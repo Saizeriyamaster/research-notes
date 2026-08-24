@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>セネガル — Country Profile</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.7;
+      padding: 24px 16px 64px;
+    }
+    .page { max-width: 960px; margin: 0 auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #006233 0%, #FDEF42 50%, #E31B23 100%);
+      border-radius: 16px;
+      padding: 48px 48px 40px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 100%);
+      pointer-events: none;
+    }
+    .hero > * { position: relative; z-index: 1; }
+    .hero-flag { font-size: 72px; line-height: 1; margin-bottom: 12px; }
+    .hero-name { font-size: 42px; font-weight: 700; letter-spacing: -0.5px; }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,0.85); margin-top: 6px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .hero-tag {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+    }
+    .meta-updated { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 16px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-top: 3px solid var(--accent, #0088FF);
+    }
+    .stat-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #0E2841; margin-top: 4px; }
+    .stat-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    .section-icon { font-size: 22px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .section-badge {
+      margin-left: auto;
+      background: #e8f4ff;
+      color: #0088FF;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .info-table th {
+      background: #f7f9fc;
+      text-align: left;
+      padding: 10px 14px;
+      color: #555;
+      font-weight: 600;
+      width: 35%;
+      border-bottom: 1px solid #eee;
+    }
+    .info-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #333;
+    }
+    .info-table tr:last-child th,
+    .info-table tr:last-child td { border-bottom: none; }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .price-card {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .price-emoji { font-size: 28px; flex-shrink: 0; }
+    .price-item-name { font-size: 13px; color: #666; }
+    .price-amount { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .price-jpy { font-size: 12px; color: #0088FF; margin-top: 1px; }
+
+    .koppen-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #CC7700, #E8A020);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .season-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .season-chip {
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .season-chip.dry    { background: #fff8e1; border-left: 4px solid #FF9900; }
+    .season-chip.wet    { background: #e8f5e9; border-left: 4px solid #38761D; }
+    .season-chip.hot    { background: #fce4ec; border-left: 4px solid #e53935; }
+    .season-chip.cold   { background: #e3f2fd; border-left: 4px solid #1565c0; }
+    .season-chip.mild   { background: #f3e5f5; border-left: 4px solid #6a1b9a; }
+    .season-chip b { display: block; font-size: 12px; margin-bottom: 3px; }
+
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .outfit-card { background: #f7f9fc; border-radius: 10px; padding: 14px 16px; }
+    .outfit-card-title { font-weight: 700; font-size: 13px; color: #0E2841; margin-bottom: 6px; }
+    .outfit-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .area-card {
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 5px solid var(--area-color, #0088FF);
+      background: #f7f9fc;
+    }
+    .area-card.nightlife   { --area-color: #9900FF; background: #faf5ff; }
+    .area-card.residential { --area-color: #38761D; background: #f5fff7; }
+    .area-card.tourist     { --area-color: #0088FF; background: #f0f7ff; }
+    .area-card.business    { --area-color: #156082; background: #f0f6fa; }
+    .area-card.caution     { --area-color: #e53935; background: #fff5f5; }
+    .area-card.transport   { --area-color: #FF9900; background: #fff8f0; }
+    .area-name { font-weight: 700; font-size: 15px; color: #0E2841; margin-bottom: 4px; }
+    .area-type { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .area-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+    .stability-bar-wrap { margin-top: 8px; }
+    .stability-label { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 4px; }
+    .stability-bar { height: 10px; background: #eee; border-radius: 99px; overflow: hidden; }
+    .stability-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #38761D, #0088FF); }
+
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .culture-card { background: #f7f9fc; border-radius: 10px; padding: 16px; }
+    .culture-card-icon { font-size: 28px; margin-bottom: 8px; }
+    .culture-card-title { font-weight: 700; font-size: 14px; color: #0E2841; margin-bottom: 6px; }
+    .culture-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .food-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .food-tag {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+    }
+
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .lang-chip {
+      background: #e8f4ff;
+      color: #0E2841;
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .lang-chip.sub { background: #f7f9fc; color: #555; font-weight: 400; }
+
+    .phrase-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+    .phrase-table th { background: #fff8e1; padding: 10px 14px; text-align: left; color: #8B4513; font-weight: 700; border-bottom: 2px solid #ffe082; }
+    .phrase-table td { padding: 10px 14px; border-bottom: 1px solid #f0f2f5; }
+    .phrase-table td:nth-child(2) { font-weight: 700; color: #0E2841; }
+    .phrase-table td:nth-child(3) { color: #8B4513; font-style: italic; }
+    .phrase-table tr:last-child td { border-bottom: none; }
+
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #C8960C, #006233, #E31B23);
+    }
+    .tl-item { position: relative; margin-bottom: 18px; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #C8960C;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #C8960C;
+    }
+    .tl-year { font-size: 12px; font-weight: 700; color: #C8960C; margin-bottom: 2px; }
+    .tl-event { font-size: 14px; color: #333; font-weight: 600; }
+    .tl-desc { font-size: 13px; color: #666; margin-top: 2px; }
+
+    .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 40px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 4px; font-size: 14px; color: #444; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-flag">🇸🇳</div>
+    <div class="hero-name">セネガル</div>
+    <div class="hero-sub">Republic of Senegal / République du Sénégal</div>
+    <div class="hero-tags">
+      <span class="hero-tag">🌍 西アフリカ</span>
+      <span class="hero-tag">🏛 共和制</span>
+      <span class="hero-tag">💰 XOF（CFA フラン）</span>
+      <span class="hero-tag">🕌 イスラム教 97%</span>
+    </div>
+    <div class="meta-updated">調査日: 2026年4月23日 — /country-info by Wanderlust</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:#0088FF;">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">人口</div>
+      <div class="stat-value">1,893万人</div>
+      <div class="stat-sub">世界第67位</div>
+    </div>
+    <div class="stat-card" style="--accent:#38761D;">
+      <div class="stat-icon">💵</div>
+      <div class="stat-label">GDP（名目）</div>
+      <div class="stat-value">368億USD</div>
+      <div class="stat-sub">世界第約100位</div>
+    </div>
+    <div class="stat-card" style="--accent:#FF9900;">
+      <div class="stat-icon">📈</div>
+      <div class="stat-label">経済成長率</div>
+      <div class="stat-value">6.0%</div>
+      <div class="stat-sub">2024年実績</div>
+    </div>
+    <div class="stat-card" style="--accent:#9900FF;">
+      <div class="stat-icon">🗺</div>
+      <div class="stat-label">国土面積</div>
+      <div class="stat-value">19.7万km²</div>
+      <div class="stat-sub">世界第87位（日本の約0.5倍）</div>
+    </div>
+    <div class="stat-card" style="--accent:#156082;">
+      <div class="stat-icon">🏙</div>
+      <div class="stat-label">首都</div>
+      <div class="stat-value" style="font-size:18px;">ダカール</div>
+      <div class="stat-sub">都市圏人口 約370万人</div>
+    </div>
+    <div class="stat-card" style="--accent:#e53935;">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">一人当たりGDP</div>
+      <div class="stat-value">約1,950USD</div>
+      <div class="stat-sub">PPP: 約3,800USD</div>
+    </div>
+    <div class="stat-card" style="--accent:#C8960C;">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-label">HDI</div>
+      <div class="stat-value">0.517</div>
+      <div class="stat-sub">世界168位（低位）</div>
+    </div>
+    <div class="stat-card" style="--accent:#8B1A1A;">
+      <div class="stat-icon">⛽</div>
+      <div class="stat-label">主要産業</div>
+      <div class="stat-value" style="font-size:14px;">漁業・採掘・観光</div>
+      <div class="stat-sub">石油・ガス開発中（2024〜）</div>
+    </div>
+  </div>
+
+  <!-- 産業・輸出・資源 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏭</span>
+      <span class="section-title">産業・輸出産品・資源</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要産業</th><td>漁業・食品加工、リン鉱石採掘、観光、農業（落花生・米・粟）、建設、新興の石油・天然ガス</td></tr>
+        <tr><th>GDPの構成</th><td>サービス業 約55% ／ 工業 約25% ／ 農業 約20%</td></tr>
+        <tr><th>主要輸出品</th><td>魚・水産物（第1位）、リン酸塩、落花生製品、石油製品、繊維製品、金</td></tr>
+        <tr><th>総輸出額</th><td>約53億USD（2022年）</td></tr>
+        <tr><th>主要輸出相手国</th><td>マリ、スイス、インド、中国、フランス、ギニア</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>産出資源</th><td>リン鉱石（世界有数）、金、ジルコン、チタン、鉄鉱石、大理石、天然ガス・石油（新興）</td></tr>
+        <tr><th>農産物</th><td>落花生、粟、モロコシ、米、キャッサバ、砂糖きび、綿花、マンゴー、柑橘類</td></tr>
+        <tr><th>水産業</th><td>GDP・輸出の要。伝統的な手漕ぎ漁業（ピログ）から産業漁業まで。西アフリカ最大規模</td></tr>
+        <tr><th>観光業</th><td>アフリカ有数の観光インフラ。ダカール・サリー・サンルイへの欧米人旅行者多数</td></tr>
+        <tr><th>石油・ガス</th><td>2024年生産開始。グランド・テルミヌス・ガス田（GTL）が経済構造を変えつつある</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2COL: 言語 + 気候 -->
+  <div class="two-col">
+
+    <!-- 言語 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🗣</span>
+        <span class="section-title">言語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin-bottom:10px;"><strong>公用語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip">フランス語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin:14px 0 8px;"><strong>国民語（実用）</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip sub">ウォロフ語（90%が話す）</span>
+        <span class="lang-chip sub">プラール語（フラニ語）</span>
+        <span class="lang-chip sub">セレール語</span>
+        <span class="lang-chip sub">ジョラ語</span>
+        <span class="lang-chip sub">マンディンカ語</span>
+        <span class="lang-chip sub">英語通用度: 低〜中</span>
+      </div>
+      <p style="font-size:13px;color:#888;margin-top:14px;">公用語はフランス語だが日常会話はウォロフ語が圧倒的。「Teranga（テランガ）＝歓待」の精神で旅行者にも親切。観光エリアや高級ホテルでは英語対応可能なことが多い。</p>
+
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-top:20px;margin-bottom:8px;">🗨 旅行者向け基本ウォロフ語フレーズ</p>
+      <table class="phrase-table">
+        <tr><th>場面</th><th>ウォロフ語</th><th>読み方</th></tr>
+        <tr><td>こんにちは</td><td>Salaam aleekum</td><td>サラーム・アレークム</td></tr>
+        <tr><td>ありがとう</td><td>Jërejëf</td><td>ジェレジェフ</td></tr>
+        <tr><td>どういたしまして</td><td>Amul solo</td><td>アムル・ソロ</td></tr>
+        <tr><td>はい</td><td>Waaw</td><td>ワーウ</td></tr>
+        <tr><td>いいえ</td><td>Déedéet</td><td>デーデート</td></tr>
+        <tr><td>いくら？</td><td>Ñaata la?</td><td>ニャーター・ラ？</td></tr>
+        <tr><td>トイレはどこ？</td><td>Fan la toilette bi nekk?</td><td>ファン・ラ・トワレット・ビ・ネック？</td></tr>
+        <tr><td>おはよう</td><td>Jaam nga fanaane?</td><td>ジャーム・ンガ・ファナーネ？</td></tr>
+        <tr><td>すみません</td><td>Baal ma</td><td>バール・マ</td></tr>
+      </table>
+    </div>
+
+    <!-- 気候 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🌤</span>
+        <span class="section-title">気候</span>
+        <span class="section-badge">ケッペン</span>
+      </div>
+      <div class="koppen-badge">BSh / BWh（ダカール）</div>
+      <p style="font-size:14px;color:#444;">乾燥帯ステップ〜砂漠気候（BSh/BWh）— ダカールは半乾燥で年降水量400mm程度。内陸北部はサハラ寄りの砂漠気候（BWh）、南部カザマンスはサバナ気候（Aw）で緑豊か。年間平均気温24℃で比較的過ごしやすい。</p>
+      <div class="season-row">
+        <div class="season-chip dry">
+          <b>乾季（大乾季）</b>
+          10月〜5月 / 日中20〜32℃
+        </div>
+        <div class="season-chip wet">
+          <b>雨季</b>
+          6月〜9月 / 日中28〜34℃・高湿
+        </div>
+        <div class="season-chip hot">
+          <b>ハルマッタン（砂嵐）</b>
+          12月〜2月 / 内陸部で砂埃強い
+        </div>
+      </div>
+      <p style="font-size:13px;color:#888;margin-top:12px;">旅行ベストシーズンは11〜4月の乾季。5〜6月は暑く蒸し暑い。7〜9月は雨季で蚊が多くマラリアリスクが高まる。ダカールは半島の先端で海風が入り比較的涼しい。</p>
+
+      <div style="margin-top:20px;background:#fff8e1;border-radius:10px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:10px;">👘 シーズン別服装ガイド</p>
+        <div class="outfit-grid">
+          <div class="outfit-card">
+            <div class="outfit-card-title">☀️ 乾季・昼間（20〜32℃）</div>
+            <div class="outfit-card-text">薄手の綿素材シャツ、リネンパンツが最適。直射日光は強いので長袖がおすすめ。サングラス・帽子必携。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌙 乾季・夜（15〜22℃）</div>
+            <div class="outfit-card-text">12〜2月は朝晩冷え込む。薄手のカーディガンやジャケット1枚持参すると安心。ダカールは海風で肌寒い夜もある。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌧 雨季（6〜9月）</div>
+            <div class="outfit-card-text">折りたたみ傘か薄手のレインコート必携。高湿度なので速乾素材推奨。蚊除けスプレー・長袖・虫除けパッチ必須。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🕌 モスク・宗教施設</div>
+            <div class="outfit-card-text">男女ともに肌の露出を最小限に。女性はスカーフで頭を覆う（貸出ありの場合も）。サンダルは脱いで入る。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 文化・国民性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title">文化・国民性</span>
+    </div>
+    <div class="culture-grid">
+      <div class="culture-card">
+        <div class="culture-card-icon">🤝</div>
+        <div class="culture-card-title">テランガ（歓待の精神）</div>
+        <div class="culture-card-text">「Teranga（テランガ）」はウォロフ語で「歓待」の意。見知らぬ旅行者をも家族のようにもてなす文化が根づいており、アフリカで最もフレンドリーな国の一つ。食事は必ず分け合う。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⏰</div>
+        <div class="culture-card-title">時間感覚・仕事観</div>
+        <div class="culture-card-text">「セネガル時間（l'heure sénégalaise）」と呼ばれるゆるやかな時間感覚がある。約束時間より1〜2時間遅れることは普通。ビジネスでも柔軟な姿勢が求められる。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🙏</div>
+        <div class="culture-card-title">宗教・信仰（スーフィズム）</div>
+        <div class="culture-card-text">97%がムスリムだが、スーフィー教団（ムーリッド、ティジャニーヤ）の影響が強く、柔軟で包容力のあるイスラムが特徴。1日5回の礼拝は日常の一部。アルコールは都市部では入手可能。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🎉</div>
+        <div class="culture-card-title">祝祭・音楽・ファッション</div>
+        <div class="culture-card-text">ムバラックス（mbalax）という独自の音楽ジャンルが有名（ユッスー・ンドゥールが代表）。タムタム太鼓・サバールダンスは結婚式や祭りの定番。カラフルなブブー（伝統衣装）を着こなすファッションも国民の誇り。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⚠️</div>
+        <div class="culture-card-title">タブー・NG行動</div>
+        <div class="culture-card-text">左手で物を渡したり食事するのは失礼。礼拝中・金曜の集会礼拝を妨げない。女性の肌の露出は控えめに（特に地方）。頭を触るのはNG。写真撮影は必ず許可を取る。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">💬</div>
+        <div class="culture-card-title">コミュニケーション特性</div>
+        <div class="culture-card-text">間接的・ハイコンテキストな会話スタイル。ことわざや比喩を多用し、直接的な批判は避ける。挨拶が非常に重視され、出会いのたびに長い挨拶交換が行われる。顔なじみになると一気に距離が縮まる。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 民族・宗教構成 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">👥</span>
+      <span class="section-title">構成民族・宗教</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要民族</th><td>ウォロフ 43.3%、ハルプラール（プラール/フラニ） 23.8%、セレール 14.7%</td></tr>
+        <tr><th>少数民族</th><td>ジョラ 3.7%、マンディンカ 4.2%、ソニンケ 2.3%、その他 8%</td></tr>
+        <tr><th>宗教構成</th><td>イスラム教 97.2%（スーフィー教団が主流）、キリスト教 2.7%（ほぼカトリック）、伝統信仰 0.1%</td></tr>
+        <tr><th>宗教的背景</th><td>日常生活の礼拝・断食（ラマダン）・タバスキ（犠牲祭）が経済・ビジネスにも影響。スーフィーの指導者（マラブー）は絶大な社会的権威を持つ</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>民族的特徴</th><td>ウォロフ人は都市部・ビジネスに強く商才豊か。セレール人はカトリックが多く農業に従事。フラニ人は牧畜・農業が伝統</td></tr>
+        <tr><th>歴史的背景</th><td>西アフリカ交易路の要衝として多様な民族が交わる地。フランス植民地期のサン・ルイ・ゴレ島が民族融合を促進</td></tr>
+        <tr><th>民族間関係</th><td>概ね平和的共存。「親族間の冗談（cousinage à plaisanterie）」という習慣で民族間の緊張を笑いで和らげる独自の文化が存在</td></tr>
+        <tr><th>言語と民族</th><td>ウォロフ語が民族を超えた共通語として機能。フランス語は行政・教育に限られ、日常会話の主役ではない</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 食文化 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🍽</span>
+      <span class="section-title">主食・食文化</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">米とモロコシ・粟が主食。西アフリカ随一の食文化を誇り、国民食チェブジェン（ティエブディエンヌ）は大きな鍋で炊いた魚入りご飯で、家族・客人がひとつの皿を囲んで食べるコミュニティ文化の象徴。落花生ソース料理が多く、コクのあるスパイス使いが特徴。屋台（タンガ）は至る所にあり、安く地元の味を楽しめる。</p>
+    <p style="font-size:13px;color:#555;font-weight:600;margin-bottom:8px;">絶対に食べるべき料理</p>
+    <div class="food-list">
+      <span class="food-tag">🐟 チェブジェン（Thieboudienne）— 国民食・魚ご飯</span>
+      <span class="food-tag">🍋 ヤッサ・プーレ（Yassa Poulet）— レモン漬けチキン</span>
+      <span class="food-tag">🥜 マフェ（Mafé）— 落花生シチュー</span>
+      <span class="food-tag">🥣 スパ（Suppa Kanja）— オクラスープ</span>
+      <span class="food-tag">🧆 アッカラ（Accara）— 豆のフリッター</span>
+      <span class="food-tag">🥤 バシ（Bissap）— ハイビスカスジュース</span>
+      <span class="food-tag">🥛 チャイ（Ataya）— ミントの甘い緑茶</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-top:14px;">ハラール対応は問題なし（豚肉・アルコールは観光エリア以外では流通が少ない）。ベジタリアン向けには豆料理・野菜スープが選択肢。屋台の食事は衛生面に注意し、火を通したものを選ぶこと。水は必ずペットボトルを使用。</p>
+  </div>
+
+  <!-- 物価 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💴</span>
+      <span class="section-title">物価ガイド</span>
+      <span class="section-badge">XOF（CFA フラン） / 2025-26年基準</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">
+      為替レート: <strong>1 USD ≈ 556 XOF</strong> &nbsp;|&nbsp; <strong>1 XOF ≈ 0.28円</strong> &nbsp;|&nbsp; <strong>1 EUR = 656 XOF（固定）</strong> &nbsp;|&nbsp; <strong>1 JPY ≈ 3.56 XOF</strong><br>
+      ※ CFA フランはユーロに固定ペッグ。物価は観光地か否かで大きく変動します。
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-emoji">🚕</div>
+        <div>
+          <div class="price-item-name">タクシー（5km目安）</div>
+          <div class="price-amount">2,000〜3,500 XOF</div>
+          <div class="price-jpy">≈ 560〜980円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">☕</div>
+        <div>
+          <div class="price-item-name">カフェのコーヒー</div>
+          <div class="price-amount">1,000〜2,500 XOF</div>
+          <div class="price-jpy">≈ 280〜700円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍺</div>
+        <div>
+          <div class="price-item-name">ビール（500ml）</div>
+          <div class="price-amount">1,000〜2,000 XOF</div>
+          <div class="price-jpy">≈ 280〜560円（観光バー）</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">地元食堂のチェブジェン</div>
+          <div class="price-amount">1,500〜3,500 XOF</div>
+          <div class="price-jpy">≈ 420〜980円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">観光地レストラン（1人）</div>
+          <div class="price-amount">10,000〜20,000 XOF</div>
+          <div class="price-jpy">≈ 2,800〜5,600円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">💧</div>
+        <div>
+          <div class="price-item-name">ペットボトル水（500ml）</div>
+          <div class="price-amount">300〜500 XOF</div>
+          <div class="price-jpy">≈ 85〜140円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🚇</div>
+        <div>
+          <div class="price-item-name">バス・ダカール急行（1乗車）</div>
+          <div class="price-amount">225〜500 XOF</div>
+          <div class="price-jpy">≈ 63〜140円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏩</div>
+        <div>
+          <div class="price-item-name">中級ホテル（1泊）</div>
+          <div class="price-amount">30,000〜60,000 XOF</div>
+          <div class="price-jpy">≈ 8,400〜16,800円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏨</div>
+        <div>
+          <div class="price-item-name">ホステル（1泊）</div>
+          <div class="price-amount">7,000〜15,000 XOF</div>
+          <div class="price-jpy">≈ 2,000〜4,200円</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:#f0f7ff;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-bottom:8px;">💡 旅行者の1日平均支出目安</p>
+      <table class="info-table">
+        <tr><th>バジェット旅行</th><td>30,000〜40,000 XOF/日（≈ 8,400〜11,200円）— 屋台・ゲストハウス中心</td></tr>
+        <tr><th>標準旅行</th><td>60,000〜90,000 XOF/日（≈ 16,800〜25,200円）— 地元レストラン・中級ホテル</td></tr>
+        <tr><th>快適旅行</th><td>100,000 XOF以上/日（≈ 28,000円〜）— 観光地レストラン・上級ホテル</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 政治・安定性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <span class="section-title">政治・安定性</span>
+    </div>
+    <div class="two-col" style="gap:12px;">
+      <table class="info-table">
+        <tr><th>政治体制</th><td>大統領制共和国（フランス第五共和制型）</td></tr>
+        <tr><th>大統領</th><td>バシル・ジオマイ・ファイ（2024年3月就任、44歳・アフリカ最年少大統領）</td></tr>
+        <tr><th>首相</th><td>ウスマン・ソンコ（野党指導者から首相就任。権力移行後の安定を模索中）</td></tr>
+        <tr><th>外務省危険レベル</th><td>レベル1（十分注意）。カザマンス地方の一部はレベル2</td></tr>
+        <tr><th>民主主義指数</th><td>5.48/10（混合的民主主義、世界83位／アフリカ11位）</td></tr>
+        <tr><th>腐敗認識指数（CPI）</th><td>45/100（世界平均43、比較的良好。2024年）</td></tr>
+      </table>
+      <div>
+        <div class="stability-bar-wrap">
+          <div class="stability-label"><span>政治的安定性（世銀WGI）</span><span>約32%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:32%"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>腐敗抑制</span><span>約45%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:45%;background:linear-gradient(90deg,#FF9900,#e53935)"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>法の支配</span><span>約38%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:38%;background:linear-gradient(90deg,#156082,#38761D)"></div></div>
+        </div>
+        <p style="font-size:13px;color:#888;margin-top:16px;">2024年3月、野党候補ファイが大統領選で当選し平和的政権交代を実現（アフリカ民主主義の模範例）。2000年以降4回の政権交代すべて平和的。ただし地方部ではカザマンス独立運動が断続的に続いており、南部への旅行は注意が必要。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 高校世界史タイムライン -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">セネガルの歴史：高校世界史の必修事項</span>
+      <span class="section-badge">受験レベル</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">8〜11世紀</div>
+        <div class="tl-event">ガーナ王国（ワガドゥー）の影響圏</div>
+        <div class="tl-desc">西アフリカの交易帝国ガーナ王国がセネガル北東部に影響力を持つ。金とサハラ交易が繁栄の源。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1230〜1400年代</div>
+        <div class="tl-event">マリ帝国の支配</div>
+        <div class="tl-desc">スンジャタ・ケイタが建国したマリ帝国がセネガル地域を支配。マンサ・ムーサの黄金のメッカ巡礼（1324）が世界史に名高い。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1360〜1800年代</div>
+        <div class="tl-event">ジョロフ王国（ウォロフ帝国）</div>
+        <div class="tl-desc">セネガンビア地域でウォロフ民族が建国。後にポルトガル・フランスの進出で分裂。現代のウォロフ文化の原型をつくる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1444年</div>
+        <div class="tl-event">ポルトガル人の到来・奴隷貿易の始まり</div>
+        <div class="tl-desc">ポルトガル人ヌーノ・トリスタンがセネガル沿岸に到達。以後ゴレ島を拠点に奴隷貿易が始まる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1659年</div>
+        <div class="tl-event">サン・ルイ建設（フランス最初の植民都市）</div>
+        <div class="tl-desc">フランスがセネガル川河口にサン・ルイを建設。サハラ以南アフリカ初のフランス植民都市。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1677年</div>
+        <div class="tl-event">フランスがゴレ島を占領</div>
+        <div class="tl-desc">オランダからゴレ島を奪取。以後大西洋奴隷貿易の最重要拠点となり、150〜200万人が奴隷船に積まれたとされる（現：世界遺産）。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">17〜19世紀</div>
+        <div class="tl-event">大西洋奴隷貿易の隆盛</div>
+        <div class="tl-desc">ゴレ島・サン・ルイが大西洋奴隷貿易の中心地となる。推定100〜200万人のアフリカ人が新大陸に連行された。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1848年</div>
+        <div class="tl-event">フランス植民地での奴隷制廃止</div>
+        <div class="tl-desc">フランス第二共和制成立により植民地での奴隷制廃止。一方でフランスの内陸征服戦争が本格化。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1895年</div>
+        <div class="tl-event">フランス領西アフリカ（AOF）の設立</div>
+        <div class="tl-desc">ダカールを首都とするフランス領西アフリカが成立。セネガルはAOFの中核植民地として行政・経済の中心を担う。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1914〜1918年</div>
+        <div class="tl-event">第一次世界大戦：セネガル狙撃兵（ティライユール）</div>
+        <div class="tl-desc">フランス軍にセネガル人兵士（ティライユール・セネガレー）が多数徴集。欧州戦線で戦い多大な犠牲を払う。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1960年4月4日</div>
+        <div class="tl-event">セネガル独立</div>
+        <div class="tl-desc">フランスから独立。詩人・政治家レオポール・セダール・サンゴールが初代大統領に就任。「ネグリチュード（黒人性）」思想を唱えアフリカ文化の誇りを世界に発信。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1980年</div>
+        <div class="tl-event">サンゴールが平和的に権力移譲</div>
+        <div class="tl-desc">アフリカで最初に自発的に権力を譲った指導者。アブドゥ・ジュフに移譲し、民主主義の伝統を確立。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2000年</div>
+        <div class="tl-event">アブドゥライ・ワッドの当選・40年ぶりの政権交代</div>
+        <div class="tl-desc">野党のワッドが大統領選で当選。アフリカ民主主義の成熟を示す平和的政権交代。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2012年</div>
+        <div class="tl-event">マッキー・サルの当選</div>
+        <div class="tl-desc">ワッドの3選阻止を求める市民運動（Y'en a Marre）を背景にマッキー・サルが当選。セネガル民主主義の強靭さを示す。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2024年3月</div>
+        <div class="tl-event">バシル・ジオマイ・ファイ大統領就任</div>
+        <div class="tl-desc">44歳の野党候補ファイが大統領選を制し就任。アフリカ最年少大統領。首相にウスマン・ソンコを指名し、民主主義による政権交代を継続。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 首都エリアガイド -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🗺</span>
+      <span class="section-title">ダカール エリアガイド</span>
+      <span class="section-badge">首都の歩き方</span>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">ダカールはアフリカ最西端の岬（カーヴェール半島）に位置する人口約370万人の都市。海に三方を囲まれ涼しい風が入り、アフリカの中でも過ごしやすい首都の一つ。交通はタクシー（黄色のタクシー）、ダカール急行（BRT/バス）、バイクタクシー（クレムン）が主。2024年にダカール地下鉄（TER）も開通し移動が便利になった。</p>
+    <div class="area-grid">
+      <div class="area-card tourist">
+        <div class="area-name">プラトー（Le Plateau）</div>
+        <div class="area-type">観光・行政・旧市街</div>
+        <div class="area-desc">植民地時代のフランス建築が残る旧市街の中心。大統領宮殿、独立記念碑、IFAN博物館、ケルメル市場が集まる。ゴレ島フェリー乗り場もここ。ホテルや飲食店も多く旅行者の拠点になりやすい。やや混雑しており、スリには注意。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">アルマディ / ノール（Les Almadies）</div>
+        <div class="area-type">ナイトライフ・ビーチ・グルメ</div>
+        <div class="area-desc">ダカール最大のナイトライフエリア。高級クラブ、バー、シーフードレストランが海沿いに並ぶ。アフリカ最西端の地「ポワン・デ・アルマディ」もここ。週末はビーチパーティも開催。外国人旅行者・駐在員に人気のエリアで比較的安全。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">メディナ（Médina）</div>
+        <div class="area-type">ローカル・市場・文化</div>
+        <div class="area-desc">フランス植民地時代にアフリカ人住民が移住させられた地区。活気あるローカル市場、屋台、モスクが密集しセネガルの生活文化が凝縮されている。予算旅行者やバックパッカーに人気。夜間は一人行動に注意。</div>
+      </div>
+      <div class="area-card business">
+        <div class="area-name">ポワン・E / ファン・レジダンス</div>
+        <div class="area-type">住宅・外国人エリア・安全</div>
+        <div class="area-desc">外国人駐在員・大使館スタッフが多く住む閑静な高級住宅地。治安が良くスーパーやレストランも充実。家族連れや長期滞在者向け。プラトーとアルマディの中間に位置しアクセス良好。</div>
+      </div>
+      <div class="area-card caution">
+        <div class="area-name">パルセル・アサニ / グラン・ダカール</div>
+        <div class="area-type">⚠️ 注意エリア（郊外）</div>
+        <div class="area-desc">市中心部から離れた郊外の庶民エリア。観光目的で訪問する理由は少なく、夜間の一人歩きは避けること。スリやひったくりの報告あり。迷い込んだ場合はすぐにタクシーを捕まえること。</div>
+      </div>
+      <div class="area-card transport">
+        <div class="area-name">エアポート周辺 / ディアムニアドゥ</div>
+        <div class="area-type">交通ハブ・新空港エリア</div>
+        <div class="area-desc">ブレーズ・ディアニュ国際空港（2017年開港）は市中心部から45km。TER（鉄道）でプラトーまで約45分。空港周辺に新しいホテルも増加。市内への移動はTER利用が最もコスパ良好（約1,000 XOF）。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">ゴレ島（Île de Gorée）</div>
+        <div class="area-type">世界遺産・観光</div>
+        <div class="area-desc">プラトーのフェリー乗り場から20分。大西洋奴隷貿易の象徴「奴隷の家（Maison des Esclaves）」がある世界遺産の島。カラフルな植民地建築と海の景色が美しく、日帰り観光に最適。フェリー往復約5,000 XOF。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    セネガル Country Profile — /country-info by Wanderlust &nbsp;|&nbsp; 調査日: 2026-04-23 &nbsp;|&nbsp; ※情報は変動するため渡航前に外務省・公式情報を確認してください
+  </div>
+
+</div>
+</body>
+</html>

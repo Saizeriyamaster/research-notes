@@ -1,0 +1,22 @@
+# 241 People
+
+## Files
+- [吉田松陰](2026-03-21_吉田松陰.md)
+- [Lee Kuan Yew](2026-04-04_Lee_Kuan_Yew.md)
+- [PayPal-Mafia](2026-04-04_PayPal-Mafia.md)
+- [Peter Thiel](2026-04-04_Peter_Thiel.md)
+- [patrick-collison](2026-04-10_patrick-collison.md)
+- [sam-altman](2026-04-10_sam-altman.md)
+- [yokogawa-tsuyoshi](2026-04-10_yokogawa-tsuyoshi.md)
+- [マキャベリ](2026-04-10_マキャベリ.md)
+- [Vincent van Gogh and Theo](2026-04-11_Vincent_van_Gogh_and_Theo.md)
+- [伊藤啓二](2026-04-16_伊藤啓二.md)
+- [Christopher Nolan](2026-06-02_Christopher_Nolan.md)
+- [Alexander-Wang](2026-06-10_Alexander-Wang.md)
+- [Alexandr-Wang-ScaleAI](2026-06-10_Alexandr-Wang-ScaleAI.md)
+- [bill-gates](2026-06-10_bill-gates.md)
+- [渋沢栄一](2026-06-11_渋沢栄一.md)
+- [paul graham](2026-06-14_paul_graham.md)
+- [Palmer Luckey](2026-06-19_Palmer_Luckey.md)
+- [藤田晋](2026-07-08_藤田晋.md)
+- [Elon Musk](2026-07-09_Elon_Musk.md)

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ナイジェリア — Country Profile</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.7;
+      padding: 24px 16px 64px;
+    }
+    .page { max-width: 960px; margin: 0 auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #1a5c1a 0%, #006600 50%, #1a1a1a 100%);
+      border-radius: 16px;
+      padding: 48px 48px 40px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="60" fill="rgba(255,255,255,0.03)"/><circle cx="10" cy="80" r="40" fill="rgba(255,255,255,0.02)"/></svg>');
+      pointer-events: none;
+    }
+    .hero-flag { font-size: 72px; line-height: 1; margin-bottom: 12px; }
+    .hero-name { font-size: 42px; font-weight: 700; letter-spacing: -0.5px; }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,0.8); margin-top: 6px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .hero-tag {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+    }
+    .meta-updated { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 16px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-top: 3px solid var(--accent, #0088FF);
+    }
+    .stat-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #0E2841; margin-top: 4px; }
+    .stat-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    .section-icon { font-size: 22px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .section-badge {
+      margin-left: auto;
+      background: #e8f4ff;
+      color: #0088FF;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .info-table th {
+      background: #f7f9fc;
+      text-align: left;
+      padding: 10px 14px;
+      color: #555;
+      font-weight: 600;
+      width: 35%;
+      border-bottom: 1px solid #eee;
+    }
+    .info-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #333;
+    }
+    .info-table tr:last-child th,
+    .info-table tr:last-child td { border-bottom: none; }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .price-card {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .price-emoji { font-size: 28px; flex-shrink: 0; }
+    .price-item-name { font-size: 13px; color: #666; }
+    .price-amount { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .price-jpy { font-size: 12px; color: #0088FF; margin-top: 1px; }
+
+    .koppen-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #1a5c1a, #006600);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      margin-right: 6px;
+    }
+    .season-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .season-chip { border-radius: 8px; padding: 8px 14px; font-size: 13px; flex: 1; min-width: 120px; }
+    .season-chip.dry  { background: #fff8e1; border-left: 4px solid #FF9900; }
+    .season-chip.wet  { background: #e8f5e9; border-left: 4px solid #38761D; }
+    .season-chip.hot  { background: #fce4ec; border-left: 4px solid #e53935; }
+    .season-chip b { display: block; font-size: 12px; margin-bottom: 3px; }
+
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .outfit-card { background: #f7f9fc; border-radius: 10px; padding: 14px 16px; }
+    .outfit-card-title { font-weight: 700; font-size: 13px; color: #0E2841; margin-bottom: 6px; }
+    .outfit-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .area-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+    .area-card { border-radius: 10px; padding: 16px 18px; border-left: 5px solid var(--area-color, #0088FF); background: #f7f9fc; }
+    .area-card.nightlife   { --area-color: #9900FF; background: #faf5ff; }
+    .area-card.residential { --area-color: #38761D; background: #f5fff7; }
+    .area-card.tourist     { --area-color: #0088FF; background: #f0f7ff; }
+    .area-card.business    { --area-color: #156082; background: #f0f6fa; }
+    .area-card.caution     { --area-color: #e53935; background: #fff5f5; }
+    .area-card.transport   { --area-color: #FF9900; background: #fff8f0; }
+    .area-name { font-weight: 700; font-size: 15px; color: #0E2841; margin-bottom: 4px; }
+    .area-type { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .area-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+    .stability-bar-wrap { margin-top: 8px; }
+    .stability-label { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 4px; }
+    .stability-bar { height: 10px; background: #eee; border-radius: 99px; overflow: hidden; }
+    .stability-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #38761D, #0088FF); }
+
+    .culture-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .culture-card { background: #f7f9fc; border-radius: 10px; padding: 16px; }
+    .culture-card-icon { font-size: 28px; margin-bottom: 8px; }
+    .culture-card-title { font-weight: 700; font-size: 14px; color: #0E2841; margin-bottom: 6px; }
+    .culture-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .food-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .food-tag { background: #fff8e1; border: 1px solid #ffe082; border-radius: 20px; padding: 5px 14px; font-size: 13px; }
+
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .lang-chip { background: #e8f4ff; color: #0E2841; border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; }
+    .lang-chip.sub { background: #f7f9fc; color: #555; font-weight: 400; }
+
+    .phrase-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+    .phrase-table th { background: #e8f5e9; padding: 10px 14px; text-align: left; color: #1a5c1a; font-weight: 700; border-bottom: 2px solid #a5d6a7; }
+    .phrase-table td { padding: 10px 14px; border-bottom: 1px solid #f0f2f5; }
+    .phrase-table td:nth-child(2) { font-weight: 700; color: #0E2841; }
+    .phrase-table td:nth-child(3) { color: #1a5c1a; font-style: italic; }
+    .phrase-table tr:last-child td { border-bottom: none; }
+
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #006600, #156082, #38761D);
+    }
+    .tl-item { position: relative; margin-bottom: 18px; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #006600;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #006600;
+    }
+    .tl-year { font-size: 12px; font-weight: 700; color: #006600; margin-bottom: 2px; }
+    .tl-event { font-size: 14px; color: #333; font-weight: 600; }
+    .tl-desc { font-size: 13px; color: #666; margin-top: 2px; }
+
+    .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 40px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 4px; font-size: 14px; color: #444; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-flag">🇳🇬</div>
+    <div class="hero-name">ナイジェリア</div>
+    <div class="hero-sub">Federal Republic of Nigeria / Jamhuriyar Tarayyar Nijeriya</div>
+    <div class="hero-tags">
+      <span class="hero-tag">🌍 西アフリカ</span>
+      <span class="hero-tag">🏛 連邦共和制（大統領制）</span>
+      <span class="hero-tag">💰 NGN（ナイラ）</span>
+      <span class="hero-tag">✝️🕌 キリスト教・イスラム教 拮抗</span>
+      <span class="hero-tag">🐘 アフリカ最多人口国</span>
+    </div>
+    <div class="meta-updated">調査日: 2026年4月23日 — /country-info by Wanderlust</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:#0088FF;">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">人口</div>
+      <div class="stat-value">約2億3,000万人</div>
+      <div class="stat-sub">アフリカ最多・世界第6位</div>
+    </div>
+    <div class="stat-card" style="--accent:#38761D;">
+      <div class="stat-icon">💵</div>
+      <div class="stat-label">GDP（名目）</div>
+      <div class="stat-value">約3,630億ドル</div>
+      <div class="stat-sub">アフリカ最大・世界第31位（2024）</div>
+    </div>
+    <div class="stat-card" style="--accent:#FF9900;">
+      <div class="stat-icon">📈</div>
+      <div class="stat-label">経済成長率</div>
+      <div class="stat-value">3.98%</div>
+      <div class="stat-sub">2025年Q3実績</div>
+    </div>
+    <div class="stat-card" style="--accent:#9900FF;">
+      <div class="stat-icon">🗺</div>
+      <div class="stat-label">国土面積</div>
+      <div class="stat-value">92.4万km²</div>
+      <div class="stat-sub">世界第32位（日本の約2.5倍）</div>
+    </div>
+    <div class="stat-card" style="--accent:#156082;">
+      <div class="stat-icon">🏙</div>
+      <div class="stat-label">首都</div>
+      <div class="stat-value" style="font-size:18px;">アブジャ</div>
+      <div class="stat-sub">最大都市はラゴス（約1,500万人）</div>
+    </div>
+    <div class="stat-card" style="--accent:#e53935;">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">一人当たりGDP</div>
+      <div class="stat-value">約1,600ドル</div>
+      <div class="stat-sub">PPP: 約7,500ドル</div>
+    </div>
+    <div class="stat-card" style="--accent:#C8960C;">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-label">HDI</div>
+      <div class="stat-value">0.548</div>
+      <div class="stat-sub">世界163位（低位）</div>
+    </div>
+    <div class="stat-card" style="--accent:#8B1A1A;">
+      <div class="stat-icon">⛽</div>
+      <div class="stat-label">主要産業</div>
+      <div class="stat-value" style="font-size:14px;">石油・農業・サービス</div>
+      <div class="stat-sub">石油が輸出の88%</div>
+    </div>
+  </div>
+
+  <!-- 産業・輸出・資源 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏭</span>
+      <span class="section-title">産業・輸出産品・資源</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要産業</th><td>石油・天然ガス、農業、通信・IT、金融サービス、映画（ノリウッド）、建設</td></tr>
+        <tr><th>GDPの構成</th><td>サービス業 約52% ／ 農業 約26% ／ 工業 約22%</td></tr>
+        <tr><th>主要輸出品</th><td>原油（70.5%）・石油製品（88%合計）、カカオ（+244%急増）、ゴマ、LNG</td></tr>
+        <tr><th>総輸出額</th><td>約470億ドル（2024年）</td></tr>
+        <tr><th>主要輸出相手国</th><td>インド、スペイン、フランス、オランダ、米国、中国、アフリカ域内</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>産出資源</th><td>原油・天然ガス（ニジェールデルタ）、鉄鉱石、石炭、石灰岩、リチウム、金、亜鉛、コルタン</td></tr>
+        <tr><th>農産物</th><td>カカオ、ゴマ、パームオイル、カシューナッツ、ゴム、ヤム芋、キャッサバ</td></tr>
+        <tr><th>ダンゴテ製油所</th><td>2024年稼働開始。65万バレル/日の処理能力。石油製品輸入依存からの脱却を目指す。</td></tr>
+        <tr><th>ノリウッド</th><td>ハリウッド・ボリウッドに次ぐ世界第3位の映画産業。年間2,500本以上を制作。</td></tr>
+        <tr><th>テック・スタートアップ</th><td>ラゴスは「Yabacon Valley」と呼ばれるアフリカ最大のスタートアップハブ。Flutterwave・Paystack等が輩出。</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2COL: 言語 + 気候 -->
+  <div class="two-col">
+
+    <!-- 言語 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🗣</span>
+        <span class="section-title">言語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin-bottom:10px;"><strong>公用語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip">英語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin:14px 0 8px;"><strong>主要民族語・共通語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip sub">ハウサ語（北部・6,300万人）</span>
+        <span class="lang-chip sub">ヨルバ語（南西・4,700万人）</span>
+        <span class="lang-chip sub">イボ語（南東・4,600万人）</span>
+        <span class="lang-chip sub">ナイジェリア・ピジン英語（共通語）</span>
+        <span class="lang-chip sub">英語通用度: 高（都市部）</span>
+      </div>
+      <p style="font-size:13px;color:#888;margin-top:14px;">520以上の言語が存在。都市部・ビジネスでは英語、日常の共通語はナイジェリア・ピジン英語（「Naija」）。観光地での英語通用度は高い。</p>
+
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-top:20px;margin-bottom:8px;">🗨 旅行者向けフレーズ（英語・ピジン英語）</p>
+      <table class="phrase-table">
+        <tr><th>場面</th><th>表現</th><th>補足</th></tr>
+        <tr><td>こんにちは</td><td>How far? / Hello!</td><td>ハウ・ファ？（ピジン：元気？）</td></tr>
+        <tr><td>返答（元気です）</td><td>I dey fine!</td><td>アイ・デイ・ファイン（ピジン）</td></tr>
+        <tr><td>ありがとう</td><td>Thank you / E se (Yoruba)</td><td>エ・セ（ヨルバ語）</td></tr>
+        <tr><td>ヨルバ：ありがとう</td><td>E se / O se</td><td>エ・セ / オ・セ</td></tr>
+        <tr><td>ハウサ：こんにちは</td><td>Sannu</td><td>サンヌ</td></tr>
+        <tr><td>イボ：ありがとう</td><td>Daalu</td><td>ダール</td></tr>
+        <tr><td>いくら？</td><td>How much?</td><td>英語そのまま通じる</td></tr>
+        <tr><td>高い！</td><td>E too much!</td><td>イ・トゥー・マッチ（ピジン）</td></tr>
+        <tr><td>トイレはどこ？</td><td>Where is the toilet?</td><td>英語で問題なし</td></tr>
+        <tr><td>気をつけて</td><td>Take care!</td><td>ナイジェリア式別れの挨拶</td></tr>
+      </table>
+    </div>
+
+    <!-- 気候 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🌤</span>
+        <span class="section-title">気候</span>
+        <span class="section-badge">ケッペン</span>
+      </div>
+      <div>
+        <span class="koppen-badge">Af/Am（南部）</span>
+        <span class="koppen-badge">Aw（中部・アブジャ）</span>
+        <span class="koppen-badge">BSh（北部）</span>
+      </div>
+      <p style="font-size:14px;color:#444;margin-top:10px;">南部（ラゴス）は<strong>熱帯雨林〜熱帯モンスーン気候</strong>で年間を通じ高温多湿（27〜32℃）。首都アブジャは<strong>サバナ気候（Aw）</strong>で乾季・雨季が明確。北部は<strong>熱帯半乾燥（BSh）</strong>でサハラ砂漠に近い。</p>
+      <div class="season-row">
+        <div class="season-chip dry">
+          <b>乾季（ハルマッタン）</b>
+          11月〜3月 / ラゴス28℃、アブジャ20〜35℃
+        </div>
+        <div class="season-chip wet">
+          <b>雨季（南部）</b>
+          4月〜10月 / 高温多湿、スコール多発
+        </div>
+        <div class="season-chip hot">
+          <b>猛暑期（北部）</b>
+          3月〜5月 / アブジャ最高40℃超も
+        </div>
+      </div>
+      <p style="font-size:12px;color:#888;margin-top:10px;">⚠️ ハルマッタン：12〜2月にサハラから吹く乾いた砂煙を含む北東風。視界悪化・肌の乾燥・のどへの刺激に注意。</p>
+
+      <div style="margin-top:20px;background:#e8f5e9;border-radius:10px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#1a5c1a;margin-bottom:10px;">👘 通年の服装ガイド（ラゴス・アブジャ）</p>
+        <div class="outfit-grid">
+          <div class="outfit-card">
+            <div class="outfit-card-title">☀️ 昼間（30〜35℃）</div>
+            <div class="outfit-card-text">薄手の綿・リネン素材。ゆったりした通気性の良い服装。Tシャツ＋軽パンツが基本。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌧 雨季対策（4〜10月）</div>
+            <div class="outfit-card-text">折りたたみ傘・軽いレインコート必携。スコールは突発的で激しい。濡れても乾きやすい素材を。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">❄️ 室内・夜</div>
+            <div class="outfit-card-text">ショッピングモール・ホテルのエアコンは強烈。薄手の上着を1枚必ず携帯。夜間は虫除け必須。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🕌 宗教施設・北部</div>
+            <div class="outfit-card-text">北部（イスラム圏）では肩・膝を隠す保守的な服装が必須。女性はスカーフ持参推奨。ショートパンツ・タンクトップはNG。</div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:#888;margin-top:10px;">🦟 マラリア蚊対策：ナイジェリアはマラリアリスクが高い。虫除けスプレー（DEET含有）、長袖・長ズボン（夕方以降）、蚊帳、予防薬（医師に相談）を準備すること。</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 文化・国民性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title">文化・国民性</span>
+    </div>
+    <div class="culture-grid">
+      <div class="culture-card">
+        <div class="culture-card-icon">🤝</div>
+        <div class="culture-card-title">圧倒的なホスピタリティ</div>
+        <div class="culture-card-text">「Omoluabi（オモルアビ）」— ヨルバ文化の人間性・思いやりの概念。見知らぬ人にも食事を分け、家に招く文化が根付く。笑顔と握手で会話が始まる。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⏰</div>
+        <div class="culture-card-title">「African Time（ナイジェリア時間）」</div>
+        <div class="culture-card-text">時間感覚はルーズ。1〜2時間の遅刻は日常的。「The party starts at 6pm」は「人が集まりだすのが8〜9pm」の意味。旅行者は余裕をもって行動を。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">👴</div>
+        <div class="culture-card-title">年長者への絶対的な敬意</div>
+        <div class="culture-card-text">部族によっては若者が床に伏せてお辞儀する（プロストレーション）。会食では年長者が先に食べる。「Sir/Ma」の敬称は必須。年上を名前で呼ぶのは失礼。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">✝️🕌</div>
+        <div class="culture-card-title">宗教が生活を支配</div>
+        <div class="culture-card-text">南部はキリスト教（福音派・カトリック）、北部はイスラム教が圧倒的。礼拝は生活の中心。神の名を頻繁に口にする（「By God's grace」など）。北部ではアルコール禁止の地域も。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">💃</div>
+        <div class="culture-card-title">音楽・エンタメ大国</div>
+        <div class="culture-card-text">アフロビーツはナイジェリア発祥。Burna Boy・Wizkid・Davido等が世界進出。映画（ノリウッド）・音楽・ファッションがアフリカ文化をリード。週末のパーティー文化が盛ん。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🍽</div>
+        <div class="culture-card-title">共食・右手の文化</div>
+        <div class="culture-card-text">食事は大皿を囲んで共食が基本。右手で食べるのがマナー（左手は不浄）。食前後に手洗い。招待されたら断らないのが礼儀。食べ物を断ることは失礼とされることも。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">💐</div>
+        <div class="culture-card-title">豪華な結婚式文化</div>
+        <div class="culture-card-text">3回の結婚式（伝統婚・役所婚・教会/モスク婚）が標準。数百人規模の宴会が週末に各地で開かれる。アソ・エビ（統一布地で衣装を揃える文化）が特徴的。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⚠️</div>
+        <div class="culture-card-title">タブー・注意事項</div>
+        <div class="culture-card-text">北部でのアルコール・豚肉はNG。公共の場での過度な肌露出は避ける。写真撮影前に必ず許可を求める（特に市場・軍・警察施設付近は厳禁）。政治批判は避ける。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 民族・宗教構成 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">👥</span>
+      <span class="section-title">構成民族・宗教</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要民族（3大）</th><td>ハウサ・フラニ族（北部・約29%）、ヨルバ族（南西・約21%）、イボ族（南東・約18%）</td></tr>
+        <tr><th>少数民族</th><td>イビビオ族、イジョウ族（ニジェールデルタ）、カヌリ族、ティブ族など250以上の民族が存在</td></tr>
+        <tr><th>宗教構成</th><td>イスラム教 約53%（北部中心）、キリスト教 約45%（南部中心）、伝統宗教 約2%</td></tr>
+        <tr><th>宗教の南北分断</th><td>北部12州はシャリーア法を部分的に導入。南部は世俗的なキリスト教文化が支配的。</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>民族間緊張</th><td>ハウサ vs イボ vs ヨルバの三角関係が政治・経済の根底に。地域間対立は現在も続く。</td></tr>
+        <tr><th>ビアフラ戦争の傷</th><td>1967〜70年のイボ族独立運動（ビアフラ共和国）。約100万〜300万人が死亡。現在も独立派が活動。</td></tr>
+        <tr><th>フラニ族</th><td>伝統的な牧畜民族。近年、農耕民族との土地争いが激化し武力衝突が多発。</td></tr>
+        <tr><th>言語と民族</th><td>公用語の英語は民族を超えた政治的中立語。各民族は自民族語に強いアイデンティティを持つ。</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 食文化 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🍽</span>
+      <span class="section-title">主食・食文化</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">主食はヤム芋・キャッサバ・コメ・プランテン（調理バナナ）。スープと一緒に食べるスタイルが基本。スパイシーな赤い料理が多く、唐辛子・パームオイル・ダシ（Maggi）が定番の味付け。ラゴスの屋台文化（「Buka」）は活発で、安価かつ美味しいローカル飯が楽しめる。</p>
+    <p style="font-size:13px;color:#555;font-weight:600;margin-bottom:8px;">絶対に食べるべき料理</p>
+    <div class="food-list">
+      <span class="food-tag">🍚 ジョロフライス（トマトソースで炊いたナイジェリアの国民食）</span>
+      <span class="food-tag">🍖 スヤ（スパイス漬けの牛串焼き・路上グリル）</span>
+      <span class="food-tag">🫕 エグシスープ（メロン種のペーストスープ＋肉・魚）</span>
+      <span class="food-tag">🍠 ポンデッドヤム（搗き芋）＋エグシ/オハ/オフォノスープ</span>
+      <span class="food-tag">🍲 ペッパースープ（辛い肉/魚のスープ）</span>
+      <span class="food-tag">🫘 アカラ（黒目豆のフライ・朝食の定番）</span>
+      <span class="food-tag">🍌 ドドー（揚げプランテン・甘辛い）</span>
+      <span class="food-tag">🍺 マルタ（甘いモルト飲料）/ スター・ビール（国民的ビール）</span>
+      <span class="food-tag">🌴 パルムワイン（ヤシ酒）</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-top:14px;">⚠️ 生水・路上の切り売りフルーツは避ける。「Buka（ブカ）」と呼ばれる家庭料理屋は安くて美味しい。北部ではアルコール販売が制限されるレストランも多い。</p>
+  </div>
+
+  <!-- 物価 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💴</span>
+      <span class="section-title">物価ガイド</span>
+      <span class="section-badge">NGN / 2026年4月基準</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">
+      為替レート: <strong>1 USD ≈ 1,349 NGN</strong> &nbsp;|&nbsp; <strong>1 NGN ≈ 0.116円</strong> &nbsp;|&nbsp; <strong>1 USD ≈ 約156円</strong><br>
+      ※ ナイジェリアは近年インフレが深刻。物価はラゴス・アブジャ（高）と地方（安）で大きく差がある。外国人価格に要注意。
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-emoji">🚕</div>
+        <div>
+          <div class="price-item-name">タクシー/Bolt（5km）</div>
+          <div class="price-amount">2,000〜4,000 NGN</div>
+          <div class="price-jpy">≈ 230〜460円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">☕</div>
+        <div>
+          <div class="price-item-name">カフェのコーヒー</div>
+          <div class="price-amount">1,500〜3,500 NGN</div>
+          <div class="price-jpy">≈ 175〜405円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍺</div>
+        <div>
+          <div class="price-item-name">スター・ビール（600ml）</div>
+          <div class="price-amount">700〜1,500 NGN</div>
+          <div class="price-jpy">≈ 80〜175円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">ブカ（地元食堂の定食）</div>
+          <div class="price-amount">800〜2,500 NGN</div>
+          <div class="price-jpy">≈ 95〜290円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">中級レストラン（1人）</div>
+          <div class="price-amount">5,000〜18,000 NGN</div>
+          <div class="price-jpy">≈ 580〜2,090円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">💧</div>
+        <div>
+          <div class="price-item-name">ペットボトル水（500ml）</div>
+          <div class="price-amount">150〜400 NGN</div>
+          <div class="price-jpy">≈ 17〜46円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🚌</div>
+        <div>
+          <div class="price-item-name">BRTバス（ラゴス・1乗車）</div>
+          <div class="price-amount">200〜700 NGN</div>
+          <div class="price-jpy">≈ 23〜81円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏩</div>
+        <div>
+          <div class="price-item-name">中級ホテル（1泊）</div>
+          <div class="price-amount">30,000〜80,000 NGN</div>
+          <div class="price-jpy">≈ 3,480〜9,280円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏨</div>
+        <div>
+          <div class="price-item-name">ゲストハウス（1泊）</div>
+          <div class="price-amount">8,000〜20,000 NGN</div>
+          <div class="price-jpy">≈ 930〜2,320円</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:#f0f7ff;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-bottom:8px;">💡 旅行者の1日平均支出目安（ラゴス）</p>
+      <table class="info-table">
+        <tr><th>バジェット旅行</th><td>8,000〜15,000 NGN/日（≈ 930〜1,740円）— ブカ・ゲストハウス中心</td></tr>
+        <tr><th>標準旅行</th><td>25,000〜60,000 NGN/日（≈ 2,900〜6,960円）— 中級ホテル・レストラン</td></tr>
+        <tr><th>快適旅行</th><td>80,000〜200,000 NGN/日（≈ 9,280〜23,200円）— 高級ホテル・観光地</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 政治・安定性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <span class="section-title">政治・安定性</span>
+    </div>
+    <div class="two-col" style="gap:12px;">
+      <table class="info-table">
+        <tr><th>政治体制</th><td>連邦共和制・大統領制（36州＋FCT）</td></tr>
+        <tr><th>大統領</th><td>ボラ・ティヌブ（2023年5月〜）</td></tr>
+        <tr><th>外務省危険レベル</th><td>レベル2〜3（北東部・ボコハラム地域はレベル3/退避勧告）</td></tr>
+        <tr><th>民主主義指数（EIU）</th><td>4.23/10（ハイブリッド体制・世界108位）</td></tr>
+        <tr><th>腐敗認識指数（CPI）</th><td>約25/100（2024年・世界約145位）</td></tr>
+        <tr><th>世界銀行：政治安定性</th><td>-2.0（世界最低水準。2024年）</td></tr>
+      </table>
+      <div>
+        <div class="stability-bar-wrap">
+          <div class="stability-label"><span>政治的安定性（世銀WGI）</span><span>約8%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:8%"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>腐敗抑制</span><span>約12%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:12%;background:linear-gradient(90deg,#FF9900,#e53935)"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>法の支配</span><span>約15%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:15%;background:linear-gradient(90deg,#156082,#38761D)"></div></div>
+        </div>
+        <p style="font-size:13px;color:#888;margin-top:16px;">北東部ではボコハラム・ISWAP（イスラム国西アフリカ州）が活動中。ラゴス・アブジャなど主要都市は旅行可能だが、武装強盗・誘拐リスクは相対的に高い。夜間の単独行動は極力避け、信頼できる現地コンタクトを持つことが重要。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 高校世界史タイムライン -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">ナイジェリアの歴史：高校世界史の必修事項</span>
+      <span class="section-badge">受験レベル</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">前500年頃〜200年</div>
+        <div class="tl-event">ノク文化（Nok Culture）</div>
+        <div class="tl-desc">現在のナイジェリア中央部に栄えた鉄器文化。サハラ以南アフリカ最古の等身大テラコッタ（素焼き）彫刻で有名。アフリカの鉄器時代の起点として重要。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">700〜1900年代</div>
+        <div class="tl-event">カネム・ボルヌ帝国・ハウサ諸都市国家</div>
+        <div class="tl-desc">北部ではトランス・サハラ交易（塩・金・奴隷）で栄えるイスラム国家群が繁栄。カノ・ザリア・カツィナなどハウサ都市が14〜15世紀に最盛期を迎える。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1300〜1800年代</div>
+        <div class="tl-event">ベニン王国・オヨ帝国</div>
+        <div class="tl-desc">南部ではベニン王国（現エド州）が精巧なブロンズ工芸（ベニン・ブロンズ）で世界的に著名。ヨルバ系のオヨ帝国は西アフリカ最大の政治組織の一つとなる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">15〜19世紀</div>
+        <div class="tl-event">奴隷貿易</div>
+        <div class="tl-desc">ポルトガル・イギリス・オランダが奴隷貿易に参入。現ナイジェリア地域（特にビアフラ湾・ベニン）は大西洋奴隷貿易の主要な「供給地」。推定で数百万人が新大陸に連行された。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1804年</div>
+        <div class="tl-event">ソコト・カリフ国の成立（ウスマン・ダン・フォディオの聖戦）</div>
+        <div class="tl-desc">フラニ族のイスラム改革者ウスマン・ダン・フォディオがジハード（聖戦）を起こし、ハウサ諸王国を統合してソコト・カリフ国を建設。西アフリカ史上最大のイスラム国家となり、現在の北部ナイジェリアの宗教的・文化的基盤を形成。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1851〜1900年</div>
+        <div class="tl-event">イギリスの植民地化</div>
+        <div class="tl-desc">1851年ラゴス砲撃、1861年ラゴス植民地化。1886年王立ニジェール会社（Royal Niger Company）設立。ベニン王国は1897年のブリティッシュ・ベニン遠征で滅亡（このときベニン・ブロンズが略奪）。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1914年</div>
+        <div class="tl-event">南北ナイジェリアの合併 → 「ナイジェリア」誕生</div>
+        <div class="tl-desc">イギリス総督フレデリック・ラガードが北部・南部ナイジェリア保護領を合併。異なる文化・宗教・民族を持つ地域を強引に一つの国家としたことが、以後の民族対立・不安定の根本原因となる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1960年10月1日</div>
+        <div class="tl-event">独立（英連邦内独立国として）</div>
+        <div class="tl-desc">イギリスから独立。初代首相はアブバカル・タファワ・バレワ。1963年に共和国宣言。アフリカ大陸への希望の象徴として「アフリカの巨人」と称される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1967〜1970年</div>
+        <div class="tl-event">ナイジェリア内戦（ビアフラ戦争）★最重要</div>
+        <div class="tl-desc">イボ族を中心に「ビアフラ共和国」として独立を宣言→連邦軍と内戦勃発。飢餓による民間人の大量死が国際世論を衝撃。100〜300万人が死亡とされ、20世紀最大の人道的悲劇の一つ。独立は失敗に終わり統一を維持。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1970年代</div>
+        <div class="tl-event">石油ブームと軍事政権時代</div>
+        <div class="tl-desc">OPECへの加盟（1971年）と石油価格高騰で「石油ブーム」。軍事クーデターが頻発し、民政と軍政が繰り返される。石油収入が腐敗・格差拡大の原因となる「オランダ病」の典型例とも。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1993年</div>
+        <div class="tl-event">選挙無効事件（アビオラ事件）</div>
+        <div class="tl-desc">大統領選でモショード・アビオラが当選するも、軍のアバチャ将軍が結果を無効化。アビオラは獄中死。民主主義への移行が大幅に遅れる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1999年</div>
+        <div class="tl-event">民政移管・第4共和国の成立</div>
+        <div class="tl-desc">オルシェグン・オバサンジョが大統領に就任し、軍政から民政へ移行。16年ぶりの民主化。以降、選挙による政権交代が続く。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2009年〜現在</div>
+        <div class="tl-event">ボコハラムの台頭と北東部危機</div>
+        <div class="tl-desc">イスラム過激派「ボコハラム（「西洋の教育は罪悪」の意）」が北東部ボルノ州を中心に武装活動を本格化。2014年のチブク学校少女拉致事件（#BringBackOurGirls）で国際的注目。現在も北東部では活動が継続。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2015年</div>
+        <div class="tl-event">初の平和的政権交代</div>
+        <div class="tl-desc">ムハンマドゥ・ブハリが現職大統領グッドラック・ジョナサンを破って当選。ナイジェリア史上初めて選挙によって与党が政権を失い、平和的に権力が移譲された。民主主義の成熟として評価。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2023年〜</div>
+        <div class="tl-event">ティヌブ大統領就任・経済改革</div>
+        <div class="tl-desc">ボラ・ティヌブが大統領就任。就任直後に石油補助金廃止→ガソリン価格3倍に。ナイラ変動相場制移行で大幅通貨安（インフレ悪化）。改革の痛みと期待が交錯する局面が続く。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- アブジャ＋ラゴス エリアガイド -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🗺</span>
+      <span class="section-title">アブジャ（首都）＆ラゴス（最大都市）エリアガイド</span>
+      <span class="section-badge">2都市の歩き方</span>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">首都はアブジャ（計画都市・比較的安全・清潔）、経済・文化の中心はラゴス（人口1,500万超・混沌とした活気）。ほとんどのビジネス・観光はラゴス起点となる。移動はBolt/Uberのアプリ配車が必須。</p>
+
+    <p style="font-size:15px;font-weight:700;color:#006600;margin-bottom:12px;">🏛 アブジャ（首都）</p>
+    <div class="area-grid" style="margin-bottom:20px;">
+      <div class="area-card business">
+        <div class="area-name">マイタマ（Maitama）</div>
+        <div class="area-type">高級・外交・行政</div>
+        <div class="area-desc">アブジャ最高級地区。大使館・国際機関・高級ホテル（ヒルトン等）が集中。ファインダイニングが充実。アブジャ滞在の定番ベースエリア。費用は高め。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">ウス・II（Wuse II）</div>
+        <div class="area-type">ナイトライフ・エンタメ</div>
+        <div class="area-desc">アブジャ最大のナイトライフゾーン。国際レストラン・バー・ラウンジが密集。外国人・ヤング層に人気。週末は深夜まで賑わう。比較的治安良好。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">中央ビジネス地区（CBD）</div>
+        <div class="area-type">官庁・観光・交通</div>
+        <div class="area-desc">国会議事堂・大統領府・アソ・ロック（岩山のランドマーク）が集まる行政エリア。国立モスク・国立キリスト教センターも近接。日帰り観光の起点。</div>
+      </div>
+      <div class="area-card caution">
+        <div class="area-name">ニヤニャ・マラーラバ（Nyanya/Mararaba）</div>
+        <div class="area-type">⚠️ 注意エリア</div>
+        <div class="area-desc">アブジャ郊外の密集住宅地。犯罪率が高く旅行者には不向き。夜間は特に避けること。過去には爆弾テロも発生。</div>
+      </div>
+    </div>
+
+    <p style="font-size:15px;font-weight:700;color:#156082;margin-bottom:12px;">🏙 ラゴス（最大都市・経済首都）</p>
+    <div class="area-grid">
+      <div class="area-card business">
+        <div class="area-name">ビクトリア・アイランド（VI）</div>
+        <div class="area-type">ビジネス・高級・安全</div>
+        <div class="area-desc">ラゴスで最も安全なエリアの一つ。金融機関・多国籍企業・高級ホテルが集中。バー・クラブも充実し夜まで賑やか。外国人ビジネスマンのベースとして最適。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">レッキ（Lekki）</div>
+        <div class="area-type">ナイトライフ・若者・高級住宅</div>
+        <div class="area-desc">若い富裕層・専門職が集まるエリア。クラブ・ルーフトップバー・ビーチリゾートが集中。「Lekki Phase 1」はアフロビーツシーンの中心地。道路渋滞（Lekki Traffic）は悪名高い。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">イコイ（Ikoyi）</div>
+        <div class="area-type">超高級住宅地・静寂</div>
+        <div class="area-desc">ラゴス最高級の住宅地。大使館・大邸宅が並ぶ静かなエリア。治安は非常に良い。高級レストラン・プライベートクラブが点在。外国人駐在員の定番居住地。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">ヤバ（Yaba）</div>
+        <div class="area-type">テック・学生・ナイトライフ</div>
+        <div class="area-desc">「Yabacon Valley」と呼ばれるスタートアップ集積地。ラゴス大学周辺の若者文化・アフロビーツの発信地。安いバー・ライブ会場・路上の屋台が賑わう。バジェット旅行者にも最適。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">イケジャ（Ikeja）</div>
+        <div class="area-type">空港・ショッピング</div>
+        <div class="area-desc">ムルタラ・ムハンマド国際空港に近いラゴスの行政首都地区。イケジャ・シティ・モールが大型ショッピング拠点。空港利用者の前泊・宿泊に便利。</div>
+      </div>
+      <div class="area-card caution">
+        <div class="area-name">オショディ・アゲゲ（Oshodi/Agege）</div>
+        <div class="area-type">⚠️ 旅行者注意エリア</div>
+        <div class="area-desc">ラゴス本土の混雑した交通ハブ・市場地帯。スリ・強盗・混雑による事故リスクが高い。旅行者が迷い込むと危険。どうしても行く場合は現地案内人と一緒に。</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;background:#e8f5e9;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#1a5c1a;margin-bottom:8px;">🚗 ラゴス移動ハック</p>
+      <ul>
+        <li><strong>Bolt / Uber（アプリ配車）</strong>：必須。料金固定・ぼったくりなし。空港〜VIは3,000〜8,000 NGN目安（渋滞次第で大幅変動）。</li>
+        <li><strong>BRT（急行バス）</strong>：安価（200〜700 NGN）だが渋滞に巻き込まれる。路線が限定的。</li>
+        <li><strong>ラゴス・フェリー</strong>：島〜本土間はフェリー（水上タクシー）が渋滞回避に有効。バジェット旅行者にもお勧め。</li>
+        <li><strong>⚠️ 渋滞（Traffic）</strong>：ラゴスの渋滞は世界屈指。朝6〜10時・夕16〜21時は移動を極力避ける。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    🇳🇬 ナイジェリア Country Profile — /country-info by Wanderlust &nbsp;|&nbsp; 調査日: 2026-04-23 &nbsp;|&nbsp; ※情報は変動するため渡航前に公式情報を確認してください
+  </div>
+
+</div>
+</body>
+</html>

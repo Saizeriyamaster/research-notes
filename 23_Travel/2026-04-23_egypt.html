@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エジプト — Country Profile</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.7;
+      padding: 24px 16px 64px;
+    }
+    .page { max-width: 960px; margin: 0 auto; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #8B1A1A 0%, #C8960C 50%, #1a5c1a 100%);
+      border-radius: 16px;
+      padding: 48px 48px 40px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="60" fill="rgba(255,255,255,0.03)"/><circle cx="10" cy="80" r="40" fill="rgba(255,255,255,0.02)"/></svg>');
+      pointer-events: none;
+    }
+    .hero-flag { font-size: 72px; line-height: 1; margin-bottom: 12px; }
+    .hero-name { font-size: 42px; font-weight: 700; letter-spacing: -0.5px; }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,0.8); margin-top: 6px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .hero-tag {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+    }
+    .meta-updated { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 16px; }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-top: 3px solid var(--accent, #0088FF);
+    }
+    .stat-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #0E2841; margin-top: 4px; }
+    .stat-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    /* SECTION */
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    .section-icon { font-size: 22px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .section-badge {
+      margin-left: auto;
+      background: #e8f4ff;
+      color: #0088FF;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* TABLE */
+    .info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .info-table th {
+      background: #f7f9fc;
+      text-align: left;
+      padding: 10px 14px;
+      color: #555;
+      font-weight: 600;
+      width: 35%;
+      border-bottom: 1px solid #eee;
+    }
+    .info-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #333;
+    }
+    .info-table tr:last-child th,
+    .info-table tr:last-child td { border-bottom: none; }
+
+    /* PRICE */
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .price-card {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .price-emoji { font-size: 28px; flex-shrink: 0; }
+    .price-item-name { font-size: 13px; color: #666; }
+    .price-amount { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .price-jpy { font-size: 12px; color: #0088FF; margin-top: 1px; }
+
+    /* CLIMATE */
+    .koppen-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #C8960C, #8B4513);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .season-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .season-chip {
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .season-chip.dry    { background: #fff8e1; border-left: 4px solid #FF9900; }
+    .season-chip.hot    { background: #fce4ec; border-left: 4px solid #e53935; }
+    .season-chip.mild   { background: #f3e5f5; border-left: 4px solid #6a1b9a; }
+    .season-chip b { display: block; font-size: 12px; margin-bottom: 3px; }
+
+    /* AREA */
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .area-card {
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 5px solid var(--area-color, #0088FF);
+      background: #f7f9fc;
+    }
+    .area-card.nightlife   { --area-color: #9900FF; background: #faf5ff; }
+    .area-card.residential { --area-color: #38761D; background: #f5fff7; }
+    .area-card.tourist     { --area-color: #0088FF; background: #f0f7ff; }
+    .area-card.business    { --area-color: #156082; background: #f0f6fa; }
+    .area-card.caution     { --area-color: #e53935; background: #fff5f5; }
+    .area-card.transport   { --area-color: #FF9900; background: #fff8f0; }
+    .area-name { font-weight: 700; font-size: 15px; color: #0E2841; margin-bottom: 4px; }
+    .area-type { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .area-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+    /* STABILITY */
+    .stability-bar-wrap { margin-top: 8px; }
+    .stability-label { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 4px; }
+    .stability-bar { height: 10px; background: #eee; border-radius: 99px; overflow: hidden; }
+    .stability-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #38761D, #0088FF); }
+
+    /* CULTURE */
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .culture-card { background: #f7f9fc; border-radius: 10px; padding: 16px; }
+    .culture-card-icon { font-size: 28px; margin-bottom: 8px; }
+    .culture-card-title { font-weight: 700; font-size: 14px; color: #0E2841; margin-bottom: 6px; }
+    .culture-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    /* FOOD */
+    .food-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .food-tag {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+    }
+
+    /* LANGUAGE */
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .lang-chip {
+      background: #e8f4ff;
+      color: #0E2841;
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .lang-chip.sub { background: #f7f9fc; color: #555; font-weight: 400; }
+
+    /* HISTORY */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #C8960C, #8B1A1A, #156082);
+    }
+    .tl-item { position: relative; margin-bottom: 18px; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #C8960C;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #C8960C;
+    }
+    .tl-year { font-size: 12px; font-weight: 700; color: #C8960C; margin-bottom: 2px; }
+    .tl-event { font-size: 14px; color: #333; font-weight: 600; }
+    .tl-desc { font-size: 13px; color: #666; margin-top: 2px; }
+
+    /* PHRASE */
+    .phrase-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .phrase-table th { background: #fff8e1; padding: 10px 14px; text-align: left; color: #8B4513; font-weight: 700; border-bottom: 2px solid #ffe082; }
+    .phrase-table td { padding: 10px 14px; border-bottom: 1px solid #f0f2f5; }
+    .phrase-table td:nth-child(2) { font-weight: 700; color: #0E2841; }
+    .phrase-table td:nth-child(3) { color: #8B4513; font-style: italic; }
+    .phrase-table tr:last-child td { border-bottom: none; }
+
+    /* OUTFIT */
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .outfit-card {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .outfit-card-title { font-weight: 700; font-size: 13px; color: #0E2841; margin-bottom: 6px; }
+    .outfit-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 4px; font-size: 14px; color: #444; }
+
+    .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 40px; }
+
+    .tag-red { background: #fce4ec; color: #c62828; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+    .tag-green { background: #e8f5e9; color: #2e7d32; border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-flag">🇪🇬</div>
+    <div class="hero-name">エジプト</div>
+    <div class="hero-sub">Arab Republic of Egypt / جمهورية مصر العربية</div>
+    <div class="hero-tags">
+      <span class="hero-tag">🌍 北アフリカ・中東</span>
+      <span class="hero-tag">🏛 大統領共和制（権威主義）</span>
+      <span class="hero-tag">💰 EGP（エジプトポンド）</span>
+      <span class="hero-tag">🕌 イスラム教スンニ派（90%）</span>
+      <span class="hero-tag">🏺 世界最古の文明</span>
+    </div>
+    <div class="meta-updated">調査日: 2026年4月23日 — /country-info by Wanderlust</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:#0088FF;">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">人口</div>
+      <div class="stat-value">1億2,010万人</div>
+      <div class="stat-sub">世界第14位</div>
+    </div>
+    <div class="stat-card" style="--accent:#38761D;">
+      <div class="stat-icon">💵</div>
+      <div class="stat-label">GDP（名目）</div>
+      <div class="stat-value">3,890億ドル</div>
+      <div class="stat-sub">世界第38位（2024）</div>
+    </div>
+    <div class="stat-card" style="--accent:#FF9900;">
+      <div class="stat-icon">📈</div>
+      <div class="stat-label">経済成長率</div>
+      <div class="stat-value">4.4%</div>
+      <div class="stat-sub">2024/25年度実績</div>
+    </div>
+    <div class="stat-card" style="--accent:#9900FF;">
+      <div class="stat-icon">🗺</div>
+      <div class="stat-label">国土面積</div>
+      <div class="stat-value">100万km²</div>
+      <div class="stat-sub">世界第30位（日本の約2.7倍）</div>
+    </div>
+    <div class="stat-card" style="--accent:#156082;">
+      <div class="stat-icon">🏙</div>
+      <div class="stat-label">首都</div>
+      <div class="stat-value" style="font-size:18px;">カイロ</div>
+      <div class="stat-sub">都市圏人口 約2,200万人</div>
+    </div>
+    <div class="stat-card" style="--accent:#e53935;">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">一人当たりGDP</div>
+      <div class="stat-value">約3,200ドル</div>
+      <div class="stat-sub">PPP: 約17,000ドル</div>
+    </div>
+    <div class="stat-card" style="--accent:#C8960C;">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-label">HDI</div>
+      <div class="stat-value">0.728</div>
+      <div class="stat-sub">世界105位（中位）</div>
+    </div>
+    <div class="stat-card" style="--accent:#8B1A1A;">
+      <div class="stat-icon">⛽</div>
+      <div class="stat-label">主要産業</div>
+      <div class="stat-value" style="font-size:15px;">石油・観光・農業</div>
+      <div class="stat-sub">スエズ運河通行料も重要</div>
+    </div>
+  </div>
+
+  <!-- 産業・輸出・資源 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏭</span>
+      <span class="section-title">産業・輸出産品・資源</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要産業</th><td>石油・天然ガス、観光、スエズ運河通行料、農業、繊維・縫製、化学、建設</td></tr>
+        <tr><th>GDPの構成</th><td>サービス業 51.3% ／ 工業 33.8% ／ 農業 11.6%</td></tr>
+        <tr><th>主要輸出品</th><td>石油・石油製品（27.4%）、化学品、農産物（果物・野菜）、繊維製品</td></tr>
+        <tr><th>🍊 オレンジ輸出</th><td>世界最大のオレンジ輸出国（輸出量 世界1位）。ナイル川デルタ地帯が主産地。欧州・湾岸諸国向けに大量輸出</td></tr>
+        <tr><th>総輸出額</th><td>448億ドル（2024年、前年比+7%）</td></tr>
+        <tr><th>主要輸出相手国</th><td>EU（特にイタリア・スペイン）、UAE、トルコ、インド</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>産出資源</th><td>石油・天然ガス（西砂漠・スエズ湾）、鉄鉱石、リン鉱石、マンガン、石灰岩、砂、金</td></tr>
+        <tr><th>農産物</th><td>綿花（かつての主力）、サトウキビ、コメ、小麦、柑橘類、ナツメヤシ</td></tr>
+        <tr><th>スエズ運河</th><td>世界貿易量の約12%が通過。年間通行料収入 約90億ドル</td></tr>
+        <tr><th>観光業</th><td>コロナ前は観光客1,500万人/年。GDPの約5-12%を占める重要産業</td></tr>
+        <tr><th>送金収入</th><td>海外在住エジプト人からの送金が外貨収入の重要な柱（年間約220億ドル）</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2COL: 言語 + 気候 -->
+  <div class="two-col">
+    <!-- 言語 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🗣</span>
+        <span class="section-title">言語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin-bottom:10px;"><strong>公用語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip">アラビア語（現代標準語）</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin:14px 0 8px;"><strong>日常語・少数言語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip sub">エジプト方言（アラビア語）</span>
+        <span class="lang-chip sub">コプト語（典礼語）</span>
+        <span class="lang-chip sub">ヌビア語</span>
+        <span class="lang-chip sub">シワ・ベルベル語</span>
+        <span class="lang-chip sub">英語通用度: 中（観光地は高）</span>
+      </div>
+      <p style="font-size:13px;color:#888;margin-top:14px;">エジプト方言はアラブ世界で最も広く通じる方言。カイロの観光地・高級ホテルでは英語が通じる。地方・バザールでは英語不可が多い。</p>
+
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-top:20px;margin-bottom:10px;">🗨 旅行者向け基本フレーズ（エジプト方言）</p>
+      <table class="phrase-table">
+        <tr><th>場面</th><th>アラビア語</th><th>読み方</th></tr>
+        <tr><td>こんにちは</td><td>السلام عليكم</td><td>アッサラーム・アライクム</td></tr>
+        <tr><td>返答（どうも）</td><td>وعليكم السلام</td><td>ワ・アライクム・アッサラーム</td></tr>
+        <tr><td>おはよう</td><td>صباح الخير</td><td>サバーフ・エルヘール</td></tr>
+        <tr><td>おはよう（返答）</td><td>صباح النور</td><td>サバーフ・エンヌール</td></tr>
+        <tr><td>ありがとう</td><td>شكراً</td><td>シュクラン</td></tr>
+        <tr><td>どういたしまして</td><td>عفواً</td><td>アフワン</td></tr>
+        <tr><td>はい</td><td>أيوه</td><td>アイワ</td></tr>
+        <tr><td>いいえ</td><td>لا</td><td>ラー</td></tr>
+        <tr><td>いくら？</td><td>بكام؟</td><td>ビカーム？</td></tr>
+        <tr><td>高い！</td><td>غالي أوي</td><td>ガーリ・アウィ</td></tr>
+        <tr><td>トイレはどこ？</td><td>فين الحمام؟</td><td>フェーン・エルハマーム？</td></tr>
+      </table>
+    </div>
+
+    <!-- 気候 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🌤</span>
+        <span class="section-title">気候</span>
+        <span class="section-badge">ケッペン</span>
+      </div>
+      <div class="koppen-badge">BWh（熱砂砂漠気候）</div>
+      <p style="font-size:14px;color:#444;margin-bottom:12px;">国土の90%以上が<strong>熱帯砂漠気候（BWh）</strong>。極度に乾燥し降水量は年間25mm以下。北海岸（アレクサンドリア）のみ地中海性気候（Csa）。南部（アスワン）では年間最高気温50℃超も。</p>
+      <div class="season-row">
+        <div class="season-chip mild">
+          <b>穏やか（観光ベスト）</b>
+          11月〜3月 / 15〜25℃
+        </div>
+        <div class="season-chip dry">
+          <b>移行期・春（4月〜5月）</b>
+          20〜35℃ / ハムシーン（砂嵐）注意
+        </div>
+        <div class="season-chip hot">
+          <b>猛暑期</b>
+          6月〜9月 / 35〜45℃超（カイロ）
+        </div>
+        <div class="season-chip dry">
+          <b>秋（10月）</b>
+          25〜32℃ / 乾燥・快晴
+        </div>
+      </div>
+
+      <div style="margin-top:20px;background:#fff8e1;border-radius:10px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:10px;">👘 4月下旬の服装ガイド（カイロ・ルクソール・アスワン）</p>
+        <div class="outfit-grid">
+          <div class="outfit-card">
+            <div class="outfit-card-title">☀️ 昼間（26〜33℃）</div>
+            <div class="outfit-card-text">薄手の綿・リネンシャツ、長めのパンツまたはスカート。肩と膝を隠す装いが必須（寺院・モスク入場）。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌙 夜（16〜20℃）</div>
+            <div class="outfit-card-text">薄手のジャケットまたはカーディガン。砂漠では日没後の冷え込みが急激。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">⚠️ 必携アイテム</div>
+            <div class="outfit-card-text">日焼け止め（SPF50+）、サングラス、帽子/スカーフ（UV強烈＋砂ぼこり対策）、歩きやすい靴。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🕌 モスク・教会</div>
+            <div class="outfit-card-text">女性は肩・膝を隠すこと必須。女性は入口でスカーフを貸してもらえることも。脱ぎ履きしやすい靴で。</div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:#888;margin-top:10px;">⚠️ ハムシーン（خماسين）：3〜6月に南から吹く熱砂嵐。短時間で視界ゼロになることも。外出時はスカーフで鼻と口を覆う準備を。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文化・国民性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title">文化・国民性</span>
+    </div>
+    <div class="culture-grid">
+      <div class="culture-card">
+        <div class="culture-card-icon">🤝</div>
+        <div class="culture-card-title">温かいホスピタリティ</div>
+        <div class="culture-card-text">「أهلاً وسهلاً（アハランワサハラン：ようこそ）」の精神が生活に根付く。初対面でも食事に誘い、客を手厚くもてなす。旅行者はとにかく親切にされる。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⏰</div>
+        <div class="culture-card-title">時間感覚はルーズ</div>
+        <div class="culture-card-text">遅刻は日常茶飯事。"Egyptian time"と言われ、約束時間の30分〜1時間遅れは普通。観光地でも「すぐ来る」は信じないこと。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🕌</div>
+        <div class="culture-card-title">イスラム教が生活の軸</div>
+        <div class="culture-card-text">1日5回のアザーン（礼拝の呼びかけ）が響く。金曜は集団礼拝で商店が午後休業。ラマダン中は昼間の飲食・喫煙に注意。豚肉・アルコールは制限。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🤲</div>
+        <div class="culture-card-title">左手・足裏はNG</div>
+        <div class="culture-card-text">左手で食べ物を渡す・口に運ぶのは不衛生とされ失礼。足の裏を相手に向けるのも侮辱。座るときや荷物の置き方に注意。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">👗</div>
+        <div class="culture-card-title">服装のマナー</div>
+        <div class="culture-card-text">女性が肌を露出する格好は注意が必要。特に地方や市場では露出を控えるべき。男性もタンクトップ姿での外出は避けた方が無難。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">💬</div>
+        <div class="culture-card-title">バクシーシ文化</div>
+        <div class="culture-card-text">チップ（バクシーシ）は文化の一部。トイレ・写真撮影・道案内など何かしてもらったら5〜20 EGPを渡す習慣。断ると気まずくなることも。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🛒</div>
+        <div class="culture-card-title">値段交渉は当たり前</div>
+        <div class="culture-card-text">バザールや土産物店では最初の提示価格は「外国人価格」。半額以下を目標に粘り強く交渉する。笑顔で楽しみながら交渉するのがコツ。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">👨‍👩‍👧</div>
+        <div class="culture-card-title">家族主義・男女関係</div>
+        <div class="culture-card-text">家族の絆を最も重視。公共の場での男女間の接触は最小限（夫婦でも）。外国人女性が男性から声をかけられるハラスメントは多い。グループ行動が安全。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 食文化 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🍽</span>
+      <span class="section-title">主食・食文化</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">主食はパン（<strong>エイシュ</strong>）とコメ。豆類を多用したシンプルで栄養的な料理が多い。屋台食文化が根付いており、コシャリ・タアミーヤ（ファラフェル）などが庶民の日常食。アルコールは制限があるがビールは入手可能（観光地・高級ホテル）。</p>
+    <p style="font-size:13px;color:#555;font-weight:600;margin-bottom:8px;">絶対に食べるべき料理</p>
+    <div class="food-list">
+      <span class="food-tag">🍝 コシャリ（コメ・マカロニ・レンズ豆の混合）</span>
+      <span class="food-tag">🧆 タアミーヤ（ファラフェル・そら豆コロッケ）</span>
+      <span class="food-tag">🫘 フール（そら豆ペースト）</span>
+      <span class="food-tag">🥙 ケバブ・コフタ（ひき肉の串焼き）</span>
+      <span class="food-tag">🐟 サマク（ナイル産・紅海産の魚料理）</span>
+      <span class="food-tag">🥗 タヒニ（胡麻ペースト）＆バーバガヌーシュ</span>
+      <span class="food-tag">🍰 ウンム・アリー（エジプト版ライスプディング）</span>
+      <span class="food-tag">☕ カフワ（砂糖入りコーヒー）/ サフリブ（冬の温かい甘い飲み物）</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-top:14px;">⚠️ 生野菜・生水・露店のアイスには注意。ミネラルウォーター（ペットボトル）を常時携帯。ラマダン期間中は日中にレストランが閉まることもある。</p>
+  </div>
+
+  <!-- 物価 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💴</span>
+      <span class="section-title">物価ガイド</span>
+      <span class="section-badge">EGP / 2026年4月基準</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">
+      為替レート: <strong>1 USD ≈ 52 EGP</strong> &nbsp;|&nbsp; <strong>1 EGP ≈ 3.25円</strong> &nbsp;|&nbsp; <strong>1 USD ≈ 約170円</strong><br>
+      ※ エジプトは近年インフレが激しく（2026年3月の年率インフレ15.2%）。観光地・非観光地で価格差が数倍になる場合があります。
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-emoji">🚕</div>
+        <div>
+          <div class="price-item-name">タクシー（Uber/Careem・5km）</div>
+          <div class="price-amount">80〜150 EGP</div>
+          <div class="price-jpy">≈ 260〜490円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">☕</div>
+        <div>
+          <div class="price-item-name">カフェのコーヒー</div>
+          <div class="price-amount">40〜120 EGP</div>
+          <div class="price-jpy">≈ 130〜390円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍺</div>
+        <div>
+          <div class="price-item-name">ビール（缶・スーパー）</div>
+          <div class="price-amount">60〜100 EGP</div>
+          <div class="price-jpy">≈ 195〜325円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">地元食堂の定食</div>
+          <div class="price-amount">80〜250 EGP</div>
+          <div class="price-jpy">≈ 260〜810円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">観光地レストラン（1人）</div>
+          <div class="price-amount">400〜900 EGP</div>
+          <div class="price-jpy">≈ 1,300〜2,900円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍝</div>
+        <div>
+          <div class="price-item-name">コシャリ（屋台）</div>
+          <div class="price-amount">30〜50 EGP</div>
+          <div class="price-jpy">≈ 100〜160円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">💧</div>
+        <div>
+          <div class="price-item-name">ペットボトル水（500ml）</div>
+          <div class="price-amount">10〜20 EGP</div>
+          <div class="price-jpy">≈ 35〜65円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🚇</div>
+        <div>
+          <div class="price-item-name">カイロ地下鉄（1乗車）</div>
+          <div class="price-amount">10〜15 EGP</div>
+          <div class="price-jpy">≈ 33〜50円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏩</div>
+        <div>
+          <div class="price-item-name">中級ホテル（1泊）</div>
+          <div class="price-amount">1,500〜3,500 EGP</div>
+          <div class="price-jpy">≈ 4,900〜11,400円</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:#f0f7ff;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-bottom:8px;">💡 旅行者の1日平均支出目安</p>
+      <table class="info-table">
+        <tr><th>バジェット旅行</th><td>500〜1,000 EGP/日（≈ 1,600〜3,300円）— 屋台・ドミトリー中心</td></tr>
+        <tr><th>標準旅行</th><td>1,500〜3,000 EGP/日（≈ 4,900〜9,800円）— 地元レストラン・中級ホテル</td></tr>
+        <tr><th>快適旅行</th><td>4,000〜8,000 EGP/日（≈ 1.3〜2.6万円）— 観光地レストラン・上級ホテル</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 政治・安定性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <span class="section-title">政治・安定性</span>
+    </div>
+    <div class="two-col" style="gap:12px;">
+      <table class="info-table">
+        <tr><th>政治体制</th><td>大統領共和制（実質的権威主義体制）</td></tr>
+        <tr><th>大統領</th><td>アブドゥルファッターフ・エルシーシ（2014年〜）</td></tr>
+        <tr><th>外務省危険レベル</th><td>レベル1〜2（地域により異なる）※ シナイ半島北部はレベル3</td></tr>
+        <tr><th>民主主義指数（EIU）</th><td>2.93/10（権威主義的体制。世界116位）</td></tr>
+        <tr><th>腐敗認識指数（CPI）</th><td>30/100（2024年・世界約130位）</td></tr>
+        <tr><th>世界銀行：政治安定性</th><td>約-0.87（2023年）改善傾向もマイナス圏</td></tr>
+      </table>
+      <div>
+        <div class="stability-bar-wrap">
+          <div class="stability-label"><span>政治的安定性（世銀WGI）</span><span>約30%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:30%"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>腐敗抑制</span><span>約25%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:25%;background:linear-gradient(90deg,#FF9900,#e53935)"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>法の支配</span><span>約28%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:28%;background:linear-gradient(90deg,#156082,#38761D)"></div></div>
+        </div>
+        <p style="font-size:13px;color:#888;margin-top:16px;">2013年のクーデター以降、エルシーシ政権が強権支配。市民社会・メディアへの統制が強い。旅行者レベルでの危険は主要観光地（カイロ・ルクソール・アスワン）では低い。シナイ半島北部（ラファ付近）には立入注意。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 民族・宗教 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">👥</span>
+      <span class="section-title">構成人種・民族・宗教</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要民族</th><td>エジプト人（アラブ系・コプト系混合）約90%</td></tr>
+        <tr><th>少数民族</th><td>ヌビア人（南部）、ベドウィン族（砂漠・シナイ）、シワ・ベルベル人、ギリシャ系・アルメニア系（都市部少数）</td></tr>
+        <tr><th>宗教構成</th><td>イスラム教（スンニ派）約90%、コプト・キリスト教 約10%（コプト正教会）</td></tr>
+        <tr><th>コプト教徒</th><td>世界最古のキリスト教徒集団の一つ。主にカイロ・上エジプトに集中。</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>ユダヤ人</th><td>歴史的に多数派だったが現在は数百人程度（19世紀〜20世紀初頭に50,000人超）</td></tr>
+        <tr><th>アイデンティティ</th><td>「エジプト人」意識が非常に強く、「アラブ人」という意識よりも「エジプト人」を優先する傾向</td></tr>
+        <tr><th>人種的特徴</th><td>北アフリカ・地中海・アラビア半島の混血。褐色〜小麦色の肌が多い。</td></tr>
+        <tr><th>コプト語</th><td>古代エジプト語の唯一の生きた末裔。礼拝で使用されるが日常会話では使われない</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 高校世界史 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">高校世界史：エジプトの必修事項</span>
+      <span class="section-badge">受験レベル</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">前3100年頃</div>
+        <div class="tl-event">統一エジプト王国の成立</div>
+        <div class="tl-desc">ナルメル（メネス）が上下エジプトを統一。白冠（上）と赤冠（下）を合わせた二重冠が統一の象徴。首都はメンフィス。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前2686〜2181年（古王国）</div>
+        <div class="tl-event">ピラミッド時代</div>
+        <div class="tl-desc">第4王朝クフ王（ケオプス）がギザの大ピラミッドを建設。ファラオは神として絶対権力を持つ。スフィンクスもこの時代。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前2040〜1640年（中王国）</div>
+        <div class="tl-event">中王国時代：再統一と文化的黄金期</div>
+        <div class="tl-desc">メンチュヘテプ2世が再統一。文学・芸術の黄金期。その後ヒクソス（異民族）に征服される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前1550〜1070年（新王国）</div>
+        <div class="tl-event">新王国：最大版図と有名ファラオ集中期</div>
+        <div class="tl-desc">
+          ヒクソス追放後、エジプト史上最も有名な時代。<br>
+          ハトシェプスト女王（女性ファラオ）、トトメス3世（「エジプトのナポレオン」・大征服）、<br>
+          アクエンアテン（アテン神への一神教的宗教改革→失敗）、ツタンカーメン（黄金マスクで有名）、<br>
+          ラムセス2世（カデシュの戦い・アブシンベル神殿・最長在位のファラオ）
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前525年</div>
+        <div class="tl-event">アケメネス朝ペルシャによる征服</div>
+        <div class="tl-desc">カンビュセス2世がエジプトを征服。ファラオの称号を名乗る。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前332年</div>
+        <div class="tl-event">アレクサンドロス大王の征服 → プトレマイオス朝</div>
+        <div class="tl-desc">マケドニアのアレクサンドロスがエジプトを征服。アレクサンドリア建設。死後、将軍プトレマイオスが王朝を開く。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前51〜前30年</div>
+        <div class="tl-event">クレオパトラ7世（最後のファラオ）とローマの支配</div>
+        <div class="tl-desc">カエサル・アントニウスと関係を結ぶも、アクティウムの海戦でオクタウィアヌスに敗北。自殺によりプトレマイオス朝滅亡。エジプトはローマ属州に。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">641年</div>
+        <div class="tl-event">イスラム軍によるエジプト征服</div>
+        <div class="tl-desc">アラブのイスラム軍がエジプトを征服。以降、アラビア語・イスラム教が普及し現在のエジプト文化の基盤となる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">969年〜</div>
+        <div class="tl-event">ファーティマ朝がカイロを建設</div>
+        <div class="tl-desc">シーア派のファーティマ朝が「アル＝カーヒラ（カイロ）」を建設。アル＝アズハル学院（世界最古級のイスラム大学）が設立される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1798〜1801年</div>
+        <div class="tl-event">ナポレオンのエジプト遠征</div>
+        <div class="tl-desc">フランス軍が遠征。ロゼッタ・ストーンを発見（ヒエログリフ解読への鍵）。近代化のきっかけとなった。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1869年</div>
+        <div class="tl-event">スエズ運河開通</div>
+        <div class="tl-desc">フランスの主導で建設。地中海と紅海を結び、ヨーロッパ〜アジア航路を大幅短縮。英国がエジプトへの影響力を強化するきっかけに。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1882〜1952年</div>
+        <div class="tl-event">イギリスの実質支配・保護国化</div>
+        <div class="tl-desc">英国がエジプトを実質支配。1922年に形式上独立するも英国の影響は継続。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1952年</div>
+        <div class="tl-event">自由将校団のクーデター → ナセル政権</div>
+        <div class="tl-desc">ナーセル（ナセル）が実権を掌握。1954年に大統領就任。アラブ民族主義・非同盟運動の旗手に。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1956年</div>
+        <div class="tl-event">スエズ危機（第2次中東戦争）</div>
+        <div class="tl-desc">ナセルがスエズ運河国有化を宣言→英仏イスラエルが軍事介入→米ソの圧力で撤退。エジプトが実質的勝利。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1967年</div>
+        <div class="tl-event">第3次中東戦争（6日間戦争）</div>
+        <div class="tl-desc">イスラエルに大敗。シナイ半島を占領される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1973年</div>
+        <div class="tl-event">第4次中東戦争（ラマダン/ヨム・キプール戦争）</div>
+        <div class="tl-desc">サダット大統領がイスラエルに奇襲。一定の成果→オイルショックの引き金に。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1979年</div>
+        <div class="tl-event">エジプト＝イスラエル平和条約</div>
+        <div class="tl-desc">サダットがイスラエルと中東初の平和条約締結→アラブ諸国から猛反発。1981年サダット暗殺。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2011年</div>
+        <div class="tl-event">アラブの春・ムバラク政権崩壊</div>
+        <div class="tl-desc">タハリール広場での大規模デモ→30年間のムバラク独裁政権崩壊。2012年ムスリム同胞団のムルシー大統領就任→2013年軍クーデターでエルシーシが実権掌握。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- カイロ エリアガイド -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🗺</span>
+      <span class="section-title">カイロ エリアガイド</span>
+      <span class="section-badge">首都の歩き方</span>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">カイロは人口約2,200万人（都市圏）の巨大都市。渋滞が慢性的で移動は意外に時間がかかる。Uber・Careemのアプリ利用を強く推奨（流しのタクシーはぼったくりリスクあり）。地下鉄3路線あり安価で速い。</p>
+    <div class="area-grid">
+      <div class="area-card tourist">
+        <div class="area-name">ダウンタウン（وسط البلد）</div>
+        <div class="area-type">観光・交通・歴史</div>
+        <div class="area-desc">エジプト考古学博物館（カイロ博物館）、タハリール広場を中心とした旧市街。ホテルや安宿が豊富で観光拠点に最適。夜は賑やかだが置き引きに注意。混雑するが雰囲気抜群。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">イスラミック・カイロ／ハン・エル＝ハリーリ</div>
+        <div class="area-type">世界遺産・バザール</div>
+        <div class="area-desc">中世から続く迷宮のようなバザール地区。アズハル・モスク、スルタン・ハサン・モスクなど壮麗なイスラム建築が集中。香辛料・土産物の宝庫。ガイドなしで迷子になりやすい。スリ注意。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">ギザ（ピラミッド地区）</div>
+        <div class="area-type">世界遺産・観光</div>
+        <div class="area-desc">クフ王・カフラー王・メンカウラー王のピラミッドとスフィンクスが集中。ダウンタウンから南西30分。ピラミッド周辺は「ラクダ乗り」「写真を撮ってお金を要求」などの業者が多く注意が必要。宿泊はここよりダウンタウンやザマレクが便利。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">ザマレク（Zamalek）</div>
+        <div class="area-type">ナイトライフ・外国人エリア</div>
+        <div class="area-desc">ナイル川の中洲（ゲジーラ島北部）に位置。大使館・外資系企業が多く、外国人・富裕層御用達。バー・レストラン・カフェが充実し、カイロ最大のナイトライフエリア。街灯が多く深夜でも比較的安全。宿泊費は高め。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">マアーディ（Maadi）</div>
+        <div class="area-type">住宅街・外国人コミュニティ</div>
+        <div class="area-desc">南カイロの高級住宅地。欧米系expatが多く居住し、清潔で治安が良い。英語が通じる店・カフェが多く、長期滞在者に人気。観光地からは離れているが落ち着いて過ごしたい人向け。ナイル沿いのコルニーシュ散歩が気持ちよい。</div>
+      </div>
+      <div class="area-card business">
+        <div class="area-name">ニュー・カイロ／ヘリオポリス</div>
+        <div class="area-type">ビジネス・新興住宅地</div>
+        <div class="area-desc">カイロ国際空港に近いヘリオポリスは中産階級の住宅地でショッピングモールが充実。ニュー・カイロは東郊外の計画都市。高級ホテルや会議施設が多い。観光地からは離れており旅行者には不便だが、空港アクセスは良好。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">コプト地区（旧カイロ）</div>
+        <div class="area-type">歴史・キリスト教遺産</div>
+        <div class="area-desc">初期キリスト教の遺跡が集中。ハンギング・チャーチ（聖母マリア教会）、コプト博物館、聖セルギウス＆バッカス教会（聖家族が避難したとされる洞窟の上）など。イスラミック・カイロとは趣の違う静かな雰囲気。</div>
+      </div>
+      <div class="area-card caution">
+        <div class="area-name">シャアビーヤ地区（非観光地バラック街）</div>
+        <div class="area-type">⚠️ 注意エリア</div>
+        <div class="area-desc">カイロ市内の非観光地の「シャアビーヤ」と呼ばれる密集市街地（ブーラーク、シュブラなど）は旅行者が迷い込むと危険。迷子・スリ・ハラスメントのリスクが高い。地図アプリを使っていても誘導注意。特に夜間は避けること。</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;background:#fff8e1;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:8px;">🚗 カイロの移動ハック</p>
+      <ul>
+        <li><strong>Uber / Careem（アプリ配車）</strong>：必須。料金固定・ぼったくりなし。空港〜ダウンタウンは200〜350 EGP目安。</li>
+        <li><strong>地下鉄（Metro）</strong>：安価（10〜15 EGP）で速い。Line 1（ヘリオポリス〜ギザ）、Line 2（シュブラ〜モハンデシーン）、Line 3（空港方面）。女性専用車両あり。</li>
+        <li><strong>徒歩</strong>：ダウンタウンやイスラミック・カイロは徒歩観光可能。ただし横断歩道でも車は止まらない。「車の流れを読んで渡る」がカイロ流。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- アレクサンドリア：概要 -->
+  <div class="section" style="border-top: 4px solid #156082;">
+    <div class="section-header">
+      <span class="section-icon">🌊</span>
+      <span class="section-title">アレクサンドリア — エジプト第二の都市</span>
+      <span class="section-badge">地中海の真珠</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">
+      アレクサンドリア（アラビア語：الإسكندرية / Al-Iskandarīya）は地中海に面したエジプト第二の都市。人口約550万人。
+      前332年にアレクサンドロス大王が建設した古代世界最大の都市にして、プトレマイオス朝の首都。
+      世界七不思議の灯台と古代最大の図書館を擁した「知の首都」は、今も独特の地中海的雰囲気と多文化的な遺産を漂わせる。
+      カイロからバス・鉄道で約3時間。日帰り可能だが1〜2泊するとより深く味わえる。
+    </p>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>位置</th><td>北エジプト、地中海沿岸。ナイル川デルタ西端</td></tr>
+        <tr><th>人口</th><td>約550万人（エジプト第2位）</td></tr>
+        <tr><th>気候</th><td>地中海性気候（Csa）。カイロよりも涼しく湿度が高い。夏も海風で過ごしやすい</td></tr>
+        <tr><th>カイロからのアクセス</th><td>高速バス（GoバスなどGobus）：約3時間・200〜350 EGP<br>鉄道（エジプト国鉄）：約2〜3時間・150〜400 EGP（等級による）</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>観光のベストシーズン</th><td>4月〜6月・9月〜11月（夏でも海風で比較的涼しい）</td></tr>
+        <tr><th>主な特徴</th><td>地中海料理・シーフード、ギリシャ＝ローマ遺跡、コスモポリタンな文化的雰囲気、海水浴（地元民に人気）</td></tr>
+        <tr><th>旅行者の主な用途</th><td>カイロの喧騒を離れた息抜き、歴史探訪、シーフード目当て</td></tr>
+        <tr><th>注意点</th><td>夏は海水浴目当てのエジプト人観光客で海沿いが非常に混雑。7〜8月は宿泊費が急騰</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- アレクサンドリアの歴史 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📜</span>
+      <span class="section-title">アレクサンドリアの歴史</span>
+      <span class="section-badge">2,300年の歩み</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">前332年</div>
+        <div class="tl-event">アレクサンドロス大王による建都</div>
+        <div class="tl-desc">マケドニア王アレクサンドロス3世（大王）がエジプト征服後、ナイル川デルタ西端の地を選び都市を建設。「アレクサンドリア」という名はこのときに命名。アレクサンドロスは建都後すぐにペルシャ遠征へ向かい、完成した都市を自ら見ることはなかった。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前323〜前30年</div>
+        <div class="tl-event">プトレマイオス朝の首都として黄金期</div>
+        <div class="tl-desc">アレクサンドロス死後、将軍プトレマイオス1世がエジプトを支配し王朝を開く。アレクサンドリアを首都に、ムセイオン（学術研究所）と<strong>アレクサンドリア図書館</strong>を設立。当時の既知世界の70万巻もの巻物を収蔵したとされ、エラトステネス・エウクレイデス・アルキメデスらが集った「世界の知の中心」となった。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前280年頃</div>
+        <div class="tl-event">ファロス灯台の建設（世界七不思議）</div>
+        <div class="tl-desc">プトレマイオス2世の時代、港口の小島ファロスに高さ約130mの巨大灯台が建設される。世界七不思議の一つ。14世紀の地震で崩壊するまで1,500年以上機能し、地中海を行き交う船の目印となった。「ファロス」の語はその後、多くの言語で「灯台」を意味する語の語源となった。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前51〜前30年</div>
+        <div class="tl-event">クレオパトラ7世と王朝の終焉</div>
+        <div class="tl-desc">最後のプトレマイオス朝女王クレオパトラ7世がアレクサンドリアを本拠に、カエサルおよびアントニウスと同盟。前30年にオクタウィアヌス（後のアウグストゥス）に敗れ、アレクサンドリア宮殿で自殺。エジプトはローマ属州となりアレクサンドリアは「ローマ帝国第二の都市」として存続。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1世紀</div>
+        <div class="tl-event">キリスト教の伝来：福音書記者マルコ</div>
+        <div class="tl-desc">使徒マルコ（マルコ福音書の著者とされる）がアレクサンドリアにキリスト教を伝えたとされ、コプト正教会の伝統では初代アレクサンドリア司教とされる。以降アレクサンドリアは初期キリスト教神学の中心地（アタナシオス、オリゲネスらを輩出）。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">391年</div>
+        <div class="tl-event">図書館の焼失・テオフィロスによる異教神殿破壊</div>
+        <div class="tl-desc">ローマ皇帝テオドシウスの勅令によりキリスト教が国教化。アレクサンドリアのテオフィロス司教が異教神殿（セラペイオン）を破壊。図書館の蔵書の大部分がこの時期までに散逸・焼失したとされる（カエサルの火災説・アラブ軍説など諸説あり）。415年には女性哲学者ヒュパティアが暴徒に殺害される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">641年</div>
+        <div class="tl-event">アラブ・イスラム軍の征服</div>
+        <div class="tl-desc">将軍アムル・イブン・アルアースに率いられたアラブ軍がアレクサンドリアを占領。以降、都市はイスラム化。首都機能はカイロ（フスタート）に移り、アレクサンドリアは港湾都市として存続。アラビア語・イスラム文化が浸透。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1480年頃</div>
+        <div class="tl-event">カーイトバーイの海城（カイトベイ要塞）建設</div>
+        <div class="tl-desc">マムルーク朝スルタン・カーイトバーイが、倒壊したファロス灯台の跡地に海上要塞を建設。現在もアレクサンドリアのシンボルとして海岸に立つ。灯台の石材が要塞建設に転用されたとされる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1798年</div>
+        <div class="tl-event">ナポレオンのエジプト遠征：アレクサンドリア上陸</div>
+        <div class="tl-desc">フランス軍がアレクサンドリアに上陸。一行には多数の学者・芸術家が同行し、エジプト研究（エジプトロジー）の基礎を作った。ロゼッタ・ストーンの発見もこの遠征で。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">19世紀〜20世紀初頭</div>
+        <div class="tl-event">コスモポリタン都市の黄金期</div>
+        <div class="tl-desc">ムハンマド・アリー朝の下で近代港湾都市として再興。ギリシャ人・イタリア人・ユダヤ人・アルメニア人ら多民族が共存する国際都市に。エジプト系ギリシャ人詩人コンスタンティノス・カヴァフィスがこの時代のアレクサンドリアを多く詠んだ。英国作家E・M・フォースターも「アレクサンドリア案内」を著した。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1952〜1960年代</div>
+        <div class="tl-event">ナセル革命と多文化的人口の流出</div>
+        <div class="tl-desc">ナセル政権の国有化・アラブ民族主義政策によりギリシャ人・ユダヤ人・イタリア人など外国系住民の大半が離散。かつての多文化的なコスモポリタン都市の性格が急速に失われる。この喪失はノーベル賞作家ナギーブ・マフフーズの作品にも描かれた。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2002年</div>
+        <div class="tl-event">新アレクサンドリア図書館（ビブリオテカ・アレクサンドリーナ）開館</div>
+        <div class="tl-desc">古代図書館への敬意を込めてユネスコ・エジプト政府が共同建設。ノルウェーの建築事務所スノヘッタが設計した斜め円筒型の建物が地中海に面して建つ。図書館・博物館・プラネタリウムを兼ねた文化施設として国際的に高い評価を受ける。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- アレクサンドリアの名所 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <span class="section-title">アレクサンドリアの名所</span>
+      <span class="section-badge">見どころ完全ガイド</span>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">アレクサンドリアの観光エリアは地中海沿いのコルニーシュ（海岸通り）沿いに東西に広がる。徒歩圏内にまとまっている名所が多く、カイロよりも観光しやすい。</p>
+    <div class="area-grid">
+      <div class="area-card tourist">
+        <div class="area-name">ビブリオテカ・アレクサンドリーナ</div>
+        <div class="area-type">図書館・文化施設（2002年開館）</div>
+        <div class="area-desc">古代アレクサンドリア図書館の精神的後継として建設されたユネスコ認定の国際図書館。海に傾いて落ちる太陽をイメージした斜めの円筒形の外観が印象的。内部には書庫・プラネタリウム・博物館（古代エジプト・科学史）・アートギャラリーが入居。入場料約120 EGP。コルニーシュ沿いの好立地。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">カイトベイ要塞（قلعة قايتباي）</div>
+        <div class="area-type">15世紀・マムルーク朝の海上要塞</div>
+        <div class="area-desc">ファロス灯台の跡地に1480年に建設された海上城塞。地中海を望む岬の突端に立ち、アレクサンドリアを代表する絶景スポット。外壁・砲台・礼拝堂が保存良好。入場料約130 EGP。夕暮れ時の景色が特に美しく、地元カップルの散歩コースにもなっている。周囲に魚市場と海鮮レストランが並ぶ。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">コム・エルシュカーファのカタコンベ</div>
+        <div class="area-type">2世紀・ローマ＝エジプト融合の地下墓地</div>
+        <div class="area-desc">1〜2世紀のローマ時代に掘られた3層構造の岩窟墓地。エジプト神話とギリシャ＝ローマ様式が見事に融合した彫刻・装飾が特徴的で、「混合様式（シンクレティズム）」の傑作とされる。中世の七不思議にも数えられた。深さ約35mまで降りる。入場料約200 EGP。やや外れた場所にあるため、タクシーか Uberで。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">ポンペイウスの柱</div>
+        <div class="area-type">3世紀・ローマ皇帝ディオクレティアヌスの記念柱</div>
+        <div class="area-desc">高さ約27m、重さ285トンの赤色花崗岩（アスワン産）の一枚岩からなる柱。ポンペイウスに関係はなく、297年にディオクレティアヌス皇帝を称えて建立。かつてのセラペイオン神殿（学術施設）跡地に立つ。スフィンクスの石像も周囲に点在。コム・エルシュカーファのカタコンベと同じエリアで合わせて観光可能。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">モンタザ宮殿＆庭園</div>
+        <div class="area-type">19〜20世紀・王室離宮と海浜公園</div>
+        <div class="area-desc">オスマン・ネオバロック様式の宮殿（アッバース2世建設、現在は大統領迎賓館で内部非公開）を囲む広大な庭園と海浜が公開されている。緑豊かで砂浜と松林が続く。地元市民の憩いの場でもあり、週末は家族連れで賑わう。コルニーシュ東端から約10km、タクシー移動が便利。庭園入場料 約40 EGP。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">アレクサンドリア国立博物館</div>
+        <div class="area-type">2003年開館・考古・イスラム・コプト展示</div>
+        <div class="area-desc">かつてのアメリカ領事館だった建物を改装した博物館。ファラオ時代・グレコローマン時代・コプト時代・イスラム時代の遺物が時代順に展示。グレコローマン博物館（修復工事中のことあり）の代替としても機能。入場料約200 EGP。ダウンタウンに近く観光しやすい。</div>
+      </div>
+      <div class="area-card tourist">
+        <div class="area-name">アブ・アッバース・エルムルシー・モスク</div>
+        <div class="area-type">13世紀の聖者廟＋現代モスク（1943年再建）</div>
+        <div class="area-desc">アレクサンドリアを代表するイスラム建築。アンダルシア出身のスーフィー聖者アブ・アッバースの廟墓に建てられた。白い尖塔と大きなドームが印象的。内部には美しいアラベスク装飾。カイトベイ要塞から徒歩10分ほどの漁港エリアに位置し、周囲は活気のある水産市場と海鮮食堂が集中。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">コルニーシュ（海岸通り）＆スタンレー橋</div>
+        <div class="area-type">散歩・カフェ・地元の生活</div>
+        <div class="area-desc">地中海沿いに約26km続く海岸遊歩道。夕暮れ散歩が特に気持ちよく、地元市民・恋人たちで賑わう。スタンレー橋はアーチ型の美しいランドマーク橋で、橋の上からのアレクサンドリア海岸の眺望が秀逸。スタンレービーチは夏季に最も混雑するビーチ。周辺にカフェ・アイスクリーム店が多い。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- アレクサンドリアの料理 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🦞</span>
+      <span class="section-title">アレクサンドリアの料理</span>
+      <span class="section-badge">地中海シーフードの都</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:16px;">
+      アレクサンドリアの食は、エジプト料理の基盤にギリシャ・イタリア・レバント（レバノン・シリア）の影響が混じった<strong>地中海コスモポリタン料理</strong>が特徴。カイロが「肉とパン」の内陸料理ならば、アレクサンドリアは「魚と海・オリーブオイル」。特に新鮮なシーフードはエジプト国内でも最高品質とされ、「シーフードを食べるためだけにアレクサンドリアへ行く」エジプト人は多い。
+    </p>
+
+    <div class="culture-grid" style="margin-bottom:20px;">
+      <div class="culture-card">
+        <div class="culture-card-icon">🐟</div>
+        <div class="culture-card-title">シーフード文化の中心</div>
+        <div class="culture-card-text">地中海から揚がった新鮮魚介が主役。カイトベイ要塞周辺・東部港湾エリアに漁港直結の海鮮レストランが密集。魚をグラム単位で購入し目の前で焼いてもらうスタイルが一般的。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🫒</div>
+        <div class="culture-card-title">地中海の影響</div>
+        <div class="culture-card-text">歴史的なギリシャ系・イタリア系の影響で、オリーブオイル・レモン・ハーブの使い方がカイロより洗練されている。パスタ（マカロナ）も根付いており、特にベシャメルソースのパスタは家庭料理の定番。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🍞</div>
+        <div class="culture-card-title">フェティール（フィータ）</div>
+        <div class="culture-card-text">薄いパイ生地を何層にも重ねた伝統菓子・軽食。甘いもの（蜂蜜・クリーム）と塩気のもの（卵・チーズ・ミンチ肉）の両方がある。アレクサンドリアのフェティール職人は全国的に有名で、観光客もわざわざ食べに来る。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🧆</div>
+        <div class="culture-card-title">アレクサンドリア式タアミーヤ</div>
+        <div class="culture-card-text">カイロのファラフェル（ひよこ豆）と異なり、アレクサンドリアでは<strong>そら豆（フール）のみ</strong>で作る。外はパリッと中はしっとりした緑色のコロッケ。ピタパンに挟んでタヒニ・トマト・パセリを添えて食べる。朝食・昼食の定番。</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:#555;font-weight:600;margin-bottom:10px;">アレクサンドリアで絶対に食べるべき料理・食材</p>
+    <div class="food-list" style="margin-bottom:16px;">
+      <span class="food-tag">🦐 サマク・マグリー（揚げ魚の盛り合わせ）</span>
+      <span class="food-tag">🦑 カラマリ（イカのグリル・フライ）</span>
+      <span class="food-tag">🦞 ガンバリー（エビのニンニク炒め）</span>
+      <span class="food-tag">🐙 タコ料理（オクトパス・グリル）</span>
+      <span class="food-tag">🐠 デニス／ルバル（地中海産白身魚の塩焼き）</span>
+      <span class="food-tag">🧆 タアミーヤ（そら豆ファラフェル・アレックス式）</span>
+      <span class="food-tag">🥐 フェティール（ミルフィーユ型パイ菓子）</span>
+      <span class="food-tag">🍝 マカロナ・ベシャメル（エジプト式ラザニア）</span>
+      <span class="food-tag">🫘 フール・メダンメス（そら豆煮込み）</span>
+      <span class="food-tag">🥗 サラタ・バルディ（田舎風サラダ＋タヒニ）</span>
+      <span class="food-tag">🧁 バスブーサ（セモリナ粉の蜂蜜ケーキ）</span>
+      <span class="food-tag">🧊 アシル・アサブ（サトウキビジュース）</span>
+    </div>
+
+    <div style="background:#f0f7ff;border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-bottom:10px;">🐟 シーフードレストランの賢い使い方</p>
+      <ul>
+        <li>カイトベイ要塞周辺・東部港の<strong>フィッシュ・マーケットエリア</strong>が最も鮮度が高い。漁師から直接仕入れる店が多い。</li>
+        <li><strong>魚はグラム売り</strong>が基本。事前に「これとこれ、合計でいくら？」と確認してから注文。2〜3人で大皿シェアが現地スタイル。</li>
+        <li>調理方法は「マグリー（揚げ）」「マシュウィー（炭火グリル）」「フィルフルン（オーブン）」から選べる店が多い。グリルが一番シンプルでおすすめ。</li>
+        <li>観光地価格の店もあり、<strong>事前にメニューの値段を確認</strong>してから入店すること。1人あたり400〜1,200 EGP が目安（魚の種類と量による）。</li>
+        <li>イスラム教の影響でアルコールが出ない店が多い。ビールが飲みたければ事前に確認を。</li>
+      </ul>
+    </div>
+
+    <div style="background:#fff8e1;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:10px;">☕ カフェ・スイーツ文化</p>
+      <p style="font-size:14px;color:#555;">アレクサンドリアはカフェ文化が根付いており、コルニーシュ沿いには老舗カフェが多い。19世紀創業の<strong>トラノン（Trianon）カフェ</strong>はギリシャ系が創業したアレクサンドリア最古の洋菓子店として有名。パティスリー・アイスクリームも充実。</p>
+    </div>
+  </div>
+
+  <!-- カイロ発 アレクサンドリア日帰りプラン -->
+  <div class="section" style="border-top: 4px solid #9900FF;">
+    <div class="section-header">
+      <span class="section-icon">🚆</span>
+      <span class="section-title">カイロ発・アレクサンドリア日帰りプラン</span>
+      <span class="section-badge">帰りはカイロ国際空港</span>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#0E2841,#156082);color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px;">
+      <p style="font-size:15px;font-weight:700;margin-bottom:8px;">📌 このプランのポイント</p>
+      <ul style="padding-left:20px;margin:0;">
+        <li style="color:rgba(255,255,255,0.9);margin-bottom:6px;font-size:14px;">カイロ国際空港は<strong>カイロ北東部（ヘリオポリス）</strong>に位置。市内中心部（ラムセス駅）から約30〜45分。</li>
+        <li style="color:rgba(255,255,255,0.9);margin-bottom:6px;font-size:14px;">アレクサンドリア→カイロ空港の<strong>直行便・直行バスは存在しない</strong>ため、どのルートも一度カイロ市内を経由する。</li>
+        <li style="color:rgba(255,255,255,0.9);font-size:14px;"><strong>プライベートカー（1日チャーター）が最も快適</strong>で、フライトがある日は特に推奨。渋滞リスクが読めるため。</li>
+      </ul>
+    </div>
+
+    <!-- 移動手段比較 -->
+    <p style="font-size:15px;font-weight:700;color:#0E2841;margin-bottom:12px;">🚗 カイロ↔アレクサンドリア 移動手段比較</p>
+    <div style="overflow-x:auto;margin-bottom:24px;">
+      <table class="info-table" style="min-width:600px;">
+        <tr>
+          <th style="width:20%;">手段</th>
+          <th>所要時間</th>
+          <th>費用目安</th>
+          <th>出発地・到着地</th>
+          <th>空港帰りの相性</th>
+        </tr>
+        <tr>
+          <td><strong>🚂 特急列車<br>（Spanish/Turbini）</strong></td>
+          <td>約2〜2.5時間</td>
+          <td>往復300〜800 EGP<br>（クラスによる）</td>
+          <td>カイロ・ラムセス駅<br>↕<br>アレクサンドリア・ミスル駅</td>
+          <td>△ ラムセス駅から空港まで<br>Uberで+40〜60分・150〜250 EGP</td>
+        </tr>
+        <tr>
+          <td><strong>🚌 高速バス<br>（Gobus等）</strong></td>
+          <td>約3〜3.5時間<br>（渋滞時4時間超）</td>
+          <td>往復200〜600 EGP</td>
+          <td>カイロ（アブ・カビール等）<br>↕<br>アレクサンドリア市内各所</td>
+          <td>✕ 空港直行バスなし。<br>市内経由が必要</td>
+        </tr>
+        <tr style="background:#f0fff4;">
+          <td><strong>🚗 プライベートカー<br>（1日チャーター）★推奨</strong></td>
+          <td>約2〜2.5時間<br>（高速道路直行）</td>
+          <td>3,500〜6,000 EGP/日<br>（交渉次第）</td>
+          <td>ホテル→アレクサンドリア各所<br>→カイロ国際空港</td>
+          <td>◎ そのまま空港ドロップ。<br>時間管理が一番楽</td>
+        </tr>
+        <tr>
+          <td><strong>🚌 マイクロバス<br>（ローカル）</strong></td>
+          <td>約2.5〜4時間</td>
+          <td>50〜80 EGP</td>
+          <td>市内ターミナルから不定期</td>
+          <td>✕ 旅行者には非推奨</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 推奨プラン -->
+    <p style="font-size:15px;font-weight:700;color:#0E2841;margin-bottom:4px;">📅 推奨日程：翌朝フライト向けプラン（1日フルに使う）</p>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">翌朝フライトなので帰りを急がなくてよい。夕暮れのコルニーシュ散歩・夜の海鮮ディナーまで楽しんだ後、夜に空港方面へ移動する余裕がある。</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">06:00〜07:00</div>
+        <div class="tl-event">カイロ市内ホテル出発</div>
+        <div class="tl-desc">プライベートカーまたは特急列車（ラムセス駅 06:30〜07:00発）でアレクサンドリアへ。砂漠ハイウェイ経由で所要約2〜2.5時間。翌朝フライトなので帰りの時間を気にせず楽しめる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">08:30〜09:00</div>
+        <div class="tl-event">アレクサンドリア到着・朝食</div>
+        <div class="tl-desc">コルニーシュ近くのカフェで<strong>タアミーヤのサンドイッチ＋ミントティー</strong>。30〜60 EGP。地中海の朝の空気がカイロとは全然違う。海を眺めながらゆっくりスタート。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">09:00〜10:30</div>
+        <div class="tl-event">ビブリオテカ・アレクサンドリーナ</div>
+        <div class="tl-desc">開館直後が最も空いていておすすめ。図書館本体・科学博物館・写本博物館・アートギャラリーを回る。入場料約120 EGP。建物の外観は海側から撮ると映える。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">10:30〜12:00</div>
+        <div class="tl-event">カイトベイ要塞＋アブ・アッバース・モスク周辺散策</div>
+        <div class="tl-desc">ファロス灯台跡の海上城塞（入場料約130 EGP）。漁港では朝の水揚げ風景が見られることも。すぐそばのアブ・アッバース・モスクも美しい。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">12:00〜13:30</div>
+        <div class="tl-event">昼食：カイトベイ周辺の海鮮レストランでシーフード</div>
+        <div class="tl-desc">魚をグラム売りで選んでグリル。<strong>デニス（鯛）・ガンバリー（エビ）・カラマリ（イカ）</strong>が定番。入店前に価格を確認。2人で2,000〜3,500 EGP目安。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">13:30〜14:30</div>
+        <div class="tl-event">コム・エルシュカーファのカタコンベ</div>
+        <div class="tl-desc">食後のひんやりした地下墓地観光が快適。ローマ＝エジプト融合の彫刻が圧巻。入場料約200 EGP、所要45〜60分。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">14:30〜15:30</div>
+        <div class="tl-event">ポンペイウスの柱＋アレクサンドリア国立博物館</div>
+        <div class="tl-desc">カタコンベと同エリアの石柱（入場無料）を見た後、国立博物館（入場料約200 EGP）でファラオ〜ローマ時代の遺物を鑑賞。翌朝フライトで時間があるからこそゆっくり見られる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">15:30〜16:30</div>
+        <div class="tl-event">カフェ休憩＋お土産</div>
+        <div class="tl-desc">コルニーシュのカフェでアイスクリーム・サトウキビジュースで休憩。フェティール（パイ菓子）をテイクアウトしておく。スパイス・ナッツのお土産はバザールで。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">16:30〜18:00</div>
+        <div class="tl-event">夕暮れのコルニーシュ散歩＆スタンレー橋</div>
+        <div class="tl-desc">アレクサンドリアの夕暮れはコルニーシュから見る地中海への日没が絶景。スタンレー橋からの眺めも美しい。地元の人々も夕涼みに出てくる時間帯で、街が一番生き生きとする。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">19:00〜20:30</div>
+        <div class="tl-event">夕食：アレクサンドリアのシーフードディナー or マカロナ・ベシャメル</div>
+        <div class="tl-desc">昼と違うレストランや料理に挑戦したい夜。<strong>マカロナ・ベシャメル（エジプト式ラザニア）</strong>はアレクサンドリアの家庭料理の代表格。またはコルニーシュ沿いの眺めの良いレストランで改めてシーフードディナー。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">20:30〜21:00</div>
+        <div class="tl-event">アレクサンドリア出発 → カイロ国際空港へ</div>
+        <div class="tl-desc">プライベートカーなら直行で約2.5〜3時間。深夜のカイロ近郊は渋滞が少なく快適。列車ならミスル駅20:30〜21:00発の最終特急でラムセス駅へ（約2時間）、その後Uberで空港へ。<strong>翌朝フライトなので深夜到着でも問題なし。</strong></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">23:00〜24:00頃</div>
+        <div class="tl-event">カイロ国際空港 到着・空港泊または空港周辺ホテル</div>
+        <div class="tl-desc">早朝フライトなら空港内のベンチや空港ホテル（Novotel Cairo Airport、移動0分）で仮眠。フライトが午前8時以降なら空港近くのヘリオポリス地区のホテルに宿泊して翌朝余裕を持ってチェックイン。</div>
+      </div>
+    </div>
+
+    <!-- 帰路オプション比較 -->
+    <div style="margin-top:24px;background:#f3e5f5;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#6a1b9a;margin-bottom:10px;">🌙 帰路オプション（翌朝フライト向け）</p>
+      <table class="info-table">
+        <tr>
+          <th>Option A<br>プライベートカー直行</th>
+          <td>アレクサンドリア 20:30発 → 空港 23:00〜23:30着。最も楽。渋滞リスク少ない深夜移動。費用は往路と合わせてチャーター料金に含まれる場合が多い。</td>
+        </tr>
+        <tr>
+          <th>Option B<br>列車＋Uber</th>
+          <td>ミスル駅 20:30〜21:00発の特急 → ラムセス駅 22:30〜23:00着 → Uber で空港 23:15〜23:45着。費用：列車150〜300 EGP＋Uber 150〜250 EGP。</td>
+        </tr>
+        <tr>
+          <th>Option C<br>アレクサンドリア泊（翌朝直行）</th>
+          <td>市内ホテルに宿泊し翌朝3〜4時出発で空港へ直行（約3時間）。ゆっくり夜を過ごせるが翌朝が超早起きになる。フライトが10時以降なら現実的。</td>
+        </tr>
+      </table>
+      <p style="font-size:12px;color:#888;margin-top:10px;">⚠️ 列車の最終便・時刻はエジプト国鉄（ENR）公式または <strong>12Go.asia</strong> で要確認。遅延があるため帰路は余裕を多めに。</p>
+    </div>
+
+    <!-- 予算まとめ -->
+    <div style="margin-top:16px;background:#f0fff4;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#2e7d32;margin-bottom:10px;">💰 1人あたり概算予算（プライベートカー2名利用の場合）</p>
+      <table class="info-table">
+        <tr><th>交通費（カー往復÷2名）</th><td>1,750〜3,000 EGP（≈ 5,700〜9,800円）</td></tr>
+        <tr><th>観光入場料合計</th><td>約450〜600 EGP（ビブリオテカ＋カイトベイ＋カタコンベ）</td></tr>
+        <tr><th>昼食（シーフード）</th><td>800〜2,000 EGP（魚の量・種類による）</td></tr>
+        <tr><th>朝食・カフェ・おやつ</th><td>100〜300 EGP</td></tr>
+        <tr><th>お土産・雑費</th><td>200〜1,000 EGP</td></tr>
+        <tr><th><strong>合計目安</strong></th><td><strong>3,300〜6,900 EGP / 1人（≈ 1.1〜2.2万円）</strong></td></tr>
+      </table>
+    </div>
+
+    <!-- 実用ヒント -->
+    <div style="margin-top:16px;background:#fff8e1;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:10px;">⚡ 実用ヒント</p>
+      <ul>
+        <li><strong>ドライバーの手配</strong>：前日までにカイロのホテルフロントに依頼するか、地元ガイドサービスを利用。英語対応ドライバーは+500〜1,000 EGP 増。Airbnbエクスペリエンスや Viatorでも一日ツアーが見つかる。</li>
+        <li><strong>入場チケット</strong>：ビブリオテカは事前オンライン予約可能。混雑期（4〜5月）は当日券が売り切れることも。</li>
+        <li><strong>飲み水</strong>：アレクサンドリアでも水道水は飲めない。出発前にペットボトルを2L以上用意。</li>
+        <li><strong>現金</strong>：観光地・レストランの多くは現金のみ。EGPを十分に持参。ATMはビブリオテカ周辺・スーパーマーケット内にある。</li>
+        <li><strong>服装</strong>：モスク見学があるため、肩と膝を覆う服装で。コルニーシュ沿いは潮風があるので薄手の羽織りが便利。</li>
+        <li><strong>フライト前の注意</strong>：カイロ空港でのチェックインは混雑することが多い。フライトの3時間前到着を推奨。空港内は想定より動線が長い。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    🇪🇬 エジプト Country Profile — /country-info by Wanderlust &nbsp;|&nbsp; 調査日: 2026-04-23 &nbsp;|&nbsp; ※情報は変動するため渡航前に公式情報を確認してください
+  </div>
+
+</div>
+</body>
+</html>

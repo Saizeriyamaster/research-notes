@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ナイジェリア 国別詳細レポート 2026</title>
+  <style>
+    :root {
+      --green: #008751;
+      --green-dark: #005c37;
+      --green-light: #00b368;
+      --green-pale: #e6f5ee;
+      --white: #ffffff;
+      --bg: #f0f4f1;
+      --text: #1a2b22;
+      --text-light: #4a6655;
+      --border: #c5ddd0;
+      --accent: #d4a017;
+      --accent-light: #fff3cc;
+      --red: #c0392b;
+      --red-light: #fdecea;
+      --blue: #1a6fa8;
+      --blue-light: #e6f2fb;
+      --card-shadow: 0 2px 12px rgba(0,135,81,0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    /* ============ HEADER ============ */
+    .hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 55%, var(--green-light) 100%);
+      color: #fff;
+      padding: 52px 40px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      right: -60px; top: -60px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: 80px; bottom: -80px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .hero-flag {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .flag-icon {
+      display: flex;
+      width: 60px;
+      height: 40px;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .flag-icon .stripe {
+      flex: 1;
+    }
+    .flag-icon .stripe.green { background: #008751; }
+    .flag-icon .stripe.white { background: #ffffff; }
+    .hero-sub { font-size: 13px; opacity: 0.8; letter-spacing: 0.1em; text-transform: uppercase; }
+    .hero h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .hero-tagline { font-size: 16px; opacity: 0.85; margin-bottom: 28px; }
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num { font-size: 26px; font-weight: 800; display: block; }
+    .hero-stat .lbl { font-size: 11px; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ============ LAYOUT ============ */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* ============ SECTION HEADER ============ */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 40px 0 20px;
+    }
+    .section-icon {
+      width: 36px; height: 36px;
+      background: var(--green);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green-dark);
+      letter-spacing: -0.01em;
+    }
+    .section-header .section-sub {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    /* ============ CARDS ============ */
+    .card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--green-pale);
+      padding-bottom: 8px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+    @media (max-width: 700px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* ============ STAT BOX ============ */
+    .stat-box {
+      background: var(--green-pale);
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--green);
+    }
+    .stat-box .stat-value { font-size: 24px; font-weight: 800; color: var(--green-dark); }
+    .stat-box .stat-label { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+    .stat-box .stat-note { font-size: 11px; color: var(--text-light); margin-top: 4px; font-style: italic; }
+
+    /* ============ BAR CHART ============ */
+    .bar-group { margin-bottom: 10px; }
+    .bar-label { font-size: 12px; color: var(--text); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .bar-track { background: #e8ede9; border-radius: 4px; height: 10px; overflow: hidden; }
+    .bar-fill { height: 10px; border-radius: 4px; transition: width 0.6s ease; }
+    .bar-fill.green { background: linear-gradient(90deg, var(--green-dark), var(--green-light)); }
+    .bar-fill.accent { background: linear-gradient(90deg, #b8860b, var(--accent)); }
+    .bar-fill.blue { background: linear-gradient(90deg, #0d4f7c, var(--blue)); }
+    .bar-fill.red { background: linear-gradient(90deg, #8b1a12, var(--red)); }
+    .bar-fill.orange { background: linear-gradient(90deg, #c0550b, #e07b28); }
+
+    /* ============ TABLE ============ */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: var(--green-pale); color: var(--green-dark); font-weight: 700; padding: 9px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+    td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--green-pale); }
+
+    /* ============ TAG / BADGE ============ */
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 2px;
+    }
+    .badge-green { background: var(--green); color: #fff; }
+    .badge-accent { background: var(--accent); color: #fff; }
+    .badge-red { background: var(--red); color: #fff; }
+    .badge-blue { background: var(--blue); color: #fff; }
+    .badge-gray { background: #bbb; color: #fff; }
+    .badge-outline { border: 1.5px solid var(--green); color: var(--green); background: transparent; }
+
+    /* ============ CALLOUT ============ */
+    .callout {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body strong { display: block; font-size: 13px; margin-bottom: 3px; }
+    .callout-body p { font-size: 12.5px; color: var(--text-light); }
+    .callout.warn { background: #fff8e1; border-left: 4px solid #f0c000; }
+    .callout.danger { background: var(--red-light); border-left: 4px solid var(--red); }
+    .callout.info { background: var(--blue-light); border-left: 4px solid var(--blue); }
+    .callout.success { background: var(--green-pale); border-left: 4px solid var(--green); }
+
+    /* ============ CLIMATE MAP ============ */
+    .climate-map {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      font-size: 13px;
+    }
+    .climate-zone {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .climate-zone.sahel { background: linear-gradient(90deg, #f5deb3, #ffe9a0); }
+    .climate-zone.savanna { background: linear-gradient(90deg, #c8e6a0, #b5d98a); }
+    .climate-zone.forest { background: linear-gradient(90deg, #5cb85c22, #2e8b5722); background-color: #d4edda; }
+    .climate-zone .zone-name { font-weight: 800; width: 120px; flex-shrink: 0; }
+    .climate-zone .zone-detail { flex: 1; font-size: 12px; color: #333; }
+    .climate-zone .zone-mm { font-size: 18px; font-weight: 800; color: var(--blue); width: 90px; text-align: right; flex-shrink: 0; }
+
+    /* ============ RELIGION MAP ============ */
+    .religion-split {
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 36px;
+      margin-bottom: 14px;
+    }
+    .rel-bar { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .rel-bar.islam { background: #1a6fa8; }
+    .rel-bar.christian { background: #5b8c3e; }
+
+    /* ============ CITY CARD ============ */
+    .city-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+    .city-card .city-header {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 12px 16px;
+    }
+    .city-card .city-name { font-size: 16px; font-weight: 800; }
+    .city-card .city-pop { font-size: 11px; opacity: 0.8; }
+    .city-card .city-body { padding: 14px 16px; font-size: 12.5px; color: var(--text-light); }
+    .city-card .city-tags { padding: 0 16px 12px; }
+
+    /* ============ INFOGRAPHIC CIRCLE ============ */
+    .circles {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 16px 0;
+    }
+    .circle-item { text-align: center; }
+    .circle-ring {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      margin: 0 auto 8px;
+      font-weight: 800;
+    }
+    .circle-ring .circle-val { font-size: 16px; }
+    .circle-ring .circle-unit { font-size: 10px; opacity: 0.8; }
+    .circle-item .circle-name { font-size: 11px; color: var(--text-light); max-width: 80px; }
+
+    /* ============ DIVIDER ============ */
+    .divider {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 32px 0;
+    }
+
+    /* ============ HIGHLIGHT ROW ============ */
+    .highlight-row {
+      background: var(--green-pale);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .highlight-row .hr-icon { font-size: 22px; }
+    .highlight-row .hr-title { font-weight: 700; font-size: 13px; color: var(--green-dark); }
+    .highlight-row .hr-desc { font-size: 12px; color: var(--text-light); }
+
+    /* ============ FOOTER ============ */
+    footer {
+      background: var(--green-dark);
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      margin-top: 40px;
+    }
+    footer a { color: var(--green-light); text-decoration: none; }
+
+    /* ============ PROGRESS RING ============ */
+    .mini-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .mini-progress .mp-label { font-size: 12px; flex: 1; }
+    .mini-progress .mp-bar-track { flex: 2; background: #e8ede9; border-radius: 4px; height: 8px; overflow: hidden; }
+    .mini-progress .mp-bar-fill { height: 8px; border-radius: 4px; }
+    .mini-progress .mp-val { font-size: 12px; font-weight: 700; color: var(--green-dark); width: 40px; text-align: right; }
+
+    /* number big */
+    .big-num { font-size: 32px; font-weight: 900; color: var(--green); }
+    .big-unit { font-size: 14px; color: var(--text-light); margin-left: 4px; }
+
+    ul.dot-list { padding-left: 18px; }
+    ul.dot-list li { margin-bottom: 6px; font-size: 13px; }
+    ul.dot-list li::marker { color: var(--green); }
+
+    p.body-text { font-size: 13px; color: var(--text); line-height: 1.7; margin-bottom: 10px; }
+
+    .two-col-text { columns: 2; column-gap: 24px; }
+    @media (max-width: 600px) { .two-col-text { columns: 1; } }
+  </style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-flag">
+    <div class="flag-icon">
+      <div class="stripe green"></div>
+      <div class="stripe white"></div>
+      <div class="stripe green"></div>
+    </div>
+    <div>
+      <div class="hero-sub">Country Research Report · 2026-04-18</div>
+      <div style="font-size:13px; opacity:0.8;">Federal Republic of Nigeria</div>
+    </div>
+  </div>
+  <h1>ナイジェリア連邦共和国</h1>
+  <div class="hero-tagline">アフリカ最大の経済大国 — 石油・農業・フィンテックが交差する多様性の超大国</div>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="num">2億4,258万</span><span class="lbl">人口（2025）</span></div>
+    <div class="hero-stat"><span class="num">$4,390億</span><span class="lbl">GDP（2025推計）</span></div>
+    <div class="hero-stat"><span class="num">4.07%</span><span class="lbl">GDP成長率（Q4 2025）</span></div>
+    <div class="hero-stat"><span class="num">923,768 km²</span><span class="lbl">国土面積</span></div>
+    <div class="hero-stat"><span class="num">36州+FCT</span><span class="lbl">行政区画</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ===== 1. 基本情報 ===== -->
+  <div class="section-header">
+    <div class="section-icon">🌍</div>
+    <div>
+      <h2>基本統計</h2>
+      <div class="section-sub">人口・経済・社会指標</div>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="stat-box">
+      <div class="stat-value">2.43億</div>
+      <div class="stat-label">総人口（2025）</div>
+      <div class="stat-note">年間成長率 +2.1%</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">4.07%</div>
+      <div class="stat-label">実質GDP成長率（Q4 2025）</div>
+      <div class="stat-note">2021年以来の最高値</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">923,768 km²</div>
+      <div class="stat-label">国土面積</div>
+      <div class="stat-note">日本の約2.4倍</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">アブジャ</div>
+      <div class="stat-label">首都（1991年遷都）</div>
+      <div class="stat-note">経済都市: ラゴス</div>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;">
+    <div class="card">
+      <div class="card-title">GDP産業別構成（2025年 名目）</div>
+      <div class="bar-group">
+        <div class="bar-label"><span>農業・林業・漁業</span><span>25.67%</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width:51%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>石油・ガス（鉱業）</span><span>~10%</span></div>
+        <div class="bar-track"><div class="bar-fill accent" style="width:20%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>製造業</span><span>8.9%</span></div>
+        <div class="bar-track"><div class="bar-fill orange" style="width:18%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>金融・フィンテック</span><span>~7%</span></div>
+        <div class="bar-track"><div class="bar-fill blue" style="width:14%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>その他サービス</span><span>~48%</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width:96%"></div></div>
+      </div>
+      <p style="font-size:11px; color:var(--text-light); margin-top:8px;">出典: ナイジェリア統計局（NBS）2025年第4四半期報告</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 2. 地理・気候 ===== -->
+  <div class="section-header">
+    <div class="section-icon">🌦</div>
+    <div>
+      <h2>地理・気候</h2>
+      <div class="section-sub">サヘル帯 / サバナ / 熱帯雨林の3気候帯</div>
+    </div>
+  </div>
+
+  <div class="climate-map">
+    <div class="climate-zone sahel">
+      <div class="zone-name">🏜 北部 サヘル帯</div>
+      <div class="zone-detail">
+        <strong>カノ・ソコトなど最北端。</strong>
+        乾燥した半砂漠地帯。雨季は6〜9月のみの短期間。ハルマッタン（サハラからの熱風）が吹く。農業は灌漑依存。砂漠化が進行中。
+      </div>
+      <div class="zone-mm">&lt; 600mm<br><span style="font-size:11px; color:#888">年間降水量</span></div>
+    </div>
+    <div class="climate-zone savanna">
+      <div class="zone-name">🌿 中部 サバナ帯</div>
+      <div class="zone-detail">
+        <strong>アブジャ・ジョスなど中央高原。</strong>
+        雨季4〜9月（南部型）または5〜9月。乾季は明確。ジョス高原では高地性冷涼気候。
+      </div>
+      <div class="zone-mm">1,100〜2,000mm</div>
+    </div>
+    <div class="climate-zone forest">
+      <div class="zone-name">🌳 南部 熱帯雨林</div>
+      <div class="zone-detail">
+        <strong>ラゴス・ポートハーコート・ニジェールデルタ。</strong>
+        年間を通じて高温多湿。2つの雨季（3〜7月 / 9〜11月）。ニジェールデルタは世界最多雨地帯の一つ。
+      </div>
+      <div class="zone-mm">2,000〜4,000mm</div>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;" class="grid-2">
+    <div class="card">
+      <div class="card-title">地理的特徴</div>
+      <ul class="dot-list">
+        <li>ニジェール川（全長4,180km）とベヌエ川が国土を貫流し合流</li>
+        <li>南部にニジェールデルタ（約7万km²、世界3位の規模）</li>
+        <li>ジョス高原（海抜1,200m以上）が中央に位置</li>
+        <li>ギニア湾に約850kmの海岸線</li>
+        <li>北はチャド湖（乾燥地帯の水源）に接する</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">気候変動の影響</div>
+      <ul class="dot-list">
+        <li>北部の砂漠化とチャド湖の縮小（1963年比約90%減少）</li>
+        <li>洪水頻度の増加：2022年は300万人以上が被災</li>
+        <li>農業生産性への打撃（食料安全保障リスク）</li>
+        <li>ニジェールデルタの海面上昇・沿岸浸食</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 3. 民族・文化・宗教・言語 ===== -->
+  <div class="section-header">
+    <div class="section-icon">🕌</div>
+    <div>
+      <h2>民族・文化・宗教・言語</h2>
+      <div class="section-sub">250以上の民族、500以上の言語が共存する多様性国家</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">主要民族の人口比</div>
+      <div class="bar-group">
+        <div class="bar-label"><span>ハウサ（北部）</span><span>30%</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width:60%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>ヨルバ（南西部）</span><span>21%</span></div>
+        <div class="bar-track"><div class="bar-fill accent" style="width:42%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>イボ（南東部）</span><span>18%</span></div>
+        <div class="bar-track"><div class="bar-fill blue" style="width:36%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>フラニ（北部）</span><span>6%</span></div>
+        <div class="bar-track"><div class="bar-fill orange" style="width:12%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>その他（イジョ・ティブ他）</span><span>25%</span></div>
+        <div class="bar-track"><div class="bar-fill red" style="width:50%"></div></div>
+      </div>
+      <p style="font-size:11px; color:var(--text-light); margin-top:8px;">総民族数：約250以上 / 言語数：500以上</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">宗教分布（地理的分断）</div>
+      <div class="religion-split">
+        <div class="rel-bar islam" style="width:56.1%">イスラム 56.1%</div>
+        <div class="rel-bar christian" style="width:43.4%">キリスト教 43.4%</div>
+      </div>
+      <table style="margin-top:8px;">
+        <tr><th>地域</th><th>主な宗教</th><th>代表例</th></tr>
+        <tr><td>北西・北東</td><td><span class="badge badge-blue">イスラム</span></td><td>カノ州91%がムスリム</td></tr>
+        <tr><td>南東（イボ）</td><td><span class="badge badge-green">キリスト教</span></td><td>カトリック・プロテスタント</td></tr>
+        <tr><td>南西（ヨルバ）</td><td>両者混在</td><td>ラゴス州83%キリスト教</td></tr>
+        <tr><td>中部（ミドルベルト）</td><td>宗教対立激しい</td><td>ボコ・ハラム問題</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-title">公用語・主要民族語</div>
+      <div class="highlight-row" style="margin-bottom:8px;">
+        <div class="hr-icon">🇳🇬</div>
+        <div>
+          <div class="hr-title">英語（公用語）</div>
+          <div class="hr-desc">政府・教育・ビジネスの共通語。旧英国植民地の遺産。</div>
+        </div>
+      </div>
+      <table>
+        <tr><th>言語</th><th>話者数</th><th>地域</th></tr>
+        <tr><td>ハウサ語</td><td>~7,000万人</td><td>北部</td></tr>
+        <tr><td>ヨルバ語</td><td>~5,000万人</td><td>南西部</td></tr>
+        <tr><td>イボ語</td><td>~4,000万人</td><td>南東部</td></tr>
+        <tr><td>フラニ語</td><td>~1,500万人</td><td>北部・中部</td></tr>
+        <tr><td>ピジン英語</td><td>全国広域</td><td>商業・日常会話</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">文化・国民性</div>
+      <ul class="dot-list">
+        <li><strong>大家族主義：</strong>「オモルゥアビ」（ヨルバ語で誠実な人格）を重んじる共同体文化</li>
+        <li><strong>起業家精神：</strong>「ナイジェリア人は諦めない」——逆境でのビジネス創出力が高い</li>
+        <li><strong>ノリウッド：</strong>世界第2位の映画産業（年間2,000本以上）。インド・ボリウッドに次ぐ</li>
+        <li><strong>音楽輸出：</strong>アフロビーツがグローバルに席巻。バーナボーイ・ウィズキッドが世界的人気</li>
+        <li><strong>口頭文化：</strong>祖先・精霊崇拝の伝統信仰が背景にある民話・芸術の豊かさ</li>
+        <li><strong>食文化：</strong>ジョロフライス、スープ（エグシ・オハ・オニグ）、スエア（焼き肉）</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 4. ヨルバ人・イボ人の深堀り ===== -->
+  <div class="section-header">
+    <div class="section-icon">👥</div>
+    <div>
+      <h2>ヨルバ人・イボ人 — 深層分析</h2>
+      <div class="section-sub">ビアフラ戦争の傷とナイジェリア経済を牽引する2大民族</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="color:#b8860b;">ヨルバ人（Yoruba）</div>
+      <p class="body-text"><strong>地域：</strong>南西部（ラゴス・オヨ・オグン・オンド・オスン・クワラ州）。ベナン・トーゴにも居住。</p>
+      <p class="body-text"><strong>歴史：</strong>12世紀イレ・イフェ王国を起源とする都市国家文明。旧英植民地下で最初に西洋教育に接し、19〜20世紀の官僚・法律家・医師の第一世代を輩出。</p>
+      <p class="body-text"><strong>宗教：</strong>キリスト教とイスラム教がほぼ半々（南西部特有の宗教的多元性）。伝統信仰「イファ」も残存（ユネスコ無形文化遺産）。</p>
+      <p class="body-text"><strong>芸術・文化：</strong>イフェのブロンズ彫刻は世界最高水準のアフリカ美術。音楽・舞踏・織物（アソ・オケ）の文化的遺産が豊か。</p>
+      <p class="body-text"><strong>現在の経済的役割：</strong>ラゴスを拠点にメディア・金融・テクノロジー企業を多数展開。ナイジェリアの金融エリートを多く輩出。</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--blue);">イボ人（Igbo）— ビアフラの記憶</div>
+      <p class="body-text"><strong>地域：</strong>南東部（アナンブラ・イモ・エボニ・エヌグ・アビア・クロスリバー州）</p>
+      <p class="body-text"><strong>ビアフラ戦争（1967〜1970年）：</strong>北部の反イボ人虐殺（ポグロム）に端を発し、イボ人がビアフラ共和国の独立を宣言。連邦軍との3年間の内戦で軍人死傷10万人以上、民間人（飢餓による死者含む）50〜200万人が死亡。イボ人の金融資産は戦後「1人20ポンド」に強制切り下げられ、経済的に壊滅。</p>
+      <p class="body-text"><strong>復活のDNA：</strong>「オラー・ンドー（終わりは始まり）」の精神で起業家として全国・海外へ展開。商業ネットワーク（アバ・マーケット）が国内最大の製造拠点に。</p>
+      <p class="body-text"><strong>現在：</strong>フィンテック（ペイスタック創業者はイボ人）・貿易・石油サービス業で突出した経済力。IPOB（ビアフラ独立運動）が現在も政治的緊張を引き起こしている。</p>
+    </div>
+  </div>
+
+  <div class="callout danger" style="margin-top:12px;">
+    <div class="callout-icon">⚔️</div>
+    <div class="callout-body">
+      <strong>ビアフラ戦争（1967〜1970）の遺産</strong>
+      <p>戦後50年以上経過した現在もイボ人は政府任用・インフラ投資での不平等を訴える。IPOB（先住民ビアフラ人民）は2010年代以降、分離独立を求める運動を継続。国家統合の最大の課題の一つ。</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 5. 発展産業 ===== -->
+  <div class="section-header">
+    <div class="section-icon">📈</div>
+    <div>
+      <h2>発展している主要産業</h2>
+      <div class="section-sub">石油依存からの脱却を図る多角化の最前線</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">💰 フィンテック</div>
+      <p class="body-text">2025年2月時点で<strong>430社以上</strong>のフィンテック企業が存在（2024年比+70%）。2024年のスタートアップ資金調達5.2億ドルのうち72%がフィンテック。モニーポイントがシリーズCで1.1億ドル調達しユニコーン化。フラッターウェーブ（決済）・カウリーセル（農業信用）なども世界展開。</p>
+      <div><span class="badge badge-green">急成長</span><span class="badge badge-blue">ユニコーン輩出</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🌾 農業・アグリビジネス</div>
+      <p class="body-text">GDP比<strong>25〜27%</strong>・雇用35%（3,580万人）を占める最大産業。カサバ・ヤム・トウモロコシ・コメ・落花生。機械化・スマート農業への投資拡大中。アグリフィンテックが農家向け信用・保険を提供。</p>
+      <div><span class="badge badge-green">最大雇用源</span><span class="badge badge-accent">輸出ポテンシャル高</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎬 クリエイティブ産業</div>
+      <p class="body-text"><strong>ノリウッド</strong>は年間生産本数世界第2位（インドに次ぐ）。アフロビーツ音楽は全世界ストリーミングで急拡大。NFT・ゲーム・デジタルアート領域でも若い世代が台頭。</p>
+      <div><span class="badge badge-accent">文化輸出力</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ エネルギー・電力</div>
+      <p class="body-text">2億人超が電力不足に悩む一方、分散型太陽光・オフグリッドソリューションが急成長。中国EXIM銀行から20億ドル借款で「スーパーグリッド」計画（東西連結）が交渉中。天然ガス（資源量世界9位）の発電活用も注目。</p>
+      <div><span class="badge badge-blue">成長ポテンシャル</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏭 製造業</div>
+      <p class="body-text">GDP比<strong>8.9%（2025目標10%）</strong>。アバ・ラゴスの縫製・皮革・プラスチック。食品加工（カサバ・パーム油精製）が最大サブセクター。輸入代替製造業政策「Agenda 2050」で育成中。</p>
+      <div><span class="badge badge-outline">育成中</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏗 不動産・建設</div>
+      <p class="body-text">ラゴスのヴィクトリアアイランド・イコイなど高級不動産が急騰。レッキ自由貿易区の開発で物流・倉庫需要が拡大。住宅不足は2,200万戸以上（世界最大級の住宅ギャップ）でインフラ投資が加速。</p>
+      <div><span class="badge badge-orange" style="background:#e07b28; color:#fff;">急騰中</span></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 6. 石油経済 ===== -->
+  <div class="section-header">
+    <div class="section-icon">🛢</div>
+    <div>
+      <h2>石油経済 — オイルマネーの功罪</h2>
+      <div class="section-sub">アフリカ最大の産油国・NNPC・ニジェールデルタの呪い</div>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:16px;">
+    <div class="stat-box">
+      <div class="stat-value">1.84M</div>
+      <div class="stat-label">最高生産量（bpd）</div>
+      <div class="stat-note">2025年ピーク値</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">1.68M</div>
+      <div class="stat-label">平均産油量（bpd）</div>
+      <div class="stat-note">Q4 2025（2020年以来最高）</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">2.1M</div>
+      <div class="stat-label">2025年目標（bpd）</div>
+      <div class="stat-note">NUPRC目標値</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">世界9位</div>
+      <div class="stat-label">天然ガス埋蔵量</div>
+      <div class="stat-note">未開発ポテンシャル大</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">NNPC（ナイジェリア国家石油公社）</div>
+      <p class="body-text">1977年設立。2021年の石油産業法（PIA）でNNPC Ltdとして法人化・部分民営化。2025年現在もナイジェリア最大の企業であり、政府の最大の歳入源。精製・探鉱・トレーディングを国内外で展開。</p>
+      <ul class="dot-list">
+        <li>Q4 2025の石油部門成長率：<strong>+20.46%</strong>（最大の成長ドライバー）</li>
+        <li>ワリ・インタゲペ・ポートハーコート精製所を保有</li>
+        <li>ダンゴテ精製所（65万bpd、民間最大）と競合・協調</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">石油収入の功罪</div>
+      <div class="callout warn" style="margin:0 0 8px;">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body">
+          <strong>功：インフラ・教育投資の原資</strong>
+          <p>石油収入がナイジェリアの連邦・州政府の主要財源。1970〜80年代の「石油ブーム」期に道路・大学・工業施設を建設。</p>
+        </div>
+      </div>
+      <div class="callout danger" style="margin:0;">
+        <div class="callout-icon">💀</div>
+        <div class="callout-body">
+          <strong>罪：資源の呪い（Resource Curse）</strong>
+          <p>農業・製造業の空洞化。汚職の温床（石油収益の横領が常態化）。為替収入の石油依存（非石油輸出が極めて低い）。価格変動への脆弱性。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 7. 水・環境・ニジェールデルタ ===== -->
+  <div class="section-header">
+    <div class="section-icon">🌊</div>
+    <div>
+      <h2>水・環境 — ニジェールデルタの悲劇</h2>
+      <div class="section-sub">世界最大マングローブ林・水運ネットワーク・50年の石油汚染</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">ニジェールデルタの水系と水運</div>
+      <p class="body-text">ニジェールデルタは約<strong>7万km²</strong>の広大な低湿地帯。クリーク（細流）・ラグーン・マングローブ林が複雑な水上ネットワークを形成。</p>
+      <ul class="dot-list">
+        <li><strong>水上交通：</strong>多くの集落は陸路アクセスが困難で船が主な移動手段</li>
+        <li><strong>漁業：</strong>デルタ住民の主要生計。年間漁獲量は国内漁業の重要な基盤</li>
+        <li><strong>マングローブ：</strong>アフリカ最大・世界3位規模（8,442km²）。タイコクマングローブが優占。</li>
+        <li><strong>生態系サービス：</strong>炭素貯留・沿岸防護・魚類繁殖場として70以上の用途</li>
+        <li><strong>水上コミュニティ：</strong>イジョ人・イセキリ人・ウルホボ人が水上集落に居住</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">石油汚染の実態（50年の累積）</div>
+      <div class="callout danger" style="margin-bottom:10px;">
+        <div class="callout-icon">☠️</div>
+        <div class="callout-body">
+          <strong>毎年24万バレルの石油流出</strong>
+          <p>配管破損・不法盗油・老朽化設備による漏出が継続。2011年UNEP報告では地下水ベンゼン濃度がWHO基準の900倍超。</p>
+        </div>
+      </div>
+      <ul class="dot-list">
+        <li>汚染による経済的損失：年間<strong>7.58億ドル</strong>（75%は地域コミュニティ負担）</li>
+        <li>魚類・エビの激減→漁業者の生活崩壊</li>
+        <li>ガスフレアリング（焼却廃棄）が大気・土壌汚染を悪化</li>
+        <li>シェル・エクソン・ENIなど欧米メジャーが続々撤退（大陸棚資産売却）</li>
+        <li>オゴニランドのUNEP調査（2011）：清浄化に25〜30年・10億ドル必要と推計</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-top:12px;">
+    <div class="callout-icon">🦀</div>
+    <div class="callout-body">
+      <strong>マングローブ林の多重危機</strong>
+      <p>石油汚染に加え、薪材採取・侵入植物（ニパヤシ）・都市化による埋め立て、気候変動による海面上昇が複合的にマングローブを脅かしている。推定面積の60%以上が何らかの劣化状態にある。</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 8. キャッサバ ===== -->
+  <div class="section-header">
+    <div class="section-icon">🌱</div>
+    <div>
+      <h2>キャッサバ — 世界最大の生産国</h2>
+      <div class="section-sub">6,270万トン（2023）・3,000万人農家・輸出ポテンシャルの宝</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">生産量 世界ランキング（2023）</div>
+      <div class="bar-group">
+        <div class="bar-label"><span>🇳🇬 ナイジェリア（世界1位）</span><span>6,270万t</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>🇨🇩 コンゴ民主共和国（2位）</span><span>約4,600万t</span></div>
+        <div class="bar-track"><div class="bar-fill accent" style="width:73%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>🇹🇭 タイ（3位）</span><span>約3,300万t</span></div>
+        <div class="bar-track"><div class="bar-fill blue" style="width:53%"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label"><span>🇻🇳 ベトナム（4位）</span><span>約1,200万t</span></div>
+        <div class="bar-track"><div class="bar-fill orange" style="width:19%"></div></div>
+      </div>
+      <p style="font-size:11px; color:var(--text-light); margin-top:8px;">世界シェア約20%。しかし輸出は生産の1%未満（タイが輸出の60〜65%を占める）</p>
+    </div>
+    <div class="card">
+      <div class="card-title">キャッサバの食文化と加工産業</div>
+      <p class="body-text"><strong>主食加工品：</strong></p>
+      <ul class="dot-list">
+        <li><strong>ガリ（Garri）：</strong>発酵・乾燥させた粗挽き粉。主食。年間消費量は膨大</li>
+        <li><strong>フフ（Fufu）：</strong>茹でてすりつぶしたもの。スープと食べる</li>
+        <li><strong>エバ（Eba）：</strong>ガリをお湯で溶いた固形食</li>
+        <li><strong>タピオカ（澱粉）：</strong>食品・医薬品・繊維産業向け</li>
+      </ul>
+      <p class="body-text" style="margin-top:10px;"><strong>工業用途：</strong>エタノール燃料・家畜飼料・グルコース原料</p>
+      <div class="callout warn" style="margin-top:10px; padding:10px 14px;">
+        <div class="callout-icon">🚨</div>
+        <div class="callout-body">
+          <strong>輸出のパラドックス</strong>
+          <p>生産1位なのに輸出はタイが世界を席巻。加工インフラ・冷蔵物流・品質規格が輸出のボトルネックに。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 9. 主要都市 ===== -->
+  <div class="section-header">
+    <div class="section-icon">🏙</div>
+    <div>
+      <h2>発展している主要都市</h2>
+      <div class="section-sub">ラゴス・アブジャ・カノ・ポートハーコート・他</div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:16px;">
+    <div class="city-card">
+      <div class="city-header">
+        <div class="city-name">ラゴス（Lagos）</div>
+        <div class="city-pop">人口：1,500〜2,100万人（推計）</div>
+      </div>
+      <div class="city-body">
+        アフリカ最大規模の経済都市。GDP貢献度はナイジェリア全体の<strong>30%</strong>。金融・テクノロジー・メディア・貿易の中枢。ヴィクトリアアイランド・イコイが高級ビジネス地区。ラゴス島とメインランドを結ぶ橋が慢性渋滞。
+      </div>
+      <div class="city-tags">
+        <span class="badge badge-green">金融</span>
+        <span class="badge badge-blue">テック</span>
+        <span class="badge badge-accent">港湾</span>
+        <span class="badge badge-gray">渋滞問題</span>
+      </div>
+    </div>
+    <div class="city-card">
+      <div class="city-header">
+        <div class="city-name">アブジャ（Abuja）</div>
+        <div class="city-pop">人口：約270万人（都市圏）</div>
+      </div>
+      <div class="city-body">
+        1991年に計画都市として遷都。政府機関・外交施設が集中。整備された街路・計画的土地利用が特徴。急速に成長する不動産・建設需要。ラゴスに比べ治安が良く、外国企業の拠点設置も増加。
+      </div>
+      <div class="city-tags">
+        <span class="badge badge-green">政治首都</span>
+        <span class="badge badge-blue">外交</span>
+        <span class="badge badge-outline">計画都市</span>
+      </div>
+    </div>
+    <div class="city-card">
+      <div class="city-header">
+        <div class="city-name">カノ（Kano）</div>
+        <div class="city-pop">人口：約490万人</div>
+      </div>
+      <div class="city-body">
+        北ナイジェリア最大の商業都市。800年以上の歴史を持つ交易都市。サハラ交易路の要衝として栄えた。現在も皮革（サフィアン）・綿花・繊維・地場製造業の拠点。伝統的な染色坑（クルミ染め）が観光資源。
+      </div>
+      <div class="city-tags">
+        <span class="badge badge-accent">皮革</span>
+        <span class="badge badge-green">北部商業</span>
+        <span class="badge badge-gray">歴史都市</span>
+      </div>
+    </div>
+    <div class="city-card">
+      <div class="city-header">
+        <div class="city-name">ポートハーコート（Port Harcourt）</div>
+        <div class="city-pop">人口：約212万人</div>
+      </div>
+      <div class="city-body">
+        石油・ガス産業の首都。ニジェールデルタの中心都市。シェル・シェブロン・トータルなどメジャー石油会社の地域本部が集中。精製・石油サービス業が経済基盤。環境汚染問題が深刻。
+      </div>
+      <div class="city-tags">
+        <span class="badge badge-red">石油</span>
+        <span class="badge badge-accent">ガス</span>
+        <span class="badge badge-gray">環境問題</span>
+      </div>
+    </div>
+    <div class="city-card">
+      <div class="city-header">
+        <div class="city-name">イバダン（Ibadan）</div>
+        <div class="city-pop">人口：約365万人</div>
+      </div>
+      <div class="city-body">
+        ナイジェリア最古の大学（イバダン大学・1948年）を擁する学術都市。南西部農産品の集積地。ラゴスから東へ約130kmの高速道路沿いに工業地帯が発展中。
+      </div>
+      <div class="city-tags">
+        <span class="badge badge-blue">学術</span>
+        <span class="badge badge-green">農業</span>
+      </div>
+    </div>
+    <div class="city-card">
+      <div class="city-header">
+        <div class="city-name">エヌグ・オニトシャ・アバ</div>
+        <div class="city-pop">イボ人の3大経済都市</div>
+      </div>
+      <div class="city-body">
+        オニトシャ：ニジェール川沿いの最大の内陸市場（世界最大規模の野外市場の一つ）。アバ：「中国製品を超える」を目標にした軽工業・縫製・靴産業の集積地。エヌグ：かつての石炭採掘都市、現在は政府・教育機関が集中。
+      </div>
+      <div class="city-tags">
+        <span class="badge badge-accent">市場・製造</span>
+        <span class="badge badge-outline">イボ経済圏</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 10. コンテナ港・物流 ===== -->
+  <div class="section-header">
+    <div class="section-icon">⚓</div>
+    <div>
+      <h2>コンテナ港・物流インフラ</h2>
+      <div class="section-sub">アパパ港・ティンカン港・レッキ深海港の三角形</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title" style="color:var(--green);">アパパ港（Apapa Port）</div>
+      <p class="body-text">ラゴス最大・最古の港湾。ナイジェリアの輸出入の約<strong>70%</strong>を処理（ティンカン含む）。コンテナ・バルク・液体貨物の総合港。</p>
+      <div class="callout danger" style="margin-top:8px; padding:10px 14px;">
+        <div class="callout-icon">🚛</div>
+        <div class="callout-body">
+          <strong>深刻な渋滞問題</strong>
+          <p>平均カーゴ滞留時間18日。渋滞による損失推計<strong>日5,500万ドル</strong>。英国輸出金融（UKEF）から7.46億ポンドの近代化投資計画（2026年）。</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--blue);">ティンカン島港（Tin Can Island Port）</div>
+      <p class="body-text">アパパに次ぐナイジェリア第2位のコンテナ港。ラゴス西部のアポパ地区に位置。自動車・一般貨物・コンテナ専用バースを保有。アパパの代替港として機能。</p>
+      <ul class="dot-list">
+        <li>コンテナ処理能力：年間約75万TEU</li>
+        <li>アパパと合わせ西アフリカ最大の港湾クラスター</li>
+        <li>近代化工事で自動化ゲートシステム導入予定</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--accent);">レッキ深海港（Lekki Deep Sea Port）</div>
+      <p class="body-text">2023年4月開業。西アフリカ最大の水深<strong>16.5m</strong>を誇るナイジェリア最新鋭の深海港。</p>
+      <ul class="dot-list">
+        <li>2025年のコンテナ処理量：<strong>210万TEU超</strong>（ナイジェリア1位）</li>
+        <li>680mの岸壁・9.6kmのアプローチ水路</li>
+        <li>COSCO（中国海運）・ONE・ZIMが新航路開設</li>
+        <li>最大7,000TEU級コンテナ船が入港可能</li>
+        <li>ラゴス自由貿易区と一体開発</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout success" style="margin-top:12px;">
+    <div class="callout-icon">🔄</div>
+    <div class="callout-body">
+      <strong>トランシップ拠点化への野望</strong>
+      <p>レッキ深海港はトランシップ（積み替え）容量2.5百万TEUを目標とし、西・中央アフリカのハブ港を目指している。ただし道路・鉄道との接続インフラ整備が課題で、港湾から内陸への輸送コストが高い（ラゴス〜カノ間のコンテナ輸送はN60万以上）。</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 11. 中国依存度 ===== -->
+  <div class="section-header">
+    <div class="section-icon">🇨🇳</div>
+    <div>
+      <h2>中国への依存度</h2>
+      <div class="section-sub">最大輸入元・最大債権国・BRI最大案件国の三重構造</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">貿易構造（2024年）</div>
+      <table>
+        <tr><th>指標</th><th>数値</th></tr>
+        <tr><td>中国からの輸入（2024）</td><td><strong>14.15兆ナイラ（+114%）</strong></td></tr>
+        <tr><td>対中貿易総額（2024）</td><td>17.14兆ナイラ（+128.8%）</td></tr>
+        <tr><td>輸入比率（輸入/総貿易）</td><td>82.5%超</td></tr>
+        <tr><td>ナイジェリアの輸出品</td><td>原材料・農産品（低付加価値）</td></tr>
+        <tr><td>中国からの輸入品</td><td>工業品・機械・電子機器（高付加価値）</td></tr>
+      </table>
+      <p style="font-size:11px; color:var(--text-light); margin-top:8px;">出典: NBS（ナイジェリア統計局）2024年貿易統計</p>
+    </div>
+    <div class="card">
+      <div class="card-title">インフラ投資・借款</div>
+      <ul class="dot-list">
+        <li><strong>アブジャ〜カドゥナ鉄道：</strong>中国EXIM銀行融資・中国土木工程集団（CCECC）施工</li>
+        <li><strong>ラゴス〜イバダン鉄道：</strong>同上、2021年開通</li>
+        <li><strong>イバダン〜カノ鉄道：</strong>計画中・中国融資予定</li>
+        <li><strong>ワリ〜イタケペ鉄道：</strong>中国融資で復旧</li>
+        <li><strong>スーパーグリッド計画：</strong>中国EXIM銀行に20億ドル借款交渉中（2025）</li>
+        <li><strong>2025年BRI建設契約額：</strong><strong>246億ドル</strong>（全世界1位）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warn" style="margin-top:12px;">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <strong>デット・トラップ（債務の罠）リスク</strong>
+      <p>インフレ率が高止まりし、債務返済が歳入の大部分を占める中、中国への新規借款追加は財政持続可能性を悪化させるリスクがある。一方でインフラ不足解消の手段として中国融資への依存が続く構造的矛盾が存在する。</p>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-top:8px;">
+    <div class="callout-icon">🤝</div>
+    <div class="callout-body">
+      <strong>包括的戦略協力パートナーシップ（2023年）</strong>
+      <p>ティヌブ政権は2023年に中国との関係を「包括的戦略協力パートナーシップ」に格上げ。「共同繁栄コミュニティ」建設を謳う中国のBRI外交の核心的事例として機能。米国との関係も維持しながら大国間バランス外交を模索。</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== まとめ ===== -->
+  <div class="section-header">
+    <div class="section-icon">💡</div>
+    <div>
+      <h2>総合評価・まとめ</h2>
+      <div class="section-sub">ナイジェリアの潜在力と課題の構造</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="color:var(--green);">ナイジェリアの強み</div>
+      <ul class="dot-list">
+        <li>人口ボーナス：2050年までに4億人を超え、世界3位の人口大国へ</li>
+        <li>キャッサバ生産世界1位・農業ポテンシャルの宝庫</li>
+        <li>アフリカ最大の石油・ガス埋蔵量と天然資源</li>
+        <li>フィンテック・テック・クリエイティブ産業で世界的存在感</li>
+        <li>アフリカ最大の英語圏市場（2.4億人）</li>
+        <li>レッキ深海港開業による物流ハブ化の潜在力</li>
+        <li>ディアスポラ送金（年間200億ドル超・外貨収入源として重要）</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--red);">ナイジェリアの課題</div>
+      <ul class="dot-list">
+        <li>石油依存からの脱却がまだ道半ば</li>
+        <li>ニジェールデルタの深刻な環境汚染と社会的不安</li>
+        <li>南北の宗教・民族対立（イスラム vs キリスト教）</li>
+        <li>IPOBによるビアフラ独立運動・北東部ボコ・ハラム問題</li>
+        <li>インフラ不足（電力・道路・港湾の渋滞）</li>
+        <li>高インフレ・ナイラ通貨安・中国借款依存</li>
+        <li>汚職・ガバナンス問題（トランスパレンシー指数で低位）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px; background: linear-gradient(135deg, var(--green-pale), #fff);">
+    <div class="card-title">キーメッセージ</div>
+    <p class="body-text">
+      ナイジェリアは「アフリカの巨人」と呼ばれながら、その潜在力を十全に発揮できずにきた。しかし2020年代後半にかけて石油産業の回復・フィンテックの爆発的成長・レッキ深海港の開業・キャッサバ加工産業の台頭という複合的な変化が重なりつつある。2050年に向けた人口爆増は経済成長の燃料になる一方、食料・水・電力・雇用を巡る巨大な社会的圧力にもなる。
+    </p>
+    <p class="body-text">
+      ニジェールデルタの環境修復、ビアフラ・ボコ・ハラム問題の政治的解決、中国依存からの多角化外交、そしてキャッサバ・農業の輸出産業化——これらがナイジェリアが「ジャイアント・オブ・アフリカ」の称号に見合う力を実際に発揮できるかどうかを決める試金石となる。
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  <p>ナイジェリア詳細リサーチレポート 2026-04-18 | データ出典: NBS Nigeria, IMF, World Bank, NNPC, Nigerian Ports Authority, UNEP, Amnesty International, Pew Research Center, FAO</p>
+  <p style="margin-top:6px;">本レポートは2026年4月時点の公開情報に基づき作成。数値は速報値を含む。</p>
+</footer>
+
+</body>
+</html>

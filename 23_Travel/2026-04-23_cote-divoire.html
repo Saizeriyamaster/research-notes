@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>コートジボワール — Country Profile</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.7;
+      padding: 24px 16px 64px;
+    }
+    .page { max-width: 960px; margin: 0 auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #E06000 0%, #F28500 40%, #009A44 100%);
+      border-radius: 16px;
+      padding: 48px 48px 40px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="60" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="80" r="40" fill="rgba(255,255,255,0.03)"/></svg>');
+      pointer-events: none;
+    }
+    .hero-flag { font-size: 72px; line-height: 1; margin-bottom: 12px; }
+    .hero-name { font-size: 42px; font-weight: 700; letter-spacing: -0.5px; }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,0.85); margin-top: 6px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .hero-tag {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+    }
+    .meta-updated { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 16px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-top: 3px solid var(--accent, #0088FF);
+    }
+    .stat-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #0E2841; margin-top: 4px; }
+    .stat-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    .section-icon { font-size: 22px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .section-badge {
+      margin-left: auto;
+      background: #e8f4ff;
+      color: #0088FF;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .info-table th {
+      background: #f7f9fc;
+      text-align: left;
+      padding: 10px 14px;
+      color: #555;
+      font-weight: 600;
+      width: 35%;
+      border-bottom: 1px solid #eee;
+    }
+    .info-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #333;
+    }
+    .info-table tr:last-child th,
+    .info-table tr:last-child td { border-bottom: none; }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .price-card {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .price-emoji { font-size: 28px; flex-shrink: 0; }
+    .price-item-name { font-size: 13px; color: #666; }
+    .price-amount { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .price-jpy { font-size: 12px; color: #0088FF; margin-top: 1px; }
+
+    .koppen-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #E06000, #CC5500);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .season-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .season-chip {
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .season-chip.dry    { background: #fff8e1; border-left: 4px solid #FF9900; }
+    .season-chip.wet    { background: #e8f5e9; border-left: 4px solid #38761D; }
+    .season-chip.hot    { background: #fce4ec; border-left: 4px solid #e53935; }
+    .season-chip.cold   { background: #e3f2fd; border-left: 4px solid #1565c0; }
+    .season-chip.mild   { background: #f3e5f5; border-left: 4px solid #6a1b9a; }
+    .season-chip b { display: block; font-size: 12px; margin-bottom: 3px; }
+
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .outfit-card { background: #f7f9fc; border-radius: 10px; padding: 14px 16px; }
+    .outfit-card-title { font-weight: 700; font-size: 13px; color: #0E2841; margin-bottom: 6px; }
+    .outfit-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .area-card {
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 5px solid var(--area-color, #0088FF);
+      background: #f7f9fc;
+    }
+    .area-card.nightlife   { --area-color: #9900FF; background: #faf5ff; }
+    .area-card.residential { --area-color: #38761D; background: #f5fff7; }
+    .area-card.tourist     { --area-color: #0088FF; background: #f0f7ff; }
+    .area-card.business    { --area-color: #156082; background: #f0f6fa; }
+    .area-card.caution     { --area-color: #e53935; background: #fff5f5; }
+    .area-card.transport   { --area-color: #FF9900; background: #fff8f0; }
+    .area-name { font-weight: 700; font-size: 15px; color: #0E2841; margin-bottom: 4px; }
+    .area-type { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .area-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+    .stability-bar-wrap { margin-top: 8px; }
+    .stability-label { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 4px; }
+    .stability-bar { height: 10px; background: #eee; border-radius: 99px; overflow: hidden; }
+    .stability-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #38761D, #0088FF); }
+
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .culture-card { background: #f7f9fc; border-radius: 10px; padding: 16px; }
+    .culture-card-icon { font-size: 28px; margin-bottom: 8px; }
+    .culture-card-title { font-weight: 700; font-size: 14px; color: #0E2841; margin-bottom: 6px; }
+    .culture-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .food-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .food-tag {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+    }
+
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .lang-chip {
+      background: #e8f4ff;
+      color: #0E2841;
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .lang-chip.sub { background: #f7f9fc; color: #555; font-weight: 400; }
+
+    .phrase-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+    .phrase-table th { background: #fff8e1; padding: 10px 14px; text-align: left; color: #8B4513; font-weight: 700; border-bottom: 2px solid #ffe082; }
+    .phrase-table td { padding: 10px 14px; border-bottom: 1px solid #f0f2f5; }
+    .phrase-table td:nth-child(2) { font-weight: 700; color: #0E2841; }
+    .phrase-table td:nth-child(3) { color: #8B4513; font-style: italic; }
+    .phrase-table tr:last-child td { border-bottom: none; }
+
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #E06000, #009A44, #156082);
+    }
+    .tl-item { position: relative; margin-bottom: 18px; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #E06000;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #E06000;
+    }
+    .tl-year { font-size: 12px; font-weight: 700; color: #E06000; margin-bottom: 2px; }
+    .tl-event { font-size: 14px; color: #333; font-weight: 600; }
+    .tl-desc { font-size: 13px; color: #666; margin-top: 2px; }
+
+    .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 40px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 4px; font-size: 14px; color: #444; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-flag">🇨🇮</div>
+    <div class="hero-name">コートジボワール</div>
+    <div class="hero-sub">Republic of Côte d'Ivoire / République de Côte d'Ivoire</div>
+    <div class="hero-tags">
+      <span class="hero-tag">🌍 西アフリカ</span>
+      <span class="hero-tag">🏛 共和制</span>
+      <span class="hero-tag">💰 XOF（セーファーフラン）</span>
+      <span class="hero-tag">🕌 イスラム教 / キリスト教</span>
+      <span class="hero-tag">🍫 世界最大カカオ生産国</span>
+    </div>
+    <div class="meta-updated">調査日: 2026年4月23日 — /country-info by Wanderlust</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:#0088FF;">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">人口</div>
+      <div class="stat-value">3,271万人</div>
+      <div class="stat-sub">世界第約47位</div>
+    </div>
+    <div class="stat-card" style="--accent:#38761D;">
+      <div class="stat-icon">💵</div>
+      <div class="stat-label">GDP（名目）</div>
+      <div class="stat-value">約800億ドル</div>
+      <div class="stat-sub">世界第約80位</div>
+    </div>
+    <div class="stat-card" style="--accent:#FF9900;">
+      <div class="stat-icon">📈</div>
+      <div class="stat-label">経済成長率</div>
+      <div class="stat-value">6.2%</div>
+      <div class="stat-sub">2025年（Q3実績）</div>
+    </div>
+    <div class="stat-card" style="--accent:#9900FF;">
+      <div class="stat-icon">🗺</div>
+      <div class="stat-label">国土面積</div>
+      <div class="stat-value">32.2万km²</div>
+      <div class="stat-sub">世界第約68位（日本の約0.85倍）</div>
+    </div>
+    <div class="stat-card" style="--accent:#156082;">
+      <div class="stat-icon">🏙</div>
+      <div class="stat-label">経済首都</div>
+      <div class="stat-value" style="font-size:18px;">アビジャン</div>
+      <div class="stat-sub">※公式首都はヤムスクロ</div>
+    </div>
+    <div class="stat-card" style="--accent:#e53935;">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">一人当たりGDP</div>
+      <div class="stat-value">3,016 USD</div>
+      <div class="stat-sub">PPP: 約6,400 USD</div>
+    </div>
+    <div class="stat-card" style="--accent:#C8960C;">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-label">HDI</div>
+      <div class="stat-value">0.550</div>
+      <div class="stat-sub">世界166位（中程度）</div>
+    </div>
+    <div class="stat-card" style="--accent:#8B1A1A;">
+      <div class="stat-icon">🍫</div>
+      <div class="stat-label">主要産業</div>
+      <div class="stat-value" style="font-size:14px;">カカオ・石油・ゴム</div>
+      <div class="stat-sub">世界カカオ生産の45%</div>
+    </div>
+  </div>
+
+  <!-- 産業・輸出・資源 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏭</span>
+      <span class="section-title">産業・輸出産品・資源</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要産業</th><td>カカオ農業・食品加工、石油精製、天然ゴム、カシューナッツ、金採掘、木材、繊維</td></tr>
+        <tr><th>GDPの構成</th><td>サービス業 約50% ／ 工業 約25% ／ 農業 約25%</td></tr>
+        <tr><th>主要輸出品</th><td>カカオ豆 19.4%、金 15.3%、天然ゴム 12%、精製石油 10%、カカオペースト 6%、カシューナッツ 5.9%</td></tr>
+        <tr><th>総輸出額</th><td>205億ドル（2024年）</td></tr>
+        <tr><th>主要輸出相手国</th><td>オランダ、米国、マレーシア、ベルギー、ドイツ、フランス</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>産出資源</th><td>石油・天然ガス（オフショア）、マンガン、鉄鉱石、ダイヤモンド、金</td></tr>
+        <tr><th>農産物</th><td>カカオ豆、コーヒー、カシューナッツ、ヤシ油、バナナ、サトウキビ、綿花、ゴム</td></tr>
+        <tr><th>カカオ産業</th><td>世界生産量の45%を占める最大産地。2024年は国内加工率44%に達し、2026年に50%を目標とする。</td></tr>
+        <tr><th>石油産業</th><td>新油田発見で埋蔵量が25%増加。日産40,000バレルまで生産増強（2024年）。輸出の15%を占める。</td></tr>
+        <tr><th>農業雇用</th><td>労働人口の約70%が農業関連に従事。小農を中心にカカオ・コーヒー生産が基幹。</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2COL: 言語 + 気候 -->
+  <div class="two-col">
+
+    <!-- 言語 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🗣</span>
+        <span class="section-title">言語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin-bottom:10px;"><strong>公用語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip">フランス語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin:14px 0 8px;"><strong>主要現地語・リンガフランカ</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip sub">ジュラ語（全国共通語）</span>
+        <span class="lang-chip sub">バウレ語</span>
+        <span class="lang-chip sub">ベテ語</span>
+        <span class="lang-chip sub">セヌフォ語</span>
+        <span class="lang-chip sub">ダン語</span>
+        <span class="lang-chip sub">英語通用度: 低</span>
+      </div>
+      <p style="font-size:13px;color:#888;margin-top:14px;">国内で約69の言語が話されている多言語国家。言語はニジェール・コンゴ語族のクワ語派（南部）、マンデ語派（北西部）、グル語派（北東部）の3系統に大別される。都市部ではフランス語が通じるが、英語は限定的。ジュラ語は市場や北部で広く使われる実用的な言語。</p>
+
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-top:20px;margin-bottom:8px;">🗨 旅行者向け基本フレーズ（フランス語）</p>
+      <table class="phrase-table">
+        <tr><th>場面</th><th>フランス語</th><th>読み方</th></tr>
+        <tr><td>こんにちは</td><td>Bonjour</td><td>ボンジュール</td></tr>
+        <tr><td>こんばんは</td><td>Bonsoir</td><td>ボンソワール</td></tr>
+        <tr><td>ありがとう</td><td>Merci</td><td>メルシー</td></tr>
+        <tr><td>どういたしまして</td><td>De rien</td><td>ドゥ・リアン</td></tr>
+        <tr><td>はい / いいえ</td><td>Oui / Non</td><td>ウィ / ノン</td></tr>
+        <tr><td>いくら？</td><td>C'est combien ?</td><td>セ・コンビアン？</td></tr>
+        <tr><td>トイレはどこ？</td><td>Où sont les toilettes ?</td><td>ウ・ソン・レ・トワレット？</td></tr>
+        <tr><td>すみません</td><td>Excusez-moi</td><td>エクスキュゼ・モワ</td></tr>
+        <tr><td>助けてください</td><td>Au secours !</td><td>オ・スクール！</td></tr>
+        <tr><td>水をください</td><td>De l'eau, s'il vous plaît</td><td>ドゥ・ロー・シルブプレ</td></tr>
+      </table>
+
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-top:20px;margin-bottom:8px;">🗨 ジュラ語（市場・地方で使える）</p>
+      <table class="phrase-table">
+        <tr><th>場面</th><th>ジュラ語</th><th>読み方</th></tr>
+        <tr><td>こんにちは</td><td>I ni sɔgɔma</td><td>イ・ニ・ソゴマ（朝）</td></tr>
+        <tr><td>ありがとう</td><td>I ni cε</td><td>イ・ニ・チェ</td></tr>
+        <tr><td>いくら？</td><td>Jɔli?</td><td>ジョリ？</td></tr>
+      </table>
+    </div>
+
+    <!-- 気候 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🌤</span>
+        <span class="section-title">気候</span>
+        <span class="section-badge">ケッペン</span>
+      </div>
+      <div class="koppen-badge">Am / Aw（地域差あり）</div>
+      <p style="font-size:14px;color:#444;">アビジャン（南部沿岸）は<strong>熱帯モンスーン気候（Am）</strong>、北部・内陸は<strong>熱帯サバナ気候（Aw）</strong>。年平均気温は25〜32℃で、季節変動は少ない。首都アビジャンの年間降水量は約1,900mm。</p>
+
+      <p style="font-size:13px;font-weight:700;color:#0E2841;margin:14px 0 6px;">📍 南部（アビジャン）の4シーズン</p>
+      <div class="season-row">
+        <div class="season-chip wet">
+          <b>大雨季</b>
+          4月〜7月 / 25〜28℃
+        </div>
+        <div class="season-chip dry">
+          <b>小乾季</b>
+          8月〜9月 / 24〜26℃
+        </div>
+        <div class="season-chip wet">
+          <b>小雨季</b>
+          10月〜11月 / 26〜29℃
+        </div>
+        <div class="season-chip dry">
+          <b>大乾季</b>
+          12月〜3月 / 26〜32℃
+        </div>
+      </div>
+
+      <p style="font-size:13px;font-weight:700;color:#0E2841;margin:14px 0 6px;">📍 北部（ヤムスクロ・コルホゴ）の2シーズン</p>
+      <div class="season-row">
+        <div class="season-chip hot">
+          <b>乾季（ハルマッタン）</b>
+          11月〜5月 / 25〜40℃
+        </div>
+        <div class="season-chip wet">
+          <b>雨季</b>
+          6月〜10月 / 25〜32℃
+        </div>
+      </div>
+
+      <div style="margin-top:20px;background:#fff8e1;border-radius:10px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:10px;">👘 シーズン別服装ガイド</p>
+        <div class="outfit-grid">
+          <div class="outfit-card">
+            <div class="outfit-card-title">☀️ 乾季（12〜3月）</div>
+            <div class="outfit-card-text">軽い綿素材のTシャツ・半袖で十分。北部は朝晩涼しくなるため薄手の上着を1枚準備。ハルマッタン（砂塵風）が吹く北部は粉塵対策のマスクがあると便利。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌧 雨季（4〜7月・10〜11月）</div>
+            <div class="outfit-card-text">折り畳み傘またはレインコートは必携。スコールは激しいが短時間で上がることが多い。蒸し暑いため速乾素材が快適。サンダルより防水シューズ推奨。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌞 UV・虫対策（通年）</div>
+            <div class="outfit-card-text">紫外線が非常に強いため日焼け止め（SPF50+）必須。マラリア媒介の蚊が多いため虫除けスプレー、長袖・長ズボンを夕方以降は着用すること。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🕌 宗教施設</div>
+            <div class="outfit-card-text">モスク訪問時は肌の露出を控え、女性はスカーフで頭を覆う。教会・伝統的な儀式の場でも露出度の高い服装は避ける。ビーチウェアは海岸・プール以外ではNG。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 文化・国民性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title">文化・国民性</span>
+    </div>
+    <div class="culture-grid">
+      <div class="culture-card">
+        <div class="culture-card-icon">🤝</div>
+        <div class="culture-card-title">対人関係・礼儀</div>
+        <div class="culture-card-text">極めて歓迎的で親しみやすい国民性。握手＋アイコンタクト＋笑顔が基本の挨拶。仲良くなると女性同士・異性間ではフランス式の頬へのキス（3回）で挨拶する。長老や目上の人への敬意が重要で、食事・物の受け渡しには右手を使うこと。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⏰</div>
+        <div class="culture-card-title">時間感覚・仕事観</div>
+        <div class="culture-card-text">「アフリカンタイム」の傾向あり。約束の時間より30分〜1時間遅れることが常態化している。ビジネスミーティングもフレキシブルに動く。ただしアビジャンの都市部ビジネス層は比較的時間に正確になってきている。人間関係の構築を優先するため、初回の会議は世間話から始める。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🙏</div>
+        <div class="culture-card-title">宗教・信仰</div>
+        <div class="culture-card-text">イスラム教（42.5%）とキリスト教（39.8%）が共存し、伝統的な信仰（祖先崇拝・精霊信仰）も根強い。ラマダン期間中は北部の飲食店が閉まることがある。宗教的寛容さは比較的高く、南北の宗教的対立は日常生活レベルでは穏やか。ただし政治的に利用されることもある。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🎉</div>
+        <div class="culture-card-title">祝祭・行事</div>
+        <div class="culture-card-text">仮面祭り（Fête des Masques）：バウレ族が祖先と森の精霊を称えるカラフルな祭典。アビジャン国際音楽フェスティバル（FEMUA）：毎年4〜5月開催、西アフリカ最大級。独立記念日（8月7日）は盛大な祝典。ラマダン明けのイード・アル＝フィトルも重要な祝日。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⚠️</div>
+        <div class="culture-card-title">タブー・NG行動</div>
+        <div class="culture-card-text">左手での食事・物の受け渡しは不浄とされるため絶対にNG。長老・年配者を軽んじる言動は禁物。人前での過度なスキンシップ（異性間）は避ける。モスク内での撮影は許可を得ること。民族衣装・仮面を許可なく触れない。道端でのゴミの無断投棄も印象が悪い。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">💬</div>
+        <div class="culture-card-title">コミュニケーション特性</div>
+        <div class="culture-card-text">ハイコンテキスト文化。直接的な拒否よりも遠回しな表現を好む。笑顔で「oui（はい）」と言っても必ずしも同意ではない場合がある。交渉（値切り）は市場では一般的で、提示価格の50〜70%から始めるのが慣習。コミュニティ（家族・部族）への帰属意識が個人よりも強い。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 民族・宗教構成 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">👥</span>
+      <span class="section-title">構成民族・宗教</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要民族</th><td>アカン系（バウレ・アニ等）38%、ヴォルタイク／グル系（セヌフォ等）22%、北部マンデ系（ジュラ・マリンケ等）22%</td></tr>
+        <tr><th>少数民族</th><td>クル系（ベテ・ネヨ等）9.1%、南部マンデ系（ダン等）8.6%、外国人系（レバノン人、フランス人、隣国移民）25〜40%</td></tr>
+        <tr><th>宗教構成</th><td>イスラム教 42.5%、キリスト教 39.8%（うちカトリック17.2%、プロテスタント系22.6%）、伝統宗教 12.6%、その他 5.1%</td></tr>
+        <tr><th>宗教的背景</th><td>北部がイスラム優勢、南部がキリスト教優勢という地理的分布。複数宗教を併せ持つ人も多く、伝統信仰との融合が見られる。</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>民族的特徴</th><td>60以上の民族が共存する多民族国家。各民族が固有の言語・衣装・音楽・仮面文化を持つ。</td></tr>
+        <tr><th>歴史的背景</th><td>植民地時代の行政区分と現在の民族分布が複雑に絡み合う。マンデ系は古くから交易で栄え、アカン系は森林地帯で農業・金採掘に従事。</td></tr>
+        <tr><th>民族間関係</th><td>1990年代以降「イヴォワリテ（Ivoirité）」問題が政治的対立の火種に。2002年内戦は南北・民族・宗教対立が複雑に絡んだ。現在は比較的安定。</td></tr>
+        <tr><th>外国人人口</th><td>隣国（ブルキナファソ・マリ・ギニア）からの移民が人口の25〜40%を占めると推定される西アフリカ最大の移民受入国の一つ。</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 食文化 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🍽</span>
+      <span class="section-title">主食・食文化</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">イヴォワール料理は根菜・穀物・魚・肉・豊富なスパイスを組み合わせた豊かな食文化を持つ。主食はキャッサバ・ヤム・プランテン・米・トウモロコシ。道端の屋台（マキ）文化が発達しており、数百円で本格的なローカルフードが楽しめる。食事は家族・コミュニティで共に大皿を囲むスタイルが基本で、食事の分かち合いは歓待の象徴。</p>
+    <p style="font-size:13px;color:#555;font-weight:600;margin-bottom:8px;">絶対に食べるべき料理</p>
+    <div class="food-list">
+      <span class="food-tag">🥣 アティエケ（発酵キャッサバクスクス）</span>
+      <span class="food-tag">🍌 アロコ（揚げプランテン）</span>
+      <span class="food-tag">🍲 ケジェヌー（鶏の密閉鍋蒸し）</span>
+      <span class="food-tag">🥘 ソース・グライン（パームナッツスープ）</span>
+      <span class="food-tag">🫕 フトゥ（プランテン＋ヤムのすり鉢料理）</span>
+      <span class="food-tag">🐟 ポワソン・ブレゼ（炭火焼き魚）</span>
+      <span class="food-tag">🥜 アラコ（インゲン豆スープ）</span>
+      <span class="food-tag">🥤 ビサップ（ハイビスカスジュース）</span>
+      <span class="food-tag">🌴 バンギ（ヤシ酒）</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-top:14px;">アティエケは2024年にユネスコ無形文化遺産に登録され「国民食」として世界的に認知されつつある。ベジタリアンメニューは限定的（肉・魚は多くの料理に使われる）。衛生面では屋台は煮沸・加熱済みを選び、生野菜サラダはホテル・高級レストランで食べることを推奨。水は必ずボトル水を使用すること。</p>
+  </div>
+
+  <!-- 物価 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💴</span>
+      <span class="section-title">物価ガイド</span>
+      <span class="section-badge">XOF（セーファーフラン）/ 2025-26年基準</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">
+      為替レート: <strong>1 USD ≈ 556 XOF</strong> &nbsp;|&nbsp; <strong>1 XOF ≈ 0.28円</strong> &nbsp;|&nbsp; <strong>1 USD ≈ 約156円</strong><br>
+      ※ XOFはユーロに固定（1EUR = 655.957 XOF）のため比較的安定。物価は観光地・高級エリア（ココディ、ゾーン4）と地元エリアで大きく異なります。
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-emoji">🚕</div>
+        <div>
+          <div class="price-item-name">タクシー（5km目安）</div>
+          <div class="price-amount">2,000〜3,500 XOF</div>
+          <div class="price-jpy">≈ 560〜980円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">☕</div>
+        <div>
+          <div class="price-item-name">カフェのコーヒー</div>
+          <div class="price-amount">1,500〜3,000 XOF</div>
+          <div class="price-jpy">≈ 420〜840円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍺</div>
+        <div>
+          <div class="price-item-name">ビール（500ml）</div>
+          <div class="price-amount">1,000〜2,500 XOF</div>
+          <div class="price-jpy">≈ 280〜700円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">屋台・地元食堂の定食</div>
+          <div class="price-amount">1,000〜2,500 XOF</div>
+          <div class="price-jpy">≈ 280〜700円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">観光地レストラン（1人）</div>
+          <div class="price-amount">8,000〜20,000 XOF</div>
+          <div class="price-jpy">≈ 2,240〜5,600円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">💧</div>
+        <div>
+          <div class="price-item-name">ペットボトル水（500ml）</div>
+          <div class="price-amount">300〜600 XOF</div>
+          <div class="price-jpy">≈ 84〜168円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🚌</div>
+        <div>
+          <div class="price-item-name">バス・ワゴン（1乗車）</div>
+          <div class="price-amount">200〜500 XOF</div>
+          <div class="price-jpy">≈ 56〜140円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏩</div>
+        <div>
+          <div class="price-item-name">中級ホテル（1泊）</div>
+          <div class="price-amount">50,000〜100,000 XOF</div>
+          <div class="price-jpy">≈ 14,000〜28,000円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏨</div>
+        <div>
+          <div class="price-item-name">ゲストハウス（1泊）</div>
+          <div class="price-amount">10,000〜25,000 XOF</div>
+          <div class="price-jpy">≈ 2,800〜7,000円</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:#f0f7ff;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-bottom:8px;">💡 旅行者の1日平均支出目安（アビジャン）</p>
+      <table class="info-table">
+        <tr><th>バジェット旅行</th><td>10,000〜20,000 XOF/日（≈ 2,800〜5,600円）— 屋台・ゲストハウス・乗合交通中心</td></tr>
+        <tr><th>標準旅行</th><td>30,000〜60,000 XOF/日（≈ 8,400〜16,800円）— 地元レストラン・中級ホテル・タクシー利用</td></tr>
+        <tr><th>快適旅行</th><td>80,000〜150,000 XOF/日（≈ 22,400〜42,000円）— 観光地レストラン・上級ホテル・移動タクシー</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 政治・安定性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <span class="section-title">政治・安定性</span>
+    </div>
+    <div class="two-col" style="gap:12px;">
+      <table class="info-table">
+        <tr><th>政治体制</th><td>共和制（大統領制）</td></tr>
+        <tr><th>元首・大統領</th><td>アラサン・ワタラ（Alassane Ouattara）/ 2011年〜</td></tr>
+        <tr><th>首相</th><td>ロベール・マンラン・ベアウガルト（2024〜）</td></tr>
+        <tr><th>外務省危険レベル</th><td>レベル1（十分注意）/ 北部・西部国境付近はレベル2</td></tr>
+        <tr><th>民主主義指数</th><td>4.2/10（ハイブリッド政権）</td></tr>
+        <tr><th>腐敗認識指数（CPI）</th><td>37/100（世界約99位）</td></tr>
+      </table>
+      <div>
+        <div class="stability-bar-wrap">
+          <div class="stability-label"><span>政治的安定性（世銀WGI）</span><span>16%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:16%"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>腐敗抑制</span><span>30%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:30%;background:linear-gradient(90deg,#FF9900,#e53935)"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>法の支配</span><span>25%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:25%;background:linear-gradient(90deg,#156082,#38761D)"></div></div>
+        </div>
+        <p style="font-size:13px;color:#888;margin-top:16px;">2011年の内戦終結後、ワタラ政権下で持続的な経済成長（年率6〜8%）を達成し安定を維持。ただし2020年のワタラ3選をめぐる政治的緊張が残る。北部はブルキナファソ・マリ情勢の悪化を受け、武装集団の越境に警戒が必要。アビジャン市内は観光・ビジネス目的には概ね安全だが、スリ・強盗への注意は必要。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 高校世界史タイムライン -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">コートジボワールの歴史：高校世界史の必修事項</span>
+      <span class="section-badge">受験レベル</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">前1000年〜</div>
+        <div class="tl-event">先住民族の定住と王国形成</div>
+        <div class="tl-desc">マンデ系・クワ系・ヴォルタイク系諸民族が現在の国土に定住。交易ネットワークと部族王国を形成。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1461年</div>
+        <div class="tl-event">ポルトガル人が海岸に到達</div>
+        <div class="tl-desc">象牙貿易が盛んになり「コート・ディヴォワール（象牙海岸）」と命名される。奴隷貿易も開始。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">17〜18世紀</div>
+        <div class="tl-event">バウレ族のガーナからの大移住</div>
+        <div class="tl-desc">アシャンティ王国から分離したバウレ族が中部に定着し、内陸の政治・文化の中心となる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1843年</div>
+        <div class="tl-event">フランスが保護領を樹立</div>
+        <div class="tl-desc">グランバッサム・アサン・グランラウ等の首長とフランスが保護条約を締結。フランス勢力が沿岸部に拡大。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1893年</div>
+        <div class="tl-event">フランス植民地「コートジボワール」正式成立</div>
+        <div class="tl-desc">ルイ・ギュスターヴ・ビニェが初代総督に就任。カカオ・コーヒー農園開発が本格化し、強制労働制度が導入される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1904年</div>
+        <div class="tl-event">フランス西アフリカ（AOF）に編入</div>
+        <div class="tl-desc">ダカール（セネガル）を本部とするフランス西アフリカ連邦の一部となる。行政・経済のフランス依存が深まる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1944年</div>
+        <div class="tl-event">ウフェ＝ボワニーが農業組合を設立し、政治活動を開始</div>
+        <div class="tl-desc">フェリックス・ウフェ＝ボワニー（Houphouët-Boigny）がアフリカ農業組合（SAA）を設立。植民地政府に対するアフリカ農民の権利を訴える。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1946年</div>
+        <div class="tl-event">「ウフェ法」による強制労働廃止</div>
+        <div class="tl-desc">ウフェ＝ボワニーがフランス国民議会議員として提案した法律が成立。植民地での強制労働が廃止される（高校入試頻出）。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1960年8月7日</div>
+        <div class="tl-event">独立達成・ウフェ＝ボワニーが初代大統領就任</div>
+        <div class="tl-desc">フランスからの独立を宣言。ウフェ＝ボワニーは1993年の死去まで33年間大統領を務め、「父なる大統領」と称される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1960〜70年代</div>
+        <div class="tl-event">「コートジボワールの奇跡」—アフリカ最高水準の経済成長</div>
+        <div class="tl-desc">カカオ・コーヒーの国際価格高騰を背景に年率8〜10%の経済成長を達成。西アフリカで最も豊かな国の一つとなる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1980年代</div>
+        <div class="tl-event">コモディティ価格暴落による経済危機</div>
+        <div class="tl-desc">カカオ・コーヒー価格の大幅下落でIMFの構造調整プログラムを受け入れ。社会不安が高まりウフェ＝ボワニーへの批判が増す。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1993年</div>
+        <div class="tl-event">ウフェ＝ボワニー死去・権力移行の混乱</div>
+        <div class="tl-desc">33年間大統領を務めたウフェ＝ボワニーが死去。後継をめぐる権力闘争が始まり、政治的不安定期に入る。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1999年</div>
+        <div class="tl-event">軍事クーデター（歴史上初）</div>
+        <div class="tl-desc">ロベール・ゲイ将軍がクーデターで政権掌握。コートジボワール史上初の軍事政権誕生。「イヴォワリテ（真のコートジボワール人）」問題が政治対立の軸となる。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2000〜2002年</div>
+        <div class="tl-event">グバグボ政権成立・第一次内戦勃発</div>
+        <div class="tl-desc">ローラン・グバグボが大統領就任後、2002年に北部反乱軍（新勢力）が武装蜂起。国土が南部（政府軍）と北部（反乱軍）に分断される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2007年</div>
+        <div class="tl-event">ワガドゥグー和平協定締結</div>
+        <div class="tl-desc">ブルキナファソの仲介でグバグボと反乱軍指導者ギヨーム・ソロが和平合意。形式的な統一政府が発足。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2010〜2011年</div>
+        <div class="tl-event">第二次内戦・ワタラが勝利・グバグボ逮捕</div>
+        <div class="tl-desc">2010年大統領選でアラサン・ワタラが当選するも、グバグボが敗北を認めず第二次内戦に発展。フランス軍・国連の支援を受けワタラ側が勝利し、グバグボはICC（国際刑事裁判所）に引き渡される。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2011〜現在</div>
+        <div class="tl-event">ワタラ政権による経済復興・アフリカの新興経済大国へ</div>
+        <div class="tl-desc">インフラ投資・農業近代化・外資誘致で年率6〜8%の成長を維持。2020年のワタラ3選は憲法解釈をめぐり物議を醸したが政権は安定。2026年以降のカカオ加工産業高度化が次の課題。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- アビジャン エリアガイド -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🗺</span>
+      <span class="section-title">アビジャン エリアガイド</span>
+      <span class="section-badge">首都の歩き方</span>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">アビジャンは西アフリカ最大級の都市（人口約500万人）で、ラグーン（エブリエ潟）に挟まれた独特の地形を持つ。エリアは橋で繋がれた複数の「島」状の区画に分かれる。移動はタクシー（Yango/InDriveアプリが安全・便利）かレシャン（乗合ミニバス）。渋滞が激しいため余裕を持ったスケジューリングが重要。</p>
+    <div class="area-grid">
+      <div class="area-card tourist">
+        <div class="area-name">ル・プラトー（Le Plateau）</div>
+        <div class="area-type">ビジネス・観光・中心街</div>
+        <div class="area-desc">アビジャンのCBD（中央ビジネス地区）。高層ビル・銀行・政府機関・フランス大使館が集中。セント・ポール大聖堂や国立博物館が観光スポット。昼は賑やかだが夜は閑散とするため宿泊は他エリアが便利。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">ココディ（Cocody）</div>
+        <div class="area-type">高級住宅街・外交エリア</div>
+        <div class="area-desc">外国大使館・富裕層・外国人駐在員が集まるアビジャン随一の高級エリア。リビエラ・ドゥ・プラトー・アングレ地区などサブ地区を持つ。治安が良く歩きやすい。高級レストラン・カフェ・スーパーが充実。旅行者の宿泊に最適。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">ゾーン4（Zone 4）</div>
+        <div class="area-type">ナイトライフ・グルメ</div>
+        <div class="area-desc">アビジャン最大のエンタメ・グルメエリア。フランス料理・レバノン料理・日本料理まで多国籍レストランが立ち並ぶ。週末の夜はクラブやバーが活況を呈し、外国人旅行者・外交官に人気。高級マンションも増加中。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">マルコリー（Marcory）</div>
+        <div class="area-type">若者・ナイトライフ・ローカル</div>
+        <div class="area-desc">若い外国人駐在員や中産階級イヴォワール人に人気。西洋スタイルのバー・クラブ・カフェが豊富。ゾーン4よりカジュアルでリーズナブル。夜はにぎやかになるため一人歩きには注意。</div>
+      </div>
+      <div class="area-card business">
+        <div class="area-name">トレシュビル（Treichville）</div>
+        <div class="area-type">商業・文化・ローカルエリア</div>
+        <div class="area-desc">アビジャン最古の商業・文化地区。活気あるアフリカ市場（グランマルシェ）、劇場、競馬場がある。屋台飯やローカルバーが充実し地元の生活に触れられる。ただし夜のひとり歩きは控えること。</div>
+      </div>
+      <div class="area-card transport">
+        <div class="area-name">アジャメ（Adjamé）</div>
+        <div class="area-type">交通ハブ・市場</div>
+        <div class="area-desc">アビジャン最大の長距離バスターミナルと巨大市場があるカオス的なエリア。スリや詐欺が多いため貴重品管理に細心の注意が必要。乗換え・移動の起点として使うが滞在・観光には不向き。バッグは前抱えで。</div>
+      </div>
+      <div class="area-card caution">
+        <div class="area-name">アボボ（Abobo）</div>
+        <div class="area-type">⚠️ 注意エリア</div>
+        <div class="area-desc">アビジャン北部の過密スラム地区。2011年内戦時の激戦地で、現在も犯罪率が高く外国人旅行者には強く非推奨のエリア。特用は絶対になく、やむを得ず通過する際は日中に。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">ビンジェルビル（Bingerville）</div>
+        <div class="area-type">歴史地区・のんびり観光</div>
+        <div class="area-desc">かつてのフランス植民地時代の首都。植物園・旧総督邸・静かな街並みが楽しめる。ラグーン沿いの景色が美しく週末の小旅行に最適。アビジャン中心部から約25km東。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    コートジボワール Country Profile — /country-info by Wanderlust &nbsp;|&nbsp; 調査日: 2026-04-23 &nbsp;|&nbsp; ※情報は変動するため渡航前に外務省・大使館の公式情報を確認してください
+  </div>
+
+</div>
+</body>
+</html>

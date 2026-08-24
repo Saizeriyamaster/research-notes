@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トルコ — Country Profile</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.7;
+      padding: 24px 16px 64px;
+    }
+    .page { max-width: 960px; margin: 0 auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #C8001E 0%, #8B0013 60%, #3a0008 100%);
+      border-radius: 16px;
+      padding: 48px 48px 40px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="60" fill="rgba(255,255,255,0.04)"/><circle cx="10" cy="80" r="40" fill="rgba(255,255,255,0.02)"/></svg>');
+      pointer-events: none;
+    }
+    .hero-flag { font-size: 72px; line-height: 1; margin-bottom: 12px; }
+    .hero-name { font-size: 42px; font-weight: 700; letter-spacing: -0.5px; }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,0.75); margin-top: 6px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .hero-tag {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+    }
+    .meta-updated { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 16px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-top: 3px solid var(--accent, #0088FF);
+    }
+    .stat-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #0E2841; margin-top: 4px; }
+    .stat-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    .section-icon { font-size: 22px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .section-badge {
+      margin-left: auto;
+      background: #e8f4ff;
+      color: #0088FF;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .info-table th {
+      background: #f7f9fc;
+      text-align: left;
+      padding: 10px 14px;
+      color: #555;
+      font-weight: 600;
+      width: 35%;
+      border-bottom: 1px solid #eee;
+    }
+    .info-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #333;
+    }
+    .info-table tr:last-child th,
+    .info-table tr:last-child td { border-bottom: none; }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .price-card {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .price-emoji { font-size: 28px; flex-shrink: 0; }
+    .price-item-name { font-size: 13px; color: #666; }
+    .price-amount { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .price-jpy { font-size: 12px; color: #0088FF; margin-top: 1px; }
+
+    .koppen-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #196B24, #38761D);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .season-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .season-chip {
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .season-chip.dry    { background: #fff8e1; border-left: 4px solid #FF9900; }
+    .season-chip.wet    { background: #e8f5e9; border-left: 4px solid #38761D; }
+    .season-chip.hot    { background: #fce4ec; border-left: 4px solid #e53935; }
+    .season-chip.cold   { background: #e3f2fd; border-left: 4px solid #1565c0; }
+    .season-chip.mild   { background: #f3e5f5; border-left: 4px solid #6a1b9a; }
+    .season-chip b { display: block; font-size: 12px; margin-bottom: 3px; }
+
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .outfit-card { background: #f7f9fc; border-radius: 10px; padding: 14px 16px; }
+    .outfit-card-title { font-weight: 700; font-size: 13px; color: #0E2841; margin-bottom: 6px; }
+    .outfit-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .area-card {
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 5px solid var(--area-color, #0088FF);
+      background: #f7f9fc;
+    }
+    .area-card.nightlife   { --area-color: #9900FF; background: #faf5ff; }
+    .area-card.residential { --area-color: #38761D; background: #f5fff7; }
+    .area-card.tourist     { --area-color: #0088FF; background: #f0f7ff; }
+    .area-card.business    { --area-color: #156082; background: #f0f6fa; }
+    .area-card.caution     { --area-color: #e53935; background: #fff5f5; }
+    .area-card.transport   { --area-color: #FF9900; background: #fff8f0; }
+    .area-name { font-weight: 700; font-size: 15px; color: #0E2841; margin-bottom: 4px; }
+    .area-type { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .area-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+    .stability-bar-wrap { margin-top: 8px; }
+    .stability-label { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 4px; }
+    .stability-bar { height: 10px; background: #eee; border-radius: 99px; overflow: hidden; }
+    .stability-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #38761D, #0088FF); }
+
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .culture-card { background: #f7f9fc; border-radius: 10px; padding: 16px; }
+    .culture-card-icon { font-size: 28px; margin-bottom: 8px; }
+    .culture-card-title { font-weight: 700; font-size: 14px; color: #0E2841; margin-bottom: 6px; }
+    .culture-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .food-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .food-tag {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+    }
+
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .lang-chip {
+      background: #e8f4ff;
+      color: #0E2841;
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .lang-chip.sub { background: #f7f9fc; color: #555; font-weight: 400; }
+
+    .phrase-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+    .phrase-table th { background: #fff8e1; padding: 10px 14px; text-align: left; color: #8B4513; font-weight: 700; border-bottom: 2px solid #ffe082; }
+    .phrase-table td { padding: 10px 14px; border-bottom: 1px solid #f0f2f5; }
+    .phrase-table td:nth-child(2) { font-weight: 700; color: #0E2841; }
+    .phrase-table td:nth-child(3) { color: #8B4513; font-style: italic; }
+    .phrase-table tr:last-child td { border-bottom: none; }
+
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #C8960C, #C8001E, #156082, #38761D);
+    }
+    .tl-item { position: relative; margin-bottom: 18px; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #C8960C;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #C8960C;
+    }
+    .tl-year { font-size: 12px; font-weight: 700; color: #C8960C; margin-bottom: 2px; }
+    .tl-event { font-size: 14px; color: #333; font-weight: 600; }
+    .tl-desc { font-size: 13px; color: #666; margin-top: 2px; }
+
+    .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 40px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 4px; font-size: 14px; color: #444; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-flag">🇹🇷</div>
+    <div class="hero-name">トルコ</div>
+    <div class="hero-sub">Republic of Türkiye / Türkiye Cumhuriyeti</div>
+    <div class="hero-tags">
+      <span class="hero-tag">🌍 西アジア・東ヨーロッパ</span>
+      <span class="hero-tag">🏛 大統領制共和国</span>
+      <span class="hero-tag">💰 TRY（トルコリラ）</span>
+      <span class="hero-tag">🕌 イスラム教（世俗国家）</span>
+      <span class="hero-tag">✈️ EU候補国</span>
+    </div>
+    <div class="meta-updated">調査日: 2026年4月23日 — /country-info by Wanderlust</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:#C8001E;">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">人口</div>
+      <div class="stat-value">8,530万人</div>
+      <div class="stat-sub">世界第18位</div>
+    </div>
+    <div class="stat-card" style="--accent:#38761D;">
+      <div class="stat-icon">💵</div>
+      <div class="stat-label">GDP（名目）</div>
+      <div class="stat-value">1.36兆ドル</div>
+      <div class="stat-sub">世界第16位・欧州第7位</div>
+    </div>
+    <div class="stat-card" style="--accent:#FF9900;">
+      <div class="stat-icon">📈</div>
+      <div class="stat-label">経済成長率</div>
+      <div class="stat-value">3.3%</div>
+      <div class="stat-sub">2024年実績</div>
+    </div>
+    <div class="stat-card" style="--accent:#9900FF;">
+      <div class="stat-icon">🗺</div>
+      <div class="stat-label">国土面積</div>
+      <div class="stat-value">78.3万km²</div>
+      <div class="stat-sub">世界第37位（日本の約2倍）</div>
+    </div>
+    <div class="stat-card" style="--accent:#156082;">
+      <div class="stat-icon">🏙</div>
+      <div class="stat-label">首都</div>
+      <div class="stat-value" style="font-size:18px;">アンカラ</div>
+      <div class="stat-sub">都市圏 約580万人</div>
+    </div>
+    <div class="stat-card" style="--accent:#e53935;">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">一人当たりGDP</div>
+      <div class="stat-value">約16,000USD</div>
+      <div class="stat-sub">PPP: 約38,000USD</div>
+    </div>
+    <div class="stat-card" style="--accent:#C8960C;">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-label">HDI</div>
+      <div class="stat-value">0.853</div>
+      <div class="stat-sub">世界45位（非常に高い）</div>
+    </div>
+    <div class="stat-card" style="--accent:#8B1A1A;">
+      <div class="stat-icon">⛽</div>
+      <div class="stat-label">主要産業</div>
+      <div class="stat-value" style="font-size:14px;">製造業・観光</div>
+      <div class="stat-sub">観光がGDPの約12%</div>
+    </div>
+  </div>
+
+  <!-- 産業・輸出・資源 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏭</span>
+      <span class="section-title">産業・輸出産品・資源</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要産業</th><td>自動車・繊維・食品加工・化学・観光・建設・電子機器</td></tr>
+        <tr><th>GDPの構成</th><td>サービス業 58.2% ／ 工業 18.3% ／ 農業 2.7%（2025年）</td></tr>
+        <tr><th>主要輸出品</th><td>自動車・部品（$294億）、機械・ボイラー（$224億）、貴金属・宝石（$136億）、電気機器（$132億）</td></tr>
+        <tr><th>総輸出額</th><td>2,619億ドル（2024年）</td></tr>
+        <tr><th>主要輸出相手国</th><td>ドイツ、アメリカ、イギリス、イラク、イタリア</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>産出資源</th><td>ホウ素（世界埋蔵量の70%・EU需要の98%を供給）、石炭、クロム、大理石</td></tr>
+        <tr><th>農産物</th><td>ヘーゼルナッツ（世界生産量の70%）、小麦、タバコ（世界3位輸出国）、綿花、果物・野菜</td></tr>
+        <tr><th>観光業</th><td>2024年観光収入611億ドル（前年比+8.3%）。GDP比約12%。年間5,000万人超が訪問</td></tr>
+        <tr><th>繊維産業</th><td>世界有数の繊維・アパレル輸出国。欧州ブランドのOEM生産拠点</td></tr>
+        <tr><th>地政学的強み</th><td>ボスポラス海峡を管理。欧州・中東・中央アジアを結ぶ物流ハブ</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2COL: 言語 + 気候 -->
+  <div class="two-col">
+
+    <!-- 言語 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🗣</span>
+        <span class="section-title">言語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin-bottom:10px;"><strong>公用語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip">トルコ語（Türkçe）</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin:14px 0 8px;"><strong>その他・少数言語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip sub">クルド語（15〜20%）</span>
+        <span class="lang-chip sub">アラビア語</span>
+        <span class="lang-chip sub">ザザ語</span>
+        <span class="lang-chip sub">英語通用度: 中（観光地は高）</span>
+      </div>
+      <p style="font-size:13px;color:#888;margin-top:14px;">イスタンブール・カッパドキア・エーゲ海沿岸などの観光地では英語が通じるが、内陸部ではトルコ語のみのケースも。基本フレーズをいくつか覚えると喜ばれる。</p>
+
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-top:20px;margin-bottom:8px;">🗨 旅行者向け基本フレーズ</p>
+      <table class="phrase-table">
+        <tr><th>場面</th><th>トルコ語</th><th>読み方</th></tr>
+        <tr><td>こんにちは</td><td>Merhaba</td><td>メルハバ</td></tr>
+        <tr><td>ありがとう</td><td>Teşekkür ederim</td><td>テシェッキュル エデリム</td></tr>
+        <tr><td>どういたしまして</td><td>Rica ederim</td><td>リジャ エデリム</td></tr>
+        <tr><td>はい</td><td>Evet</td><td>エヴェット</td></tr>
+        <tr><td>いいえ</td><td>Hayır</td><td>ハユル</td></tr>
+        <tr><td>おはよう</td><td>Günaydın</td><td>ギュナイドゥン</td></tr>
+        <tr><td>いくら？</td><td>Ne kadar?</td><td>ネ カダル？</td></tr>
+        <tr><td>トイレはどこ？</td><td>Tuvalet nerede?</td><td>トゥヴァレット ネレデ？</td></tr>
+        <tr><td>助けてください</td><td>İmdat!</td><td>イムダット！</td></tr>
+      </table>
+    </div>
+
+    <!-- 気候 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🌤</span>
+        <span class="section-title">気候</span>
+        <span class="section-badge">ケッペン</span>
+      </div>
+      <div class="koppen-badge">Csa / BSk / Dfb</div>
+      <p style="font-size:14px;color:#444;">トルコは国土が広く、地域によって気候が大きく異なる。<strong>地中海・エーゲ海沿岸（Csa）</strong>：夏乾燥・温暖。<strong>中央アナトリア（BSk）</strong>：寒冷ステップ気候、寒暖差大。<strong>東部山岳地帯（Dfb）</strong>：冬は厳寒。イスタンブールはCfaに近いCsa。</p>
+      <div class="season-row">
+        <div class="season-chip mild">
+          <b>春（3〜5月）</b>
+          10〜20℃ / 観光のベストシーズン
+        </div>
+        <div class="season-chip hot">
+          <b>夏（6〜9月）</b>
+          25〜35℃ / 乾燥・快晴
+        </div>
+        <div class="season-chip wet">
+          <b>秋（10〜11月）</b>
+          15〜22℃ / 穏やか・降雨増加
+        </div>
+        <div class="season-chip cold">
+          <b>冬（12〜2月）</b>
+          3〜9℃ / 寒く積雪あり
+        </div>
+      </div>
+
+      <div style="margin-top:20px;background:#fff8e1;border-radius:10px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:10px;">👘 シーズン別服装ガイド（イスタンブール基準）</p>
+        <div class="outfit-grid">
+          <div class="outfit-card">
+            <div class="outfit-card-title">☀️ 春・秋の服装</div>
+            <div class="outfit-card-text">薄手のジャケットやカーディガンが必須。日中は半袖でも夜は冷える。重ね着が正解。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌞 夏の服装（6〜9月）</div>
+            <div class="outfit-card-text">Tシャツ＋軽いパンツでOK。ただし日差しが強烈なため帽子・サングラス必携。日焼け止めSPF50+推奨。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🧥 冬の服装（12〜2月）</div>
+            <div class="outfit-card-text">コート、ニット、マフラーが必要。雨が多くブーツ推奨。積雪時もある。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🕌 宗教施設の服装</div>
+            <div class="outfit-card-text">モスク入場時は女性はスカーフ必須・肌の露出NG。男性も半ズボン不可。ブルーモスク入口で貸し出しあり。靴は脱ぐ。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 文化・国民性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title">文化・国民性</span>
+    </div>
+    <div class="culture-grid">
+      <div class="culture-card">
+        <div class="culture-card-icon">🤝</div>
+        <div class="culture-card-title">対人関係・礼儀</div>
+        <div class="culture-card-text">「ミサフィルペルヴェルリク（misafirperverlik）」＝客人への極上のもてなしが文化の核心。初対面でもお茶（çay）を出すのが礼儀。年長者の手に口をつけておでこを当てる挨拶が最高の敬意を示す。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⏰</div>
+        <div class="culture-card-title">時間感覚・仕事観</div>
+        <div class="culture-card-text">「インシャアッラー（神の御心のままに）」という言葉が示すように、時間に対してある程度柔軟。ビジネスでは関係構築が最優先。最初の商談はほぼ社交の場。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🙏</div>
+        <div class="culture-card-title">宗教・信仰</div>
+        <div class="culture-card-text">人口の約99%がムスリムだが憲法上の世俗国家。金曜の礼拝時間にモスク付近は混雑。ラマダン（断食月）中は飲食に配慮を。アルコールは売られているが過度な飲酒は非常識。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🎉</div>
+        <div class="culture-card-title">祝祭・行事</div>
+        <div class="culture-card-text">ラマダン明けの「ラマダン・バイラム（シュッケル・バイラム）」と犠牲祭「クルバン・バイラム」が2大祝日。期間中は商店が閉まる。10月29日の共和国記念日も重要な祝日。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⚠️</div>
+        <div class="culture-card-title">タブー・NG行動</div>
+        <div class="culture-card-text">トルコ国旗・アタテュルクへの侮辱は法律違反（最大3年禁錮）。モスク内での写真撮影は礼拝中禁止。人に足の裏を向けるのはNG。左手だけで物を渡さない。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">☕</div>
+        <div class="culture-card-title">チャイ（お茶）文化</div>
+        <div class="culture-card-text">紅茶（çay/チャイ）はトルコ人の社交の血液。一日に何十杯も飲む。チューリップ型のグラスに入れてどこでも出てくる。断るのは失礼になることも。コーヒーよりもポピュラー。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 民族・宗教構成 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">👥</span>
+      <span class="section-title">構成民族・宗教</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要民族</th><td>トルコ人 約70〜75%（政府は民族統計を公開していない）</td></tr>
+        <tr><th>少数民族</th><td>クルド人（15〜20%）、アラブ人、アルメニア人、ギリシャ人、ユダヤ人、ラズ人、チェルケス人</td></tr>
+        <tr><th>宗教構成</th><td>イスラム教（スンニ派）約99% ／ キリスト教・ユダヤ教少数</td></tr>
+        <tr><th>宗教的背景</th><td>憲法上は政教分離の世俗国家だが、近年イスラム保守派の影響力が増大。アルコール規制強化の動きも。</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>民族的特徴</th><td>中央アジアのテュルク系民族を起源とするが、アナトリア先住民・ビザンツ・オスマン時代の多様な民族と混交</td></tr>
+        <tr><th>歴史的背景</th><td>11世紀のセルジューク朝移住以降、オスマン帝国600年間で多民族国家を形成。1923年の建国で「トルコ人」アイデンティティが強調された</td></tr>
+        <tr><th>民族間関係</th><td>クルド問題が最大の民族課題。PKKとの武力紛争が1984年から継続。東南部には緊張エリアが存在</td></tr>
+        <tr><th>言語と民族</th><td>トルコ語が唯一の公用語。クルド語は教育・行政への使用が制限されており人権問題となっている</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 食文化 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🍽</span>
+      <span class="section-title">主食・食文化</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">トルコ料理は世界三大料理の一つ（フランス料理・中華料理と並ぶ）。小麦・羊肉・野菜・乳製品・オリーブオイルが柱。朝食（kahvaltı/カフヴァルトゥ）は「テーブルが壊れる」と言われるほど豪華で、オリーブ・チーズ・ジャム・ハチミツ・卵・野菜が並ぶ。路上の「simit（スィミット）」はゴマパン型の定番屋台フード。</p>
+    <p style="font-size:13px;color:#555;font-weight:600;margin-bottom:8px;">絶対に食べるべき料理</p>
+    <div class="food-list">
+      <span class="food-tag">🥩 アダナ・ケバブ</span>
+      <span class="food-tag">🥩 イスケンデル・ケバブ</span>
+      <span class="food-tag">🥙 ラフマジュン（トルコピザ）</span>
+      <span class="food-tag">🥟 マントゥ（トルコ餃子）</span>
+      <span class="food-tag">🫓 ピデ（舟型パン）</span>
+      <span class="food-tag">🫙 フムス & メゼ</span>
+      <span class="food-tag">🍆 カルヌヤルク（揚げナス）</span>
+      <span class="food-tag">🥘 クル・ファスリエ（白インゲン豆煮込み）</span>
+      <span class="food-tag">🍩 バクラヴァ</span>
+      <span class="food-tag">🍬 ロクム（トルコ菓子）</span>
+      <span class="food-tag">☕ トルココーヒー</span>
+      <span class="food-tag">🍵 チャイ（紅茶）</span>
+      <span class="food-tag">🥤 アイラン（塩ヨーグルト飲料）</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-top:14px;">ハラール食文化なので豚肉・豚由来食品はほぼ不在だが、観光地では豚肉入り料理も一部提供。ベジタリアン向けにはメゼ（前菜）が充実。飲料水は水道水を直接飲むのは避け、ペットボトル購入を推奨。</p>
+  </div>
+
+  <!-- 物価 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💴</span>
+      <span class="section-title">物価ガイド</span>
+      <span class="section-badge">TRY / 2026年4月基準</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">
+      為替レート: <strong>1 USD ≈ 44.9 TRY</strong> &nbsp;|&nbsp; <strong>1 TRY ≈ 3.57円</strong> &nbsp;|&nbsp; <strong>1 USD ≈ 約160円</strong><br>
+      ※ イスタンブール基準。トルコリラは継続的に下落傾向にあり、渡航前に最新レートを確認推奨。
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-emoji">🚕</div>
+        <div>
+          <div class="price-item-name">タクシー（5km目安）</div>
+          <div class="price-amount">200〜400 TRY</div>
+          <div class="price-jpy">≈ 710〜1,430円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">☕</div>
+        <div>
+          <div class="price-item-name">カフェのコーヒー</div>
+          <div class="price-amount">100〜200 TRY</div>
+          <div class="price-jpy">≈ 360〜710円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍺</div>
+        <div>
+          <div class="price-item-name">ビール（500ml）</div>
+          <div class="price-amount">150〜300 TRY</div>
+          <div class="price-jpy">≈ 535〜1,070円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">地元食堂の定食</div>
+          <div class="price-amount">300〜500 TRY</div>
+          <div class="price-jpy">≈ 1,070〜1,785円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">観光地レストラン（1人）</div>
+          <div class="price-amount">800〜1,500 TRY</div>
+          <div class="price-jpy">≈ 2,855〜5,355円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">💧</div>
+        <div>
+          <div class="price-item-name">ペットボトル水（500ml）</div>
+          <div class="price-amount">10〜20 TRY</div>
+          <div class="price-jpy">≈ 36〜71円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🚇</div>
+        <div>
+          <div class="price-item-name">地下鉄・バス（1乗車）</div>
+          <div class="price-amount">25〜40 TRY</div>
+          <div class="price-jpy">≈ 89〜143円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏩</div>
+        <div>
+          <div class="price-item-name">中級ホテル（1泊）</div>
+          <div class="price-amount">2,500〜6,000 TRY</div>
+          <div class="price-jpy">≈ 8,925〜21,420円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏨</div>
+        <div>
+          <div class="price-item-name">ホステル（1泊）</div>
+          <div class="price-amount">500〜1,200 TRY</div>
+          <div class="price-jpy">≈ 1,785〜4,285円</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:#f0f7ff;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-bottom:8px;">💡 旅行者の1日平均支出目安（イスタンブール）</p>
+      <table class="info-table">
+        <tr><th>バジェット旅行</th><td>1,000〜2,000 TRY/日（≈ 3,570〜7,140円）— 屋台・ドミトリー・公共交通中心</td></tr>
+        <tr><th>標準旅行</th><td>2,500〜5,000 TRY/日（≈ 8,925〜17,850円）— 地元レストラン・中級ホテル・観光入場料込み</td></tr>
+        <tr><th>快適旅行</th><td>7,000〜15,000+ TRY/日（≈ 24,990〜53,550円）— 観光地レストラン・上級ホテル・ツアー込み</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 政治・安定性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <span class="section-title">政治・安定性</span>
+    </div>
+    <div class="two-col" style="gap:12px;">
+      <table class="info-table">
+        <tr><th>政治体制</th><td>大統領制共和国（2018年憲法改正で首相職廃止）</td></tr>
+        <tr><th>元首・政府首班</th><td>大統領：レジェップ・タイイップ・エルドアン（2023年再選）</td></tr>
+        <tr><th>与党</th><td>AKP（公正発展党）。2024年地方選では野党CHPが首位に</td></tr>
+        <tr><th>外務省危険レベル</th><td>レベル1（東南部国境付近はレベル3）。渡航前に外務省HP確認必須</td></tr>
+        <tr><th>腐敗認識指数（CPI）</th><td>34/100（2024年）世界約115位。世界平均43を下回る</td></tr>
+        <tr><th>Freedom House</th><td>34/100「Not Free」（2025年）</td></tr>
+      </table>
+      <div>
+        <div class="stability-bar-wrap">
+          <div class="stability-label"><span>政治的安定性（世銀WGI）</span><span>23%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:23%"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>腐敗抑制</span><span>38%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:38%;background:linear-gradient(90deg,#FF9900,#e53935)"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>法の支配</span><span>32%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:32%;background:linear-gradient(90deg,#156082,#38761D)"></div></div>
+        </div>
+        <p style="font-size:13px;color:#888;margin-top:16px;">エルドアン政権下で司法・メディアへの政府影響力が拡大。2016年クーデター未遂後に大規模粛清を実施。東南部はクルド紛争の影響で治安不安定。イスタンブール・アンカラ・観光地エリアは比較的安全。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 歴史タイムライン -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">トルコの歴史：高校世界史の必修事項</span>
+      <span class="section-badge">受験レベル</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">前6000年頃</div>
+        <div class="tl-event">チャタル・ヒュユク（Çatalhöyük）</div>
+        <div class="tl-desc">アナトリア中部に存在した世界最古レベルの都市集落遺跡。農耕・牧畜・宗教儀礼の証拠あり。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前2000〜前1200年</div>
+        <div class="tl-event">ヒッタイト王国</div>
+        <div class="tl-desc">アナトリアを統一した最初の大帝国。前1274年にカデシュの戦いでエジプトのラムセス2世と激突。世界最古の平和条約を締結。鉄器文明の先駆け。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">前334年</div>
+        <div class="tl-event">アレクサンドロス大王のアナトリア征服</div>
+        <div class="tl-desc">マケドニア王がペルシャ帝国を打ち破りアナトリア全域を制圧。ヘレニズム文化がアナトリアに根付く。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">330年</div>
+        <div class="tl-event">コンスタンティノープル建設</div>
+        <div class="tl-desc">ローマ皇帝コンスタンティヌス1世が旧ビザンティウムに新首都を建設。その後1000年以上、東ローマ（ビザンツ）帝国の首都として繁栄。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1071年</div>
+        <div class="tl-event">マンジケルトの戦い（バズカートの戦い）</div>
+        <div class="tl-desc">セルジューク朝がビザンツ帝国を撃破。トルコ系民族のアナトリア定住が本格化し、現在のトルコ民族の原型が形成された転換点。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1299年</div>
+        <div class="tl-event">オスマン帝国の建国</div>
+        <div class="tl-desc">オスマン1世がアナトリア北西部に小侯国を建設。以後600年にわたるオスマン帝国の礎。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1453年</div>
+        <div class="tl-event">コンスタンティノープル陥落（東ローマ帝国滅亡）</div>
+        <div class="tl-desc">スルタン・メフメト2世（征服者）がビザンツ帝国最後の皇帝を倒し首都を占領。中世の終わりを象徴する世界史上最重要事件の一つ。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1520〜1566年</div>
+        <div class="tl-event">スレイマン1世（壮麗帝）の治世・オスマン黄金期</div>
+        <div class="tl-desc">欧州・中東・北アフリカを支配した最大版図を実現。イスタンブールにスレイマニエ・モスクを建設。西欧諸国はオスマンとの外交を余儀なくされた。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1683年</div>
+        <div class="tl-event">第二次ウィーン包囲の失敗</div>
+        <div class="tl-desc">ウィーン攻略に失敗し、オスマン帝国の欧州進出が頂点から転じた転換点。以後「瀕死の病人」と呼ばれる衰退期へ。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1839年</div>
+        <div class="tl-event">タンジマート（近代化改革）</div>
+        <div class="tl-desc">西欧化・法の近代化を目指した大改革。非ムスリムへの平等権付与、近代的官僚制・軍制整備。日本の明治維新に先行する上からの近代化。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1908年</div>
+        <div class="tl-event">青年トルコ革命（統一と進歩委員会）</div>
+        <div class="tl-desc">「統一と進歩委員会（イッティハット）」がスルタン専制を打倒し立憲君主制を復活させた革命。第一次世界大戦への参戦を主導。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1915年</div>
+        <div class="tl-event">アルメニア人虐殺</div>
+        <div class="tl-desc">第一次大戦中にアナトリアのアルメニア人が組織的に虐殺・追放され50〜150万人が死亡。トルコ政府は現在も「ジェノサイド」との認定を拒否。国際的にはジェノサイドと認定する国が多い。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1919〜1922年</div>
+        <div class="tl-event">トルコ独立戦争（アタテュルクの蜂起）</div>
+        <div class="tl-desc">第一次大戦敗北後のセーヴル条約（国土分割）に抵抗し、ムスタファ・ケマルがアンカラを拠点に抵抗運動。ギリシャ・アルメニア・フランス軍を撃退し独立を達成。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1923年10月29日</div>
+        <div class="tl-event">トルコ共和国の建国</div>
+        <div class="tl-desc">ムスタファ・ケマル（後のアタテュルク「トルコの父」）が初代大統領に就任。政教分離・ローマ字採用・女性参政権（1934年）など急進的な西欧化改革を断行。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1952年</div>
+        <div class="tl-event">NATO加盟</div>
+        <div class="tl-desc">冷戦構造の中でアメリカ主導のNATOに加盟。ソ連への対抗上、戦略的に重要な地位を確保。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1974年</div>
+        <div class="tl-event">キプロス軍事介入</div>
+        <div class="tl-desc">キプロスのギリシャへの統合クーデターを受け、トルコ軍が北キプロスに侵攻。現在も「北キプロス・トルコ共和国」を事実上支配。EU加盟の最大障壁の一つ。</td></tr>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1983年〜</div>
+        <div class="tl-event">PKKとの武力紛争開始</div>
+        <div class="tl-desc">クルド労働者党（PKK）が武装闘争を開始。40年以上にわたる紛争で4万人以上が死亡。東南部の治安問題は現在も継続中。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2002年</div>
+        <div class="tl-event">AKP（エルドアン）政権の誕生</div>
+        <div class="tl-desc">イスラム保守派のAKPが総選挙で圧勝。エルドアンが首相に就任し長期政権の始まり。経済成長と権威主義的傾向が同時進行。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2016年7月15日</div>
+        <div class="tl-event">クーデター未遂事件</div>
+        <div class="tl-desc">軍の一部がクーデターを試みたが失敗。政府はギュレン運動の関与と断定し、軍・司法・教育・メディアで15万人以上を粛清・解雇。その後急速に中央集権化が進んだ。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- イスタンブール エリアガイド -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🗺</span>
+      <span class="section-title">イスタンブール エリアガイド</span>
+      <span class="section-badge">旅行者の実質首都</span>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">人口1,600万人超（トルコ最大都市）。ボスポラス海峡を挟んでヨーロッパ側・アジア側に広がる。地下鉄・トラム・フェリーが発達しており移動は比較的容易。観光の軸は「スルタンアフメット（旧市街）→ベイオール（新市街）→カドゥキョイ（アジア側）」の三角地帯。行政首都はアンカラだが文化・商業・観光の中心はイスタンブール。</p>
+    <div class="area-grid">
+      <div class="area-card tourist">
+        <div class="area-name">スルタンアフメット（Sultanahmet）</div>
+        <div class="area-type">歴史観光の中心</div>
+        <div class="area-desc">ブルーモスク・アヤソフィア・トプカプ宮殿・グランドバザールが集中。観光客がいつも多く安全。ただし物売りの声かけや価格設定が高め。歩いてほぼすべての見どころを回れる。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">ベイオール・タクシム（Beyoğlu / Taksim）</div>
+        <div class="area-type">ナイトライフ・ショッピング</div>
+        <div class="area-desc">イスティクラル通りを中心に夜遅くまで賑わう。バー・クラブ・アートギャラリー・レストランが集中。カラキョイ地区はヒップなカフェとギャラリーが続くトレンドエリア。週末は歩行者天国に。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">カドゥキョイ（Kadıköy）</div>
+        <div class="area-type">アジア側・ローカル食文化の宝庫</div>
+        <div class="area-desc">地元民が多く暮らすアジア側の文化地区。食市場・カフェ・アンティークショップが立ち並ぶ。観光客は少なめで本物のイスタンブール日常を体験できる。フェリーでヨーロッパ側と30分。</div>
+      </div>
+      <div class="area-card business">
+        <div class="area-name">ニシャンタシュ・ベシクタシュ（Nişantaşı / Beşiktaş）</div>
+        <div class="area-type">高級ショッピング・ビジネス</div>
+        <div class="area-desc">ハイエンドブランド・ブティックが揃うアッパークラスエリア。外国人居住者・外交官も多く英語が通じやすい。ベシクタシュは若者のカフェ文化と漁港の混在する活気ある地区。</div>
+      </div>
+      <div class="area-card caution">
+        <div class="area-name">タルラバシュ（Tarlabaşı）</div>
+        <div class="area-type">⚠️ 注意エリア</div>
+        <div class="area-desc">ベイオール・タクシムに隣接するが治安が悪く、スリ・薬物・売春が問題。夜間の単独行動は避けること。再開発が進んでいるエリアも一部あるが、まだ信頼できる観光エリアではない。</div>
+      </div>
+      <div class="area-card transport">
+        <div class="area-name">シルケジ・エミノニュ（Sirkeci / Eminönü）</div>
+        <div class="area-type">交通ハブ・フェリー発着地</div>
+        <div class="area-desc">旧市街の玄関口。ボスポラス海峡フェリー・アジア側行き船の発着点。イェニ・モスクとエジプシャン・バザールが近い。地下鉄・トラムの接続も良く、ここを起点に動くと便利。周辺に手頃なホテル多数。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    トルコ Country Profile — /country-info by Wanderlust &nbsp;|&nbsp; 調査日: 2026-04-23 &nbsp;|&nbsp; ※情報は変動するため渡航前に公式情報を確認してください
+  </div>
+
+</div>
+</body>
+</html>

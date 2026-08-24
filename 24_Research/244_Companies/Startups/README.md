@@ -1,0 +1,23 @@
+# Startups
+
+## Files
+- [JISDA](2026-06-18_JISDA.md)
+- [KyotoFusioneering](2026-06-18_KyotoFusioneering.md)
+- [Solafune](2026-06-18_Solafune.md)
+- [Traysar](2026-06-18_Traysar.md)
+- [京都フュージョニアリング](2026-06-18_京都フュージョニアリング.md)
+- [ElevationSpace](2026-06-19_ElevationSpace.md)
+- [FigureAI](2026-06-19_FigureAI.md)
+- [ICEYE](2026-06-19_ICEYE.md)
+- [IonQ](2026-06-19_IonQ.md)
+- [ANDURIL](2026-06-22_ANDURIL.md)
+- [Solafune](2026-06-22_Solafune.md)
+- [newmo](2026-06-22_newmo.md)
+- [Halter](2026-06-23_Halter.md)
+- [Shinkei Systems](2026-06-23_Shinkei_Systems.md)
+- [ストックマーク](2026-06-23_ストックマーク.md)
+- [Rapidus](2026-06-25_Rapidus.md)
+- [Stark](2026-06-25_Stark.md)
+- [松尾研発スタートアップ全社調査](2026-06-25_松尾研発スタートアップ全社調査.md)
+- [NOT-A-HOTEL](2026-06-26_NOT-A-HOTEL.md)
+- [テラドローン](2026-07-08_テラドローン.md)

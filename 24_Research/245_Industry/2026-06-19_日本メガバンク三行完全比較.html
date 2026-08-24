@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本メガバンク三行 完全比較レポート 2026</title>
+<style>
+:root {
+  --mufg: #CC0000;
+  --mufg-light: #ffeeee;
+  --smfg: #00529B;
+  --smfg-light: #eef4ff;
+  --mizuho: #003087;
+  --mizuho-light: #eef0f8;
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --gold: #d4af37;
+  --green: #3fb950;
+  --red: #f85149;
+  --orange: #e97132;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hiragino Sans', 'Yu Gothic', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* ─── Layout ─── */
+.wrapper { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* ─── Hero ─── */
+.hero {
+  text-align: center;
+  padding: 56px 24px 40px;
+  background: linear-gradient(160deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 200px;
+  background: radial-gradient(ellipse, rgba(88,166,255,0.08) 0%, transparent 70%);
+}
+.hero-tag {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgba(88,166,255,0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+.hero-sub {
+  color: var(--text2);
+  font-size: 14px;
+}
+.bank-tags {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.bank-tag {
+  padding: 8px 20px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.bank-tag.mufg { background: rgba(204,0,0,0.15); border: 1px solid rgba(204,0,0,0.4); color: #ff8080; }
+.bank-tag.smfg { background: rgba(0,82,155,0.15); border: 1px solid rgba(0,82,155,0.4); color: #7ab8ff; }
+.bank-tag.mizuho { background: rgba(0,48,135,0.15); border: 1px solid rgba(100,120,200,0.4); color: #a0b4f0; }
+
+/* ─── TOC ─── */
+.toc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin: 32px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+}
+.toc-title { grid-column: 1/-1; font-size: 11px; letter-spacing: 2px; color: var(--text2); text-transform: uppercase; margin-bottom: 8px; }
+.toc a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 4px 0;
+  display: block;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.toc a:hover { opacity: 1; }
+
+/* ─── Sections ─── */
+.section { margin: 48px 0; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.section-num {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 1px;
+  min-width: 28px;
+}
+.section-title { font-size: 22px; font-weight: 700; }
+
+h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 12px; margin-top: 24px; }
+h4 { font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 8px; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ─── Scorecard ─── */
+.scorecard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.scorecard {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.scorecard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.scorecard.mufg::before { background: var(--mufg); }
+.scorecard.smfg::before { background: var(--smfg); }
+.scorecard.mizuho::before { background: #6070cc; }
+
+.scorecard-bank { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+.scorecard-bank.mufg { color: #ff8080; }
+.scorecard-bank.smfg { color: #7ab8ff; }
+.scorecard-bank.mizuho { color: #a0b4f0; }
+
+.metric { margin-bottom: 12px; }
+.metric-label { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+.metric-value { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+.metric-value.highlight { color: var(--gold); }
+.metric-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.metric-change { font-size: 12px; color: var(--green); }
+.rank-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+.rank-1 { background: rgba(212,175,55,0.2); color: var(--gold); border: 1px solid rgba(212,175,55,0.4); }
+.rank-2 { background: rgba(88,166,255,0.1); color: var(--accent); border: 1px solid rgba(88,166,255,0.3); }
+.rank-3 { background: rgba(139,148,158,0.1); color: var(--text2); border: 1px solid var(--border); }
+
+/* ─── Segment bars ─── */
+.segment-section { margin: 20px 0; }
+.seg-bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+.seg-bar-label { font-size: 12px; color: var(--text2); width: 200px; flex-shrink: 0; }
+.seg-bar-wrap { flex: 1; background: var(--bg3); border-radius: 4px; height: 22px; overflow: hidden; }
+.seg-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 600; color: white; transition: width 0.3s; }
+.seg-bar-pct { font-size: 12px; color: var(--text2); width: 50px; text-align: right; flex-shrink: 0; }
+.seg-bar-val { font-size: 12px; color: var(--text); width: 100px; text-align: right; flex-shrink: 0; }
+
+/* ─── Timeline ─── */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--mufg), var(--smfg), #6070cc);
+  opacity: 0.4;
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg);
+}
+.tl-item.mufg-event::before { border-color: var(--mufg); background: rgba(204,0,0,0.3); }
+.tl-item.smfg-event::before { border-color: var(--smfg); background: rgba(0,82,155,0.3); }
+.tl-item.mizuho-event::before { border-color: #6070cc; background: rgba(96,112,204,0.3); }
+.tl-item.crisis::before { border-color: var(--red); background: rgba(248,81,73,0.3); }
+
+.tl-year { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1px; margin-bottom: 3px; }
+.tl-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+.tl-note { font-size: 12px; color: var(--text2); margin-top: 3px; }
+
+/* ─── Culture cards ─── */
+.culture-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.culture-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.culture-keyword {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.culture-sub { font-size: 11px; color: var(--text2); margin-bottom: 14px; }
+.culture-item { font-size: 13px; color: var(--text); margin-bottom: 6px; padding-left: 14px; position: relative; }
+.culture-item::before { content: '›'; position: absolute; left: 0; color: var(--text2); }
+
+/* ─── Insight box ─── */
+.insight-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+.insight-box.danger { border-left-color: var(--red); }
+.insight-box.info { border-left-color: var(--accent); }
+.insight-box.green { border-left-color: var(--green); }
+.insight-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.insight-box.danger .insight-label { color: var(--red); }
+.insight-box.info .insight-label { color: var(--accent); }
+.insight-box.green .insight-label { color: var(--green); }
+.insight-text { font-size: 14px; line-height: 1.7; }
+
+/* ─── Table ─── */
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  background: var(--bg3);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(48,54,61,0.5);
+  vertical-align: top;
+}
+tr:hover td { background: rgba(48,54,61,0.3); }
+td.mufg-col { color: #ff8080; }
+td.smfg-col { color: #7ab8ff; }
+td.mizuho-col { color: #a0b4f0; }
+td.bold { font-weight: 600; }
+td.em { color: var(--gold); font-weight: 600; }
+
+/* ─── Olive ─── */
+.olive-hero {
+  background: linear-gradient(135deg, #003366 0%, #00529b 50%, #0077cc 100%);
+  border-radius: 12px;
+  padding: 32px;
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+.olive-hero::after {
+  content: 'OLIVE';
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 100px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  letter-spacing: -5px;
+}
+.olive-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.olive-stat { text-align: center; }
+.olive-stat-num { font-size: 28px; font-weight: 800; color: white; }
+.olive-stat-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+.olive-timeline { display: flex; gap: 0; margin: 20px 0; }
+.olive-tl-item {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--bg3);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  font-size: 12px;
+}
+.olive-tl-item:last-child { border-right: none; border-radius: 0 8px 8px 0; }
+.olive-tl-item:first-child { border-radius: 8px 0 0 8px; }
+.olive-tl-date { color: var(--text2); font-size: 10px; margin-bottom: 4px; }
+.olive-tl-num { font-size: 18px; font-weight: 700; color: #7ab8ff; }
+
+/* ─── Ecosystem map ─── */
+.eco-map {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin: 20px 0;
+}
+.eco-center {
+  text-align: center;
+  background: var(--bg3);
+  border: 2px solid var(--smfg);
+  border-radius: 12px;
+  padding: 16px;
+  display: inline-block;
+  margin: 0 auto 20px;
+  width: 100%;
+  font-weight: 700;
+  font-size: 16px;
+  color: #7ab8ff;
+}
+.eco-nodes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.eco-node {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 12px;
+}
+.eco-node-title { font-weight: 600; margin-bottom: 6px; font-size: 13px; }
+.eco-node-detail { color: var(--text2); line-height: 1.5; }
+.eco-node.partner { border-color: rgba(88,166,255,0.3); }
+
+/* ─── CVC ─── */
+.cvc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cvc-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.cvc-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.cvc-size { font-size: 12px; color: var(--text2); margin-bottom: 14px; }
+.cvc-invest { font-size: 12px; margin-bottom: 6px; padding: 6px 10px; background: var(--bg3); border-radius: 6px; }
+.cvc-invest-name { font-weight: 600; }
+.cvc-invest-note { color: var(--text2); }
+
+/* ─── News ─── */
+.news-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 12px; }
+.news-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.news-bank-badge {
+  width: 48px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.news-bank-badge.mufg { background: rgba(204,0,0,0.2); color: #ff8080; }
+.news-bank-badge.smfg { background: rgba(0,82,155,0.2); color: #7ab8ff; }
+.news-bank-badge.mzh { background: rgba(96,112,204,0.2); color: #a0b4f0; }
+.news-bank-badge.all { background: rgba(212,175,55,0.2); color: var(--gold); }
+.news-content { flex: 1; }
+.news-headline { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.news-detail { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+/* ─── Stablecoin ─── */
+.stable-box {
+  background: linear-gradient(135deg, rgba(88,166,255,0.08) 0%, rgba(96,112,204,0.05) 100%);
+  border: 1px solid rgba(88,166,255,0.25);
+  border-radius: 12px;
+  padding: 28px;
+  margin: 20px 0;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .scorecard-grid { grid-template-columns: 1fr; }
+  .culture-grid { grid-template-columns: 1fr; }
+  .cvc-grid { grid-template-columns: 1fr; }
+  .olive-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .eco-nodes { grid-template-columns: 1fr; }
+  .olive-timeline { flex-direction: column; }
+}
+
+.pill {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.pill.new { background: rgba(63,185,80,0.2); color: var(--green); }
+.pill.hot { background: rgba(233,113,50,0.2); color: var(--orange); }
+.pill.warn { background: rgba(248,81,73,0.2); color: var(--red); }
+
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+.note-text { font-size: 11px; color: var(--text2); font-style: italic; margin-top: 8px; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+.highlight-num { color: var(--gold); font-weight: 700; }
+.mufg-text { color: #ff8080; }
+.smfg-text { color: #7ab8ff; }
+.mizuho-text { color: #a0b4f0; }
+
+footer {
+  text-align: center;
+  padding: 32px;
+  color: var(--text2);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Research Report · 2026-06-19</div>
+  <h1>日本メガバンク三行 完全比較</h1>
+  <p class="hero-sub">財務・統合史・組織文化・リテール戦略・エコシステム・CVC・最新テック</p>
+  <div class="bank-tags">
+    <span class="bank-tag mufg">三菱UFJ / MUFG</span>
+    <span class="bank-tag smfg">三井住友 / SMFG</span>
+    <span class="bank-tag mizuho">みずほ / MFG</span>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-title">目次</div>
+  <a href="#s1">① 財務スコアカード</a>
+  <a href="#s2">② 部門別収益構成</a>
+  <a href="#s3">③ 統合の歴史</a>
+  <a href="#s4">④ 組織文化・行風</a>
+  <a href="#s5">⑤ みずほはなぜ3位か</a>
+  <a href="#s6">⑥ リテール戦略の真実</a>
+  <a href="#s7">⑦ Olive 完全解剖</a>
+  <a href="#s8">⑧ デジタル経済圏</a>
+  <a href="#s9">⑨ CVC投資</a>
+  <a href="#s10">⑩ 最新ニュース</a>
+</nav>
+
+<!-- ─── S1: 財務スコアカード ─── -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">財務スコアカード（最新決算）</span>
+  </div>
+
+  <div class="scorecard-grid">
+    <!-- MUFG -->
+    <div class="scorecard mufg">
+      <div class="rank-badge rank-1">1</div>
+      <div class="scorecard-bank mufg">三菱UFJ / MUFG</div>
+      <div class="metric">
+        <div class="metric-label">連結純利益（FY2026年3月期）</div>
+        <div class="metric-value highlight">2兆4,272億円</div>
+        <div class="metric-change">▲ +31.8% YoY｜3期連続最高益</div>
+        <div class="metric-sub">日本初・2兆円超突破</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">連結純業務利益</div>
+        <div class="metric-value" style="font-size:18px">2兆3,772億円</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">ROE</div>
+        <div class="metric-value" style="font-size:18px">11.3%</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">主要株式資産</div>
+        <div class="metric-sub">モルガン・スタンレー持分 / クルンシィ銀行（タイ）/ ダナモン銀行（インドネシア）</div>
+      </div>
+    </div>
+
+    <!-- SMFG -->
+    <div class="scorecard smfg">
+      <div class="rank-badge rank-2">2</div>
+      <div class="scorecard-bank smfg">三井住友 / SMFG</div>
+      <div class="metric">
+        <div class="metric-label">連結純利益（FY2025年3月期）</div>
+        <div class="metric-value">1兆1,779億円</div>
+        <div class="metric-change">▲ +22.3% YoY｜初の1兆円超</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">連結純業務利益</div>
+        <div class="metric-value" style="font-size:18px">1兆7,193億円</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">海外収益比率</div>
+        <div class="metric-value" style="font-size:18px">55.4%</div>
+        <div class="metric-sub">米州24.5%・アジア16.4%・欧州14.5%</div>
+      </div>
+    </div>
+
+    <!-- Mizuho -->
+    <div class="scorecard mizuho">
+      <div class="rank-badge rank-3">3</div>
+      <div class="scorecard-bank mizuho">みずほ / MFG</div>
+      <div class="metric">
+        <div class="metric-label">連結純利益（FY2025年3月期）</div>
+        <div class="metric-value">1兆2,486億円</div>
+        <div class="metric-change">▲ +41.0% YoY｜過去最高益</div>
+        <div class="metric-sub">※一時的な政策株売却益含む</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">連結純業務利益</div>
+        <div class="metric-value" style="font-size:18px">1兆4,611億円</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">ROE</div>
+        <div class="metric-value" style="font-size:18px">11.4%</div>
+        <div class="metric-sub">中計目標を2年前倒し達成</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-top:20px">
+    <div class="insight-label">KEY OBSERVATION</div>
+    <div class="insight-text">MUFGの純利益はSMFG・みずほの2倍超。ただしROEはみずほ11.4%、MUFG 11.3%と収益効率面では接近している。規模の差よりも「資産をどれだけ効率的に稼がせているか」という視点で見ると、三行の距離は縮まっている。</div>
+  </div>
+</div>
+
+<!-- ─── S2: 部門別収益構成 ─── -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">部門別収益構成</span>
+  </div>
+
+  <!-- MUFG -->
+  <h3><span class="mufg-text">■</span> MUFG — 純業務利益 2兆3,772億円（FY2026年3月期）</h3>
+  <div class="segment-section">
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">JCIB（国内法人・IB）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:26.5%;background:#CC0000">26.5%</div></div>
+      <div class="seg-bar-pct">26.5%</div>
+      <div class="seg-bar-val">約6,300億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">GCIB（グローバルCIB）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:19.6%;background:#aa0000">19.6%</div></div>
+      <div class="seg-bar-pct">19.6%</div>
+      <div class="seg-bar-val">約4,650億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">CWM（個人富裕層）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:16.7%;background:#880000">16.7%</div></div>
+      <div class="seg-bar-pct">16.7%</div>
+      <div class="seg-bar-val">約3,960億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">GCB（グローバル商業銀行）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:16.1%;background:#660000">16.1%</div></div>
+      <div class="seg-bar-pct">16.1%</div>
+      <div class="seg-bar-val">約3,830億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">R&D（リテール・デジタル）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:11.6%;background:#440000">11.6%</div></div>
+      <div class="seg-bar-pct">11.6%</div>
+      <div class="seg-bar-val">約2,760億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">AM/IS（資産運用）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:5.9%;background:#330000">5.9%</div></div>
+      <div class="seg-bar-pct">5.9%</div>
+      <div class="seg-bar-val">約1,410億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">Global Markets</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:2.4%;background:#220000">2.4%</div></div>
+      <div class="seg-bar-pct">2.4%</div>
+      <div class="seg-bar-val">約577億円</div>
+    </div>
+  </div>
+  <p class="note-text">※セグメントNOPの変化額は公式確認済み。絶対額はFY2024実績＋変化額による推計を含む。Global Marketsは前期の債券再編損（▲6,494億円）の反動で大幅改善。</p>
+
+  <hr class="divider">
+
+  <!-- SMFG -->
+  <h3><span class="smfg-text">■</span> SMFG — 純業務利益 1兆7,193億円（FY2025年3月期）</h3>
+  <div class="segment-section">
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">ホールセール（国内法人）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:42.4%;background:#00529B">42.4%</div></div>
+      <div class="seg-bar-pct">42.4%</div>
+      <div class="seg-bar-val">7,292億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">グローバル</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:34.4%;background:#003d75">34.4%</div></div>
+      <div class="seg-bar-pct">34.4%</div>
+      <div class="seg-bar-val">5,920億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">グローバルマーケッツ</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:27.6%;background:#002855">27.6%</div></div>
+      <div class="seg-bar-pct">27.6%</div>
+      <div class="seg-bar-val">4,745億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">リテール<span class="pill warn">最小</span></div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:15.9%;background:#001835">15.9%</div></div>
+      <div class="seg-bar-pct">15.9%</div>
+      <div class="seg-bar-val">2,738億円</div>
+    </div>
+  </div>
+  <p class="note-text">※各セグメントのGBP（総業務利益）ベースの構成比。連結調整後の純業務利益合計は1兆7,193億円。</p>
+
+  <hr class="divider">
+
+  <!-- Mizuho -->
+  <h3><span class="mizuho-text">■</span> みずほ — 純業務利益 1兆4,611億円（FY2025年3月期）</h3>
+  <div class="segment-section">
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">CIBC（国内大企業・IB）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:34.2%;background:#6070cc">34.2%</div></div>
+      <div class="seg-bar-pct">34.2%</div>
+      <div class="seg-bar-val">4,998億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">GCIBC（グローバルCIB）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:25.2%;background:#4a58aa">25.2%</div></div>
+      <div class="seg-bar-pct">25.2%</div>
+      <div class="seg-bar-val">3,677億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">GMC（グローバルマーケッツ）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:17.8%;background:#384090">17.8%</div></div>
+      <div class="seg-bar-pct">17.8%</div>
+      <div class="seg-bar-val">2,600億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">RBC（リテール・中小法人）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:16.3%;background:#283070">16.3%</div></div>
+      <div class="seg-bar-pct">16.3%</div>
+      <div class="seg-bar-val">2,375億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">その他</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:5.2%;background:#1a2050">5.2%</div></div>
+      <div class="seg-bar-pct">5.2%</div>
+      <div class="seg-bar-val">765億円</div>
+    </div>
+    <div class="seg-bar-row">
+      <div class="seg-bar-label">AMC（資産運用）</div>
+      <div class="seg-bar-wrap"><div class="seg-bar" style="width:1.3%;background:#0d1030">1.3%</div></div>
+      <div class="seg-bar-pct">1.3%</div>
+      <div class="seg-bar-val">197億円</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── S3: 統合の歴史 ─── -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">統合の歴史</span>
+  </div>
+
+  <div class="two-col" style="margin-bottom:28px">
+    <div>
+      <h3>三行の前身銀行</h3>
+      <div class="table-wrap">
+        <table>
+          <tr>
+            <th>グループ</th><th>前身銀行</th><th>特色</th>
+          </tr>
+          <tr>
+            <td class="mufg-col bold">MUFG</td>
+            <td>三菱銀行<br>東京銀行<br>三和銀行<br>東海銀行</td>
+            <td>財閥中核・エリート主義<br>外為専門・国際エリート<br>大阪中小企業<br>名古屋・トヨタ系</td>
+          </tr>
+          <tr>
+            <td class="smfg-col bold">SMFG</td>
+            <td>住友銀行<br>三井銀行（さくら銀行）</td>
+            <td>効率・収益規律が極限値<br>江戸両替商起源の伝統</td>
+          </tr>
+          <tr>
+            <td class="mizuho-col bold">みずほ</td>
+            <td>第一勧業銀行<br>富士銀行<br>日本興業銀行</td>
+            <td>日本最古、実務派<br>安田財閥、名門意識強<br>国策・最高頭脳の自負</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>みずほ三行の統合時の規模感</h3>
+      <div class="insight-box info" style="margin-top:0">
+        <div class="insight-label">背景</div>
+        <div class="insight-text">1990年代末、第一勧業・富士・興銀はいずれも日本の時価総額トップ10に入る超大手。「世界最大の銀行グループをつくる」という野望のもと統合が構想された。当時の総資産合算は世界首位級だった。</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>統合年表</h3>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1991</div>
+      <div class="tl-text">バブル崩壊。不良債権問題が表面化し、都市銀行15行の再編圧力が高まる</div>
+    </div>
+    <div class="tl-item mufg-event">
+      <div class="tl-year">1996</div>
+      <div class="tl-text"><span class="mufg-text">MUFG系</span> 三菱銀行 ＋ 東京銀行 → 東京三菱銀行</div>
+      <div class="tl-note">財閥系がいち早く動く。外為専門の東京銀行を取り込み国際力を補強</div>
+    </div>
+    <div class="tl-item crisis">
+      <div class="tl-year">1997</div>
+      <div class="tl-text">北海道拓殖銀行・山一證券が破綻。護送船団方式の終焉。再編加速</div>
+    </div>
+    <div class="tl-item mizuho-event">
+      <div class="tl-year">1999</div>
+      <div class="tl-text"><span class="mizuho-text">みずほ系</span> 第一勧業・富士・日本興業銀行が統合合意。「世界最大」を目指す</div>
+    </div>
+    <div class="tl-item smfg-event">
+      <div class="tl-year">2001</div>
+      <div class="tl-text"><span class="smfg-text">SMFG系</span> さくら銀行（三井系）＋ 住友銀行 → 三井住友銀行</div>
+      <div class="tl-note">住友の効率文化が主導権を握り、迅速な統合を完遂</div>
+    </div>
+    <div class="tl-item mizuho-event">
+      <div class="tl-year">2000</div>
+      <div class="tl-text"><span class="mizuho-text">みずほ系</span> みずほホールディングス設立</div>
+    </div>
+    <div class="tl-item crisis">
+      <div class="tl-year">2002.4.1</div>
+      <div class="tl-text"><span class="pill warn">システム障害</span> みずほ銀行 発足初日：ATM約6,000台停止・250万件の二重引き落とし</div>
+      <div class="tl-note">旧三行がそれぞれのシステム維持を主張し、最悪の暫定接続を強行開業した結果</div>
+    </div>
+    <div class="tl-item mufg-event">
+      <div class="tl-year">2002</div>
+      <div class="tl-text"><span class="mufg-text">MUFG系</span> 三和銀行 ＋ 東海銀行 → UFJ銀行 誕生</div>
+    </div>
+    <div class="tl-item mufg-event">
+      <div class="tl-year">2005–06</div>
+      <div class="tl-text"><span class="mufg-text">MUFG系</span> UFJ銀行が経営危機→東京三菱銀行が吸収合併 → 三菱東京UFJ銀行（現MUFG体制完成）</div>
+      <div class="tl-note">SMFGとの争奪戦に三菱が勝利。日本最大のメガバンクが誕生</div>
+    </div>
+    <div class="tl-item crisis">
+      <div class="tl-year">2011</div>
+      <div class="tl-text"><span class="pill warn">システム障害</span> みずほ：東日本大震災後の義援金集中で10日間にわたる振込遅延</div>
+    </div>
+    <div class="tl-item mufg-event">
+      <div class="tl-year">2018</div>
+      <div class="tl-text"><span class="mufg-text">MUFG系</span> 三菱東京UFJ銀行 → 三菱UFJ銀行に改称</div>
+    </div>
+    <div class="tl-item crisis">
+      <div class="tl-year">2021</div>
+      <div class="tl-text"><span class="pill warn">システム障害（8回連続）</span> みずほ：4,000億円・7年かけて構築した新基幹系「MINORI」でも連続障害。金融庁が業務改善命令</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── S4: 組織文化 ─── -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">組織文化・行風</span>
+  </div>
+
+  <div class="culture-grid">
+    <div class="culture-card">
+      <div class="culture-keyword mufg-text">格調とグローバル</div>
+      <div class="culture-sub">MUFG</div>
+      <div class="culture-item">「三菱」ブランドが強力な統合軸として機能</div>
+      <div class="culture-item">旧東京銀行・UFJを事実上吸収、三菱文化が一貫して存続</div>
+      <div class="culture-item">エリート主義・階層的だが方向性は一本</div>
+      <div class="culture-item">モルガン・スタンレーへの出資でグローバルIBを補完</div>
+      <div class="culture-item">意思決定は慎重だが、方針が定まれば大胆な海外M&A</div>
+    </div>
+
+    <div class="culture-card">
+      <div class="culture-keyword smfg-text">効率と住友の掟</div>
+      <div class="culture-sub">SMFG</div>
+      <div class="culture-item">「1円でも削る」住友の効率文化が統合後も支配的</div>
+      <div class="culture-item">経費率40%台：国内メガ最低水準を達成</div>
+      <div class="culture-item">重複店舗の早期統廃合で他行より速く固定費削減</div>
+      <div class="culture-item">ROE・株主還元を経営の最重要KPIに据える</div>
+      <div class="culture-item">三井のカラーは薄まり、住友が事実上の主導権</div>
+    </div>
+
+    <div class="culture-card">
+      <div class="culture-keyword mizuho-text">たすき掛けと合意形成</div>
+      <div class="culture-sub">みずほ</div>
+      <div class="culture-item">役員ポストを旧三行で「按分」する人事が定着</div>
+      <div class="culture-item">意思決定は「合意形成の連続」で著しく遅い</div>
+      <div class="culture-item">「言うべきことを言わない」と金融庁が公式批判</div>
+      <div class="culture-item">誰も「主導権を握った」と思われたくない文化</div>
+      <div class="culture-item">2022年でも「また興銀か」とのローテーション懸念</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── S5: みずほはなぜ3位か ─── -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title">みずほはなぜ3位か — 「対等合併の呪縛」</span>
+  </div>
+
+  <div class="insight-box danger">
+    <div class="insight-label">コア命題</div>
+    <div class="insight-text">三行はいずれも「世界最大を一緒につくる」という目標で合意したが、<strong>格・文化・ビジネスモデルが全く異なる三行が「対等」という虚構の下に並立し、誰も主導権を握れなかった</strong>。MUFGが「三菱」という求心力で速やかに統合文化を確立したのとは正反対の軌跡を辿った。</div>
+  </div>
+
+  <h3>失われた20年 — 具体的な構造問題</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>問題</th><th>内容</th><th>他行との対比</th></tr>
+      <tr>
+        <td class="bold">旧行主導権争い</td>
+        <td>経営トップ選定も「今回は旧興銀系、次は旧富士系」のローテーション。最適な人材登用より旧行バランス優先</td>
+        <td>MUFGは旧三菱系が一貫して主導。SMFGは旧住友が実質掌握</td>
+      </tr>
+      <tr>
+        <td class="bold">システム三重コスト</td>
+        <td>旧三行がそれぞれ自行システムの維持を主張。IT維持コストが事実上三倍に。2000年代全体が不良債権＋システムコストに圧迫</td>
+        <td>SMFGは住友主導で早期一本化を完了、コスト優位を確立</td>
+      </tr>
+      <tr>
+        <td class="bold">投資余力の喪失</td>
+        <td>MUFGが2000年代にモルガン・スタンレー出資、クルンシィ買収等の海外M&Aを積極化した時期に、みずほは内部抗争とシステム問題に忙殺</td>
+        <td>MUFGの海外利益が現在の収益力差に直結</td>
+      </tr>
+      <tr>
+        <td class="bold">顧客信頼の喪失</td>
+        <td>2002年発足初日の大規模障害が20年間のブランド傷跡。2021年の8回連続障害で業務改善命令。金融庁の定例指導対象に</td>
+        <td>MUFG・SMFGは大規模システム障害なし</td>
+      </tr>
+      <tr>
+        <td class="bold">ガバナンスの欠如</td>
+        <td>金融庁が「危機対応力の弱さ・ITシステム統制力の弱さ・顧客目線の弱さ」の3点を公式指摘（2021年）</td>
+        <td>SMFGはROE重視の明確なガバナンス体制を確立</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="insight-box" style="margin-top:16px">
+    <div class="insight-label">現在のみずほの状況</div>
+    <div class="insight-text">ただし2025年度は純利益1兆2,486億円で過去最高、ROE 11.4%で目標2年前倒し達成。2026年目標は1兆3,000億円。加藤頭取体制での「構造改革」は着実に進んでいる。「たすき掛け人事」を廃止し、能力主義への移行を宣言。問題は「遅れた20年分の海外アセット不足」という構造的ハンデだ。</div>
+  </div>
+</div>
+
+<!-- ─── S6: リテール戦略 ─── -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title">リテール部門の真実 — 「強み」は本当か？</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>指標</th>
+        <th class="mufg-col">MUFG</th>
+        <th class="smfg-col">SMFG</th>
+        <th class="mizuho-col">みずほ</th>
+      </tr>
+      <tr>
+        <td>貸出金残高</td>
+        <td class="em">107兆円超（最大）</td>
+        <td>90兆円台</td>
+        <td>80兆円台</td>
+      </tr>
+      <tr>
+        <td>グループ顧客数</td>
+        <td class="em">約6,000万人</td>
+        <td>3,000万人以上</td>
+        <td>数千万人</td>
+      </tr>
+      <tr>
+        <td>住宅ローン競争力</td>
+        <td>価格.com 変動・固定・全期間固定すべて1位（2025.5）</td>
+        <td>Olive×SBI連携で若年層獲得</td>
+        <td>楽天提携で反転攻勢</td>
+      </tr>
+      <tr>
+        <td>リテール純業務利益比率</td>
+        <td>11.6%（R&D部門）</td>
+        <td class="warn">15.9%（最小部門）</td>
+        <td>16.3%（RBC）</td>
+      </tr>
+      <tr>
+        <td>デジタル戦略</td>
+        <td>エムット（2025年発表）</td>
+        <td class="em">Olive（700万超）</td>
+        <td>みずほ楽天カード</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-label">真実の構造</div>
+    <div class="insight-text">「リテールが強み」という言説は<strong>半分正解・半分言い訳</strong>だ。規模は最大（MUFG 6,000万人）だが、収益効率ではネット銀行に劣る。住宅ローンのシェアは依然大きいが、利ザヤ競争はネット系に侵食されている。メガバンクが本当に持つリテールの武器は「総合提案力」——住宅ローン×資産運用×保険×相続を一体で提案できる点。AIと大量の顧客データを組み合わせた「個別最適提案」が、今後の差別化軸になる。</div>
+  </div>
+
+  <div class="insight-box info">
+    <div class="insight-label">オリーブとエムットは言い訳か？</div>
+    <div class="insight-text">むしろ逆だ。Oliveは既存のリテール論理（口座とカードを別々に売る）を根底から変え、「スマホ一つで銀行・カード・証券・保険が全部繋がる」体験を提供している。これは従来型リテールの補完ではなく、<strong>プラットフォームへの転換</strong>であり、若年層を入口に複数金融商品を一生涯通じて提供するLTV（顧客生涯価値）最大化戦略だ。</div>
+  </div>
+</div>
+
+<!-- ─── S7: Olive ─── -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <span class="section-title">Olive（オリーブ）完全解剖</span>
+  </div>
+
+  <div class="olive-hero">
+    <div class="olive-stat-grid">
+      <div class="olive-stat">
+        <div class="olive-stat-num">700万+</div>
+        <div class="olive-stat-label">会員数（2026年1月）</div>
+      </div>
+      <div class="olive-stat">
+        <div class="olive-stat-num">49.2%</div>
+        <div class="olive-stat-label">会員の20代以下比率</div>
+      </div>
+      <div class="olive-stat">
+        <div class="olive-stat-num">90%+</div>
+        <div class="olive-stat-label">10〜20代の満足度</div>
+      </div>
+      <div class="olive-stat">
+        <div class="olive-stat-num">1,200万</div>
+        <div class="olive-stat-label">2027年度末目標</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>会員数の推移</h3>
+  <div class="olive-timeline">
+    <div class="olive-tl-item">
+      <div class="olive-tl-date">2024年2月</div>
+      <div class="olive-tl-num">200万</div>
+    </div>
+    <div class="olive-tl-item">
+      <div class="olive-tl-date">2024年7月</div>
+      <div class="olive-tl-num">300万</div>
+    </div>
+    <div class="olive-tl-item">
+      <div class="olive-tl-date">2025年3月</div>
+      <div class="olive-tl-num">500万</div>
+    </div>
+    <div class="olive-tl-item">
+      <div class="olive-tl-date">2026年1月</div>
+      <div class="olive-tl-num">700万+</div>
+    </div>
+    <div class="olive-tl-item">
+      <div class="olive-tl-date">2027年度末（目標）</div>
+      <div class="olive-tl-num">1,200万</div>
+    </div>
+  </div>
+
+  <h3>若年層49.2%が意味するもの</h3>
+  <div class="insight-box green">
+    <div class="insight-label">戦略的意味</div>
+    <div class="insight-text">
+      20代以下が会員の約半数を占めることは、単なる「若い人気サービス」ではない。<br><br>
+      <strong>1. 住宅ローン予備軍の獲得:</strong> 10〜20代は5〜10年後に最初の住宅購入を迎える。Oliveで先に関係を作っておけば、最大の利ザヤ商品である住宅ローンへの導線が自然に生まれる。<br><br>
+      <strong>2. 資産形成の入り口:</strong> SBI証券のクレカ積立（最大5% Vポイント還元）は「投資の習慣化」を若い段階から形成する。資産が膨らめばウェルスマネジメント商品の提案対象になる。<br><br>
+      <strong>3. ブランドスイッチコスト:</strong> 銀行口座・証券・カードをすべてOliveに集約させれば、他行への乗り換えコストが極端に高くなる。<strong>若い段階でのロックイン</strong>が生涯顧客を生む。
+    </div>
+  </div>
+
+  <h3>Vポイント ＝ 旧Tポイントとの関係</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>時期</th><th>出来事</th></tr>
+      <tr><td>2024年4月</td><td><strong>VポイントとTポイントが統合。</strong> 旧TポイントがVポイントに改称。CCCとの協業によりT系加盟店（TSUTAYA等）でVポイントがそのまま使用可能に</td></tr>
+      <tr><td>2026年4月〜</td><td>Olive口座残高100万円ごとにVポイント還元率+0.1%（残高連動ボーナス）</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ─── S8: デジタル経済圏 ─── -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <span class="section-title">デジタル経済圏 — エコシステム比較</span>
+  </div>
+
+  <h3><span class="smfg-text">■</span> SMFGのOlive経済圏（最も完成度が高い）</h3>
+  <div class="eco-map">
+    <div class="eco-center">Olive（三井住友銀行口座 ＋ 三井住友カード）</div>
+    <div class="eco-nodes">
+      <div class="eco-node partner">
+        <div class="eco-node-title">SBI証券 <span class="pill new">資本提携</span></div>
+        <div class="eco-node-detail">2022年6月に包括資本業務提携（約796億円・議決権10%取得）。Oliveアプリ内でSBI証券口座開設・管理が可能。三井住友カードのクレカ積立で最大5% Vポイント付与。月間積立額1,000億円超（2026年3月）</div>
+      </div>
+      <div class="eco-node partner">
+        <div class="eco-node-title">Vポイント（旧Tポイント統合）</div>
+        <div class="eco-node-detail">2024年4月にTポイントと統合。T系加盟店（TSUTAYA・ファミマなど）でVポイントが利用可。Olive残高連動ボーナスも追加（2026年4月〜）</div>
+      </div>
+      <div class="eco-node partner">
+        <div class="eco-node-title">PayPay <span class="pill new">2025年提携</span></div>
+        <div class="eco-node-detail">2025年5月に三井住友カード×ソフトバンクが業務提携。VポイントとPayPayポイントの相互交換（等価）が2026年中にスタート。2026年秋：OliveにPayPay残高モードを追加、Oliveアプリから直接PayPayコード決済が可能に</div>
+      </div>
+      <div class="eco-node">
+        <div class="eco-node-title">マネーフォワードME連携</div>
+        <div class="eco-node-detail">2025年春から連携。資産管理の一元化でOliveの利便性を強化</div>
+      </div>
+      <div class="eco-node">
+        <div class="eco-node-title">住信SBIネット銀行 協業</div>
+        <div class="eco-node-detail">2022年2月から三井住友信託銀行が協業中</div>
+      </div>
+      <div class="eco-node">
+        <div class="eco-node-title">SNS戦略</div>
+        <div class="eco-node-detail">TikTok・Instagram・YouTube で媒体別KPIを設計。若年層向けのデジタルマーケティングが会員獲得を牽引</div>
+      </div>
+    </div>
+  </div>
+
+  <h3><span class="mufg-text">■</span> MUFGのエムット（empt）— 2025年発表・建設中</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>要素</th><th>内容</th></tr>
+      <tr><td>ブランド</td><td>MUFGグループ共通の新個人向けサービスブランド「empt（エムット）」（2025年5月発表）</td></tr>
+      <tr><td>アプリ</td><td>三菱UFJ銀行アプリを刷新。口座・資産運用・カード情報を一元管理</td></tr>
+      <tr><td>共通ポイント</td><td>「エムットポイント」を新設</td></tr>
+      <tr><td>デジタルバンク</td><td><strong>2026年度後半に開業予定。</strong> Google Cloudで勘定系を動かす全く新しい設計（日本の主要銀行初）</td></tr>
+      <tr><td>資産管理</td><td>ウェルスナビと共同開発の「Money Advisory Platform（MAP）」を搭載予定</td></tr>
+      <tr><td>AI連携</td><td>Sakana AI・KDDIと連携で金融特化LLM・AIエージェントを開発中</td></tr>
+      <tr><td>スケール優位</td><td>6,000万人の顧客データ×AIによる個別最適提案が核心。Oliveとの差別化点は「規模」</td></tr>
+    </table>
+  </div>
+
+  <h3><span class="mizuho-text">■</span> みずほの「外部提携型」モデル</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>提携</th><th>内容</th></tr>
+      <tr><td>楽天カード（2024年11月〜）</td><td>楽天カードに約15%出資して資本業務提携。「みずほ楽天カード」を発行。楽天ポイント＋みずほポイントのWポイント付与（2025年7月〜）</td></tr>
+      <tr><td>みずほポイントモール</td><td>みずほポイントを楽天ポイント・dポイントに交換可能。既存大経済圏への「接続」を選択</td></tr>
+    </table>
+  </div>
+  <div class="insight-box">
+    <div class="insight-label">みずほの選択</div>
+    <div class="insight-text">自前経済圏の構築より「既存の大経済圏（楽天・dポイント）への接続」を選んだ外部提携型モデル。Oliveのような自前プラットフォーム構築に比べ投資コストは低いが、顧客との接点の深さで劣る。</div>
+  </div>
+</div>
+
+<!-- ─── S9: CVC ─── -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <span class="section-title">CVC投資 — 各行のベンチャー戦略</span>
+  </div>
+
+  <div class="cvc-grid">
+    <!-- MUFG -->
+    <div class="cvc-card">
+      <div class="cvc-name mufg-text">三菱UFJイノベーション・パートナーズ（MUIP）</div>
+      <div class="cvc-size">3ファンド合計 約800億円｜メガバンク最大規模</div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">LayerX</div>
+        <div class="cvc-invest-note">AIソフトウェア。2025年9月追加出資</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">マネーツリー</div>
+        <div class="cvc-invest-note">CVC投資→2025年5月にMUFGが完全買収（エグジット事例）</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">Auxia</div>
+        <div class="cvc-invest-note">AIパーソナライゼーション（2025年3月）</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">Lecto</div>
+        <div class="cvc-invest-note">フィンテック（2024年11月）</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">カサナレ</div>
+        <div class="cvc-invest-note">不動産テック（2024年11月）</div>
+      </div>
+    </div>
+
+    <!-- SMFG -->
+    <div class="cvc-card">
+      <div class="cvc-name smfg-text">SMBCベンチャーキャピタル / SMBC Edge</div>
+      <div class="cvc-size">米国ファンド約3億ドル（約450億円）＋国内150億円</div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">SMBC Edge（2025年10月〜新設）</div>
+        <div class="cvc-invest-note">資金だけでなく「プロ人材」による経営支援を提供するGP会社</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">SMBCフィン・アトラス・ビヨンド・ファンド</div>
+        <div class="cvc-invest-note">2025年設立。米国フィンテック・AIスタートアップ特化</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">HAKKI AFRICA</div>
+        <div class="cvc-invest-note">初のインパクト投資。アフリカのタクシードライバー向けマイクロファイナンス（2025年2月）</div>
+      </div>
+    </div>
+
+    <!-- Mizuho -->
+    <div class="cvc-card">
+      <div class="cvc-name mizuho-text">みずほイノベーション・フロンティア（MHIF）</div>
+      <div class="cvc-size">100億円｜2023年4月設立</div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">設立方針</div>
+        <div class="cvc-invest-note">リターンより「新規事業創出・グループ共創」を優先する戦略</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">ネストブルー株式会社</div>
+        <div class="cvc-invest-note">2025年10月、リバネスと合弁設立。ディープテック×中堅中小企業支援</div>
+      </div>
+      <div class="cvc-invest">
+        <div class="cvc-invest-name">規模について</div>
+        <div class="cvc-invest-note">MUIPの100億円 vs SMBC 450億円+ と比較すると投資規模は最小。早期テコ入れが課題</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── S10: 最新ニュース ─── -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <span class="section-title">最新ニュース — ステーブルコイン・AI・イノベーション</span>
+  </div>
+
+  <h3>ステーブルコイン <span class="pill hot">2026年度中に共同発行へ</span></h3>
+  <div class="stable-box">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div>
+        <h4>概要</h4>
+        <p style="font-size:13px;line-height:1.7">2026年6月、三行が協議会を設置し「2026年度中に円ステーブルコインを共同発行」と正式発表。参加：三菱UFJ・三井住友・みずほ＋三菱UFJ信託銀行。発行基盤は<strong>Progmat（プログマット）</strong> — MUFGグループのトークン発行インフラ。</p>
+        <ul style="font-size:13px;margin-top:12px;padding-left:18px">
+          <li>法的構造：三行が共同委託者、信託銀行が受託者の「信託型」</li>
+          <li>最初の商品：機関投資家向け円建てトークン化MMF</li>
+          <li>金融庁「FinTech実証実験ハブ」の支援案件として承認済み</li>
+        </ul>
+      </div>
+      <div>
+        <h4>歴史的意義</h4>
+        <p style="font-size:13px;line-height:1.7">2023〜2024年の先行実証（三菱UFJ×みずほ）を経て、本格フェーズへ。三行が競合しながらも業界インフラは共同構築するという「協調と競争の共存」モデル。決済の脱中央集権化を銀行自身が主導する歴史的転換点。</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>AI戦略 — 三行合計1,600億円規模の投資</h3>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>行</th>
+        <th>AIコンセプト</th>
+        <th>主な取り組み</th>
+      </tr>
+      <tr>
+        <td class="mufg-col bold">MUFG</td>
+        <td>OpenAI公式パートナー<br>「AI Native」宣言</td>
+        <td>
+          ・社内AI「AI-bow」で4万人が利用<br>
+          ・「AI行員」を2026年1月から順次実装<br>
+          ・グループ15万人へAI研修展開<br>
+          ・Sakana AI・KDDI連携で金融特化LLM開発
+        </td>
+      </tr>
+      <tr>
+        <td class="smfg-col bold">SMFG</td>
+        <td>「AI-CEO」<br>500億円・100プロジェクト</td>
+        <td>
+          ・生成AIを全社展開（最大規模）<br>
+          ・AIが経営戦略の中枢を担うコンセプト<br>
+          ・生成AIガバナンス独自指針を制定<br>
+          ・SMBCフィン・アトラス・ビヨンドでAI新興企業に出資
+        </td>
+      </tr>
+      <tr>
+        <td class="mizuho-col bold">みずほ</td>
+        <td>頭取自らAIエージェントを構築<br>（業界初）</td>
+        <td>
+          ・加藤頭取が自律型＋ワークフロー型の2種エージェントを自作<br>
+          ・スタートアップ向け融資を最短1週間にAI審査で実現<br>
+          ・2024年8月：生成AI活用の次世代コンタクトセンター導入
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>その他の注目ニュース（2024–2026）</h3>
+  <div class="news-grid">
+    <div class="news-item">
+      <div class="news-bank-badge mufg">MUFG</div>
+      <div class="news-content">
+        <div class="news-headline">マネーツリーをCVC投資→完全買収</div>
+        <div class="news-detail">2025年5月。「CVC投資→戦略M&A」という一気通貫エグジット戦略の確立。個人向けデータサービスをグループに取り込み</div>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-bank-badge mufg">MUFG</div>
+      <div class="news-content">
+        <div class="news-headline">empt（エムット）デジタルバンク：Google Cloudで勘定系を稼働</div>
+        <div class="news-detail">2026年度後半に開業予定。日本の主要銀行で初めてパブリッククラウドで勘定系を稼働させる。既存の重厚な基幹系との抜本的決別を宣言</div>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-bank-badge smfg">SMFG</div>
+      <div class="news-content">
+        <div class="news-headline">OliveにPayPay残高モードを追加（2026年秋予定）</div>
+        <div class="news-detail">ソフトバンクとの業務提携（2025年5月）でVポイント↔PayPayポイントの等価交換・OliveアプリからのPayPay直接決済が実現。3,000万超のPayPayユーザーへリーチ</div>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-bank-badge smfg">SMFG</div>
+      <div class="news-content">
+        <div class="news-headline">Olive 700万会員突破、1,200万を目指す</div>
+        <div class="news-detail">2026年1月に700万を突破。2027年度末の1,200万達成に向けPayPay連携・エムット対抗のSNSマーケティングを継続強化中</div>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-bank-badge mzh">みずほ</div>
+      <div class="news-content">
+        <div class="news-headline">楽天カードに約15%出資・みずほ楽天カード発行</div>
+        <div class="news-detail">2024年11月。楽天ポイント＋みずほポイントのWポイントで若年層獲得を狙う。「自前エコシステム」より「大経済圏への接続」を選んだ外部提携戦略</div>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-bank-badge all">三行</div>
+      <div class="news-content">
+        <div class="news-headline">2026年度中に円ステーブルコインを三行共同発行</div>
+        <div class="news-detail">Progmat（MUFG系）基盤で信託型の円建てトークン化MMFを機関投資家向けに発行。競合しながらもインフラは共同構築する「コペティション（協調的競争）」モデル</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Research compiled by Claude Code · Sources: 各行IR・日経・ダイヤモンド・日本銀行・金融庁資料など</p>
+  <p style="margin-top:4px">Wanderlust / 20_Private/24_Research/245_Industry / 2026-06-19</p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI inside Deep Research — 2026-06-23</title>
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #1a2e44;
+    --blue: #2563eb;
+    --blue-light: #dbeafe;
+    --text: #1e293b;
+    --text-sub: #475569;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --table-head: #1e293b;
+    --table-stripe: #f1f5f9;
+    --tag-bg: #f0f9ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--bg);
+  }
+  .site-header {
+    background: var(--navy);
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 12px 40px;
+    letter-spacing: 0.05em;
+  }
+  .site-header a { color: #64748b; text-decoration: none; }
+  .site-header span { color: #cbd5e1; margin: 0 6px; }
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 100%);
+    color: white;
+    padding: 60px 40px 50px;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(37,99,235,0.3);
+    border: 1px solid rgba(37,99,235,0.5);
+    color: #93c5fd;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .hero-sub { color: #94a3b8; font-size: 14px; max-width: 700px; }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+  }
+  .meta-item { font-size: 12px; color: #64748b; }
+  .meta-value { font-size: 22px; font-weight: 700; color: white; display: block; }
+  .layout {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .toc {
+    position: sticky;
+    top: 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 12.5px;
+  }
+  .toc-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-sub);
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc li {
+    counter-increment: toc;
+    padding: 5px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .toc li:last-child { border-bottom: none; }
+  .toc a {
+    color: var(--text-sub);
+    text-decoration: none;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .toc a:hover { color: var(--blue); }
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--blue);
+    flex-shrink: 0;
+  }
+  .content { min-width: 0; }
+  .section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .section h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--blue-light);
+    letter-spacing: -0.01em;
+  }
+  .section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 24px 0 12px;
+    padding-left: 10px;
+    border-left: 3px solid var(--blue);
+  }
+  .section p { color: var(--text-sub); margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 16px 0; }
+  thead th {
+    background: var(--table-head);
+    color: white;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+  }
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-sub);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) td { background: var(--table-stripe); }
+  tbody tr:hover td { background: var(--blue-light); }
+  td strong, td b { color: var(--text); }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.05em;
+  }
+  .badge-v { background: #d1fae5; color: #065f46; }
+  .badge-h { background: #ede9fe; color: #5b21b6; }
+  .badge-u { background: #fef3c7; color: #92400e; }
+  .badge-s { background: #fee2e2; color: #991b1b; }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .kpi-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .kpi-label { font-size: 11px; color: var(--text-sub); margin-bottom: 6px; }
+  .kpi-value { font-size: 24px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .kpi-unit { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+  .callout {
+    border-left: 4px solid var(--blue);
+    background: var(--tag-bg);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 13.5px;
+    color: var(--text-sub);
+  }
+  .callout.warn { border-color: #f59e0b; background: #fffbeb; }
+  .callout.danger { border-color: #ef4444; background: #fef2f2; }
+  .callout.green { border-color: #10b981; background: #ecfdf5; }
+  .callout strong { color: var(--text); }
+  .moat-row { margin-bottom: 12px; }
+  .moat-label { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .moat-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .moat-fill { height: 100%; border-radius: 4px; background: var(--blue); }
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-dot { position: absolute; left: -24px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--blue); border: 2px solid white; box-shadow: 0 0 0 2px var(--blue); }
+  .tl-dot.red { background: #ef4444; box-shadow: 0 0 0 2px #ef4444; }
+  .tl-dot.green { background: #10b981; box-shadow: 0 0 0 2px #10b981; }
+  .tl-dot.orange { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+  .tl-year { font-size: 11px; font-weight: 700; color: var(--blue); margin-bottom: 2px; }
+  .tl-year.red { color: #ef4444; }
+  .tl-year.green { color: #10b981; }
+  .tl-year.orange { color: #f59e0b; }
+  .tl-text { font-size: 13px; color: var(--text-sub); }
+  .leader { background: #eff6ff !important; font-weight: 700; color: var(--navy) !important; }
+  .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .risk-item { border: 1px solid var(--border); border-radius: 8px; padding: 14px; background: var(--bg); }
+  .risk-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .risk-desc { font-size: 12px; color: var(--text-sub); line-height: 1.6; }
+  .risk-level { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; margin-bottom: 6px; }
+  .risk-high { background: #fee2e2; color: #991b1b; }
+  .risk-mid { background: #fef3c7; color: #92400e; }
+  .risk-low { background: #d1fae5; color: #065f46; }
+  .highlight-box {
+    background: linear-gradient(135deg, #0d1b2a, #1e3a5f);
+    color: white;
+    border-radius: 10px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .highlight-box h4 { font-size: 13px; color: #93c5fd; margin-bottom: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .highlight-box p { color: #cbd5e1; font-size: 13px; line-height: 1.7; margin: 0; }
+  .shock-bar {
+    background: linear-gradient(90deg, #1e3a5f 0%, #ef4444 100%);
+    height: 4px;
+    border-radius: 2px;
+    margin: 12px 0;
+  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .stat-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .stat-card .label { font-size: 11px; color: var(--text-sub); margin-bottom: 4px; }
+  .stat-card .value { font-size: 20px; font-weight: 800; color: var(--navy); }
+  .stat-card .sub { font-size: 11px; color: var(--text-sub); margin-top: 4px; }
+  .persona-box {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .persona-box h4 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+  .persona-box ul { list-style: none; }
+  .persona-box li { font-size: 13px; color: var(--text-sub); padding: 4px 0; padding-left: 16px; position: relative; }
+  .persona-box li::before { content: '▸'; position: absolute; left: 0; color: var(--blue); }
+  .site-footer {
+    background: var(--navy);
+    color: #475569;
+    font-size: 12px;
+    padding: 32px 40px;
+    margin-top: 40px;
+  }
+  .footer-inner { max-width: 980px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+  .footer-meta span { color: #64748b; margin-right: 20px; }
+  .footer-meta strong { color: #94a3b8; }
+  .methodology { font-size: 11px; color: #334155; max-width: 500px; line-height: 1.7; }
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; padding: 24px 20px; }
+    .toc { display: none; }
+    .hero { padding: 40px 20px; }
+    .hero h1 { font-size: 26px; }
+    .hero-meta { gap: 20px; }
+    .risk-grid, .two-col { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .section { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#">Research</a><span>/</span>
+  <a href="#">Companies</a><span>/</span>
+  AI inside（4488）Deep Research
+</header>
+
+<div class="hero">
+  <div class="hero-tag">Deep Research · Investment Grade · 東証グロース</div>
+  <h1>AI inside 株式会社<br>Deep Research Report</h1>
+  <p class="hero-sub">AI-OCR国内シェア1位、DX Suiteを武器に上場した高成長スタートアップ。NTT解約ショックで売上38%蒸発という前例なき危機を経験し、今AIエージェント化戦略で第2章に挑む企業の実態を解剖する。</p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-value">28</span>参照ソース
+    </div>
+    <div class="meta-item">
+      <span class="meta-value">47</span>主要クレーム
+    </div>
+    <div class="meta-item">
+      <span class="meta-value">34</span>確認済
+    </div>
+    <div class="meta-item">
+      <span class="meta-value">3</span>棄却
+    </div>
+    <div class="meta-item">
+      <span class="meta-value">2026-06-23</span>調査日
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <nav class="toc">
+    <div class="toc-title">目次</div>
+    <ol>
+      <li><a href="#s01">企業概要・沿革</a></li>
+      <li><a href="#s02">事業構造</a></li>
+      <li><a href="#s03">CEO 渡久地択の人物像</a></li>
+      <li><a href="#s04">財務分析・業績推移</a></li>
+      <li><a href="#s05">上場 &amp; 株価軌跡</a></li>
+      <li><a href="#s06">M&amp;A実績・aiforce買収解剖</a></li>
+      <li><a href="#s07">技術的優位性</a></li>
+      <li><a href="#s08">競合分析</a></li>
+      <li><a href="#s09">リスク分析</a></li>
+      <li><a href="#s10">戦略ビジョン</a></li>
+    </ol>
+  </nav>
+
+  <main class="content">
+
+    <!-- 01 企業概要 -->
+    <section class="section" id="s01">
+      <div class="section-num">Chapter 01</div>
+      <h2>企業概要・沿革</h2>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">設立</div>
+          <div class="kpi-value">2015</div>
+          <div class="kpi-unit">年</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">上場</div>
+          <div class="kpi-value">2019</div>
+          <div class="kpi-unit">年12月（東証マザーズ）</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">証券コード</div>
+          <div class="kpi-value">4488</div>
+          <div class="kpi-unit">東証グロース</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">CEO持分</div>
+          <div class="kpi-value">47%</div>
+          <div class="kpi-unit">渡久地択（2025年9月）</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>項目</th><th>内容</th><th>信頼度</th></tr></thead>
+        <tbody>
+          <tr><td>正式名称</td><td><strong>AI inside 株式会社</strong></td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>創業者 / CEO</td><td>渡久地 択（とぐち たく）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>設立</td><td>2015年</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>本社</td><td>東京都港区（渋谷区から移転）</td><td><span class="badge badge-h">◎ 高</span></td></tr>
+          <tr><td>上場日</td><td>2019年12月25日（東証マザーズ、現グロース）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>主力事業</td><td>AI-OCR「DX Suite」、エッジAI、AIエージェント</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>筆頭株主</td><td>渡久地択 47.06%（2025年9月30日時点）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>従業員数</td><td>約200〜300名（推定）</td><td><span class="badge badge-s">? 推定</span></td></tr>
+          <tr><td>投資家（VC）</td><td>UTEC（東京大学エッジキャピタル）、SBIインベストメント</td><td><span class="badge badge-h">◎ 高</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>会社沿革タイムライン</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2004年</div>
+          <div class="tl-text">渡久地択、大学1年で中退。人工知能の研究開発を独学で開始。以来11年間、AIを探求し続ける。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2015年</div>
+          <div class="tl-text">AI inside 株式会社を設立。画像認識・文字認識AIの事業化へ本格始動。UTECが初期投資。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2017年</div>
+          <div class="tl-text">手書き文字認識AI「DX Suite」をリリース。AIを使ったOCR（光学文字認識）で国内市場に切り込む。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2019年11月</div>
+          <div class="tl-text">NTT西日本とパートナー契約を締結。「おまかせAI OCR」というブランドでDX Suiteを代理販売。この契約が後の激震の震源となる。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2019年12月25日</div>
+          <div class="tl-text">東証マザーズに上場（証券コード4488）。公募価格3,600円→初値12,600円（+250%）。上場当日から市場の熱狂を集める。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2020年</div>
+          <div class="tl-text">コロナ禍でDX需要が爆発。NTT西日本が無料キャンペーンを展開し、9,284件のライセンスを急速に獲得。売上が急拡大。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot red"></div>
+          <div class="tl-year red">2021年4月28日【転換点①】</div>
+          <div class="tl-text">決算発表でNTT西日本のライセンス9,284件が全件不更新となるリスクを開示。売上高の約38%（17.6億円）消失の可能性を公表。翌営業日から連続ストップ安。株価が数日で40〜50%暴落。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot orange"></div>
+          <div class="tl-year orange">2022年3月【転換点②】</div>
+          <div class="tl-text">aiforce solutions を16.6億円で株式取得・吸収合併。予測AI・教育分野への事業拡張を目指す。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2023〜2024年</div>
+          <div class="tl-text">DX Suiteのリカバリーと新規顧客開拓で売上が回復基調。AIエージェント戦略を打ち出し、「OCRの会社」から「AIプラットフォームの会社」への転換を宣言。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2025〜2026年</div>
+          <div class="tl-text">AIエージェントによる業務完遂を主力テーマとして再定義。新事業「Leapnet」を本格展開。売上50億円超を視野に入れる。</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>企業の本質:</strong> AI inside は「DX Suite」という製品一本で上場し、時価総額1,000億円超まで育てた稀なケース。創業者 渡久地が11年独学でAIを研究し続けた「技術者起業家」の成功例であると同時に、NTT依存という構造的リスクを露呈した教科書的な大口顧客依存ケースでもある。
+      </div>
+    </section>
+
+    <!-- 02 事業構造 -->
+    <section class="section" id="s02">
+      <div class="section-num">Chapter 02</div>
+      <h2>事業構造</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>セグメント</th>
+            <th>概要</th>
+            <th>位置付け</th>
+            <th>信頼度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>AI-OCR（DX Suite）</strong></td>
+            <td>手書き・活字文字認識AI。クラウド・オンプレミス両対応。国内シェア1位。</td>
+            <td>売上の主柱（推定80%以上）</td>
+            <td><span class="badge badge-v">✓ 確認</span></td>
+          </tr>
+          <tr>
+            <td><strong>エッジAI（AI inside Cube）</strong></td>
+            <td>小型エッジコンピュータにAIを搭載。モデルを端末内で完結させるプライバシー重視設計。</td>
+            <td>IoT・製造向け育成中</td>
+            <td><span class="badge badge-h">◎ 高</span></td>
+          </tr>
+          <tr>
+            <td><strong>AIエージェント（新主力）</strong></td>
+            <td>生成AI時代の業務自動化。「実行」まで完遂するエージェント型AIプラットフォーム。</td>
+            <td>次世代成長ドライバー</td>
+            <td><span class="badge badge-h">◎ 高</span></td>
+          </tr>
+          <tr>
+            <td><strong>DX教育・コンサル（aiforce資産）</strong></td>
+            <td>aiforce買収で獲得した「AMATERAS EDU」教育プログラムとDXコンサルティング。</td>
+            <td>補完的・規模小</td>
+            <td><span class="badge badge-u">△ 要注意</span></td>
+          </tr>
+          <tr>
+            <td><strong>Leapnet（新事業）</strong></td>
+            <td>詳細未公開。2026年から本格展開予定の新規事業ライン。</td>
+            <td>将来オプション</td>
+            <td><span class="badge badge-s">? 推定</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>収益モデルの特徴</h3>
+      <div class="callout">
+        <strong>SaaSモデル:</strong> DX Suiteはサブスクリプション型で、月次・年次の継続課金。2019年の渡久地CEOインタビューで「<strong>原価率9%</strong>でAIサービスを安く提供できる」と語った（日経）。高マージン×SaaS型が初期の高バリュエーションの根拠。<br><br>
+        直近KPI（◎）：契約件数 <strong>3,057件</strong>（前年比+9.6%）、ユーザー数 <strong>66,477名</strong>（+18.8%）、月次AI使用回数 <strong>21億回</strong>（+9.0%）、リカーリング売上 <strong>41.9億円</strong>（+8.9%）
+      </div>
+    </section>
+
+    <!-- 03 CEO -->
+    <section class="section" id="s03">
+      <div class="section-num">Chapter 03</div>
+      <h2>CEO 渡久地択の人物像</h2>
+
+      <table>
+        <thead><tr><th>項目</th><th>内容</th><th>信頼度</th></tr></thead>
+        <tbody>
+          <tr><td>生年月日</td><td>1984年4月29日</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>出身</td><td>愛知県</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>学歴</td><td>高校卒業後、大学1年で中退（2003年頃）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>AI研究開始</td><td>2004年（独学。設立11年前から）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>株式持分</td><td><strong>47.06%</strong>（2025年9月30日時点、筆頭株主）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>読書量</td><td>年間約700冊</td><td><span class="badge badge-h">◎ 高</span></td></tr>
+          <tr><td>役職</td><td>代表取締役社長CEO兼CPO（Chief Product Officer）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>インタビュー・メディアから読み解く性格・思想</h3>
+
+      <div class="persona-box">
+        <h4>① 200年タイムラインの思想家</h4>
+        <ul>
+          <li>「人類に最もインパクトを与えられる分野は何か」を自問し、200年スパンの未来タイムラインを作成して経営判断の軸にしている</li>
+          <li>「宇宙かAI」という結論に至り、AIを選択。この壮大なフレームがOCRという地味な入り口とのギャップを生む</li>
+          <li>「AIが大事なわけではない、AIの使い方を考えることが大事」——手段としてのAIに徹する実用主義的側面</li>
+          <li>出典：FastGrow、UTEC、社名鑑インタビュー（◎確認）</li>
+        </ul>
+      </div>
+
+      <div class="persona-box">
+        <h4>② 「セオリーに縛られない」反慣習主義</h4>
+        <ul>
+          <li>「"セオリー"を意識するようじゃ競争優位なんてつくれない」——会社としての価値観「<strong>非常識を常識に</strong>」を体現</li>
+          <li>大学中退・独学でAIを11年研究という経歴自体が「型破り」の証左</li>
+          <li>上場前から「原価率9%」という異常値を誇示し、マスメディアを通じて高マージンビジネスとして訴求（日経）</li>
+          <li>出典：FastGrow × AI inside組織デザイン記事（◎確認）</li>
+        </ul>
+      </div>
+
+      <div class="persona-box">
+        <h4>③ NTT事件後の誠実な開示姿勢</h4>
+        <ul>
+          <li>2021年の解約ショック後、「事前に高い解約率を予想できなかった」と自らの誤算を認めた（日経取材）</li>
+          <li>「NTT西日本以外のチャーンは非常に低かったため、パターンに気づけなかった」と率直に説明</li>
+          <li>危機時に社長自らメディアに出て詳細を語るスタンス——投資家へのコミュニケーション姿勢は評価できる</li>
+          <li>出典：日経（nxtech）「社長が打ち明けた誤算」記事（✓確認）</li>
+        </ul>
+      </div>
+
+      <div class="persona-box">
+        <h4>④ 技術者 × 経営者のハイブリッド型CEO</h4>
+        <ul>
+          <li>CPO（Chief Product Officer）も兼任。製品の細部まで自ら関与する「プロダクト型CEO」</li>
+          <li>小学〜中学時代は人見知り→生徒会長・バンド活動へ変化。対人スキルを後天的に獲得したタイプ</li>
+          <li>年間700冊読書という自己研鑚量。インプット量の多い独学者型</li>
+          <li>2026年のAIトレンド予測を自ら発信するなど、思想的リーダーシップを前面に出す</li>
+        </ul>
+      </div>
+
+      <div class="callout">
+        <strong>人物評:</strong> 渡久地択は「壮大なビジョン × 技術への深い理解 × 反慣習的な経営判断」を組み合わせた創業者型CEO。カリスマ性が高い反面、NTT事件が示すようにオペレーション・リスク管理は穴になりやすい。47%という圧倒的持分は長期的コントロールを保証するが、後継・ガバナンスリスクも内包する。
+      </div>
+    </section>
+
+    <!-- 04 財務 -->
+    <section class="section" id="s04">
+      <div class="section-num">Chapter 04</div>
+      <h2>財務分析・業績推移</h2>
+
+      <div class="callout warn">
+        <strong>注意:</strong> AI insideは過去に会計年度を3月期から12月期に変更している。以下の数値は複数の情報ソースを照合した推計を含む。確認済ソースは注記する。
+      </div>
+
+      <h3>売上高推移（概算）</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>会計年度</th>
+            <th>売上高（概算）</th>
+            <th>YoY</th>
+            <th>主な出来事</th>
+            <th>信頼度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>FY2020（3月）</td>
+            <td><strong>約16億円</strong></td>
+            <td>—</td>
+            <td>上場直後、NTT契約スタート</td>
+            <td><span class="badge badge-u">△ 要注意</span></td>
+          </tr>
+          <tr style="background:#eff6ff">
+            <td><strong>FY2021（3月）【最高期】</strong></td>
+            <td><strong>約46億円</strong></td>
+            <td><strong>+約187%</strong></td>
+            <td>NTT西日本との大口契約絶頂期。株価最高値圏</td>
+            <td><span class="badge badge-h">◎ 高</span></td>
+          </tr>
+          <tr style="background:#fef2f2">
+            <td><strong>FY2022（3月）【暴落期】</strong></td>
+            <td><strong>約33億円</strong></td>
+            <td><strong>▲28%</strong></td>
+            <td>NTT解約ショック。17.6億円（38%）の売上消失</td>
+            <td><span class="badge badge-h">◎ 高</span></td>
+          </tr>
+          <tr>
+            <td>FY2023（3月）</td>
+            <td><strong>約38億円</strong></td>
+            <td>+15%</td>
+            <td>新規顧客で回復基調。経常利益2.7億円</td>
+            <td><span class="badge badge-v">✓ 確認</span></td>
+          </tr>
+          <tr>
+            <td>FY2024（3月）</td>
+            <td><strong>約42億円</strong></td>
+            <td>+11%</td>
+            <td>リカーリング売上が中心に</td>
+            <td><span class="badge badge-h">◎ 高</span></td>
+          </tr>
+          <tr style="background:#ecfdf5">
+            <td>FY2025（12月）【最新】</td>
+            <td><strong>約47億円（予想）</strong></td>
+            <td>+約12%</td>
+            <td>Q1-3累計35.2億円（前年比108.7%）から推計</td>
+            <td><span class="badge badge-u">△ 推計</span></td>
+          </tr>
+          <tr>
+            <td>FY2026（12月）【会社予想】</td>
+            <td><strong>50.5億円</strong></td>
+            <td>+約14%</td>
+            <td>AIエージェント展開とDX Suite継続成長</td>
+            <td><span class="badge badge-v">✓ 確認</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>収益性・利益率推移</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>指標</th>
+            <th>FY2021（最高期）</th>
+            <th>FY2022（暴落後）</th>
+            <th>FY2023（回復）</th>
+            <th>最新傾向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>営業利益率</td>
+            <td><strong>非常に高い（推定30%超）</strong></td>
+            <td><strong>大幅縮小</strong></td>
+            <td>経常2.7億（経常利益率約7%）</td>
+            <td>回復基調<br><span class="badge badge-u">△</span></td>
+          </tr>
+          <tr>
+            <td>現金・手元流動性</td>
+            <td>豊富（上場調達資金あり）</td>
+            <td>減少</td>
+            <td>改善</td>
+            <td>安定的<br><span class="badge badge-h">◎</span></td>
+          </tr>
+          <tr>
+            <td>特損・のれん毀損</td>
+            <td>なし</td>
+            <td>—</td>
+            <td>aiforceのれん毀損6.85億円計上</td>
+            <td>解消方向<span class="badge badge-v">✓</span></td>
+          </tr>
+          <tr>
+            <td>5年売上CAGR</td>
+            <td colspan="3" style="text-align:center">+11.1%（成長は続くが不安定）</td>
+            <td><span class="badge badge-h">◎</span></td>
+          </tr>
+          <tr>
+            <td>5年営業利益CAGR</td>
+            <td colspan="3" style="text-align:center"><strong>▲22.5%（NTT事件の影響が長尾を引く）</strong></td>
+            <td><span class="badge badge-h">◎</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <strong>財務の本質的課題:</strong> 売上成長（CAGR +11%）と利益縮小（CAGR ▲22.5%）の乖離は「成長投資のための意図的な赤字」ではなく、NTTショック後の構造的な低収益状態の長期化を示す。AIエージェント戦略が本当にプレミアム化につながるかが利益率回復の鍵。
+      </div>
+    </section>
+
+    <!-- 05 上場・株価 -->
+    <section class="section" id="s05">
+      <div class="section-num">Chapter 05</div>
+      <h2>上場 &amp; 株価軌跡</h2>
+
+      <div class="two-col">
+        <div class="stat-card">
+          <div class="label">公募価格</div>
+          <div class="value">¥3,600</div>
+          <div class="sub">2019年12月25日</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">初値</div>
+          <div class="value">¥12,600</div>
+          <div class="sub">公募比 +250%（3.5倍）</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">上場時時価総額（初値）</div>
+          <div class="value">約446億円</div>
+          <div class="sub">東証マザーズ上場当日</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">最高値時価総額</div>
+          <div class="value">1,000億円超</div>
+          <div class="sub">2020〜2021年（推定）<span class="badge badge-s">? 推定</span></div>
+        </div>
+      </div>
+
+      <h3>株価軌跡（フェーズ別）</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">Phase 1｜上場ハネムーン期（2019年12月〜2020年）</div>
+          <div class="tl-text">公募3,600円→初値12,600円（+250%）。コロナ禍のデジタル化需要・DXブームと重なり、AI関連銘柄として資金が集中。NTT西日本との大型パートナー契約も好感。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">Phase 2｜最高値圏（2020〜2021年3月）</div>
+          <div class="tl-text">売上高46億円・高マージンSaaSとしてバリュエーションが膨張。「AI × SaaS × 高成長」の組み合わせで市場が熱狂。時価総額は1,000億円超に（推定）。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot red"></div>
+          <div class="tl-year red">Phase 3｜NTT解約ショック（2021年4月〜）</div>
+          <div class="tl-text">2021年4月28日に売上38%消失リスクを開示。4月30日・5月6日と連続ストップ安。数日で株価40〜50%暴落。「大口顧客依存 → 一気に崩壊」という教科書的事例として記憶される。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot orange"></div>
+          <div class="tl-year orange">Phase 4｜再構築期（2022〜2024年）</div>
+          <div class="tl-text">売上が33億円→38億→42億と段階的に回復。ただし株価はNTT前の水準には戻らず。グロース市場全体の低迷とも重なり、出口が見えない模索期。aiforce買収のシナジーも限定的。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">Phase 5｜AIエージェント再定義（2025〜2026年）</div>
+          <div class="tl-text">生成AI・AIエージェントブームに乗り、再び「AI プラットフォーム企業」として市場に再定義を試みる。売上50億円超を目指す。</div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <strong>NTT解約ショックの本質:</strong> NTT西日本は2020年に無料キャンペーン（違約金免除）で9,284件を獲得したが、無料期間終了後に大量解約が発生。AI insideはNTT以外での解約率が低かったため、パターンを事前に察知できなかった。売上の38%が特定パートナー経由だったという「隠れた集中リスク」が一夜にして顕在化した。
+      </div>
+    </section>
+
+    <!-- 06 M&A -->
+    <section class="section" id="s06">
+      <div class="section-num">Chapter 06</div>
+      <h2>M&amp;A実績・aiforce solutions買収解剖</h2>
+
+      <h3>M&amp;A全体像</h3>
+      <p>AI insideのM&A実績は現在のところ aiforce solutions の1件が主要案件として確認されている。</p>
+
+      <div class="highlight-box">
+        <h4>Major Deal — aiforce solutions 買収（2022年）</h4>
+        <p>数値データをもとにした予測AIを開発・提供する aiforce solutions を16.6億円で完全子会社化し、即日吸収合併。NTTショックからの事業拡張戦略の一環。</p>
+      </div>
+
+      <h3>aiforce solutions 案件詳細</h3>
+      <table>
+        <thead><tr><th>項目</th><th>内容</th><th>信頼度</th></tr></thead>
+        <tbody>
+          <tr><td>発表日</td><td>2022年3月15日</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>完了日（合併）</td><td>2022年5月2日</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>取引形態</td><td>全株式取得 → 同日吸収合併</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td><strong>取得価額</strong></td><td><strong>16億6,500万円（約16.4億円）</strong></td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>aiforce 売上高（直前期）</td><td>9,870万円（=約0.99億円）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>aiforce 営業損益（直前期）</td><td>▲1億3,500万円（赤字）</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>aiforce 純資産</td><td>1億2,200万円</td><td><span class="badge badge-v">✓ 確認</span></td></tr>
+          <tr><td>aiforce 設立年</td><td>2018年</td><td><span class="badge badge-h">◎ 高</span></td></tr>
+          <tr><td>aiforce 既存株主</td><td>住友商事等出資のスタートアップ</td><td><span class="badge badge-h">◎ 高</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>バリュエーション・マルチプル分析</h3>
+      <table>
+        <thead><tr><th>マルチプル</th><th>計算式</th><th>値</th><th>解釈</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>EV/Revenue（PSR相当）</strong></td>
+            <td>16.65億 ÷ 0.987億</td>
+            <td><strong>16.9倍</strong></td>
+            <td>赤字SaaSスタートアップとして市場相場（10〜20倍）内ながら上限圏。当時の「AI × SaaS」プレミアムを反映。</td>
+          </tr>
+          <tr>
+            <td><strong>EV/純資産（PBR相当）</strong></td>
+            <td>16.65億 ÷ 1.22億</td>
+            <td><strong>13.6倍</strong></td>
+            <td>純資産の13倍以上を支払う。のれんが大部分を占める。</td>
+          </tr>
+          <tr>
+            <td><strong>EV/EBITDA</strong></td>
+            <td>計算不可（赤字）</td>
+            <td><strong>N/A</strong></td>
+            <td>赤字企業のため適用不可。将来利益への賭け。</td>
+          </tr>
+          <tr>
+            <td><strong>推定のれん額</strong></td>
+            <td>16.65億 − 1.22億</td>
+            <td><strong>約15.4億円</strong></td>
+            <td>取得価額のほぼ全額がのれん（超過収益力への期待）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>想定シナジー（買収発表時）</h3>
+      <div class="callout">
+        <strong>公式シナジー説明（AI inside発表）:</strong><br>
+        ① <strong>事業領域の拡張</strong>：OCR（画像認識AI）× 予測AI（数値データ）で、扱える企業課題の幅を拡大<br>
+        ② <strong>DXコンサルの強化</strong>：aiforceのコンサルティング力を取り込み、ツール提供からビジネス変革支援へ昇格<br>
+        ③ <strong>AI人材教育</strong>：「AMATERAS EDU」でAI内製化を支援。人材育成市場への進出<br>
+        ④ <strong>クロスセル</strong>：DX Suite × AMATERAS RAY（自動機械学習）の組み合わせで顧客単価向上
+      </div>
+
+      <h3>買収後の実績評価</h3>
+      <div class="callout danger">
+        <strong>のれん毀損で買収失敗が示唆:</strong> 後の決算において、<strong>aiforce買収に由来するのれん毀損損失6億8,500万円</strong>が計上された。取得価額の約44%が1度で償却されたことは、期待したシナジーが実現しなかったことを意味する。「OCR × 予測AI」の組み合わせは戦略的には正しいが、統合後の事業化・顧客展開がうまく機能しなかったと推測される。2022年というタイミング（NTT事件直後の混乱期）での買収であり、本業の回復に手が取られる中でPMI（買収後統合）が十分に機能しなかった可能性が高い。
+      </div>
+
+      <h3>aiforce買収の総合評価</h3>
+      <table>
+        <thead><tr><th>評価軸</th><th>評価</th><th>コメント</th></tr></thead>
+        <tbody>
+          <tr><td>戦略合理性</td><td>★★★★☆</td><td>AI領域拡張の方向性は正しく、住友商事出資のAI企業を仲間にする意義はあった</td></tr>
+          <tr><td>バリュエーション適正性</td><td>★★★☆☆</td><td>PSR17倍は当時相場で正当化可能だが、赤字企業に15億超の超過対価は高リスク</td></tr>
+          <tr><td>PMI・統合実行</td><td>★★☆☆☆</td><td>のれん毀損がPMI失敗を示唆。本業再建との並行は負荷が重すぎた</td></tr>
+          <tr><td>財務インパクト</td><td>★★☆☆☆</td><td>6.85億円のれん毀損で自己資本を毀損。売上貢献も限定的</td></tr>
+          <tr><td>長期オプション価値</td><td>★★★☆☆</td><td>教育・コンサル資産は依然として活用可能。評価が低すぎる可能性もある</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 07 技術的優位性 -->
+    <section class="section" id="s07">
+      <div class="section-num">Chapter 07</div>
+      <h2>技術的優位性（Economic Moat）</h2>
+
+      <div class="moat-row">
+        <div class="moat-label">OCR精度・技術蓄積<span class="badge badge-v">✓ 国内シェア1位</span></div>
+        <div class="moat-bar"><div class="moat-fill" style="width:80%"></div></div>
+      </div>
+      <div class="moat-row">
+        <div class="moat-label">スイッチングコスト（業務フローへの組み込み）<span class="badge badge-h">◎</span></div>
+        <div class="moat-bar"><div class="moat-fill" style="width:70%"></div></div>
+      </div>
+      <div class="moat-row">
+        <div class="moat-label">コスト優位（原価率9%）<span class="badge badge-u">△ 2019年時点</span></div>
+        <div class="moat-bar"><div class="moat-fill" style="width:75%"></div></div>
+      </div>
+      <div class="moat-row">
+        <div class="moat-label">ブランド・認知（国内AI-OCR代名詞）<span class="badge badge-h">◎</span></div>
+        <div class="moat-bar"><div class="moat-fill" style="width:65%"></div></div>
+      </div>
+      <div class="moat-row">
+        <div class="moat-label">ネットワーク効果<span class="badge badge-s">? 弱い</span></div>
+        <div class="moat-bar"><div class="moat-fill" style="width:25%"></div></div>
+      </div>
+      <div class="moat-row">
+        <div class="moat-label">エッジAI特許・ハードウェア<span class="badge badge-u">△</span></div>
+        <div class="moat-bar"><div class="moat-fill" style="width:45%"></div></div>
+      </div>
+
+      <div class="callout">
+        <strong>Moat総評:</strong> OCR技術における11年超の研究蓄積と「日本語・手書き文字」への特化が差別化の核。スイッチングコストは高く、業務フローに組み込まれると乗り換えは困難。ただし生成AI（ChatGPT等）のOCR機能向上がモートを侵食するリスクが高まっている。AIエージェント化への転換は、このモート劣化を先手で補完しようとする戦略として解釈できる。
+      </div>
+    </section>
+
+    <!-- 08 競合 -->
+    <section class="section" id="s08">
+      <div class="section-num">Chapter 08</div>
+      <h2>競合分析</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>企業</th>
+            <th>領域</th>
+            <th>強み</th>
+            <th>AI insideへの脅威度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="leader">
+            <td><strong>AI inside ★</strong></td>
+            <td>AI-OCR国内シェア1位</td>
+            <td>日本語特化精度、SaaS×エッジのハイブリッド</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>ABBYY（独）</td>
+            <td>グローバルOCR最大手</td>
+            <td>多言語対応、エンタープライズ実績豊富</td>
+            <td>中（グローバル企業向け）</td>
+          </tr>
+          <tr>
+            <td>Kofax（米）</td>
+            <td>IDP（インテリジェントドキュメントプロセッシング）</td>
+            <td>ワークフロー統合、大企業向け</td>
+            <td>中〜低（日本市場での認知薄）</td>
+          </tr>
+          <tr>
+            <td>DXクラウド各社（国内）</td>
+            <td>汎用DX・RPA</td>
+            <td>既存顧客基盤、総合ソリューション</td>
+            <td>中（OCR機能の内包化）</td>
+          </tr>
+          <tr>
+            <td>ChatGPT/GPT-4o Vision（OpenAI）</td>
+            <td>汎用マルチモーダルAI</td>
+            <td>圧倒的なモデル性能、API展開</td>
+            <td>高（長期的にOCR市場を侵食）</td>
+          </tr>
+          <tr>
+            <td>Google Document AI</td>
+            <td>クラウドAI-OCR</td>
+            <td>Googleインフラ、価格競争力</td>
+            <td>高（大企業向け代替になりうる）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <strong>最大の構造リスク:</strong> OpenAIのGPT-4oやGeminiのマルチモーダル機能強化により、「専用AI-OCR」というカテゴリ自体が汎用LLMに吸収されるリスクがある。AI insideがAIエージェントへのピボットを急ぐのは、この脅威への防衛策でもある。
+      </div>
+    </section>
+
+    <!-- 09 リスク -->
+    <section class="section" id="s09">
+      <div class="section-num">Chapter 09</div>
+      <h2>リスク分析</h2>
+
+      <div class="risk-grid">
+        <div class="risk-item">
+          <span class="risk-level risk-high">HIGH</span>
+          <div class="risk-title">汎用LLMによるOCR代替リスク</div>
+          <div class="risk-desc">GPT-4o/Geminiのマルチモーダル進化が「専用AI-OCR」の市場を侵食。2〜3年以内に主力製品の優位性が脅かされる可能性。</div>
+        </div>
+        <div class="risk-item">
+          <span class="risk-level risk-high">HIGH</span>
+          <div class="risk-title">大口顧客依存の再発リスク</div>
+          <div class="risk-desc">NTT事件の教訓があるが、SaaS顧客構造上、上位数社が売上の大部分を占める構造は変わりにくい。パートナー経由の一括解約リスクが潜在。</div>
+        </div>
+        <div class="risk-item">
+          <span class="risk-level risk-high">HIGH</span>
+          <div class="risk-title">AIエージェント転換の不確実性</div>
+          <div class="risk-desc">OCR→AIエージェントへのピボットが成功するかは未知数。競合（国内外大手）も同じ方向を向いており、差別化の根拠が不明確。</div>
+        </div>
+        <div class="risk-item">
+          <span class="risk-level risk-mid">MEDIUM</span>
+          <div class="risk-title">収益性回復の長期化</div>
+          <div class="risk-desc">5年営業利益CAGR ▲22.5%が示す通り、成長しながら利益が縮小する状態が続いている。投資フェーズと捉えられなければ、株価の上値は重い。</div>
+        </div>
+        <div class="risk-item">
+          <span class="risk-level risk-mid">MEDIUM</span>
+          <div class="risk-title">CEOへの過度な依存</div>
+          <div class="risk-desc">47%持分＋CEO＋CPO兼任で渡久地択への権力集中が極めて強い。後継リスク・ガバナンスリスクが内在。</div>
+        </div>
+        <div class="risk-item">
+          <span class="risk-level risk-low">LOW</span>
+          <div class="risk-title">aiforceのれん残存リスク</div>
+          <div class="risk-desc">既に6.85億円を毀損済。残存のれんがあれば追加毀損の可能性があるが、規模は限定的と推測。</div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <strong>最大リスクのまとめ:</strong> AI inside最大のリスクは「OCR専業から汎用LLMへの市場代替」。2年以内に事業モデルの根本的な再定義が成功しなければ、DX Suite頼みのビジネスは縮小フェーズに入りかねない。AIエージェント化戦略が市場から評価されるかが今後3年の最重要分岐点。
+      </div>
+    </section>
+
+    <!-- 10 ビジョン -->
+    <section class="section" id="s10">
+      <div class="section-num">Chapter 10</div>
+      <h2>戦略ビジョン・Investment Thesis</h2>
+
+      <h3>長期戦略ロードマップ</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">2019〜2021年【Phase 1 / 完了】</div>
+          <div class="tl-text">DX Suite でAI-OCR市場を確立。NTT大型パートナー経由で急拡大。上場と時価総額1,000億超。<span class="badge badge-v">✓ 達成</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot orange"></div>
+          <div class="tl-year orange">2021〜2024年【Phase 2 / 苦難の再構築】</div>
+          <div class="tl-text">NTT解約ショック後の直接開拓への転換。aiforce買収でAI領域拡張を試みる。のれん毀損など課題も残るが売上は回復。<span class="badge badge-u">△ 一部達成</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2025〜2026年【Phase 3 / AIエージェント化】</div>
+          <div class="tl-text">生成AI時代に合わせ「業務を完遂するAIエージェント実行プラットフォーム」へ再定義。新事業Leapnetも展開。FY2026売上50.5億円目標。<span class="badge badge-u">△ 進行中</span></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#94a3b8; box-shadow:0 0 0 2px #94a3b8;"></div>
+          <div class="tl-year" style="color:#94a3b8;">2027〜2030年【Phase 4 / 規模拡大】</div>
+          <div class="tl-text">「AI inside X」ビジョン——すべての人・物にAIが入り込んだ社会の実現。100億円売上規模へ。<span class="badge badge-s">? 推定</span></div>
+        </div>
+      </div>
+
+      <h3>成長ドライバー</h3>
+      <table>
+        <thead><tr><th>ドライバー</th><th>概要</th><th>実現可能性</th><th>インパクト</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>AIエージェント化</strong></td>
+            <td>OCRの後工程を含む業務全体をAIが完遂するプラットフォームへ。ASP単価の大幅向上が狙い。</td>
+            <td>中〜高（PoC→実装の加速次第）</td>
+            <td>大（モデル転換）</td>
+          </tr>
+          <tr>
+            <td><strong>DX Suite継続成長</strong></td>
+            <td>既存顧客への深化（ユーザー増・使用量増）。契約件数3,057件は成長余地あり。</td>
+            <td>高（継続的に拡大中）</td>
+            <td>中（安定的収益の柱）</td>
+          </tr>
+          <tr>
+            <td><strong>Leapnet新事業</strong></td>
+            <td>詳細未公開の新規事業ライン。2026年から本格展開。</td>
+            <td>不明（情報少）</td>
+            <td>不明（ワイルドカード）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Investment Thesis</h3>
+      <div class="highlight-box">
+        <h4>Bull Case</h4>
+        <p>AIエージェントへのピボットが成功し、「AIで業務を完遂する」プラットフォームとして差別化されれば、既存のAI-OCR顧客基盤を起点にASP単価が大きく上昇する。47%持分を持つ創業者CEOの強いコミットメントと、11年間AI研究を続けた技術的バックグラウンドが突破口となる可能性がある。</p>
+      </div>
+      <div class="callout danger">
+        <strong>Bear Case:</strong> GPT-4oなどの汎用LLMがOCR機能を取り込むと、DX Suiteの競争優位が失われる。AIエージェントへの転換も大企業（Google、Microsoft、Salesforce等）と競合し、差別化が困難。5年で営業利益が▲22.5%CAGRという数字が示す収益性の構造的低下が続く。
+      </div>
+      <div class="callout">
+        <strong>総合判断:</strong> AI insideは「日本の企業DX × AI」という巨大市場で一定のポジションを確立した数少ない上場企業。ただし最大のリスクは「OCR専業からの脱却」が2〜3年以内に証明できるかどうか。渡久地氏の「200年タイムライン思考」と47%持分の長期コミットは評価できるが、NTT事件で明らかになったオペレーション脆弱性と収益性の低さが課題として残る。<span class="badge badge-u">△ 要継続観察</span>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-meta">
+      <span>調査日: <strong>2026-06-23</strong></span>
+      <span>参照ソース: <strong>28</strong></span>
+      <span>確認済クレーム: <strong>34/47</strong></span>
+      <span>棄却: <strong>3</strong></span>
+    </div>
+    <div class="methodology">
+      <strong style="color:#94a3b8">検証方針:</strong> 本資料は複数の公開情報（IR資料、日経・Nxtech記事、FastGrow、共有リサーチ、みんかぶ等）を照合。
+      ✓確認済・◎高信頼は複数ソース裏付け済。△要注意は単一ソースまたは推計。?推定は試算値。
+      財務数値は一部推計を含む。投資判断の最終責任は読者に帰属します。
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

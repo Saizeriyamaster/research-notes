@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ガーナ — Country Profile</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      line-height: 1.7;
+      padding: 24px 16px 64px;
+    }
+    .page { max-width: 960px; margin: 0 auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #006B3F 0%, #FCD116 60%, #CE1126 100%);
+      border-radius: 16px;
+      padding: 48px 48px 40px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="60" fill="rgba(0,0,0,0.08)"/><circle cx="10" cy="80" r="40" fill="rgba(0,0,0,0.05)"/></svg>');
+      pointer-events: none;
+    }
+    .hero-flag { font-size: 72px; line-height: 1; margin-bottom: 12px; }
+    .hero-name { font-size: 42px; font-weight: 700; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,0.9); margin-top: 6px; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .hero-tag {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+      color: #fff;
+    }
+    .meta-updated { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 16px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-top: 3px solid var(--accent, #0088FF);
+    }
+    .stat-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #0E2841; margin-top: 4px; }
+    .stat-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    .section-icon { font-size: 22px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .section-badge {
+      margin-left: auto;
+      background: #e8f4ff;
+      color: #0088FF;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .info-table th {
+      background: #f7f9fc;
+      text-align: left;
+      padding: 10px 14px;
+      color: #555;
+      font-weight: 600;
+      width: 35%;
+      border-bottom: 1px solid #eee;
+    }
+    .info-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #333;
+    }
+    .info-table tr:last-child th,
+    .info-table tr:last-child td { border-bottom: none; }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .price-card {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .price-emoji { font-size: 28px; flex-shrink: 0; }
+    .price-item-name { font-size: 13px; color: #666; }
+    .price-amount { font-size: 18px; font-weight: 700; color: #0E2841; }
+    .price-jpy { font-size: 12px; color: #0088FF; margin-top: 1px; }
+
+    .koppen-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #006B3F, #38761D);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .season-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .season-chip {
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .season-chip.dry    { background: #fff8e1; border-left: 4px solid #FF9900; }
+    .season-chip.wet    { background: #e8f5e9; border-left: 4px solid #38761D; }
+    .season-chip.hot    { background: #fce4ec; border-left: 4px solid #e53935; }
+    .season-chip.cold   { background: #e3f2fd; border-left: 4px solid #1565c0; }
+    .season-chip.mild   { background: #f3e5f5; border-left: 4px solid #6a1b9a; }
+    .season-chip b { display: block; font-size: 12px; margin-bottom: 3px; }
+
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .outfit-card { background: #f7f9fc; border-radius: 10px; padding: 14px 16px; }
+    .outfit-card-title { font-weight: 700; font-size: 13px; color: #0E2841; margin-bottom: 6px; }
+    .outfit-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .area-card {
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-left: 5px solid var(--area-color, #0088FF);
+      background: #f7f9fc;
+    }
+    .area-card.nightlife   { --area-color: #9900FF; background: #faf5ff; }
+    .area-card.residential { --area-color: #38761D; background: #f5fff7; }
+    .area-card.tourist     { --area-color: #0088FF; background: #f0f7ff; }
+    .area-card.business    { --area-color: #156082; background: #f0f6fa; }
+    .area-card.caution     { --area-color: #e53935; background: #fff5f5; }
+    .area-card.transport   { --area-color: #FF9900; background: #fff8f0; }
+    .area-name { font-weight: 700; font-size: 15px; color: #0E2841; margin-bottom: 4px; }
+    .area-type { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .area-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+    .stability-bar-wrap { margin-top: 8px; }
+    .stability-label { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 4px; }
+    .stability-bar { height: 10px; background: #eee; border-radius: 99px; overflow: hidden; }
+    .stability-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #38761D, #0088FF); }
+
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .culture-card { background: #f7f9fc; border-radius: 10px; padding: 16px; }
+    .culture-card-icon { font-size: 28px; margin-bottom: 8px; }
+    .culture-card-title { font-weight: 700; font-size: 14px; color: #0E2841; margin-bottom: 6px; }
+    .culture-card-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .food-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .food-tag {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+    }
+
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .lang-chip {
+      background: #e8f4ff;
+      color: #0E2841;
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .lang-chip.sub { background: #f7f9fc; color: #555; font-weight: 400; }
+
+    .phrase-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+    .phrase-table th { background: #fff8e1; padding: 10px 14px; text-align: left; color: #8B4513; font-weight: 700; border-bottom: 2px solid #ffe082; }
+    .phrase-table td { padding: 10px 14px; border-bottom: 1px solid #f0f2f5; }
+    .phrase-table td:nth-child(2) { font-weight: 700; color: #0E2841; }
+    .phrase-table td:nth-child(3) { color: #8B4513; font-style: italic; }
+    .phrase-table tr:last-child td { border-bottom: none; }
+
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #006B3F, #FCD116, #CE1126);
+    }
+    .tl-item { position: relative; margin-bottom: 18px; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #C8960C;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px #C8960C;
+    }
+    .tl-year { font-size: 12px; font-weight: 700; color: #C8960C; margin-bottom: 2px; }
+    .tl-event { font-size: 14px; color: #333; font-weight: 600; }
+    .tl-desc { font-size: 13px; color: #666; margin-top: 2px; }
+
+    .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 40px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 4px; font-size: 14px; color: #444; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-flag">🇬🇭</div>
+    <div class="hero-name">ガーナ</div>
+    <div class="hero-sub">Republic of Ghana / Gaana</div>
+    <div class="hero-tags">
+      <span class="hero-tag">🌍 西アフリカ</span>
+      <span class="hero-tag">🏛 共和制（大統領制）</span>
+      <span class="hero-tag">💰 GHS（ガーナセディ）</span>
+      <span class="hero-tag">✝️ キリスト教 71%</span>
+    </div>
+    <div class="meta-updated">調査日: 2026年4月23日 — /country-info by Wanderlust</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--accent:#0088FF;">
+      <div class="stat-icon">👥</div>
+      <div class="stat-label">人口</div>
+      <div class="stat-value">3,410万人</div>
+      <div class="stat-sub">世界第46位</div>
+    </div>
+    <div class="stat-card" style="--accent:#38761D;">
+      <div class="stat-icon">💵</div>
+      <div class="stat-label">GDP（名目）</div>
+      <div class="stat-value">823億ドル</div>
+      <div class="stat-sub">世界第83位（2024年）</div>
+    </div>
+    <div class="stat-card" style="--accent:#FF9900;">
+      <div class="stat-icon">📈</div>
+      <div class="stat-label">経済成長率</div>
+      <div class="stat-value">5.7%</div>
+      <div class="stat-sub">2024年実績</div>
+    </div>
+    <div class="stat-card" style="--accent:#9900FF;">
+      <div class="stat-icon">🗺</div>
+      <div class="stat-label">国土面積</div>
+      <div class="stat-value">23.9万km²</div>
+      <div class="stat-sub">世界第82位（日本の約63%）</div>
+    </div>
+    <div class="stat-card" style="--accent:#156082;">
+      <div class="stat-icon">🏙</div>
+      <div class="stat-label">首都</div>
+      <div class="stat-value" style="font-size:18px;">アクラ</div>
+      <div class="stat-sub">都市圏人口 約450万人</div>
+    </div>
+    <div class="stat-card" style="--accent:#e53935;">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">一人当たりGDP</div>
+      <div class="stat-value">2,391 USD</div>
+      <div class="stat-sub">PPP: 約7,200 USD</div>
+    </div>
+    <div class="stat-card" style="--accent:#C8960C;">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-label">HDI</div>
+      <div class="stat-value">0.602</div>
+      <div class="stat-sub">世界145位（2022年）</div>
+    </div>
+    <div class="stat-card" style="--accent:#8B1A1A;">
+      <div class="stat-icon">⛽</div>
+      <div class="stat-label">主要産業</div>
+      <div class="stat-value" style="font-size:14px;">金・カカオ・石油</div>
+      <div class="stat-sub">アフリカ最大の金産出国</div>
+    </div>
+  </div>
+
+  <!-- 産業・輸出・資源 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏭</span>
+      <span class="section-title">産業・輸出産品・資源</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要産業</th><td>金採掘、カカオ農業、石油・天然ガス、サービス業、観光業、木材業</td></tr>
+        <tr><th>GDPの構成</th><td>サービス業 47% ／ 工業・鉱業 31% ／ 農業 22%</td></tr>
+        <tr><th>主要輸出品</th><td>金地金 55.3%、原油 17.8%、カカオ豆 11.4%、木材・加工品、マンガン</td></tr>
+        <tr><th>総輸出額</th><td>約170億ドル（2024年）</td></tr>
+        <tr><th>主要輸出相手国</th><td>UAE、インド、中国、スイス、EU諸国</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>産出資源</th><td>金（アフリカ最大生産国）、マンガン、ボーキサイト、ダイヤモンド、原油（ジュビリー油田）</td></tr>
+        <tr><th>農産物</th><td>カカオ（世界第2位）、ヤム芋、キャッサバ、プランテン、コーン、米</td></tr>
+        <tr><th>金採掘</th><td>2019年に南アフリカを抜き、アフリカNo.1の金産出国に。外貨収入の過半数を占める</td></tr>
+        <tr><th>石油・ガス</th><td>2007年にジュビリー海底油田を発見。2010年代から生産開始し重要な輸出品に</td></tr>
+        <tr><th>観光業</th><td>奴隷貿易史跡（ケープコースト城）、国立公園（カクム）、「アフリカ帰還」プログラムが訪問者を増加させている</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2COL: 言語 + 気候 -->
+  <div class="two-col">
+
+    <!-- 言語 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🗣</span>
+        <span class="section-title">言語</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin-bottom:10px;"><strong>公用語</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip">英語（English）</span>
+      </div>
+      <p style="font-size:14px;color:#555;margin:14px 0 8px;"><strong>主要現地語（政府公認11言語）</strong></p>
+      <div class="lang-chips">
+        <span class="lang-chip sub">トゥイ語（Twi）</span>
+        <span class="lang-chip sub">エウェ語（Ewe）</span>
+        <span class="lang-chip sub">ガ語（Ga）</span>
+        <span class="lang-chip sub">ダグバニ語（Dagbanli）</span>
+        <span class="lang-chip sub">ファンテ語（Fante）</span>
+        <span class="lang-chip sub">英語通用度: 高（都市部ほぼ全域）</span>
+      </div>
+      <p style="font-size:13px;color:#888;margin-top:14px;">英語が公用語のため、アクラ・クマシなど都市部では英語で全て用が足せる。約80の民族語が存在するが、旅行者が最も耳にするのはアカン系のトゥイ語。一言でもトゥイ語を使うと喜ばれる。</p>
+
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-top:20px;margin-bottom:8px;">🗨 旅行者向け基本フレーズ（Twi語）</p>
+      <table class="phrase-table">
+        <tr><th>場面</th><th>現地語（Twi）</th><th>読み方（カタカナ）</th></tr>
+        <tr><td>ようこそ</td><td>Akwaaba</td><td>アクワーバ</td></tr>
+        <tr><td>おはようございます</td><td>Maakyé</td><td>マーチェ</td></tr>
+        <tr><td>こんにちは（調子は？）</td><td>Ete sen?</td><td>エテ・セン</td></tr>
+        <tr><td>ありがとう</td><td>Meda wo ase</td><td>メダ・ウォ・アセ</td></tr>
+        <tr><td>はい</td><td>Aane</td><td>アーネ</td></tr>
+        <tr><td>いいえ</td><td>Dabi</td><td>ダビ</td></tr>
+        <tr><td>いくら？</td><td>Ɛyɛ sɛn?</td><td>エイェ・セン</td></tr>
+        <tr><td>トイレはどこ？</td><td>Tiefiase wɔ hɛ?</td><td>ティエフィアセ・ウォ・ヘ</td></tr>
+        <tr><td>おいしい！</td><td>Eye dɛ!</td><td>エイェ・デ</td></tr>
+      </table>
+    </div>
+
+    <!-- 気候 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🌤</span>
+        <span class="section-title">気候</span>
+        <span class="section-badge">ケッペン</span>
+      </div>
+      <div class="koppen-badge">Am / Aw</div>
+      <p style="font-size:14px;color:#444;">南部（アクラ・ケープコースト）は<strong>熱帯モンスーン気候（Am）</strong>、北部（タマレ以北）は<strong>熱帯サバナ気候（Aw）</strong>。年間を通じ高温（22〜32℃）で、南部は雨期が二分割（小雨期・大雨期）、北部は一本の雨期を持つ。</p>
+      <div class="season-row">
+        <div class="season-chip wet">
+          <b>大雨期（南部）</b>
+          3〜7月 / 平均28〜31℃・湿度80%超
+        </div>
+        <div class="season-chip dry">
+          <b>小乾期（南部）</b>
+          8〜9月 / 涼しめ・曇りがち
+        </div>
+        <div class="season-chip wet">
+          <b>小雨期（南部）</b>
+          10〜11月 / 再び降雨
+        </div>
+        <div class="season-chip dry">
+          <b>乾期（南部）</b>
+          12〜2月 / ハルマッタン（砂塵風）・最も乾燥
+        </div>
+      </div>
+
+      <!-- 4月の服装ガイド -->
+      <div style="margin-top:20px;background:#fff8e1;border-radius:10px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#8B4513;margin-bottom:10px;">👘 4月のアクラ服装ガイド（大雨期序盤）</p>
+        <div class="outfit-grid">
+          <div class="outfit-card">
+            <div class="outfit-card-title">☀️ 昼間（30〜32℃）</div>
+            <div class="outfit-card-text">綿・リネン素材の薄手のTシャツ＋ショートパンツまたは薄手のパンツ。湿度が高く体感温度は35℃超えも。速乾性素材が快適。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🌙 夜（26〜28℃）</div>
+            <div class="outfit-card-text">夜も蒸し暑い。薄手の長袖1枚あると冷房の効いたレストランや車内で重宝する。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">⚠️ 必携アイテム</div>
+            <div class="outfit-card-text">折り畳み傘・レインコート（午後に突然のスコールあり）、SPF50以上の日焼け止め、虫除けスプレー（DEET含有）、経口補水塩、サングラス。</div>
+          </div>
+          <div class="outfit-card">
+            <div class="outfit-card-title">🕍 宗教施設・文化施設</div>
+            <div class="outfit-card-text">教会・モスクは肩・膝を隠す服装が必要。スカーフ持参推奨。首長や族長を訪問する場合は帽子を脱ぐのが礼儀。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 文化・国民性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title">文化・国民性</span>
+    </div>
+    <div class="culture-grid">
+      <div class="culture-card">
+        <div class="culture-card-icon">🤝</div>
+        <div class="culture-card-title">対人関係・礼儀</div>
+        <div class="culture-card-text">ガーナ人は非常に温かく社交的。会うたびに必ず挨拶を交わすのが礼儀で、挨拶を飛ばすと失礼とみなされる。握手はアフリカ流の「指クリック」付きが一般的。左手で物を渡すのは不作法とされ、必ず右手を使う。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⏰</div>
+        <div class="culture-card-title">時間感覚・仕事観</div>
+        <div class="culture-card-text">「ガーナ・タイム」と呼ばれる時間感覚があり、約束の時間に2時間遅れることも珍しくない。渋滞が激しいアクラでは交通事情が主因だが、文化的にも時間は柔軟。ビジネスでは徐々に改善されつつある。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🙏</div>
+        <div class="culture-card-title">宗教・信仰</div>
+        <div class="culture-card-text">キリスト教71%、イスラム教17%。宗教は日常生活に深く根付いており、ビジネスの場でも神への感謝を口にする。両宗教が共存しており、宗教的寛容性はアフリカ屈指。先祖崇拝などの伝統的信仰も残る。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">🎉</div>
+        <div class="culture-card-title">祝祭・行事</div>
+        <div class="culture-card-text">独立記念日（3月6日）、ホモウォ祭（ガ族・収穫祭・9月）、オトゥーフォー祭（アシャンティ族）、ファンテ・アシャフォー祭。各民族の伝統祭りは観光資源にもなっており、カラフルなケンテ布の衣装が見どころ。</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">⚠️</div>
+        <div class="culture-card-title">タブー・NG行動</div>
+        <div class="culture-card-text">①左手で物を渡す ②首長・長老への不敬（帽子をかぶったまま・足を向けて座る） ③無断で写真撮影（特に人物・市場） ④土足のまま家に入る ⑤公共の場での過度なスキンシップ（同性間は友好の証として問題なし）</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-icon">💬</div>
+        <div class="culture-card-title">コミュニケーション特性</div>
+        <div class="culture-card-text">ハイコンテキスト文化。直接的な拒否は避け、「Yes, but...」形式で遠回しに伝えることが多い。諺・比喩を多用する。批判や否定的な内容は婉曲に伝えられるため、額面通りに受け取らないよう注意。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 民族・宗教構成 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">👥</span>
+      <span class="section-title">構成民族・宗教</span>
+    </div>
+    <div class="two-col">
+      <table class="info-table">
+        <tr><th>主要民族</th><td>アカン族 47.5%（アシャンティ・ファンテ・アクアペムなど複数民族の総称）</td></tr>
+        <tr><th>その他主要民族</th><td>モレ＝ダグバニ族 16.6%、エウェ族 13.9%、ガ＝アダングベ族 7.7%、グルマ族 5.7%</td></tr>
+        <tr><th>宗教構成</th><td>キリスト教 71.2%（ペンテコステ派 28%、プロテスタント 28%、カトリック 13%など）、イスラム教 17.6%、伝統的信仰 5.2%</td></tr>
+        <tr><th>宗教的背景</th><td>南部にキリスト教が強く、北部にイスラム教が多い傾向。両宗教の共存が平和の基盤となっている</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>民族的特徴</th><td>アシャンティ族は黄金海岸時代から強大な王国を持ち、精巧なケンテ布・金細工文化を保持している</td></tr>
+        <tr><th>歴史的背景</th><td>独立後もイギリス植民地時代の境界線を維持。多民族が共存する民主的な国家運営が評価されている</td></tr>
+        <tr><th>民族間関係</th><td>民族間の対立は比較的少なく、ガーナはアフリカの民主主義モデル国として評価が高い</td></tr>
+        <tr><th>言語と民族</th><td>アカン民族語（トゥイ・ファンテ等）が南部共通語として機能。英語が全土の教育・行政言語</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 食文化 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🍽</span>
+      <span class="section-title">主食・食文化</span>
+    </div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">ガーナ料理はキャッサバ・ヤム・プランテン・コーンなどデンプン系主食とスープ・シチューの組み合わせが基本。スパイシーでコクのあるパームオイルベースの料理が多く、屋台文化（ストリートフード）が非常に発達している。朝食から夜まで屋台で調達する人も多い。ジョロフライスをめぐる「ガーナ vs ナイジェリア」論争は西アフリカの名物文化論争。</p>
+    <p style="font-size:13px;color:#555;font-weight:600;margin-bottom:8px;">絶対に食べるべき料理</p>
+    <div class="food-list">
+      <span class="food-tag">🫙 フフ（Fufu）</span>
+      <span class="food-tag">🍚 ジョロフライス（Jollof Rice）</span>
+      <span class="food-tag">🫘 ワーキェ（Waakye）</span>
+      <span class="food-tag">🌽 バンク＋ティラピア（Banku）</span>
+      <span class="food-tag">🍌 ケレウェレ（Kelewele）</span>
+      <span class="food-tag">🥜 グラウンドナッツスープ</span>
+      <span class="food-tag">🐟 レッドレッド（Red Red）</span>
+      <span class="food-tag">🌾 トゥオ・ザーフィ（TZ）</span>
+      <span class="food-tag">🥭 チチンガ（串焼き肉）</span>
+      <span class="food-tag">🍺 マルタ（麦芽飲料）</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-top:14px;">ベジタリアンは豆料理（レッドレッドなど）で対応可能。水道水は飲まず、ペットボトル水またはパック水（サチェット）を使用。屋台の衛生状態にはばらつきがあるため、繁盛している店を選ぶのがコツ。</p>
+  </div>
+
+  <!-- 物価 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💴</span>
+      <span class="section-title">物価ガイド</span>
+      <span class="section-badge">GHS（セディ） / 2026年4月基準</span>
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">
+      為替レート: <strong>1 USD ≈ 11.07 GHS</strong> &nbsp;|&nbsp; <strong>1 GHS ≈ 13円</strong> &nbsp;|&nbsp; <strong>1 USD ≈ 約144円</strong><br>
+      ※ 観光地・高級エリア（オス・空港周辺）は2〜3倍の価格設定になる場合があります。
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-emoji">🚕</div>
+        <div>
+          <div class="price-item-name">タクシー（5km目安・Uber/Bolt）</div>
+          <div class="price-amount">30〜60 GHS</div>
+          <div class="price-jpy">≈ 390〜780円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">☕</div>
+        <div>
+          <div class="price-item-name">カフェのコーヒー</div>
+          <div class="price-amount">30〜70 GHS</div>
+          <div class="price-jpy">≈ 390〜910円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍺</div>
+        <div>
+          <div class="price-item-name">Star Beer / Club Beer（330ml）</div>
+          <div class="price-amount">20〜40 GHS</div>
+          <div class="price-jpy">≈ 260〜520円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">屋台・地元食堂（ワーキェ等）</div>
+          <div class="price-amount">20〜50 GHS</div>
+          <div class="price-jpy">≈ 260〜650円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🍽</div>
+        <div>
+          <div class="price-item-name">観光地レストラン（1人）</div>
+          <div class="price-amount">100〜250 GHS</div>
+          <div class="price-jpy">≈ 1,300〜3,250円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">💧</div>
+        <div>
+          <div class="price-item-name">ペットボトル水（500ml）</div>
+          <div class="price-amount">3〜8 GHS</div>
+          <div class="price-jpy">≈ 39〜104円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🚌</div>
+        <div>
+          <div class="price-item-name">トロトロ（乗合ミニバス）</div>
+          <div class="price-amount">3〜8 GHS</div>
+          <div class="price-jpy">≈ 39〜104円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏩</div>
+        <div>
+          <div class="price-item-name">中級ホテル（1泊）</div>
+          <div class="price-amount">350〜800 GHS</div>
+          <div class="price-jpy">≈ 4,550〜10,400円</div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-emoji">🏨</div>
+        <div>
+          <div class="price-item-name">ゲストハウス・ホステル（1泊）</div>
+          <div class="price-amount">80〜180 GHS</div>
+          <div class="price-jpy">≈ 1,040〜2,340円</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:#f0f7ff;border-radius:10px;padding:16px 20px;">
+      <p style="font-size:14px;font-weight:700;color:#0E2841;margin-bottom:8px;">💡 旅行者の1日平均支出目安</p>
+      <table class="info-table">
+        <tr><th>バジェット旅行</th><td>200〜350 GHS/日（≈ 2,600〜4,550円）— 屋台・トロトロ・ゲストハウス中心</td></tr>
+        <tr><th>標準旅行</th><td>400〜700 GHS/日（≈ 5,200〜9,100円）— 地元レストラン・Uber・中級ホテル</td></tr>
+        <tr><th>快適旅行</th><td>800〜1,500 GHS/日（≈ 10,400〜19,500円）— 観光地レストラン・上級ホテル・ツアー利用</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 政治・安定性 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <span class="section-title">政治・安定性</span>
+    </div>
+    <div class="two-col" style="gap:12px;">
+      <table class="info-table">
+        <tr><th>政治体制</th><td>大統領制共和国（Presidential Republic）</td></tr>
+        <tr><th>元首・行政府長</th><td>大統領：ジョン・ドラマニ・マハマ（2025年1月就任）</td></tr>
+        <tr><th>副大統領</th><td>ジェーン・ナアナ・オポク・アジマン</td></tr>
+        <tr><th>外務省危険レベル</th><td>レベル1（アクラ・南部）／レベル2（ブルキナファソ国境近隣の北部）</td></tr>
+        <tr><th>民主主義指数（EIU）</th><td>約6.2/10（欠陥民主主義）</td></tr>
+        <tr><th>腐敗認識指数（CPI）</th><td>42/100（世界80位、2024年）</td></tr>
+      </table>
+      <div>
+        <div class="stability-bar-wrap">
+          <div class="stability-label"><span>政治的安定性（世銀WGI）</span><span>55%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:55%"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>腐敗抑制</span><span>48%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:48%;background:linear-gradient(90deg,#FF9900,#e53935)"></div></div>
+        </div>
+        <div class="stability-bar-wrap" style="margin-top:14px;">
+          <div class="stability-label"><span>法の支配</span><span>52%ile</span></div>
+          <div class="stability-bar"><div class="stability-fill" style="width:52%;background:linear-gradient(90deg,#156082,#38761D)"></div></div>
+        </div>
+        <p style="font-size:13px;color:#888;margin-top:16px;">1992年以降、9回の選挙で4回の政権交代を平和裏に実現。「西アフリカの民主主義モデル」と評される。2024年12月の選挙でもNDCのマハマ氏が56.4%を獲得し平和裏に政権交代。腐敗対策は課題だが、治安はアフリカ有数の良さ。ただし北部のブルキナファソ・マリ国境近くではジハード系武装勢力の脅威が波及しつつある。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 高校世界史タイムライン -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">ガーナの歴史：高校世界史の必修事項</span>
+      <span class="section-badge">受験レベル</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">〜900年頃</div>
+        <div class="tl-event">ガーナ帝国の隆盛（現ガーナとは別地域）</div>
+        <div class="tl-desc">現在のマリ・モーリタニア付近に栄えたガーナ帝国（ワガドゥ王国）は金と塩の交易で繁栄。現ガーナの国名はこの帝国へのオマージュとして1957年に採用された。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1471年</div>
+        <div class="tl-event">ポルトガル人到来—「黄金海岸（Gold Coast）」の命名</div>
+        <div class="tl-desc">ポルトガル人が現在のガーナ沿岸部に到達。豊富な金の産出から「黄金海岸」と名付け、交易拠点を設ける。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1482年</div>
+        <div class="tl-event">エルミナ城（Elmina Castle）築城</div>
+        <div class="tl-desc">ポルトガルがエルミナに城塞を建設。サハラ以南アフリカ最古のヨーロッパ建造物であり、後に奴隷貿易の中継基地となった（現ユネスコ世界遺産）。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">16〜18世紀</div>
+        <div class="tl-event">大西洋三角貿易の中心地—奴隷貿易の深淵</div>
+        <div class="tl-desc">英・蘭・丁が競って黄金海岸に貿易拠点を設置。推定数百万人のガーナ人・西アフリカ人がアメリカ大陸へ奴隷として送り出された。ケープコースト城が主要拠点となった。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">17世紀末〜</div>
+        <div class="tl-event">アシャンティ王国の勃興</div>
+        <div class="tl-desc">アシャンティ族がオセイ・トゥトゥ王のもとに統合。1701年デンキラ族を破り（フェイアセの戦い）、黄金の王座（Sika Dwa）を権威の象徴に強大な王国を形成。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1807年</div>
+        <div class="tl-event">英国、奴隷貿易廃止法（Abolition of the Slave Trade Act）</div>
+        <div class="tl-desc">ウィリアム・ウィルバーフォースらの運動で英国議会が奴隷貿易を禁止。黄金海岸での人身売買は徐々に縮小するが、植民地支配は続く。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1874年</div>
+        <div class="tl-event">英領ゴールドコースト植民地の正式成立</div>
+        <div class="tl-desc">英国がアシャンティ戦争に勝利し、沿岸部を王室直轄植民地に。内陸部のアシャンティは1900年まで抵抗を続けた（ヤア・アサンテワー戦争・黄金の王座戦争）。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1900年</div>
+        <div class="tl-event">ヤア・アサンテワーの戦い（最後のアシャンティ抵抗）</div>
+        <div class="tl-desc">アシャンティの女王母ヤア・アサンテワーが「黄金の王座」引き渡し要求を拒否して蜂起。最終的に英国に鎮圧され、アシャンティも保護領に編入。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1948年</div>
+        <div class="tl-event">アクラ暴動と独立運動の加速</div>
+        <div class="tl-desc">帰還した元兵士のデモ行進を英国警察が発砲し3人死亡。全土で暴動が拡大し、反植民地独立運動が一気に加速した。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1957年3月6日</div>
+        <div class="tl-event">ガーナ独立——サハラ以南アフリカ初の独立国</div>
+        <div class="tl-desc">クワメ・エンクルマ（Kwame Nkrumah）率いる国民党が選挙に勝利し、英連邦内での自治から完全独立へ。「黒いアフリカ」初の独立はアフリカ民族主義運動のシンボルとなった。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1960年</div>
+        <div class="tl-event">共和国宣言・エンクルマ初代大統領就任</div>
+        <div class="tl-desc">「アフリカ統一（Pan-Africanism）」を唱えたエンクルマが大統領に。アフリカ統一機構（OAU、現AU）の設立を主導し、アフリカ解放運動のリーダーとなった。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1966年</div>
+        <div class="tl-event">軍事クーデター——エンクルマ追放</div>
+        <div class="tl-desc">エンクルマが北ベトナム訪問中に軍部がクーデター。その後の独裁化・経済悪化が背景にあった。エンクルマは亡命先で没す（1972年）。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1979年・1981年</div>
+        <div class="tl-event">ジェリー・ローリングスによる二度のクーデター</div>
+        <div class="tl-desc">空軍中尉ローリングスが1979年と1981年に政権掌握。腐敗した旧軍事指導者らを処刑。長期に渡り国家評議会議長として実権を握った。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1992年</div>
+        <div class="tl-event">新憲法制定・多党制民主主義への回帰</div>
+        <div class="tl-desc">ローリングスが民政移管を決断。新憲法のもと選挙を実施しローリングス自身が大統領に当選。以後2000年には平和裏の政権交代が実現し、民主主義が定着した。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2007年</div>
+        <div class="tl-event">海底油田（ジュビリー・フィールド）発見</div>
+        <div class="tl-desc">沖合で大規模油田を発見。2010年から生産開始し、農業・金・カカオに続く第4の外貨収入源となったが、資源収益の配分が政治課題に。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2024年12月</div>
+        <div class="tl-event">マハマ大統領再選——NDC政権復帰</div>
+        <div class="tl-desc">前大統領のジョン・ドラマニ・マハマ（NDC）が56.4%の票を獲得し、アクフォ＝アド政権（NPP）から政権交代。経済危機（IMF融資受入）からの回復が最大の政策課題。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 首都エリアガイド -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🗺</span>
+      <span class="section-title">アクラ エリアガイド</span>
+      <span class="section-badge">首都の歩き方</span>
+    </div>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">アクラはガーナ大西洋沿岸に位置する人口約450万人の大都市。渋滞（「アクラ・トラフィック」）が激しいことで有名で、移動にはUber・Boltアプリが便利。Boltが最も普及しており価格も適正。中心部にはKotoka国際空港があり、主要エリアへのアクセスは良好。</p>
+    <div class="area-grid">
+      <div class="area-card tourist">
+        <div class="area-name">オス（Osu）＆ラボーン（Labone）</div>
+        <div class="area-type">観光・ショッピング・ダイニング</div>
+        <div class="area-desc">アクラ随一の観光エリア。オックスフォード・ストリートを中心に、多国籍レストラン・バー・クラフトショップが集中。旅行者の拠点として最適。夜のメインストリートは比較的安全だが、路地は要注意。</div>
+      </div>
+      <div class="area-card nightlife">
+        <div class="area-name">イースト・レゴン（East Legon）</div>
+        <div class="area-type">ナイトライフ・エンタメ・モール</div>
+        <div class="area-desc">アクラ最大のショッピングモール（Marina Mall・Accra Mall）があり、クラブ・パブも充実。富裕層・中産階級が多く住む新興住宅街でもあり、夜のナイトライフも活発。Uberでアクセスが便利。</div>
+      </div>
+      <div class="area-card residential">
+        <div class="area-name">カントンメンツ（Cantonments）</div>
+        <div class="area-type">高級住宅街・安全エリア</div>
+        <div class="area-desc">ガーナ警察本部・各国大使館が集中する、アクラで最も安全な住宅街の一つ。静かで治安が良く、外国人居住者も多い。高級住宅・サービスアパートメントが豊富。</div>
+      </div>
+      <div class="area-card business">
+        <div class="area-name">空港周辺エリア（Airport Residential Area）</div>
+        <div class="area-type">ビジネス・外国人向け・拠点</div>
+        <div class="area-desc">Kotoka国際空港に隣接する高級・安全エリア。大使館・国際機関・高級ホテルが集中。外国人駐在員が多く、英語が完全に通じる。物価は高めだが快適。初回訪問者の宿泊拠点としておすすめ。</div>
+      </div>
+      <div class="area-card caution">
+        <div class="area-name">ニマ（Nima）・マアモビ（Mamobi）</div>
+        <div class="area-type">⚠️ 要注意エリア</div>
+        <div class="area-desc">アクラ中部の人口密集スラム地区。スリや強盗のリスクが比較的高く、観光目的での単独訪問は推奨しない。地元ガイドと同行すれば文化的に興味深いエリアだが、夜間は避けること。</div>
+      </div>
+      <div class="area-card transport">
+        <div class="area-name">テマ（Tema）・中央バスターミナル</div>
+        <div class="area-type">交通ハブ・地方移動の拠点</div>
+        <div class="area-desc">テマはアクラ東部の工業港湾都市で、クマシ・ケープコースト方面への長距離バスが発着。Neoplanや国営バスOABが運行。KIA空港からは車で30〜60分（渋滞次第）。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    ガーナ Country Profile — /country-info by Wanderlust &nbsp;|&nbsp; 調査日: 2026-04-23 &nbsp;|&nbsp; ※情報は変動するため渡航前に外務省・在ガーナ日本大使館の最新情報を確認してください
+  </div>
+
+</div>
+</body>
+</html>

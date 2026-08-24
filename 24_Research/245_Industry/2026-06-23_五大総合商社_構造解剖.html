@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五大総合商社 — 構造解剖 2026</title>
+<style>
+:root {
+  --ground: #EEEAE3;
+  --surface: #F8F5F0;
+  --text: #17110C;
+  --text-muted: #6B5B45;
+  --hero: #0F2540;
+  --hero-text: #EDE8DF;
+  --accent: #9B6E1A;
+  --accent-inv: #F5C842;
+  --neg: #C44329;
+  --pos: #2A6B50;
+  --border: #D4CDBF;
+  --mono: 'SF Mono','Fira Code','Cascadia Code','Courier New',monospace;
+  --sans: -apple-system,'Hiragino Sans','Yu Gothic UI','Helvetica Neue',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--ground);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* ── HERO ── */
+.hero{background:var(--hero);color:var(--hero-text);padding:72px 40px 56px;}
+.hero-inner{max-width:1100px;margin:0 auto;}
+.hero-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-inv);opacity:.75;margin-bottom:18px;}
+.hero h1{font-size:clamp(32px,5.5vw,68px);font-weight:700;letter-spacing:-.025em;line-height:1.05;margin-bottom:10px;}
+.hero h1 em{font-style:normal;color:var(--accent-inv);}
+.hero-sub{font-size:14px;color:rgba(237,232,223,.55);margin-bottom:56px;max-width:560px;}
+
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.strip-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:16px 14px;transition:border-color .2s;}
+.strip-card:hover{border-color:rgba(245,200,66,.35);}
+.strip-code{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--accent-inv);opacity:.65;margin-bottom:5px;}
+.strip-name{font-size:13px;font-weight:600;line-height:1.25;margin-bottom:12px;color:var(--hero-text);}
+.strip-label{font-size:9px;color:rgba(237,232,223,.45);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.strip-profit{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--hero-text);}
+.strip-profit span{font-size:11px;font-weight:400;color:rgba(237,232,223,.5);}
+.strip-yoy{font-family:var(--mono);font-size:10px;margin-top:3px;}
+.up{color:#6BEBA0;}.down{color:#FF7B5E;}
+.strip-kw{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(237,232,223,.4);line-height:1.4;}
+
+/* ── MAIN ── */
+.main{max-width:1100px;margin:0 auto;padding:0 40px;}
+.block{padding:68px 0;border-bottom:1px solid var(--border);}
+.block:last-child{border-bottom:none;}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.block-title{font-size:clamp(22px,3.5vw,32px);font-weight:700;letter-spacing:-.015em;line-height:1.15;margin-bottom:10px;}
+.block-lead{font-size:14px;color:var(--text-muted);max-width:620px;margin-bottom:36px;line-height:1.7;}
+
+/* ── METRICS TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:9px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(15,37,64,.07);}
+table.metrics{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.metrics th{background:var(--hero);color:var(--hero-text);padding:14px 15px;font-size:11px;font-weight:600;letter-spacing:.03em;white-space:nowrap;}
+table.metrics th.cname{text-align:center;font-size:12px;}
+table.metrics th .co-code{display:block;font-family:var(--mono);font-size:9px;color:var(--accent-inv);font-weight:400;opacity:.65;margin-top:2px;letter-spacing:.1em;}
+table.metrics td{padding:12px 15px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
+table.metrics td.row-label{text-align:left;font-size:12px;font-weight:500;color:var(--text-muted);white-space:nowrap;background:var(--surface);border-right:1px solid var(--border);}
+table.metrics tr:nth-child(even) td:not(.row-label){background:var(--surface);}
+table.metrics tr:last-child td{border-bottom:none;}
+.num{font-family:var(--mono);font-weight:600;}
+.num.best{color:var(--pos);font-weight:700;}
+.num.worst{color:var(--neg);}
+.num.hi{color:var(--accent);}
+.approx{font-size:10px;color:var(--text-muted);font-family:var(--mono);}
+.tbl-note{font-size:11px;color:var(--text-muted);margin-top:10px;font-family:var(--mono);line-height:1.6;}
+
+/* ── SEGMENTS (redesigned) ── */
+.seg-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;}
+.seg-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);}
+.seg-leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+
+.seg-company-row{display:grid;grid-template-columns:160px 1fr;align-items:center;gap:16px;margin-bottom:10px;}
+.seg-co-label{text-align:right;}
+.seg-co-name{font-size:13px;font-weight:700;color:var(--text);}
+.seg-co-total{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700;}
+.seg-stack{display:flex;height:40px;border-radius:5px;overflow:hidden;gap:1px;background:var(--border);}
+.seg-part{height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:rgba(255,255,255,.92);overflow:hidden;white-space:nowrap;padding:0 4px;transition:filter .15s;}
+.seg-part:hover{filter:brightness(1.15);}
+
+.seg-detail-wrap{margin-top:40px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.seg-detail-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.seg-detail-head{padding:10px 12px;font-size:12px;font-weight:700;background:var(--hero);color:var(--hero-text);}
+.seg-detail-head .sd-total{font-family:var(--mono);font-size:10px;color:var(--accent-inv);opacity:.8;margin-top:1px;}
+.seg-detail-row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);}
+.seg-detail-row:last-child{border-bottom:none;}
+.sd-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.sd-label{font-size:11px;color:var(--text-muted);flex:1;line-height:1.3;}
+.sd-val{font-family:var(--mono);font-size:11px;font-weight:700;white-space:nowrap;}
+.sd-pct{font-family:var(--mono);font-size:9px;color:var(--text-muted);}
+.est{opacity:.7;}
+.est::after{content:'*';font-size:9px;vertical-align:super;color:var(--accent);}
+
+.cross-table-wrap{margin-top:48px;overflow-x:auto;border-radius:8px;border:1px solid var(--border);}
+table.cross{width:100%;border-collapse:collapse;font-size:12.5px;}
+table.cross th{background:var(--hero);color:var(--hero-text);padding:11px 13px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap;}
+table.cross th:first-child{text-align:left;min-width:120px;}
+table.cross td{padding:9px 13px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
+table.cross td:first-child{text-align:left;font-size:11px;background:var(--surface);display:flex;align-items:center;gap:7px;}
+table.cross tr:last-child td{border-bottom:none;}
+table.cross .cn{font-family:var(--mono);font-weight:700;}
+table.cross .cn.top{color:var(--pos);font-weight:800;}
+table.cross .dash{color:var(--border);font-size:14px;}
+.cat-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;display:inline-block;}
+
+/* ── DOSSIERS ── */
+.dossier-list{display:grid;gap:28px;}
+.dossier{display:grid;grid-template-columns:260px 1fr;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
+.dos-side{background:var(--hero);color:var(--hero-text);padding:28px 24px;}
+.dos-code{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--accent-inv);opacity:.65;margin-bottom:6px;}
+.dos-name{font-size:18px;font-weight:700;margin-bottom:3px;line-height:1.2;}
+.dos-tag{font-size:11px;color:rgba(237,232,223,.45);margin-bottom:22px;font-style:italic;}
+.dos-kpi{margin-bottom:13px;}
+.dos-kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(237,232,223,.45);margin-bottom:1px;}
+.dos-kpi-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent-inv);line-height:1;}
+.dos-kpi-val .u{font-size:11px;font-weight:400;color:rgba(237,232,223,.5);}
+.dos-kpi-sub{font-size:10px;color:rgba(237,232,223,.4);margin-top:1px;font-family:var(--mono);}
+.dos-body{padding:28px 32px;}
+.dos-body h3{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-top:20px;margin-bottom:7px;}
+.dos-body h3:first-child{margin-top:0;}
+.dos-body p{font-size:13.5px;line-height:1.65;margin-bottom:6px;color:var(--text);}
+.sub-list{list-style:none;}
+.sub-list li{font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.sub-list li:last-child{border-bottom:none;}
+.sub-tag{font-size:10px;color:var(--text-muted);font-family:var(--mono);}
+.stake-pill{display:inline-flex;align-items:center;gap:5px;background:var(--ground);border:1px solid var(--border);border-radius:4px;padding:3px 8px;font-size:11px;margin:2px 2px 2px 0;font-family:var(--mono);}
+.s-pct{font-weight:700;color:var(--accent);}
+
+/* ── ECOSYSTEM ── */
+.eco-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.eco-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;}
+.eco-card h3{font-size:13px;font-weight:700;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.eco-item{margin-bottom:12px;}
+.eco-item-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.eco-item-desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
+.eco-tag{display:inline-block;font-size:9px;font-family:var(--mono);letter-spacing:.06em;background:var(--ground);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-right:3px;color:var(--text-muted);vertical-align:middle;}
+
+/* ── CVS BANNER ── */
+.cvs-banner{background:var(--hero);color:var(--hero-text);padding:72px 40px;}
+.cvs-inner{max-width:1100px;margin:0 auto;}
+.cvs-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:36px;}
+.cvs-block{border-left:2px solid rgba(245,200,66,.35);padding-left:20px;}
+.cvs-block h3{font-size:16px;font-weight:700;margin-bottom:10px;color:var(--accent-inv);}
+.cvs-block p{font-size:13.5px;color:rgba(237,232,223,.75);line-height:1.7;margin-bottom:8px;}
+.cvs-block ul{list-style:none;margin-top:6px;}
+.cvs-block ul li{font-size:12.5px;color:rgba(237,232,223,.65);padding:4px 0;padding-left:14px;position:relative;line-height:1.55;}
+.cvs-block ul li::before{content:'→';position:absolute;left:0;color:var(--accent-inv);opacity:.5;font-size:10px;top:5px;}
+
+/* ── OUTLOOK ── */
+.outlook-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.outlook-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
+.outlook-card .oc-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.outlook-card h4{font-size:14px;font-weight:700;margin-bottom:8px;}
+.outlook-card p{font-size:12.5px;color:var(--text-muted);line-height:1.6;}
+
+/* ── FOOTER ── */
+.footer{max-width:1100px;margin:0 auto;padding:32px 40px;font-family:var(--mono);font-size:10px;color:var(--text-muted);border-top:1px solid var(--border);display:flex;justify-content:space-between;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .strip{grid-template-columns:repeat(3,1fr);}
+  .seg-grid{grid-template-columns:repeat(2,1fr);}
+  .dossier{grid-template-columns:1fr;}
+  .eco-grid{grid-template-columns:1fr;}
+  .cvs-grid{grid-template-columns:1fr;}
+  .outlook-grid{grid-template-columns:1fr;}
+  .hero{padding:48px 24px 40px;}
+  .main{padding:0 24px;}
+  .cvs-banner{padding:48px 24px;}
+}
+@media(max-width:600px){
+  .strip{grid-template-columns:repeat(2,1fr);}
+  .seg-grid{grid-template-columns:1fr;}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Industry Research · 2026年6月23日</p>
+    <h1>五大<em>総合商社</em><br>構造解剖</h1>
+    <p class="hero-sub">三菱・三井・伊藤忠・住友・丸紅。資源・エネルギー・食料・消費を貫く日本独自の複合体。財務・資源権益・クライアント・川下戦略まで横断的に解剖する。</p>
+    <div class="strip">
+      <div class="strip-card">
+        <div class="strip-code">8001 · TSE</div>
+        <div class="strip-name">伊藤忠商事</div>
+        <div class="strip-label">純利益 FY2026</div>
+        <div class="strip-profit">9,003<span>億円</span></div>
+        <div class="strip-yoy up">▲ 過去最高 2期連続</div>
+        <div class="strip-kw">川下・非資源85%・ファミリーマート</div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-code">8031 · TSE</div>
+        <div class="strip-name">三井物産</div>
+        <div class="strip-label">純利益 FY2026</div>
+        <div class="strip-profit">8,340<span>億円</span></div>
+        <div class="strip-yoy down">▼ −7.4%（資源安）</div>
+        <div class="strip-kw">鉄鉱石・LNG・Rhodes Ridge 8,000億投資</div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-code">8058 · TSE</div>
+        <div class="strip-name">三菱商事</div>
+        <div class="strip-label">純利益 FY2026</div>
+        <div class="strip-profit">8,005<span>億円</span></div>
+        <div class="strip-yoy down">▼ −15.8%（一時益反動）</div>
+        <div class="strip-kw">LNG 1,220万t権益・ローソン・金属資源</div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-code">8053 · TSE</div>
+        <div class="strip-name">住友商事</div>
+        <div class="strip-label">純利益 FY2026</div>
+        <div class="strip-profit">6,003<span>億円</span></div>
+        <div class="strip-yoy up">▲ 過去最高更新</div>
+        <div class="strip-kw">J:COM・SCSK・ニッケル・インフラ</div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-code">8002 · TSE</div>
+        <div class="strip-name">丸紅</div>
+        <div class="strip-label">純利益 FY2026</div>
+        <div class="strip-profit">5,440<span>億円</span></div>
+        <div class="strip-yoy up">▲ +8.1%</div>
+        <div class="strip-kw">穀物Gavilon・電力IPP・銅チリ権益</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FINANCIAL METRICS
+══════════════════════════════════════ -->
+<div class="main">
+
+<section class="block">
+  <p class="eyebrow">Financial Snapshot</p>
+  <h2 class="block-title">財務指標 完全比較</h2>
+  <p class="block-lead">IFRSベースFY2026（2026年3月期）。「収益」は総合商社の連結売上収益で、商品コストの多くが含まれるため製造業との単純比較は不適。純利益・ROE・時価総額が実態を測る主要指標。</p>
+  <div class="tbl-wrap">
+    <table class="metrics">
+      <thead>
+        <tr>
+          <th style="text-align:left;min-width:130px;">指標</th>
+          <th class="cname">伊藤忠商事<span class="co-code">8001</span></th>
+          <th class="cname">三井物産<span class="co-code">8031</span></th>
+          <th class="cname">三菱商事<span class="co-code">8058</span></th>
+          <th class="cname">住友商事<span class="co-code">8053</span></th>
+          <th class="cname">丸紅<span class="co-code">8002</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-label">時価総額（概算）</td>
+          <td><span class="num best">約8.5兆円</span></td>
+          <td><span class="num">約6.5兆円</span></td>
+          <td><span class="num">約7.5兆円</span></td>
+          <td><span class="num worst">約3.5兆円</span></td>
+          <td><span class="num">約4.0兆円</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">収益（売上収益）</td>
+          <td><span class="num">約15兆円</span></td>
+          <td><span class="num">13.9兆円</span></td>
+          <td><span class="num best">約21兆円</span></td>
+          <td><span class="num worst">約6.8兆円</span></td>
+          <td><span class="num">8.3兆円</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">純利益（親会社帰属）</td>
+          <td><span class="num best">9,003億円</span></td>
+          <td><span class="num">8,340億円</span></td>
+          <td><span class="num">8,005億円</span></td>
+          <td><span class="num">6,003億円</span></td>
+          <td><span class="num worst">5,440億円</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">ROE</td>
+          <td><span class="num best">14.6%</span></td>
+          <td><span class="num">10.2%</span></td>
+          <td><span class="num worst">8.5%</span></td>
+          <td><span class="num hi">12.9%</span></td>
+          <td><span class="num">約10%</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">PER（概算）</td>
+          <td><span class="num">約13倍</span></td>
+          <td><span class="num">約10倍</span></td>
+          <td><span class="num">約11倍</span></td>
+          <td><span class="num best">7.8倍</span></td>
+          <td><span class="num">9.5倍</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">PBR（概算）</td>
+          <td><span class="num best">約1.8倍</span></td>
+          <td><span class="num">約1.0倍</span></td>
+          <td><span class="num">約1.1倍</span></td>
+          <td><span class="num worst">0.94倍</span><br><span class="approx">（解散価値割れ）</span></td>
+          <td><span class="num">約1.0倍</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">自己資本比率（概算）</td>
+          <td><span class="num">約26%</span></td>
+          <td><span class="num best">約31%</span></td>
+          <td><span class="num hi">約30%</span></td>
+          <td><span class="num">約27%</span></td>
+          <td><span class="num worst">約24%</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">利益の資源比率</td>
+          <td><span class="num best">14.8%</span></td>
+          <td><span class="num worst">約55%</span></td>
+          <td><span class="num worst">約50%</span></td>
+          <td><span class="num best">13.7%</span></td>
+          <td><span class="num">29.0%</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tbl-note">
+    ★ 確認済み数値：純利益・ROE・住友PER(7.81倍)・丸紅PER(9.51倍)・住友PBR(0.94倍)・三井収益(13.9兆)・丸紅収益(8.3兆)・資源比率（伊藤忠14.8%・住友13.7%・丸紅29.0%）<br>
+    ★ 時価総額・その他PER/PBR・自己資本比率は概算。正確な値はIR資料を参照。<br>
+    ★ 「収益」= Revenue（IFRS）。商社の収益にはコモディティの仕入原価が含まれるため営業利益率は低く見える。実質的な収益力は純利益・売上総利益・ROEで判断すること。
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════
+     SEGMENTS
+══════════════════════════════════════ -->
+<section class="block">
+  <p class="eyebrow">Business Segments</p>
+  <h2 class="block-title">事業セグメント別 純利益 内訳</h2>
+  <p class="block-lead">各社の主要セグメント別純利益（IFRSベース、FY2026）。同色＝同カテゴリで比較しやすく並べた。★は確認済み数値、*は推計値。</p>
+
+  <!-- LEGEND -->
+  <div class="seg-legend">
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#7B3B18"></span>金属・資源（鉄鉱石・原料炭・銅・ニッケル）</span>
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#1C5A8A"></span>エネルギー（LNG・天然ガス・石油）</span>
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#4A6080"></span>機械・インフラ</span>
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#3B7A3B"></span>食料・アグリ</span>
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#B87020"></span>消費・小売（コンビニ等）</span>
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#6A2A8A"></span>メディア・デジタル・情報金融</span>
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#2A6A5A"></span>金融・不動産・電力</span>
+    <span class="seg-leg-item"><span class="seg-leg-dot" style="background:#4A5A70"></span>化学品・素材・繊維・その他</span>
+  </div>
+
+  <!-- STACKED BARS -->
+  <div>
+    <!-- 伊藤忠 -->
+    <div class="seg-company-row">
+      <div class="seg-co-label">
+        <div class="seg-co-name">伊藤忠商事</div>
+        <div class="seg-co-total">9,003億円</div>
+      </div>
+      <div class="seg-stack">
+        <div class="seg-part" style="width:17.3%;background:#4A6080;" title="機械 1,556億円★">機械 1,556</div>
+        <div class="seg-part" style="width:15.9%;background:#7B3B18;" title="金属 1,435億円★">金属 1,435</div>
+        <div class="seg-part" style="width:11.8%;background:#4A5A70;" title="繊維 〜1,061億円*">繊維〜1,061*</div>
+        <div class="seg-part" style="width:11.7%;background:#B87020;" title="第8(ファミマ) 〜1,050億円*">第8〜1,050*</div>
+        <div class="seg-part" style="width:13.3%;background:#1C5A8A;" title="エネ化学品 〜1,200億円*">エネ〜1,200*</div>
+        <div class="seg-part" style="width:10.3%;background:#6A2A8A;" title="情報・金融 930億円★">情金 930</div>
+        <div class="seg-part" style="width:10.2%;background:#3B7A3B;" title="食料 921億円★">食料 921</div>
+        <div class="seg-part" style="width:9.4%;background:#2A6A5A;" title="住生活 〜850億円*">住〜850*</div>
+      </div>
+    </div>
+    <!-- 三井物産 -->
+    <div class="seg-company-row">
+      <div class="seg-co-label">
+        <div class="seg-co-name">三井物産</div>
+        <div class="seg-co-total">8,340億円</div>
+      </div>
+      <div class="seg-stack">
+        <div class="seg-part" style="width:30.0%;background:#7B3B18;" title="金属資源（鉄鉱石）〜2,500億円*">金属資源〜2,500*</div>
+        <div class="seg-part" style="width:25.2%;background:#4A6080;" title="機械・インフラ 〜2,100億円*">機械・インフラ〜2,100*</div>
+        <div class="seg-part" style="width:21.6%;background:#1C5A8A;" title="エネルギー 〜1,800億円*">エネルギー〜1,800*</div>
+        <div class="seg-part" style="width:7.2%;background:#4A5A70;" title="化学品 〜600億円*">化〜600*</div>
+        <div class="seg-part" style="width:11.3%;background:#2A6A5A;" title="次世代・機能推進等 〜940億円*">次世代等</div>
+        <div class="seg-part" style="width:3.6%;background:#3B7A3B;" title="生活産業 〜300億円*">生</div>
+        <div class="seg-part" style="width:1.1%;background:#4A5A70;" title="鉄鋼製品 〜150億円*"></div>
+      </div>
+    </div>
+    <!-- 三菱商事 -->
+    <div class="seg-company-row">
+      <div class="seg-co-label">
+        <div class="seg-co-name">三菱商事</div>
+        <div class="seg-co-total">8,005億円</div>
+      </div>
+      <div class="seg-stack">
+        <div class="seg-part" style="width:25.5%;background:#7B3B18;" title="金属資源 2,045億円★">金属資源 2,045</div>
+        <div class="seg-part" style="width:20.1%;background:#1C5A8A;" title="天然ガス・LNG 1,609億円★">LNG 1,609</div>
+        <div class="seg-part" style="width:18.7%;background:#4A6080;" title="産業インフラ・化学等 〜1,500億円*">産業・化〜1,500*</div>
+        <div class="seg-part" style="width:11.4%;background:#B87020;" title="消費産業（ローソン） 910億円★">ローソン 910</div>
+        <div class="seg-part" style="width:8.7%;background:#4A5A70;" title="化学品・素材 〜700億円*">化〜700*</div>
+        <div class="seg-part" style="width:7.2%;background:#4A6080;" title="モビリティ（三菱自） 576億円★">モビ 576</div>
+        <div class="seg-part" style="width:8.3%;background:#2A6A5A;" title="電力・新エネルギー等 〜665億円*">電〜665*</div>
+      </div>
+    </div>
+    <!-- 住友商事 -->
+    <div class="seg-company-row">
+      <div class="seg-co-label">
+        <div class="seg-co-name">住友商事</div>
+        <div class="seg-co-total">6,003億円</div>
+      </div>
+      <div class="seg-stack">
+        <div class="seg-part" style="width:25.0%;background:#6A2A8A;" title="メディア・デジタル（J:COM・SCSK） 〜1,500億円*">メディア〜1,500*</div>
+        <div class="seg-part" style="width:17.1%;background:#1C5A8A;" title="エネルギー変革 1,024億円★">エネ変 1,024</div>
+        <div class="seg-part" style="width:14.8%;background:#4A6080;" title="輸送機・建機 889億円★">輸送 889</div>
+        <div class="seg-part" style="width:13.7%;background:#7B3B18;" title="資源（ニッケル等） 823億円★">資源 823</div>
+        <div class="seg-part" style="width:13.6%;background:#2A6A5A;" title="都市総合開発 815億円★">都市 815</div>
+        <div class="seg-part" style="width:8.3%;background:#3B7A3B;" title="生活・小売 〜500億円*">生活〜500*</div>
+        <div class="seg-part" style="width:7.5%;background:#2A6A5A;" title="金融等 〜452億円*">金融</div>
+      </div>
+    </div>
+    <!-- 丸紅 -->
+    <div class="seg-company-row">
+      <div class="seg-co-label">
+        <div class="seg-co-name">丸紅</div>
+        <div class="seg-co-total">5,439億円</div>
+      </div>
+      <div class="seg-stack">
+        <div class="seg-part" style="width:29.8%;background:#2A6A5A;" title="金融・リース・不動産 1,620億円★（一時益765億含む）">金融・不動産 1,620</div>
+        <div class="seg-part" style="width:24.7%;background:#7B3B18;" title="金属資源（銅チリ等） 1,343億円★">金属 1,343</div>
+        <div class="seg-part" style="width:12.9%;background:#3B7A3B;" title="食料・アグリ（Gavilon） 〜700億円*">食料〜700*</div>
+        <div class="seg-part" style="width:12.7%;background:#1C5A8A;" title="エネルギー 693億円">エネ 693</div>
+        <div class="seg-part" style="width:12.1%;background:#2A6A5A;" title="電力IPP 660億円">電力 660</div>
+        <div class="seg-part" style="width:7.8%;background:#4A6080;" title="航空機・輸送・その他 〜423億円*">他</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL CARDS -->
+  <div class="seg-detail-wrap">
+    <!-- 伊藤忠 -->
+    <div class="seg-detail-card">
+      <div class="seg-detail-head">伊藤忠商事<div class="sd-total">9,003億円｜非資源85%</div></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A6080"></span><span class="sd-label">機械</span><span class="sd-val">1,556</span><span class="sd-pct">17.3%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#7B3B18"></span><span class="sd-label">金属</span><span class="sd-val">1,435</span><span class="sd-pct">15.9%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#1C5A8A"></span><span class="sd-label est">エネ・化学品</span><span class="sd-val est">〜1,200</span><span class="sd-pct">13.3%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A5A70"></span><span class="sd-label est">繊維（デサント等）</span><span class="sd-val est">〜1,061</span><span class="sd-pct">11.8%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#B87020"></span><span class="sd-label est">第8（ファミリーマート）</span><span class="sd-val est">〜1,050</span><span class="sd-pct">11.7%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#6A2A8A"></span><span class="sd-label">情報・金融（CTC）</span><span class="sd-val">930</span><span class="sd-pct">10.3%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#3B7A3B"></span><span class="sd-label">食料</span><span class="sd-val">921</span><span class="sd-pct">10.2%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#2A6A5A"></span><span class="sd-label est">住生活</span><span class="sd-val est">〜850</span><span class="sd-pct">9.4%</span></div>
+    </div>
+    <!-- 三井物産 -->
+    <div class="seg-detail-card">
+      <div class="seg-detail-head">三井物産<div class="sd-total">8,340億円｜資源〜55%</div></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#7B3B18"></span><span class="sd-label est">金属資源（鉄鉱石）</span><span class="sd-val est">〜2,500</span><span class="sd-pct">30%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A6080"></span><span class="sd-label est">機械・インフラ</span><span class="sd-val est">〜2,100</span><span class="sd-pct">25%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#1C5A8A"></span><span class="sd-label est">エネルギー（LNG）</span><span class="sd-val est">〜1,800</span><span class="sd-pct">22%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#2A6A5A"></span><span class="sd-label est">次世代・機能推進</span><span class="sd-val est">〜940</span><span class="sd-pct">11%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A5A70"></span><span class="sd-label est">化学品</span><span class="sd-val est">〜600</span><span class="sd-pct">7%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#3B7A3B"></span><span class="sd-label est">生活産業</span><span class="sd-val est">〜300</span><span class="sd-pct">4%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A5A70"></span><span class="sd-label est">鉄鋼製品</span><span class="sd-val est">〜100</span><span class="sd-pct">1%</span></div>
+    </div>
+    <!-- 三菱商事 -->
+    <div class="seg-detail-card">
+      <div class="seg-detail-head">三菱商事<div class="sd-total">8,005億円｜資源〜50%</div></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#7B3B18"></span><span class="sd-label">金属資源（原料炭・銅）</span><span class="sd-val">2,045</span><span class="sd-pct">26%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#1C5A8A"></span><span class="sd-label">天然ガス・LNG</span><span class="sd-val">1,609</span><span class="sd-pct">20%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A6080"></span><span class="sd-label est">産業インフラ等</span><span class="sd-val est">〜1,500</span><span class="sd-pct">19%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#B87020"></span><span class="sd-label">消費産業（ローソン）</span><span class="sd-val">910</span><span class="sd-pct">11%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A5A70"></span><span class="sd-label est">化学品・素材</span><span class="sd-val est">〜700</span><span class="sd-pct">9%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A6080"></span><span class="sd-label">モビリティ（三菱自）</span><span class="sd-val">576</span><span class="sd-pct">7%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#2A6A5A"></span><span class="sd-label est">電力・新エネ等</span><span class="sd-val est">〜665</span><span class="sd-pct">8%</span></div>
+    </div>
+    <!-- 住友商事 -->
+    <div class="seg-detail-card">
+      <div class="seg-detail-head">住友商事<div class="sd-total">6,003億円｜資源13.7%</div></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#6A2A8A"></span><span class="sd-label est">メディア・デジタル</span><span class="sd-val est">〜1,500</span><span class="sd-pct">25%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#1C5A8A"></span><span class="sd-label">エネルギー変革</span><span class="sd-val">1,024</span><span class="sd-pct">17%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A6080"></span><span class="sd-label">輸送機・建機</span><span class="sd-val">889</span><span class="sd-pct">15%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#7B3B18"></span><span class="sd-label">資源（ニッケル等）</span><span class="sd-val">823</span><span class="sd-pct">14%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#2A6A5A"></span><span class="sd-label">都市総合開発</span><span class="sd-val">815</span><span class="sd-pct">14%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#3B7A3B"></span><span class="sd-label est">生活・小売</span><span class="sd-val est">〜500</span><span class="sd-pct">8%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#2A6A5A"></span><span class="sd-label est">金融等</span><span class="sd-val est">〜452</span><span class="sd-pct">7%</span></div>
+    </div>
+    <!-- 丸紅 -->
+    <div class="seg-detail-card">
+      <div class="seg-detail-head">丸紅<div class="sd-total">5,439億円｜資源29%</div></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#2A6A5A"></span><span class="sd-label">金融・リース・不動産</span><span class="sd-val">1,620</span><span class="sd-pct">30%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#7B3B18"></span><span class="sd-label">金属資源（銅）</span><span class="sd-val">1,343</span><span class="sd-pct">25%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#3B7A3B"></span><span class="sd-label est">食料・アグリ（Gavilon）</span><span class="sd-val est">〜700</span><span class="sd-pct">13%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#1C5A8A"></span><span class="sd-label">エネルギー</span><span class="sd-val">693</span><span class="sd-pct">13%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#2A6A5A"></span><span class="sd-label">電力IPP（12GW超）</span><span class="sd-val">660</span><span class="sd-pct">12%</span></div>
+      <div class="seg-detail-row"><span class="sd-dot" style="background:#4A6080"></span><span class="sd-label est">航空機・輸送・他</span><span class="sd-val est">〜423</span><span class="sd-pct">8%</span></div>
+    </div>
+  </div>
+
+  <!-- CROSS-COMPANY CATEGORY TABLE -->
+  <div class="cross-table-wrap">
+    <table class="cross">
+      <thead>
+        <tr>
+          <th style="text-align:left;">カテゴリ比較（億円）</th>
+          <th>三菱商事</th>
+          <th>三井物産</th>
+          <th>伊藤忠商事</th>
+          <th>住友商事</th>
+          <th>丸紅</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#7B3B18;margin-right:7px;margin-top:2px;"></span>金属・資源</td>
+          <td><span class="cn">2,045</span></td>
+          <td><span class="cn top">〜2,500</span></td>
+          <td><span class="cn">1,435</span></td>
+          <td><span class="cn">823</span></td>
+          <td><span class="cn">1,343</span></td>
+        </tr>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#1C5A8A;margin-right:7px;margin-top:2px;"></span>エネルギー（LNG等）</td>
+          <td><span class="cn top">1,609</span></td>
+          <td><span class="cn">〜1,800</span></td>
+          <td><span class="cn">〜1,200</span></td>
+          <td><span class="cn">1,024</span></td>
+          <td><span class="cn">693</span></td>
+        </tr>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#4A6080;margin-right:7px;margin-top:2px;"></span>機械・インフラ</td>
+          <td><span class="cn">〜1,500</span></td>
+          <td><span class="cn top">〜2,100</span></td>
+          <td><span class="cn">1,556</span></td>
+          <td><span class="cn">889</span></td>
+          <td><span class="cn">〜423</span></td>
+        </tr>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#3B7A3B;margin-right:7px;margin-top:2px;"></span>食料・アグリ</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="cn">〜300</span></td>
+          <td><span class="cn top">921</span></td>
+          <td><span class="cn">〜500</span></td>
+          <td><span class="cn">〜700</span></td>
+        </tr>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#B87020;margin-right:7px;margin-top:2px;"></span>消費・小売（CVS等）</td>
+          <td><span class="cn">910<br><span style="font-size:9px;color:#888;">ローソン</span></span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="cn top">〜1,050<br><span style="font-size:9px;color:#888;">ファミマ</span></span></td>
+          <td><span class="cn">〜500<br><span style="font-size:9px;color:#888;">Summit等</span></span></td>
+          <td><span class="dash">—</span></td>
+        </tr>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#6A2A8A;margin-right:7px;margin-top:2px;"></span>メディア・デジタル・情金</td>
+          <td><span class="dash">—</span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="cn">930<br><span style="font-size:9px;color:#888;">CTC等</span></span></td>
+          <td><span class="cn top">〜1,500<br><span style="font-size:9px;color:#888;">J:COM・SCSK</span></span></td>
+          <td><span class="dash">—</span></td>
+        </tr>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#2A6A5A;margin-right:7px;margin-top:2px;"></span>金融・不動産・電力</td>
+          <td><span class="cn">〜665</span></td>
+          <td><span class="cn">〜940</span></td>
+          <td><span class="cn">〜850</span></td>
+          <td><span class="cn">815</span></td>
+          <td><span class="cn top">1,620<br><span style="font-size:9px;color:#888;">不動産一時益含む</span></span></td>
+        </tr>
+        <tr>
+          <td style="display:flex;"><span class="cat-dot" style="background:#4A5A70;margin-right:7px;margin-top:2px;"></span>繊維・化学・その他</td>
+          <td><span class="cn">〜700</span></td>
+          <td><span class="cn">〜600</span></td>
+          <td><span class="cn top">〜1,061<br><span style="font-size:9px;color:#888;">繊維・デサント</span></span></td>
+          <td><span class="dash">—</span></td>
+          <td><span class="dash">—</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tbl-note" style="margin-top:12px;">
+    ★ = IR公開データ確認済み。* = Q3累計または推計値。三井物産は通期推計（Q3累計から算出）。住友商事は2026年4月改編後の新セグメント基準の参考値。丸紅「金融・不動産1,620億」は第一生命不動産統合の評価益765億円含む一時的押し上げに注意。
+  </p>
+
+</section>
+
+<!-- ══════════════════════════════════════
+     COMPANY DOSSIERS
+══════════════════════════════════════ -->
+<section class="block">
+  <p class="eyebrow">Company Deep Dive</p>
+  <h2 class="block-title">各社の核心 — 権益・子会社・クライアント</h2>
+  <p class="block-lead">「どの資源を、誰から仕入れ、誰に売るか」のバリューチェーンと、主要子会社・出資先を俯瞰する。</p>
+
+  <div class="dossier-list">
+
+    <!-- 三菱商事 -->
+    <div class="dossier">
+      <div class="dos-side">
+        <div class="dos-code">8058 · MITSUBISHI CORP.</div>
+        <div class="dos-name">三菱商事</div>
+        <div class="dos-tag">「天然ガスの三菱」兼複合インフラ巨人</div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">LNG生産権益</div>
+          <div class="dos-kpi-val">1,220<span class="u">万t</span></div>
+          <div class="dos-kpi-sub">→ 2030年代前半に1,700万t へ拡大</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">純利益 FY2026</div>
+          <div class="dos-kpi-val">8,005<span class="u">億円</span></div>
+          <div class="dos-kpi-sub">−15.8%（ローソン再評価益反動）</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">ROE</div>
+          <div class="dos-kpi-val">8.5<span class="u">%</span></div>
+          <div class="dos-kpi-sub">5社中最低→改善余地大</div>
+        </div>
+      </div>
+      <div class="dos-body">
+        <h3>LNG権益の全体像</h3>
+        <p>日本のLNG輸入量の約2割を賄う規模。マレーシアLNG（9系列、延長契約済）、カナダLNG Canada、豪州Browse事業、米国Cameron LNG、カタールなど10以上のプロジェクトで権益保有。単なる卸売でなく<strong>生産権益者として座席を持つ</strong>点が強み。LNG販売子会社（シンガポール100%出資）で短期トレーディングも展開。</p>
+        <h3>金属資源：原料炭と銅</h3>
+        <p>豪州原料炭（BHPとの合弁→売却済だが代替権益継続）と銅権益を保有。銅事業ではチリ・豪州に複数権益。FY2026の金属資源純利益は2,045億円で全社最大セグメント。</p>
+        <h3>主要子会社・出資先</h3>
+        <ul class="sub-list">
+          <li>ローソン<span class="sub-tag">連結子会社 ※KDDI共同保有</span></li>
+          <li>三菱自動車工業<span class="sub-tag">持分法 約14.9%</span></li>
+          <li>メタルワン<span class="sub-tag">鉄鋼専門商社 三菱・双日JV</span></li>
+          <li>三菱食品<span class="sub-tag">食品流通 連結子会社</span></li>
+          <li>日本ユニシス（BIPROGYに改称）<span class="sub-tag">IT 出資</span></li>
+          <li>三菱HCキャピタル<span class="sub-tag">金融 持分法</span></li>
+          <li>シンガポールLNG販売会社<span class="sub-tag">100%出資 トレーディング</span></li>
+        </ul>
+        <h3>主なクライアント・取引先</h3>
+        <p>
+          <span class="stake-pill"><span class="s-pct">供給先</span>JERA・中部電力・大阪ガス（LNG）</span>
+          <span class="stake-pill"><span class="s-pct">供給先</span>日本製鉄・JFEスチール（原料炭）</span>
+          <span class="stake-pill"><span class="s-pct">提携</span>KDDIとローソン共同運営</span>
+        </p>
+        <h3>資源開発での重機・海運</h3>
+        <p>LNG・石炭鉱山の開発現場ではコマツ・日立建機等の大型採掘機械・ダンプトラックが必須。三菱商事が開発権益を持つ現場のオペレーターがコマツ機を調達する関係。海運は日本郵船（三菱グループ、三菱商事が大株主）のLNG船・ばら積み船を活用。</p>
+      </div>
+    </div>
+
+    <!-- 三井物産 -->
+    <div class="dossier">
+      <div class="dos-side">
+        <div class="dos-code">8031 · MITSUI &amp; CO.</div>
+        <div class="dos-name">三井物産</div>
+        <div class="dos-tag">「鉄鉱石の三井」兼LNG大手</div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">Rhodes Ridge 投資額</div>
+          <div class="dos-kpi-val">約8,000<span class="u">億円</span></div>
+          <div class="dos-kpi-sub">豪州 40%権益 2030年生産開始予定</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">純利益 FY2026</div>
+          <div class="dos-kpi-val">8,340<span class="u">億円</span></div>
+          <div class="dos-kpi-sub">−7.4%（鉄鉱石・原料炭市況下落）</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">ROE</div>
+          <div class="dos-kpi-val">10.2<span class="u">%</span></div>
+        </div>
+      </div>
+      <div class="dos-body">
+        <h3>鉄鉱石権益の全体像</h3>
+        <p>豪州Pilbara地域でBHP・Rio TintoとのJVにより複数の鉄鉱石鉱山に権益を持つ。世界の海上鉄鉱石貿易の7割をRio Tinto・BHP・VALEが支配する中、三井物産はBHPとの協働で日本主要鉄鋼メーカー（JFEスチール・日本製鉄）への安定調達ルートを確保してきた。2025年に取得したRhodes Ridge（40%権益）は「次の鉄鉱石の柱」として2030年以降の生産を見込む。</p>
+        <h3>Ministers North 鉄鉱石</h3>
+        <p>2025年にBHP 85%・伊藤忠 8%・三井物産 7%で新規持分取得。三井と伊藤忠が共同で参画するケースも増えている。</p>
+        <h3>主要子会社・出資先</h3>
+        <ul class="sub-list">
+          <li>商船三井（MOL）<span class="sub-tag">大株主 世界3大海運</span></li>
+          <li>三井金属鉱業<span class="sub-tag">銅・亜鉛精錬 グループ</span></li>
+          <li>IHI（一部出資）<span class="sub-tag">重工・エネルギー</span></li>
+          <li>三井ダイレクト損保<span class="sub-tag">金融 連結</span></li>
+          <li>Paiton Energy<span class="sub-tag">インドネシア電力 IPP</span></li>
+          <li>北米天然ガスマーケティング子会社<span class="sub-tag">100% 北米ガス販売</span></li>
+        </ul>
+        <h3>主なクライアント・取引先</h3>
+        <p>
+          <span class="stake-pill"><span class="s-pct">最大顧客</span>JFEスチール・日本製鉄（鉄鉱石）</span>
+          <span class="stake-pill"><span class="s-pct">供給先</span>各電力・ガス会社（LNG）</span>
+          <span class="stake-pill"><span class="s-pct">提携</span>BHP（豪鉱山JV）</span>
+        </p>
+        <h3>コマツ・海運との連関</h3>
+        <p>Rhodes RidgeなどBig Mineの掘削にはコマツの830E超大型ダンプ（280t積み）が数十〜数百台稼働。鉱山採掘から港までの内部物流は鉄道・コンベア。積み出し港から日本製鉄・JFEの高炉へのばら積み船輸送は商船三井の大型バルカーが担う。三井物産→商船三井→日鉄・JFEという流れが三井グループの基幹バリューチェーン。</p>
+      </div>
+    </div>
+
+    <!-- 伊藤忠商事 -->
+    <div class="dossier">
+      <div class="dos-side">
+        <div class="dos-code">8001 · ITOCHU CORP.</div>
+        <div class="dos-name">伊藤忠商事</div>
+        <div class="dos-tag">「川下の伊藤忠」非資源85%・消費者直結</div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">純利益 FY2026</div>
+          <div class="dos-kpi-val">9,003<span class="u">億円</span></div>
+          <div class="dos-kpi-sub">2期連続過去最高・業界トップ</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">ROE</div>
+          <div class="dos-kpi-val">14.6<span class="u">%</span></div>
+          <div class="dos-kpi-sub">5社中断トツ1位</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">資源利益比率</div>
+          <div class="dos-kpi-val">14.8<span class="u">%</span></div>
+          <div class="dos-kpi-sub">非資源85%が差別化の核</div>
+        </div>
+      </div>
+      <div class="dos-body">
+        <h3>「利は川下にあり」の構造</h3>
+        <p>繊維商社出身の伊藤忠は、素材・原料の調達から消費者への販売まで<strong>バリューチェーンの下流</strong>を志向。資源価格に業績が左右される三菱・三井と対照的に、食料・繊維・小売・IT・金融の非資源セグメントが安定した利益源を形成。</p>
+        <h3>主要子会社・出資先</h3>
+        <ul class="sub-list">
+          <li>ファミリーマート<span class="sub-tag">実質完全子会社 2020年完全子会社化</span></li>
+          <li>デサント<span class="sub-tag">スポーツウェア 連結</span></li>
+          <li>伊藤忠テクノソリューションズ（CTC）<span class="sub-tag">IT 連結</span></li>
+          <li>伊藤忠食品<span class="sub-tag">食品卸 連結</span></li>
+          <li>伊藤忠エネクス<span class="sub-tag">エネルギー卸 連結</span></li>
+          <li>CITIC（中国中信集団）<span class="sub-tag">持分法 中国最大コングロマリット</span></li>
+          <li>CPE（カナダ電力）<span class="sub-tag">北米電力 持分法</span></li>
+          <li>Drums Foods（インド）<span class="sub-tag">食料 投資</span></li>
+        </ul>
+        <h3>資源部門も手薄ではない</h3>
+        <p>
+          <span class="stake-pill"><span class="s-pct">BHP Pilbara</span>鉄鉱石 Ministers North 8%</span>
+          <span class="stake-pill"><span class="s-pct">豪州炭</span>原料炭権益保有</span>
+          <span class="stake-pill"><span class="s-pct">CITIC</span>中国資源・金融</span>
+        </p>
+        <h3>主なクライアント・取引先</h3>
+        <p>
+          <span class="stake-pill"><span class="s-pct">供給先</span>ユニクロ（繊維素材）</span>
+          <span class="stake-pill"><span class="s-pct">自社</span>ファミリーマート全国2.3万店</span>
+          <span class="stake-pill"><span class="s-pct">提携</span>CITIC経由で中国市場</span>
+        </p>
+        <h3>ファミリーマートとのシナジー</h3>
+        <p>伊藤忠食品からの食品供給、CTCによるシステム・デジタル化、CITICを通じた中国ファミリーマート展開（約2,500店）という縦串の統合が実現。リテールメディア（店舗デジタルサイネージ広告）では4年後に100億円事業化を目指す。</p>
+      </div>
+    </div>
+
+    <!-- 住友商事 -->
+    <div class="dossier">
+      <div class="dos-side">
+        <div class="dos-code">8053 · SUMITOMO CORP.</div>
+        <div class="dos-name">住友商事</div>
+        <div class="dos-tag">「メディア・インフラとニッケル」5社中最もユニーク</div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">純利益 FY2026</div>
+          <div class="dos-kpi-val">6,003<span class="u">億円</span></div>
+          <div class="dos-kpi-sub">過去最高更新</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">ROE</div>
+          <div class="dos-kpi-val">12.9<span class="u">%</span></div>
+          <div class="dos-kpi-sub">伊藤忠に次ぐ効率性</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">PBR</div>
+          <div class="dos-kpi-val">0.94<span class="u">倍</span></div>
+          <div class="dos-kpi-sub">唯一PBR1倍割れ→割安圏</div>
+        </div>
+      </div>
+      <div class="dos-body">
+        <h3>「住友が銅（どう）？」の整理</h3>
+        <p>住友グループ全体でみると、<strong>住友金属鉱山（SMM）</strong>が銅・ニッケルの大手生産者（住友商事とは別法人）。住友商事自体の資源の柱は<strong>ニッケル</strong>で、EV電池用途として注目される。銅は丸紅（チリ）や三菱の方が大きい。</p>
+        <h3>ニッケル権益</h3>
+        <p>
+          <span class="stake-pill"><span class="s-pct">PNII</span>フィリピン・ニッケル・インダストリーズ 主要出資</span>
+          <span class="stake-pill"><span class="s-pct">Ambatovy</span>マダガスカル ニッケル（苦戦中）</span>
+        </p>
+        <p>EV普及に伴うリチウムイオン電池向けニッケル需要増が中長期的な追い風。ただしAmbatovyプロジェクトは採算に苦しみ、損失計上を繰り返している。</p>
+        <h3>「メディア・デジタル」が他社にない柱</h3>
+        <p>商社5社の中で住友商事だけがメディア・デジタルを主要セグメントに持つ。J:COM（ケーブルTV最大手）、ジュピターショップチャンネル（テレビ通販）、SCSK（ITサービス）の3社を完全子会社として保有。</p>
+        <h3>主要子会社・出資先</h3>
+        <ul class="sub-list">
+          <li>J:COM（ジェイコム）<span class="sub-tag">ケーブルTV最大手 連結</span></li>
+          <li>SCSK<span class="sub-tag">ITサービス 連結</span></li>
+          <li>ジュピターショップチャンネル<span class="sub-tag">テレビ通販 連結</span></li>
+          <li>住友商事マシネックス<span class="sub-tag">機械 連結</span></li>
+          <li>Summit Inc.（Summit Retail）<span class="sub-tag">スーパー 連結</span></li>
+          <li>トルコ自動車ディーラー<span class="sub-tag">新興国モビリティ</span></li>
+        </ul>
+        <h3>インフラとTBS</h3>
+        <p>TBSホールディングスへの出資（約15%で筆頭株主）を保有。メディア×通信×小売という消費者データ起点の事業展開が住友商事の長期戦略軸。</p>
+      </div>
+    </div>
+
+    <!-- 丸紅 -->
+    <div class="dossier">
+      <div class="dos-side">
+        <div class="dos-code">8002 · MARUBENI CORP.</div>
+        <div class="dos-name">丸紅</div>
+        <div class="dos-tag">「穀物と電力」— 食とエネルギーの二本柱</div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">電力IPP権益</div>
+          <div class="dos-kpi-val">12GW<span class="u">超</span></div>
+          <div class="dos-kpi-sub">世界各国・再エネ含む最大規模</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">純利益 FY2026</div>
+          <div class="dos-kpi-val">5,440<span class="u">億円</span></div>
+          <div class="dos-kpi-sub">+8.1%</div>
+        </div>
+        <div class="dos-kpi">
+          <div class="dos-kpi-label">時価総額目標</div>
+          <div class="dos-kpi-val">10兆<span class="u">円</span></div>
+          <div class="dos-kpi-sub">現在約4兆円→2031年目標</div>
+        </div>
+      </div>
+      <div class="dos-body">
+        <h3>穀物：Gavilon買収でグローバル大手へ</h3>
+        <p>2013年に米穀物大手Gavilonを約2,600億円で買収し、北米における穀物集荷→物流→販売のバリューチェーンを垂直統合。穀物事業では5社中断トツのポジションを持ち、カーギル・ADM・ブンゲ・ルイ・ドレイファスの「ABCD」に次ぐ存在感。食品メーカーへの供給から海外食料安全保障まで幅広く機能する。</p>
+        <h3>電力IPP：12GW超の権益</h3>
+        <p>日本最大級の独立系発電事業者として、アジア・中東・米州・欧州など世界30カ国以上でIPP（独立発電事業）を展開。2050年に向けて再生可能エネルギー比率を高める方針。長期電力購入契約（PPA）による安定キャッシュフローが特徴。</p>
+        <h3>銅権益（資源の第3の柱）</h3>
+        <p>
+          <span class="stake-pill"><span class="s-pct">チリ</span>Los Pelambres銅山（15%権益）</span>
+          <span class="stake-pill"><span class="s-pct">チリ</span>Centinela銅山権益</span>
+        </p>
+        <p>世界の銅需要の増加（EV・電力インフラ）を見据え、チリの世界級銅鉱山への権益が中長期の収益基盤に。銅製錬後は日本製鉄・JFEスチール・銅メーカーへ供給。</p>
+        <h3>主要子会社・出資先</h3>
+        <ul class="sub-list">
+          <li>Gavilon（米国）<span class="sub-tag">穀物集荷・物流 連結</span></li>
+          <li>丸紅建材リース<span class="sub-tag">建材 連結</span></li>
+          <li>丸紅エネックス<span class="sub-tag">エネルギー卸 連結</span></li>
+          <li>テキサス電力事業体<span class="sub-tag">北米再エネIPP</span></li>
+          <li>丸紅情報システムズ<span class="sub-tag">IT 連結</span></li>
+        </ul>
+        <h3>主なクライアント・取引先</h3>
+        <p>
+          <span class="stake-pill"><span class="s-pct">穀物供給先</span>日本の食品メーカー・製粉会社</span>
+          <span class="stake-pill"><span class="s-pct">銅供給先</span>JFEスチール・日本製鉄・電線各社</span>
+          <span class="stake-pill"><span class="s-pct">電力</span>各国電力会社・PPA契約先</span>
+        </p>
+      </div>
+    </div>
+
+  </div><!-- /dossier-list -->
+</section>
+
+<!-- ══════════════════════════════════════
+     ECOSYSTEM
+══════════════════════════════════════ -->
+<section class="block">
+  <p class="eyebrow">Ecosystem</p>
+  <h2 class="block-title">バリューチェーンと周辺エコシステム</h2>
+  <p class="block-lead">資源鉱山から消費者まで、商社は「見えない結節点」として機能する。関連プレイヤーとの関係を整理する。</p>
+
+  <div class="eco-grid">
+    <div class="eco-card">
+      <h3>🏗 重機・採掘機器：コマツ・日立建機</h3>
+      <div class="eco-item">
+        <div class="eco-item-name">コマツ（小松製作所）</div>
+        <div class="eco-item-desc">
+          <span class="eco-tag">三井物産関係</span>
+          鉄鉱石・石炭鉱山で使用される超大型ダンプ（730E・830E系列 積載200〜290t）、油圧ショベル（PC8000等）を世界の鉱山に供給。三井物産はコマツの海外建機販売ネットワークの一部を担うほか、三井物産グループ内でコマツ製品の調達・供給も。商社が持つ鉱山=コマツの顧客になる関係。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">日立建機</div>
+        <div class="eco-item-desc">住友商事が販売代理店機能を担う地域あり。鉱山向けEH3500 AC超大型ダンプ等を供給。</div>
+      </div>
+    </div>
+
+    <div class="eco-card">
+      <h3>🚢 海運：商船三井・日本郵船・川崎汽船</h3>
+      <div class="eco-item">
+        <div class="eco-item-name">商船三井（MOL）</div>
+        <div class="eco-item-desc">
+          <span class="eco-tag">三井物産グループ</span>
+          三井物産が主要株主。鉄鉱石・原料炭の大型バルカー（Capesize、大型船積載量18万DWT+）で豪州→日本の安定輸送を担う。LNG船でも三菱・三井が使用。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">日本郵船（NYK）</div>
+        <div class="eco-item-desc">
+          <span class="eco-tag">三菱グループ</span>
+          三菱商事が主要株主グループの一員。LNG専用船・自動車専用船で三菱商事との連携深い。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">川崎汽船（K LINE）</div>
+        <div class="eco-item-desc">川崎重工グループ出身。資源輸送から自動車専用船まで幅広く商社各社のカーゴを担う。</div>
+      </div>
+    </div>
+
+    <div class="eco-card">
+      <h3>🔩 鉄鋼：JFEスチール・日本製鉄（日鉄）</h3>
+      <div class="eco-item">
+        <div class="eco-item-name">日本製鉄（日鉄）</div>
+        <div class="eco-item-desc">
+          <span class="eco-tag">最大の資源需要家</span>
+          粗鋼生産量で国内最大。三菱商事・三井物産から豪州産原料炭・鉄鉱石を安定購入。日鉄物産（100%子会社）が一部内製するが、大量調達は総合商社ルートに依存。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">JFEスチール（JFEホールディングス傘下）</div>
+        <div class="eco-item-desc">
+          <span class="eco-tag">川崎製鉄+NKK統合</span>
+          三井物産・三菱商事から原料炭・鉄鉱石を調達。JFE商事（JFEスチール100%子会社）は鉄鋼専門商社として機能し、総合商社の鉄鋼流通部門と競合・協調する関係。</div>
+      </div>
+    </div>
+
+    <div class="eco-card">
+      <h3>🌾 穀物・食品：Gavilon / 伊藤忠食品</h3>
+      <div class="eco-item">
+        <div class="eco-item-name">Gavilon（丸紅子会社）</div>
+        <div class="eco-item-desc">米国最大級の穀物集荷インフラ。ミシシッピ川流域のエレベーター（穀物倉庫）・鉄道・トラック網を保有し、農家からABCDと並んで穀物を集荷・輸出。日本向け小麦・トウモロコシ・大豆の安定供給源。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">伊藤忠食品（伊藤忠商事子会社）</div>
+        <div class="eco-item-desc">食品卸最大手クラス。ファミリーマート・スーパー・飲食チェーンへの商品供給から、伊藤忠商事が集荷した農産品の国内流通を担う。</div>
+      </div>
+    </div>
+
+    <div class="eco-card">
+      <h3>⚡ エネルギー：JERA・電力・ガス会社</h3>
+      <div class="eco-item">
+        <div class="eco-item-name">JERA（東電×中部電力JV）</div>
+        <div class="eco-item-desc">日本最大のLNG調達主体。三菱商事・三井物産・丸紅などから大量のLNG長期購入契約を締結。商社のLNG権益は事実上JERAへの売り先確保でもある。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">東京ガス・大阪ガス・東邦ガス</div>
+        <div class="eco-item-desc">LNG輸入でも三菱・三井が主要サプライヤー。都市ガスの原料として長期契約ベースで購入。</div>
+      </div>
+    </div>
+
+    <div class="eco-card">
+      <h3>🏪 小売・消費者接点</h3>
+      <div class="eco-item">
+        <div class="eco-item-name">ファミリーマート（伊藤忠）</div>
+        <div class="eco-item-desc">全国2.3万店。伊藤忠の「川下の実験場」として購買データ・物流・リテールメディアを統合。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">ローソン（三菱商事+KDDI）</div>
+        <div class="eco-item-desc">全国1.5万店。AI・DX技術を使った「未来のコンビニ」実験をKDDIと共同推進。高輪Gateway Cityにモデル店舗。</div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-item-name">Summit（住友商事）</div>
+        <div class="eco-item-desc">食品スーパー。J:COM・SCSK・ジュピターショップチャンネルとのメディア×小売シナジーを模索。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /main -->
+
+<!-- ══════════════════════════════════════
+     CVS STRATEGY (dark band)
+══════════════════════════════════════ -->
+<div class="cvs-banner">
+  <div class="cvs-inner">
+    <p class="eyebrow" style="color:rgba(245,200,66,.65);">Strategic Analysis</p>
+    <h2 class="block-title" style="color:var(--hero-text);font-size:clamp(24px,4vw,38px);margin-bottom:6px;">商社はなぜコンビニを持つのか</h2>
+    <p style="font-size:14px;color:rgba(237,232,223,.55);max-width:680px;">伊藤忠がファミリーマートを実質完全子会社化（2020年）し、三菱商事がKDDIと共同でローソンを運営する。なぜ資源・貿易の巨人が小売店舗を持つのか。</p>
+    <div class="cvs-grid">
+      <div class="cvs-block">
+        <h3>① 川下志向：「利は川下にあり」</h3>
+        <p>商流の最下流＝消費者接点に最大の付加価値がある。原料→製造→卸→小売の各段階で利益が薄まるが、最終販売者だけは消費者の需要変化を「直接」受け取れる。特に伊藤忠は1990年代から「Btoみんな（BtoC）」へのシフトを戦略として明文化し、繊維・食料でその哲学を実践してきた。コンビニは消費者接点の「最前線拠点」。</p>
+      </div>
+      <div class="cvs-block">
+        <h3>② データ資産：リアル購買データの獲得</h3>
+        <p>コンビニの本質はもはや「物売り」ではなく<strong>日次の購買データ収集装置</strong>。ファミリーマートでは会員アプリ「ファミペイ」を通じて数千万人の購買行動・位置情報・決済データが蓄積される。このデータは伊藤忠の食料・繊維・金融事業に還流し、商品開発・在庫最適化・金融スコアリングに活用できる。</p>
+      </div>
+      <div class="cvs-block">
+        <h3>③ サプライチェーン統合：物流の内製化</h3>
+        <p>商社はもともと物流・調達のプロ集団。コンビニの弁当・おにぎり・飲料の原材料は伊藤忠食品（食品卸子会社）経由で供給でき、調達コストを内製化できる。農産物の海外仕入れから店頭まで一気通貫の垂直統合が可能になる。三菱商事はローソンの食材調達に三菱食品を組み込み、同様のシナジーを追求。</p>
+      </div>
+      <div class="cvs-block">
+        <h3>④ 資源依存からの脱却：景気耐性の強化</h3>
+        <p>コンビニはデフレ耐性が高く、景気後退局面でも「近くて便利」の需要が下がりにくい。原料炭・鉄鉱石・LNGなど資源価格に業績が左右される商社にとって、コンビニ収益は<strong>資源安ショックのバッファー</strong>になる。伊藤忠の非資源比率85%・ROE14.6%という優秀な数字は、ファミマ完全子会社化以降に定着した。</p>
+      </div>
+      <div class="cvs-block">
+        <h3>⑤ 金融・決済プラットフォーム化</h3>
+        <p>ファミペイ（電子マネー）やローソン銀行はコンビニを金融プラットフォームに変える試み。毎日来店する消費者の決済データは、融資・保険・投資商品のリコメンドに活用可能。商社の金融事業（リース・ファクタリング等）との掛け合わせで「フィジカル×フィンテック」の生態系を構築できる。</p>
+      </div>
+      <div class="cvs-block">
+        <h3>⑥ AI・DXの実験場（三菱×KDDI×ローソン）</h3>
+        <p>三菱商事とKDDIがローソンで進める「未来のコンビニ」実証。AIカメラによる万引き防止・レジレス化・鮮度管理、5G通信によるリアルタイム在庫連携、エネルギー最適化（冷蔵ケース制御）などの実験を1.5万店舗規模で行える。成功モデルを国内外の小売・物流にライセンス展開する狙いもある。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     OUTLOOK
+══════════════════════════════════════ -->
+<div class="main">
+<section class="block">
+  <p class="eyebrow">Forward Look</p>
+  <h2 class="block-title">今後の注目論点</h2>
+  <p class="block-lead">資源価格の次の波、非資源の成長、地政学リスク。5社が直面する構造的課題と機会。</p>
+  <div class="outlook-grid">
+    <div class="outlook-card">
+      <div class="oc-label">Energy Transition</div>
+      <h4>LNG：「橋渡しエネルギー」の命運</h4>
+      <p>2030年代にかけ石炭からの代替でLNG需要は底堅い見通し。三菱・三井はカナダ・豪州の新規LNG拡張に積極投資。しかし2040年以降の脱炭素加速でLNG資産が「座礁資産化」するリスクも。権益の減価償却期間と脱炭素タイムラインの整合が課題。</p>
+    </div>
+    <div class="outlook-card">
+      <div class="oc-label">Critical Minerals</div>
+      <h4>銅・ニッケル：EV需要の恩恵</h4>
+      <p>EV普及で銅（モーター・電線）とニッケル（電池）の需要が急増する見通し。丸紅のチリ銅権益、住友商事のフィリピンニッケルが長期的に評価されやすい局面。コバルトフリー電池技術の進展がニッケル需要を左右するリスクあり。</p>
+    </div>
+    <div class="outlook-card">
+      <div class="oc-label">Non-Resource War</div>
+      <h4>非資源競争：伊藤忠モデルの模倣圧力</h4>
+      <p>伊藤忠の非資源85%・ROE14.6%を見て、三菱・三井も非資源セグメントへの投資を加速。しかし消費財・デジタル・ヘルスケアは既に競争が激しく、商社の強みである「資源バリューチェーン」が直接活きにくい。差別化は容易ではない。</p>
+    </div>
+    <div class="outlook-card">
+      <div class="oc-label">Geopolitics</div>
+      <h4>地政学：豪州依存と中国リスク</h4>
+      <p>三菱・三井の鉄鉱石・原料炭は豪州依存度が高い。日豪関係は良好だが、台湾有事シナリオでは輸送ルート（マラッカ海峡）が脅威に。伊藤忠のCITIC出資（中国最大コングロ）は対中緊張下で政治的なリスクが顕在化する可能性がある。</p>
+    </div>
+    <div class="outlook-card">
+      <div class="oc-label">Power IPP</div>
+      <h4>丸紅の電力12GW：再エネ拡張</h4>
+      <p>2031年に時価総額10兆円（現在約4兆円）を目指す丸紅の戦略の核は電力IPP事業の拡大。洋上風力・太陽光発電への権益取得を加速中。穀物（Gavilon）との二本柱が世界的な「食料×エネルギー安全保障」テーマに合致し評価が高まる可能性。</p>
+    </div>
+    <div class="outlook-card">
+      <div class="oc-label">Retail Tech</div>
+      <h4>コンビニのAI化：次の収益源</h4>
+      <p>ファミリーマートのリテールメディア（4年後100億円目標）、ローソンのAI×DX実験が本格化。成功すれば「小売DXのノウハウ」を海外コンビニ・スーパーにライセンスするSaaS的ビジネスモデルへ転換できる。失敗すれば莫大な初期投資のみが残る高リスク賭け。</p>
+    </div>
+  </div>
+</section>
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span>五大総合商社 構造解剖 — 2026年6月23日</span>
+  <span style="font-family:var(--mono);font-size:9px;">FY2026データベース · 概算値あり · IR資料で要確認</span>
+</footer>
+
+</body>
+</html>
