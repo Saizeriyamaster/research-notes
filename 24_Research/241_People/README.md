@@ -6,7 +6,6 @@
 - [PayPal-Mafia](2026-04-04_PayPal-Mafia.md)
 - [Peter Thiel](2026-04-04_Peter_Thiel.md)
 - [patrick-collison](2026-04-10_patrick-collison.md)
-- [sam-altman](2026-04-10_sam-altman.md)
 - [yokogawa-tsuyoshi](2026-04-10_yokogawa-tsuyoshi.md)
 - [マキャベリ](2026-04-10_マキャベリ.md)
 - [Vincent van Gogh and Theo](2026-04-11_Vincent_van_Gogh_and_Theo.md)
@@ -20,3 +19,4 @@
 - [Palmer Luckey](2026-06-19_Palmer_Luckey.md)
 - [藤田晋](2026-07-08_藤田晋.md)
 - [Elon Musk](2026-07-09_Elon_Musk.md)
+- [Sam Altman](2026-08-28_Sam_Altman.html)

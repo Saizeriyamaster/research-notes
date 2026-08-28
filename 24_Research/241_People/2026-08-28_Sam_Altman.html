@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sam Altman — Diff Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#ffffff; --surface:#f5f5f3; --surface2:#ebeae6; --ink:#111111;
+  --text:#111111; --mid:#555555; --muted:#949494; --dim:#cccccc; --border:#e2e1da;
+  --good:#2f7a4f; --bad:#b3382c; --warn:#a67c2e; --accent:#2b4a6f;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.75;}
+h1,h2,h3,.section-label,.hero-eyebrow,.stat-label,.info-card-eyebrow,.tl-year,.block-label,.toc-title,.eyebrow,.networth,.net-name{font-family:'Poppins','Noto Sans JP',sans-serif;}
+.hero{background:var(--ink);padding:64px 40px 48px;}
+.hero-inner{max-width:860px;margin:0 auto;}
+.hero-crumb{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:16px;}
+.hero-crumb a{color:rgba(255,255,255,.65);text-decoration:none;}
+.hero-crumb a:hover{color:#fff;}
+.hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:12px;font-weight:600;}
+.hero h1{font-size:clamp(26px,4.2vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.15;color:#fff;margin-bottom:14px;}
+.hero-sub{font-size:13.5px;color:rgba(255,255,255,.68);line-height:1.8;max-width:640px;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:18px 28px;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);}
+.hero-meta-item{display:flex;flex-direction:column;gap:2px;}
+.hero-meta-item .label{font-size:10.5px;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;}
+.hero-meta-item .value{font-size:13.5px;font-weight:600;color:#fff;}
+@media (max-width:640px){.hero{padding:44px 20px 32px;}}
+.wrap{max-width:860px;margin:0 auto;padding:64px 40px 100px;}
+@media (max-width:900px){.wrap{padding:40px 20px 72px;}}
+.hero + .wrap{padding-top:40px;}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.summary{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--ink);border-radius:10px;padding:22px 26px;margin:36px 0;font-size:14px;line-height:1.85;color:var(--mid);}
+.summary strong{color:var(--text);font-weight:700;}
+section,.block{margin-top:44px;}
+section:first-child,.block:first-child{margin-top:0;}
+.section-label,.block-label{font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+h2,.block-title{font-size:1.25rem;font-weight:800;letter-spacing:-.01em;color:var(--text);padding-bottom:12px;border-bottom:1px solid var(--border);margin:0 0 22px;}
+.block h3{font-size:13.5px;font-weight:700;color:var(--text);margin:24px 0 12px;}
+.block p{color:var(--mid);margin-bottom:12px;font-size:13.5px;line-height:1.8;}
+.block p:last-child{margin-bottom:0;}
+.block ul{padding-left:20px;}
+.block li{margin-bottom:5px;font-size:13.5px;color:var(--mid);line-height:1.7;}
+.callout{border-left:3px solid var(--ink);border-radius:0 8px 8px 0;background:var(--surface2);padding:16px 20px;margin:20px 0;font-size:13.5px;line-height:1.85;color:var(--mid);}
+.callout strong{color:var(--text);font-weight:700;}
+.callout.warn{border-left-color:var(--warn);} .callout.bad{border-left-color:var(--bad);} .callout.good{border-left-color:var(--good);}
+.quote{background:var(--surface2);border-left:3px solid var(--ink);border-radius:0 8px 8px 0;padding:20px 24px;margin:24px 0;font-style:italic;font-size:14.5px;line-height:1.9;color:var(--text);}
+.quote cite{display:block;margin-top:8px;font-style:normal;font-size:12px;color:var(--muted);}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;}
+.data-table th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--surface2);padding:10px 12px;border-bottom:1px solid var(--border);}
+.data-table td{padding:11px 12px;border-bottom:1px solid var(--border);color:var(--mid);vertical-align:top;line-height:1.7;}
+.data-table td strong,.data-table td b{color:var(--text);}
+.data-table tr:last-child td{border-bottom:none;}
+.tag{display:inline-block;border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:11.5px;color:var(--mid);font-weight:600;}
+.tag.good{color:var(--good);border-color:var(--good);} .tag.warn{color:var(--warn);border-color:var(--warn);} .tag.bad{color:var(--bad);border-color:var(--bad);} .tag.accent{color:var(--accent);border-color:var(--accent);}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+.timeline{position:relative;padding-left:28px;}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:4px;width:1px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:22px;} .tl-item:last-child{margin-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:-24px;top:8px;width:8px;height:8px;border-radius:50%;background:var(--ink);}
+.tl-item.high::before{width:11px;height:11px;left:-25.5px;top:6.5px;}
+.tl-year{font-size:11.5px;font-weight:700;letter-spacing:.05em;color:var(--text);margin-bottom:3px;}
+.tl-title{font-size:13.5px;font-weight:700;color:var(--text);}
+.tl-text,.tl-item p{font-size:13.5px;color:var(--mid);line-height:1.75;margin-top:2px;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:8px 0;}
+.card,.info-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;}
+.card h3,.info-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.card p,.card ul,.info-card-text{font-size:13.5px;color:var(--mid);line-height:1.75;}
+.card ul{padding-left:18px;} .card ul li{margin-bottom:4px;}
+.info-card-eyebrow{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.episode{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;}
+.episode h3{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text);}
+.episode p{font-size:13.5px;color:var(--mid);line-height:1.75;}
+.episode .arrow{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:13px;color:var(--text);font-weight:600;}
+.fact-list{list-style:none;}
+.fact-list li{display:flex;gap:16px;padding:13px 0;border-bottom:1px solid var(--border);font-size:13.5px;align-items:flex-start;}
+.fact-list li:last-child{border-bottom:none;}
+.fact-list .key{min-width:130px;font-weight:600;color:var(--muted);font-size:12.5px;padding-top:1px;}
+.fact-list .val{flex:1;color:var(--mid);}
+@media (max-width:600px){.fact-list li{flex-direction:column;gap:3px;} .fact-list .key{min-width:0;text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;}}
+.back-link{display:inline-block;margin-top:40px;font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;} .back-link:hover{color:var(--mid);}
+.page-footer{border-top:1px solid var(--border);padding-top:24px;margin-top:8px;font-size:12px;color:var(--muted);line-height:1.8;}
+img,svg,iframe{max-width:100%;height:auto;} body{overflow-wrap:break-word;}
+.note{font-size:12.5px;color:var(--muted);line-height:1.8;}
+@media (max-width:600px){.hero h1{font-size:28px;} .card-grid{gap:12px;} .card,.info-card,.episode{padding:16px 18px;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-crumb"><a href="../../index.html">root</a> / <a href="../index.html">24_Research</a> / 241_People</div>
+    <div class="hero-eyebrow">Diff Analysis</div>
+    <h1>Sam Altman</h1>
+    <p class="hero-sub">サム・アルトマンの偉大さは「確信の非対称性」という構造から生まれた。他者が「まだ早い」「リスクが高い」と感じる領域に、根拠ある確信を持って賭け続けた。Loopt・YC・OpenAI——三つのステージでそれぞれ時代を数年先取りし、最終的にAI革命の震源地に立った人物。</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="label">生年</div><div class="value">1985年 / シカゴ</div></div>
+      <div class="hero-meta-item"><div class="label">現職</div><div class="value">OpenAI CEO</div></div>
+      <div class="hero-meta-item"><div class="label">初版</div><div class="value">2026-04-10</div></div>
+      <div class="hero-meta-item"><div class="label">更新</div><div class="value">2026-08-28</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="summary">
+    <strong>TL;DR — </strong>Loopt（時代に早すぎたモバイルSNS）、Y Combinator（ネットワークの複利化）、OpenAI（AGIへの非対称な賭け）。三段階すべてに共通するのは、スタンフォードのポーカーテーブルで鍛えた「不完全情報でも動く」「インプライド・オッズで考える」判断様式だ。2023年の5日間解任劇でこの様式は極限まで試され、彼はポーカーフェイスのまま復帰を勝ち取った。
+  </div>
+
+  <section>
+    <div class="section-label">01 · Timeline</div>
+    <h2>年表：人生の変化率マップ</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1985</div><div class="tl-title">シカゴ生まれ。4歳でセントルイス（クレイトン市）に移住</div></div>
+      <div class="tl-item"><div class="tl-year">1993（8歳）</div><div class="tl-title">Apple Macintoshを分解し独学でコーディング開始</div></div>
+      <div class="tl-item"><div class="tl-year">2001（16歳）</div><div class="tl-title">ゲイであることを両親にカミングアウト</div></div>
+      <div class="tl-item"><div class="tl-year">2003（18歳）</div><div class="tl-title">John Burroughs School卒業、スタンフォード大学CS学科入学</div></div>
+      <div class="tl-item high"><div class="tl-year">2005（20歳）</div><div class="tl-title">スタンフォード中退 → Loopt共同創業（YC第1期）</div></div>
+      <div class="tl-item"><div class="tl-year">2009（24歳）</div><div class="tl-title">Looptで3,000万ドルのVC調達、スマホ時代を先取り</div></div>
+      <div class="tl-item"><div class="tl-year">2011（26歳）</div><div class="tl-title">YCパートナーに就任（兼業）</div></div>
+      <div class="tl-item"><div class="tl-year">2012（27歳）</div><div class="tl-title">Looptを4,340万ドルでGreen Dotに売却 → Hydrazine Capital設立</div></div>
+      <div class="tl-item high"><div class="tl-year">2014（29歳）</div><div class="tl-title">YC社長に就任（Paul Grahamから引き継ぎ）</div></div>
+      <div class="tl-item high"><div class="tl-year">2015（30歳）</div><div class="tl-title">OpenAI共同創業（非営利）</div></div>
+      <div class="tl-item"><div class="tl-year">2019（34歳）</div><div class="tl-title">YC社長を退任 → OpenAI CEO就任</div></div>
+      <div class="tl-item high"><div class="tl-year">2022（37歳）</div><div class="tl-title">ChatGPT公開 → 5日で100万ユーザー。AI革命が世界規模に</div></div>
+      <div class="tl-item high"><div class="tl-year">2023（38歳）</div><div class="tl-title">OpenAI取締役会により突然解任 → 5日後に復帰</div></div>
+      <div class="tl-item"><div class="tl-year">2024（39歳）</div><div class="tl-title">個人資産推定20億ドル超。AGIから「超知性」へ目標更新</div></div>
+      <div class="tl-item"><div class="tl-year">2026（41歳）</div><div class="tl-title">Oliver Mulherinと結婚。「6〜8人の子どもが欲しい」と発言</div></div>
+      <div class="tl-item"><div class="tl-year">2026年8月</div><div class="tl-title">「Astra」モデル群を軸に年内AGI到達を予告する一方、Anthropicに首位を譲ったと認め、データセンター反発・Apple提訴対応にも追われる</div></div>
+    </div>
+    <p class="note" style="margin-top:16px;">● = 偉大さの方向性を決定した超高変化率の瞬間</p>
+  </section>
+
+  <section>
+    <div class="section-label">02 · Formative Years</div>
+    <h2>幼少期〜学生時代（基礎パラメータの形成）</h2>
+    <p><strong>環境:</strong> ミズーリ州クレイトン（セントルイス近郊）の上位中産階級家庭。母は皮膚科医、父は不動産ブローカー。4人兄弟の長男として育つ。家族は毎晩揃って夕食をとり、卓球・ビリヤード・シャレードを共にした。</p>
+    <p><strong>技術との出会い（8歳）:</strong> 父母からApple Macintoshをプレゼントされる。彼はすぐにコードを書き始めるだけでなく、マシンを物理的に分解して内部構造を把握しようとした。「なぜ動くか」を理解したいという欲求が、後のAGI研究への原動力の原型である。</p>
+    <p><strong>アイデンティティの確立（16歳）:</strong> ゲイであることを両親にカミングアウト。自身は後に「2000年代のミッドウエストで同性愛者として育つのは最高ではなかった」と振り返る。社会的マジョリティでないことを早期に経験したことが、「自分の確信を外部の評価に左右されない」姿勢を鍛えた可能性がある。</p>
+    <p><strong>スタンフォードとの決別（20歳）:</strong> CS専攻で入学するも、Paul GrahamにYCへの応募を勧められ2年で中退。「学位を取るより会社を作るほうがいい」という判断を20歳でできたのは、幼少期からの「構造を自分で解体して理解する」習慣が根底にあったためだと考えられる。</p>
+    <h3>育まれた基礎パラメータ</h3>
+    <div class="tag-row">
+      <span class="tag">好奇心（分解→理解）</span>
+      <span class="tag">自立した確信</span>
+      <span class="tag">リスク許容度</span>
+      <span class="tag">家族的温かさ</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">03 · Formative Episodes</div>
+    <h2>原体験エピソード（偉大さのトリガー）</h2>
+
+    <div class="episode">
+      <h3>🔧 マックの分解（8歳 / 1993年）</h3>
+      <p>父母からもらったMacintoshを受け取るや、彼はまずそれを分解した。コーディングを独学で始め、「機械がなぜ動くか」を内側から理解しようとした。</p>
+      <div class="arrow">→ GPT-4やChatGPTの開発でも「スケーリングの法則を信じて大規模投資を決断する」形で現れた原理追求の姿勢。</div>
+    </div>
+
+    <div class="episode">
+      <h3>🃏 スタンフォードのポーカーと「不完全情報」哲学（18〜20歳 / 2003〜2005年）</h3>
+      <p>スタンフォード在学中、ポーカーに"fairly seriously"（かなり本気で）打ち込み、カリフォルニアのカジノに通って生活費を賄えるレベルまで稼いだ。本人はこう総括している。</p>
+      <div class="quote">"The two things that taught me the most about business are poker and angel investing."<cite>— Sam Altman</cite></div>
+      <p>2017年に公開した連続ツイートで、ポーカーから学んだ3つの投資原則を語っている：</p>
+      <ul>
+        <li><strong>不完全情報でも動くこと</strong> — "the most valuable one is the importance of acting with imperfect information"</li>
+        <li><strong>期待値思考</strong> — 手を「勝率」ではなく「期待値」で評価する</li>
+        <li><strong>インプライド・オッズ</strong> — 現時点の期待値がマイナスでも、後続ラウンドのリターンを含めれば正の期待値になるという概念。「多くのポーカープレイヤーが理解していると思い込んでいるが、投資家はほぼ全員理解していない」と本人は語る</li>
+      </ul>
+      <div class="arrow">→ 「AGIは来る、だから今動く」というOpenAI設立時の判断構造そのもの。今は赤字でも将来の巨大リターンを見込んで張るのはインプライド・オッズの実践。</div>
+    </div>
+
+    <div class="episode">
+      <h3>🎭 ポーカーフェイスという武器（38歳 / 2023年）</h3>
+      <p>2023年11月の解任劇では、取締役会から突然通知を受けた直後も冷静に社員・投資家・Microsoftとの交渉を進め、5日で復帰した。業界では"Sam Altman has the craziest poker face you can imagine"と評された。現在進行中のMAG7各社との競争も「4Dポーカー」と称される。</p>
+      <div class="arrow">→ 「組織とは人が全て」という確信を深め、ガバナンス改革を断行するきっかけになった。</div>
+    </div>
+
+    <div class="episode">
+      <h3>🤝 Paul GrahamとのYC第1期（20歳 / 2005年）</h3>
+      <p>スタンフォード在学中にYCの存在を知り、Paul Grahamに直談判。Grahamは「彼は自分が会ったファウンダーの中で最も印象的だった——何を作ったかではなく、どう考えるかによって」と評した。</p>
+      <div class="arrow">→ 「思考の質」が他のファウンダーと異なるという自覚が生まれ、後にYC社長として「思考の質が高いファウンダーを見抜く」眼力に転化。</div>
+    </div>
+
+    <div class="episode">
+      <h3>🚀 ChatGPT公開の瞬間（37歳 / 2022年12月）</h3>
+      <p>公開後5日で100万ユーザー。世界規模の変化を自分の手で引き起こしたことを、初めてリアルタイムで体感した瞬間。</p>
+      <div class="arrow">→ AGIを「遠い未来の話」から「実現する現実」として公言し始め、超知性（superintelligence）へと目標をアップデート。</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">04 · Career</div>
+    <h2>キャリア・業績の軌跡</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <div class="info-card-eyebrow">2005–2012</div>
+        <div class="info-card-title">Loopt</div>
+        <div class="info-card-text">位置情報SNSアプリ。スマートフォン普及前にモバイル×ソーシャル×位置情報を掛け合わせたが時代を先取りしすぎ、3,000万ドル超を調達も4,340万ドルでGreen Dotに売却。「どんな賭けをしたか」は後の行動と完全に一致している。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">2012–</div>
+        <div class="info-card-title">Hydrazine Capital</div>
+        <div class="info-card-text">Loopt売却益500万ドルを核に弟Jackと共同設立したVCファンド。Stripe・Asana・Reddit・Airbnb等への早期投資で資産を形成。現在の個人資産のほぼ全てはOpenAI給与ではなくここから。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">2014–2019</div>
+        <div class="info-card-title">Y Combinator 社長</div>
+        <div class="info-card-text">Paul Grahamからバトンを受け、YCを「バッチ8社」から「年1,000社規模」へ拡張。ポートフォリオを約1,900社に拡大。Airbnb・DoorDash・Instacart・Twitchが在任中に急成長。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">2015–現在</div>
+        <div class="info-card-title">OpenAI</div>
+        <div class="info-card-text">イーロン・マスク、Greg Brockman、Peter Thiel等と共同創業。GPT-2→GPT-3→ChatGPT→GPT-4と進化。2026年は新モデル群「Astra」を軸に年内のAGI到達を予告しつつ、Anthropicへの首位交代・データセンター反発・Apple提訴対応にも直面している。</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">05 · Structural Analysis</div>
+    <h2>偉大さの構造分析（なぜ彼だけが？）</h2>
+    <table class="data-table">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><strong>確信の非対称性</strong></td><td>他者が「まだ早い・リスクが高い」と思う時点で確信を持って参入する</td><td>Looptでのスマホ前SNS、OpenAI設立時の「AGIへの1億ドル投資が狂気に見えた」状況での決断</td></tr>
+        <tr><td><strong>人間観察とパターン認識</strong></td><td>ポーカーで鍛えた「不完全情報での意思決定」がVC投資・採用・組織マネジメントに通底</td><td>カジノで生活費を稼ぐレベルのポーカー歴。解任劇での5日間の無表情交渉</td></tr>
+        <tr><td><strong>ネットワークの複利</strong></td><td>YCという中心ノードに立ち、シリコンバレーで最も密度の高い人脈を構築</td><td>イーロン・マスク、Peter Thiel、Greg Brockman等をAGIの旗の下に集めたキャスティング力</td></tr>
+        <tr><td><strong>失敗を資産化する能力</strong></td><td>Looptは時代に先行した失敗だったが、知識資産化して次の賭けに活かした</td><td>YCでの「ハードテクノロジーに賭けろ」という指針はLooptの失敗から来ている</td></tr>
+        <tr><td><strong>実存的楽観主義</strong></td><td>「最悪の事態を準備しつつ、最良の未来を本気で信じる」二重思考</td><td>黙示録的サバイバル装備を持ちながら「AGIで人類の生産性を100倍にする」と語る一貫性</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-label">06 · Trivia</div>
+    <h2>雑学・意外な側面</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>心臓外科医志望</h3>
+        <p>テクノロジー起業家になる前の夢は心臓外科医。精密さと命に関わる意思決定への憧れが、後のAGI安全性研究への傾倒と奇妙に重なる。</p>
+      </div>
+      <div class="card">
+        <h3>自家用機のパイロット</h3>
+        <p>パイロット免許を保有し、将来的には自分のエアラインを立ち上げたいと語る。「自律システムを理解して自ら操る」行動パターンはAIへのアプローチと一致。</p>
+      </div>
+      <div class="card">
+        <h3>黙示録的備蓄ガチ勢</h3>
+        <p>ビッグサーに土地を所有し、銃・金・ヨウ化カリウム・抗生物質・IDF製ガスマスクなど本格的なサバイバル装備を保持。「AGIが人類最大のリスクになりうる」という考えの裏返し。</p>
+      </div>
+      <div class="card">
+        <h3>アシモフの信者</h3>
+        <p>アシモフ・アーサー・C・クラーク・ニール・スティーヴンスンの熱烈なファン。特に「ファウンデーション」と「ロボット工学三原則」がAIガバナンス思想に深く影響している。</p>
+      </div>
+      <div class="card">
+        <h3>「6〜8人の子どもが欲しい」</h3>
+        <p>Oliver Mulherinと結婚し、子どもを持つことを人生最大の目標の一つとして語る。AGIで人類を変えることと家族を大きく育てることを、どちらも「legacy」として捉えている節がある。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">07 · 2026年8月時点の動向</div>
+    <h2>最新アップデート</h2>
+    <div class="callout warn">
+      <strong>首位交代を認める:</strong> Time誌のインタビューでAltmanは「明らかにいくつか判断ミスがあった」「行きたかった場所より遅れている」と認め、この1年でAI競争の先頭をAnthropicに譲ったと報じられている。
+    </div>
+    <p>新モデル群「Astra」（数日単位のリサーチタスクを遂行可能）を軸に、2026年内の社内AGI到達を予告する一方、$500億規模のデータセンター投資への社会的反発（"Clearly, people hate data centers"）、Appleの営業秘密訴訟への反論、エージェントの安全評価での「反抗的」挙動を受けた開発ペースの意図的な減速（"I think it's a good time to slow down"）など、拡大に伴う摩擦への対応にも追われている。</p>
+  </section>
+
+  <section>
+    <div class="section-label">08 · Message</div>
+    <h2>現代へのメッセージ</h2>
+    <div class="callout good">
+      <strong>「確信を持つことと、確認を怠らないことは矛盾しない」</strong> — 「自分の確信を信じること」と「最悪のシナリオを準備すること」を同時に行う能力。「自分を信じろ、ほぼ妄想に近いくらいに」と言いながら黙示録的備蓄を怠らない。無謀な楽観主義ではなく、構造的リスク管理を伴った確信だ。
+    </div>
+    <div class="callout">
+      <strong>「時代を先取りする失敗は、最も価値の高い投資だ」</strong> — Looptは時代に負けたが、それを「モバイル×ソーシャルの未来への早期授業料」として消化した。失敗を「間違いだった」ではなく「タイミングが早すぎた正解だった」と読み替える能力が、次の賭けの精度を上げる。
+    </div>
+  </section>
+
+  <div class="page-footer">
+    参考: <a href="https://en.wikipedia.org/wiki/Sam_Altman" target="_blank" rel="noopener">Wikipedia</a> ·
+    <a href="https://www.britannica.com/money/Sam-Altman" target="_blank" rel="noopener">Britannica</a> ·
+    <a href="https://blog.samaltman.com/" target="_blank" rel="noopener">Sam Altman's Blog</a> ·
+    <a href="https://time.com/article/2026/08/26/openai-sam-altman-interview/" target="_blank" rel="noopener">TIME (2026-08-26)</a> ·
+    <a href="https://fortune.com/2026/08/27/sam-altman-openai-data-center-backlash/" target="_blank" rel="noopener">Fortune (2026-08-27)</a>
+  </div>
+
+  <a class="back-link" href="../index.html">← 241_People 一覧へ戻る</a>
+
+</div>
+</body>
+</html>
