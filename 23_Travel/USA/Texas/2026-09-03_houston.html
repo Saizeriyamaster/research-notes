@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ヒューストン — Industrial & Urban Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f3;
+  --surface2:#ebeae6;
+  --ink:     #111111;
+  --text:    #111111;
+  --mid:     #555555;
+  --muted:   #949494;
+  --dim:     #cccccc;
+  --border:  #e2e1da;
+  --good:   #2f7a4f;
+  --bad:    #b3382c;
+  --warn:   #a67c2e;
+  --accent: #2b4a6f;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.75;
+}
+h1, h2, h3, .section-label, .hero-eyebrow, .stat-label, .info-card-eyebrow,
+.tl-year, .block-label, .toc-title, .eyebrow { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
+.hero { background: var(--ink); padding: 64px 40px 48px; }
+.hero-inner { max-width: 860px; margin: 0 auto; }
+.hero-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; font-weight: 600; }
+.hero h1 { font-size: clamp(26px, 4.2vw, 44px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; color: #fff; margin-bottom: 14px; }
+.hero-sub { font-size: 13.5px; color: rgba(255,255,255,.68); line-height: 1.8; max-width: 640px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 18px 28px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.15); }
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-size: 10.5px; color: rgba(255,255,255,.45); letter-spacing: .1em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 13.5px; font-weight: 600; color: #fff; }
+@media (max-width: 640px) { .hero { padding: 44px 20px 32px; } }
+.wrap { max-width: 860px; margin: 0 auto; padding: 64px 40px 100px; }
+@media (max-width: 900px) { .wrap { padding: 40px 20px 72px; } }
+.hero + .wrap { padding-top: 40px; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.summary { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--ink); border-radius: 10px; padding: 22px 26px; margin: 36px 0; font-size: 14px; line-height: 1.85; color: var(--mid); }
+.summary strong { color: var(--text); font-weight: 700; }
+section, .block { margin-top: 44px; }
+section:first-child, .block:first-child { margin-top: 0; }
+.section-label, .block-label { font-size: 10.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+h2, .block-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -.01em; color: var(--text); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin: 0 0 22px; }
+.block h3 { font-size: 13.5px; font-weight: 700; color: var(--text); margin: 24px 0 12px; }
+.block p { color: var(--mid); margin-bottom: 12px; font-size: 13.5px; line-height: 1.8; }
+.block p:last-child { margin-bottom: 0; }
+.block ul { padding-left: 20px; }
+.block li { margin-bottom: 5px; font-size: 13.5px; color: var(--mid); line-height: 1.7; }
+.callout { border-left: 3px solid var(--ink); border-radius: 0 8px 8px 0; background: var(--surface2); padding: 16px 20px; margin: 20px 0; font-size: 13.5px; line-height: 1.85; color: var(--mid); }
+.callout strong { color: var(--text); font-weight: 700; }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.quote { background: var(--surface2); border-left: 3px solid var(--ink); border-radius: 0 8px 8px 0; padding: 20px 24px; margin: 24px 0; font-style: italic; font-size: 14.5px; line-height: 1.9; color: var(--text); }
+.quote cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; color: var(--muted); }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.stat-tile { background: var(--bg); padding: 22px 18px; }
+.stat-label { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.stat-value { font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; line-height: 1.2; }
+.stat-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+.data-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); background: var(--surface2); padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.data-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--mid); vertical-align: top; line-height: 1.7; }
+.data-table td strong, .data-table td b { color: var(--text); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table.kv th { width: 30%; font-size: 13px; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--mid); }
+.tag { display: inline-block; border: 1px solid var(--border); border-radius: 20px; padding: 4px 14px; font-size: 11.5px; color: var(--mid); font-weight: 600; }
+.tag.good { color: var(--good); border-color: var(--good); }
+.tag.warn { color: var(--warn); border-color: var(--warn); }
+.tag.bad  { color: var(--bad);  border-color: var(--bad); }
+.tag.accent { color: var(--accent); border-color: var(--accent); }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before { content: ''; position: absolute; left: 6px; top: 8px; bottom: 4px; width: 1px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 20px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -24px; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.tl-year { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; color: var(--text); margin-bottom: 3px; }
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-text, .tl-item p { font-size: 13.5px; color: var(--mid); line-height: 1.75; margin-top: 2px; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 8px 0; }
+.card, .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+.card h3, .info-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; margin-top: 0; }
+.card p, .card ul, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.75; }
+.card ul { padding-left: 18px; }
+.card ul li { margin-bottom: 4px; }
+.info-card-eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.8; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+.src-list { columns: 2; column-gap: 24px; font-size: 11.5px; color: var(--muted); line-height: 1.9; }
+.src-list a { color: var(--muted); }
+@media (max-width: 640px) { .src-list { columns: 1; } }
+img, svg { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+@media (max-width: 600px) { .hero h1 { font-size: 28px; } .card-grid { gap: 12px; } .card, .info-card { padding: 16px 18px; } }
+</style>
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">USA / Texas — Industrial &amp; Urban Deep Dive</div>
+    <h1>ヒューストン</h1>
+    <p class="hero-sub">1836年、不動産投機家のアレン兄弟が湿地帯を買って始めた交易拠点は、1901年のスピンドルトップ油田発見と1914年のヒューストン運河開通という2つの人工的な決断で「世界のエネルギー首都」になった。ゾーニング条例を持たない全米唯一の大都市というもう一つの特異性が、無秩序な拡張とハリケーン・ハービーで露呈した弱点を同時に生んでいる。</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="label">市域人口</div><div class="value">230.5万人（2020）</div></div>
+      <div class="hero-meta-item"><div class="label">都市圏人口</div><div class="value">790万人超（2025）</div></div>
+      <div class="hero-meta-item"><div class="label">建市</div><div class="value">1836年8月30日</div></div>
+      <div class="hero-meta-item"><div class="label">Updated</div><div class="value">2026-09-03</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="summary">
+    <strong>この街を一言で言うと——「油田の発見地ではなく、油の集積地として栄えた街」。</strong> スピンドルトップ油田(1901年)はビューモント近郊で発見されたが、精製・輸送・トレーディング機能はヒューストンに集積した。決め手は1914年のヒューストン運河開通——内陸50マイルの都市が外洋船の入出港できる商業港になったことで、原油輸入・製品輸出の一大ハブへ変貌した。ゾーニング無し・独立電力網ERCOT・全米トップクラスの人口増加率という3つの特異な制度設計が、この街の伸び方と脆さを同時に規定している。
+  </div>
+
+  <!-- 1. 都市形成の歴史 -->
+  <section>
+    <div class="eyebrow">01 · City Formation</div>
+    <h2>都市形成の歴史</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1836</div><div class="tl-title">アレン兄弟による建設</div><div class="tl-text">8月30日、不動産投機家のオーガスタス・C・アレンとジョン・K・アレン兄弟がバッファロー・バイユー沿いの湿地帯を購入。テキサス共和国初代大統領サム・ヒューストンにちなみ命名。1837年6月5日市制施行、1837〜39年はテキサス共和国の臨時首都に。</div></div>
+      <div class="tl-item"><div class="tl-year">1901</div><div class="tl-title">スピンドルトップ油田発見</div><div class="tl-text">1月10日、ビューモント近郊で「ルーカス・ガッシャー」が噴出（深度1,139フィート、日量10万バレル、高さ150フィート超が9日間制御不能）。初年度産油量359万バレルは1901年の米国全体産油量の約4割。1902年末までに500社超が設立された（詳細7章）。</div></div>
+      <div class="tl-item"><div class="tl-year">1914</div><div class="tl-title">ヒューストン運河開通</div><div class="tl-text">9月7日完成・11月10日開通。全長50.5マイル、水深36フィート。ウィルソン大統領がホワイトハウスから祝砲ケーブルを送った。内陸50マイルの都市が外洋船の商業港に変貌。</div></div>
+      <div class="tl-item"><div class="tl-year">1961</div><div class="tl-title">NASA有人宇宙船センター誘致</div><div class="tl-text">9月19日発表。副大統領リンドン・B・ジョンソンと下院議員アルバート・トーマスの政治力、ライス大学寄贈の1,000エーカーが決め手。1963年開所、1973年ジョンソン宇宙センターに改称（「ヒューストン、こちら〜」の由来）。</div></div>
+      <div class="tl-item"><div class="tl-year">1970s</div><div class="tl-title">オイルブーム</div><div class="tl-text">原油高騰でヒューストンに人口・資本が殺到。</div></div>
+      <div class="tl-item"><div class="tl-year">1982–86</div><div class="tl-title">石油価格暴落・大不況</div><div class="tl-text">原油10ドル/バレルまで下落。21.1万人の雇用消失、失業率9%超、住宅約20万戸が空き家に、オフィス空室率20%超、「テント村」が出現するほどの不況。</div></div>
+      <div class="tl-item"><div class="tl-year">2001</div><div class="tl-title">エンロン破綻</div><div class="tl-text">12月2日チャプター11申請。株価は90.75ドルから0.26ドルへ暴落、地元4,000人超が失職。エネルギートレーディング市場の信頼が失墜（詳細5章）。</div></div>
+      <div class="tl-item"><div class="tl-year">2017</div><div class="tl-title">ハリケーン・ハービー</div><div class="tl-text">最大60.58インチの記録的降雨。住宅10万戸以上浸水、死者68〜89人、被害額1,250億〜1,600億ドル（当時ハリケーン・カトリーナに次ぐ史上2番目）。</div></div>
+      <div class="tl-item"><div class="tl-year">2021</div><div class="tl-title">テキサス大寒波・大停電</div><div class="tl-text">冬季嵐ユーライでERCOTが緊急停電。最大480万件超が停電、全州崩壊まで残り4分37秒。州公式死者数246人、ハリス郡43人で最多。</div></div>
+      <div class="tl-item"><div class="tl-year">2023–</div><div class="tl-title">エネルギー転換の本格化</div><div class="tl-text">ExxonMobilが本社をスプリング(ヒューストン近郊)へ移転。CCUS・クリーン水素への投資が加速（詳細5章）。</div></div>
+    </div>
+
+    <h3 style="margin-top:32px;">人口推移</h3>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="stat-label">1900年</div><div class="stat-value">44,633人</div></div>
+      <div class="stat-tile"><div class="stat-label">1950年</div><div class="stat-value">59.6万人</div></div>
+      <div class="stat-tile"><div class="stat-label">1980年</div><div class="stat-value">159.5万人</div></div>
+      <div class="stat-tile"><div class="stat-label">2020年（市域）</div><div class="stat-value">230.5万人</div></div>
+      <div class="stat-tile"><div class="stat-label">2025年（都市圏）</div><div class="stat-value">790万人超</div><div class="stat-sub">2025年全米トップの増加数</div></div>
+    </div>
+  </section>
+
+  <!-- 2. 産業クラスターの形成史 -->
+  <section>
+    <div class="eyebrow">02 · Industry Origins</div>
+    <h2>産業クラスターの形成史 — なぜここに根付いたか</h2>
+    <div class="block">
+      <h3>石油・石油化学産業</h3>
+      <p>1901年スピンドルトップ発見以降、メキシコ湾岸一帯で探査ブームが発生。精製・輸送・トレーディング機能がヒューストンに集積した理由は、メキシコ湾岸への近接性と原油産地への地の利に加え、1914年のヒューストン運河による内陸港化。運河沿いには1930年時点で精製所9カ所が稼働していた。テキサス鉄道委員会による産出調整や法人税・個人所得税の無さも立地要因とされる。</p>
+      <h3>宇宙産業</h3>
+      <p>NASAの立地条件（水運アクセス・温暖な気候・全天候型ジェット便・大学近接）に加え、副大統領リンドン・B・ジョンソンの政治力とライス大学の1,000エーカー寄贈が誘致を決定づけた。クリアレイク周辺はもともと牧畜・零細農漁業集落だったが、宇宙センター立地で航空宇宙人材の集積地に転換した。</p>
+      <h3>医療産業（テキサス医療センター）</h3>
+      <p>1945年、実業家モンロー・デュナウェイ・アンダーソンのM.D.アンダーソン財団の資金拠出で組織化。1994年時点で敷地面積675エーカー超、当時から「世界最大の医療センター」と称される規模に成長した。</p>
+      <h3>ゾーニング無し都市</h3>
+      <p>全米最大のゾーニング非導入都市。1948年（反対69%）・1962年（反対57%）・1993年（反対52%）と3度の住民投票で条例導入が否決され続けている。市憲章上、市議会単独ではゾーニング条例を制定できず住民投票の過半数承認が必須という制度的縛りがあり、財産権重視・経済的リバタリアニズムの気風と不動産開発業者の強い反対が背景にある。</p>
+    </div>
+  </section>
+
+  <!-- 3. 主要産業・代表企業 -->
+  <section>
+    <div class="eyebrow">03 · Key Industries &amp; Companies</div>
+    <h2>主要産業・代表企業</h2>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="stat-label">ポート・ヒューストン（2024）</div><div class="stat-value">2.201億トン</div><div class="stat-sub">外国貿易トン数で全米1位</div></div>
+      <div class="stat-tile"><div class="stat-label">テキサス医療センター</div><div class="stat-value">加盟49機関</div><div class="stat-sub">雇用12万人超・年間患者約1,000万件</div></div>
+      <div class="stat-tile"><div class="stat-label">2空港合計旅客数（2024）</div><div class="stat-value">6,310万人</div></div>
+      <div class="stat-tile"><div class="stat-label">フォーチュン500本社数</div><div class="stat-value">27社</div><div class="stat-sub">全米2位タイ（ハリス郡単独23社）</div></div>
+    </div>
+
+    <h3>A. 本社を置く大企業</h3>
+    <table class="data-table">
+      <thead><tr><th>企業</th><th>業種</th><th>本社地区</th><th>創業</th><th>規模</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ExxonMobil</strong></td><td>エネルギー</td><td>スプリング（都市圏北部）</td><td>1870年（起源）／1999年合併</td><td>従業員約57,952人／時価総額約6,658億ドル</td></tr>
+        <tr><td><strong>Sysco</strong></td><td>食品流通</td><td>ヒューストン</td><td>1969年</td><td>従業員75,000人／売上814億ドル（2025）</td></tr>
+        <tr><td><strong>Baker Hughes</strong></td><td>油田サービス</td><td>ヒューストン</td><td>1987年（起源1908年）</td><td>従業員54,000人／売上277億ドル</td></tr>
+        <tr><td><strong>Waste Management</strong></td><td>廃棄物処理</td><td>ダウンタウン</td><td>1968年</td><td>従業員60,500人／売上257億ドル</td></tr>
+        <tr><td><strong>HPE</strong></td><td>サーバー・インフラ</td><td>スプリング</td><td>2015年（源流1939年）</td><td>従業員90,233人／時価総額約720〜743億ドル</td></tr>
+        <tr><td><strong>CenterPoint Energy</strong></td><td>電力・ガス公益</td><td>ダウンタウン</td><td>1882年</td><td>従業員約8,300人／売上約93.2億ドル</td></tr>
+      </tbody>
+    </table>
+
+    <h3>B. 発祥企業・スタートアップ</h3>
+    <table class="data-table">
+      <thead><tr><th>企業</th><th>創業</th><th>創業エピソード</th><th>現状</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Compaq</strong></td><td>1982年</td><td>テキサス・インスツルメンツの元幹部3名がパイ専門店「House of Pies」でプレースマット裏にIBM互換PCを構想</td><td>史上最速でフォーチュン500入り。2001年HPが約250億ドルで買収</td></tr>
+        <tr><td><strong>BMC Software</strong></td><td>1980年</td><td>元シェル・オイル従業員3名（社名は頭文字）がIBMメインフレーム向け高速化ソフトを開発</td><td>現存、2018年KKRが買収し非公開化</td></tr>
+        <tr><td><strong>Men's Wearhouse</strong></td><td>1973年</td><td>George Zimmerが父の与信3万ドル・自己資金7000ドルでストリップモールに1号店開業</td><td>現存（Tailored Brandsに改称）</td></tr>
+        <tr><td><strong>Solugen</strong></td><td>2016年</td><td>医学生時代のポーカー中の会話から着想、MIT起業コンテスト準優勝を機に本格始動</td><td>現存、累計調達6.43億ドル・評価額22億ドル</td></tr>
+        <tr><td><strong>Axiom Space</strong></td><td>2016年</td><td>元NASA ISSプログラムマネージャーがジョンソン宇宙センター近接地で商業宇宙ステーション構想</td><td>現存・成長中、スペースポートに新本社建設中</td></tr>
+        <tr><td><strong>Intuitive Machines</strong></td><td>2013年</td><td>元NASA職員2名が創業、2017年月面回帰方針を機に月着陸船開発へ転換</td><td>NASDAQ上場、2024年に米国単独初の月面軟着陸成功</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 4. インフラ -->
+  <section>
+    <div class="eyebrow">04 · Infrastructure</div>
+    <h2>インフラ</h2>
+    <div class="block">
+      <h3>水インフラ・洪水リスク</h3>
+      <p>粘土質土壌「ガンボ」が地下水汲み上げに伴う地盤沈下を助長する極めて平坦な沖積平野。1975年、ハリス・ガルベストン・サブシデンス地区が設立され地下水汲み上げを規制。2017年ハリケーン・ハービーでは最大60.58インチ（ネダーランド、米国記録）の降雨で住宅10万戸以上が浸水、死者68〜89人、被害額1,250億〜1,600億ドルに達した。</p>
+      <h3>電力（ERCOT）</h3>
+      <p>テキサス州独自の電力網ERCOTは他州系統とほぼ接続していない独立系統。2021年冬季嵐ユーライでは最大480万件超が停電、全州崩壊まで残り4分37秒という際どさをERCOTが事後公表。州公式死者数246人、ハリス郡43人で最多。他州からの電力融通ができない系統構造上の弱点が露呈した。</p>
+      <h3>高速道路網</h3>
+      <p>I-610（インナーループ）は1942年「ディフェンス・ループ」指定、1976年に全通。Beltway 8（中間ループ、全長83マイル）は1969年指定、立体交差化完了は2011年。Grand Parkway（外側ループ）は郊外地権者主導で断片的に建設継続中。ゾーニング無しによる無秩序な郊外開発を、3重の環状高速道路網が下支えする構造。</p>
+    </div>
+  </section>
+
+  <!-- 5. 都市計画上の転換点 -->
+  <section>
+    <div class="eyebrow">05 · Urban Turning Points</div>
+    <h2>都市計画上の転換点</h2>
+    <div class="callout"><strong>ゾーニング住民投票:</strong> 1948年（反対69%）→1962年（反対57%）→1993年（反対52%）と3度否決、賛成比率は徐々に上昇するも過半数には至らず。ヒューストンは今なお全米最大のゾーニング非導入都市。</div>
+    <div class="callout bad"><strong>エンロン破綻（2001年）:</strong> ダウンタウンの象徴的高層本社ビルが「国際金融・エネルギートレーディングの主要プレーヤー」という自己像の象徴だったが、破綻により地元4,000人超が失職。同社が事実上創出したエネルギートレーディング市場の信頼が失墜し、規制緩和後の卸電力・ガス市場全体への信頼にも波及した。</div>
+    <div class="callout warn"><strong>ハリケーン・ハービー後（2017年〜）:</strong> 大規模浸水を受け、ハリス郡洪水規制庁による洪水対策債（2018年住民投票承認、25億ドル規模、要検証）や分水嶺ベースの開発規制強化が進んだ。</div>
+    <div class="callout"><strong>エネルギー転換:</strong> Houston Energy Transition Initiative（Greater Houston Partnership傘下）がCCUS・クリーン水素の作業部会を組成。ExxonMobilは2023年にDenbury社を買収し全米最大のCO2パイプライン網・陸上貯留サイト10カ所を獲得、2040年までに年間1億トンのCO2回収・貯留能力を目指すCCSハブ構想を推進中。</div>
+  </section>
+
+  <!-- 6. エリア別ドリルダウン -->
+  <section>
+    <div class="eyebrow">06 · Area Breakdown</div>
+    <h2>エリア別ドリルダウン</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <div class="info-card-eyebrow">大手町・丸の内＋日本橋的</div>
+        <div class="info-card-title">Downtown</div>
+        <div class="info-card-text">高層オフィス街、地下トンネルネットワークでビル群を接続。金融・法律・エネルギー企業本社が集積。Theater District、Discovery Green。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">表参道・青山＋六本木ヒルズ的</div>
+        <div class="info-card-title">Uptown / Galleria</div>
+        <div class="info-card-text">テキサス州最大のショッピングモール「The Galleria」中心の高級商業地区。高層コンドミニアム・高級ホテル。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">西新宿的（郊外型）</div>
+        <div class="info-card-title">Energy Corridor</div>
+        <div class="info-card-text">I-10・エルドリッジ・パークウェイ沿い。BP、Shell、ConocoPhillips等の本社・拠点、Sysco本社もここに立地。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">本郷・御茶ノ水の巨大版</div>
+        <div class="info-card-title">Texas Medical Center</div>
+        <div class="info-card-text">世界最大の医療複合施設群、49機関、雇用者12万人超、年間患者1,000万件。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">田園都市線沿線の拡大版</div>
+        <div class="info-card-title">The Woodlands</div>
+        <div class="info-card-text">1974年、石油実業家ジョージ・ミッチェルが構想した世界最大級のマスタープランド・コミュニティ（44.5平方マイル）。人口11.8万人超、企業約2,200社立地。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">企業城下町的</div>
+        <div class="info-card-title">League City / Clear Lake（NASA周辺）</div>
+        <div class="info-card-text">ジョンソン宇宙センターが約1万人を直接雇用、関連企業含め広域雇用4〜5万人規模。Space Center Houstonは年間来場者約130万人。Kemah Boardwalkのエンターテインメント地区も隣接。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">下北沢・代官山的</div>
+        <div class="info-card-title">Montrose</div>
+        <div class="info-card-text">ヒューストンの文化的中心地。Menil Collection、テキサス州で最も独立系レストラン密度が高いとされるエリア。</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px;">エリア間移動時間の目安（車）</h3>
+    <table class="data-table">
+      <thead><tr><th>区間</th><th>所要時間</th></tr></thead>
+      <tbody>
+        <tr><td>Downtown ⇔ Uptown/Galleria</td><td>約15〜20分</td></tr>
+        <tr><td>Downtown ⇔ Energy Corridor</td><td>約25〜30分</td></tr>
+        <tr><td>Downtown ⇔ Texas Medical Center</td><td>約10〜15分</td></tr>
+        <tr><td>Downtown ⇔ Clear Lake/NASA</td><td>約30〜40分</td></tr>
+        <tr><td>Downtown ⇔ The Woodlands</td><td>約35〜45分</td></tr>
+      </tbody>
+    </table>
+    <p class="note">※渋滞なし時の目安、要検証。</p>
+  </section>
+
+  <!-- 7. Deep Dive -->
+  <section>
+    <div class="eyebrow">07 · Deep Dive</div>
+    <h2>スピンドルトップ油田発見がヒューストンの産業構造を一変させた経緯</h2>
+    <p>1901年1月10日、ビューモント近郊の塩丘「スピンドルトップ」で、鉱山技師アンソニー・F・ルーカス率いる掘削チームが深度1,139フィートに達した瞬間、地中から泥・ガス・石油が高さ150フィート超まで噴出した。9日間制御不能で続いたこの「ルーカス・ガッシャー」は日量10万バレル、推定85万バレルが失われるという当時世界最大級の油井となり、初年度産油量359万バレルは1901年の米国全体産油量の約4割に相当した。</p>
+    <p>この発見の衝撃は産油量の多さにとどまらない。第一に、石油埋蔵地の重心をペンシルベニアからテキサス湾岸へ決定的にシフトさせた。第二に、わずか1年強で500社を超える企業が乱立し、Gulf Oil、Texas Company（後のTexaco）、Sun Oil、Magnolia Petroleum、Humble Oilといった、20世紀の米国石油メジャーの原型となる企業群がここから誕生した。第三に、ビューモントの人口が発見直後に1万人から5万人へ急増する「石油ブームタウン」現象を全米で初めて実演した。</p>
+    <div class="quote">ヒューストンにとって決定的だったのは、油田そのものはビューモント近郊にありながら、精製・輸送・トレーディングの機能がヒューストンに集積したという点である。既にメキシコ湾岸へのアクセスと鉄道網を備えていたため、乱立した石油関連企業の多くが精製所・パイプライン・港湾機能をヒューストンに求めた。この流れを決定づけたのが1914年のヒューストン運河開通であり、1930年時点で運河沿いに9カ所の精製所が稼働していたという事実は、「点」の発見が「面」の産業集積へ転化した過程を如実に示している。<cite>単なる湿地の交易拠点が、20世紀を通じて「世界のエネルギー首都」へ変貌した</cite></div>
+  </section>
+
+  <div class="page-footer">
+    <strong>参照情報源（抜粋）</strong>
+    <div class="src-list" style="margin-top:10px;">
+      <a href="https://www.tshaonline.org/handbook/entries/houston-tx">A Comprehensive History of Houston - TSHA</a><br>
+      <a href="https://www.tshaonline.org/handbook/entries/spindletop-oilfield">The Historic Discovery of Spindletop Oilfield - TSHA</a><br>
+      <a href="https://www.tshaonline.org/handbook/entries/houston-ship-channel">The History and Significance of the Houston Ship Channel - TSHA</a><br>
+      <a href="https://www.tshaonline.org/handbook/entries/lyndon-b-johnson-space-center">Lyndon B. Johnson Space Center - TSHA</a><br>
+      <a href="https://www.tmc.edu/news/2014/08/building-a-city-of-medicine-the-history-of-the-texas-medical-center/">History of the Texas Medical Center - TMC News</a><br>
+      <a href="https://www.houstonlanding.org/no-zoning-in-houston-provides-flexibility-complications-experts-say-why-does-it-matter/">Houston zoning battles - Houston Landing</a><br>
+      <a href="https://www.texastribune.org/2018/01/08/hurricane-harvey-was-years-costliest-us-disaster-125-billion-damages/">Hurricane Harvey costliest disaster - Texas Tribune</a><br>
+      <a href="https://energy.utexas.edu/research/ercot-blackout-2021">ERCOT Blackout 2021 - UT Energy Institute</a><br>
+      <a href="https://en.wikipedia.org/wiki/Compaq">Compaq - Wikipedia</a><br>
+      <a href="https://en.wikipedia.org/wiki/Axiom_Space">Axiom Space - Wikipedia</a>
+    </div>
+    <p style="margin-top:16px;">Koshikawa Research Notes — personal knowledge base, published via GitHub Pages. LLM調査に基づく一次情報のため、数値・年号は要検証箇所を含む。</p>
+  </div>
+
+  <a class="back-link" href="index.html">&larr; Texas一覧へ戻る</a>
+
+</div>
+</body>
+</html>
