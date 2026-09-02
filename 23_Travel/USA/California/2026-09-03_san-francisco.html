@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サンフランシスコ — Industrial & Urban Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f3;
+  --surface2:#ebeae6;
+  --ink:     #111111;
+  --text:    #111111;
+  --mid:     #555555;
+  --muted:   #949494;
+  --dim:     #cccccc;
+  --border:  #e2e1da;
+  --good:   #2f7a4f;
+  --bad:    #b3382c;
+  --warn:   #a67c2e;
+  --accent: #2b4a6f;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.75;
+}
+h1, h2, h3, .section-label, .hero-eyebrow, .stat-label, .info-card-eyebrow,
+.tl-year, .block-label, .toc-title, .eyebrow { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
+.hero { background: var(--ink); padding: 64px 40px 48px; }
+.hero-inner { max-width: 860px; margin: 0 auto; }
+.hero-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; font-weight: 600; }
+.hero h1 { font-size: clamp(26px, 4.2vw, 44px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; color: #fff; margin-bottom: 14px; }
+.hero-sub { font-size: 13.5px; color: rgba(255,255,255,.68); line-height: 1.8; max-width: 640px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 18px 28px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.15); }
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-size: 10.5px; color: rgba(255,255,255,.45); letter-spacing: .1em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 13.5px; font-weight: 600; color: #fff; }
+@media (max-width: 640px) { .hero { padding: 44px 20px 32px; } }
+.wrap { max-width: 860px; margin: 0 auto; padding: 64px 40px 100px; }
+@media (max-width: 900px) { .wrap { padding: 40px 20px 72px; } }
+.hero + .wrap { padding-top: 40px; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.summary { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--ink); border-radius: 10px; padding: 22px 26px; margin: 36px 0; font-size: 14px; line-height: 1.85; color: var(--mid); }
+.summary strong { color: var(--text); font-weight: 700; }
+section, .block { margin-top: 44px; }
+section:first-child, .block:first-child { margin-top: 0; }
+.section-label, .block-label { font-size: 10.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+h2, .block-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -.01em; color: var(--text); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin: 0 0 22px; }
+.block h3 { font-size: 13.5px; font-weight: 700; color: var(--text); margin: 24px 0 12px; }
+.block p { color: var(--mid); margin-bottom: 12px; font-size: 13.5px; line-height: 1.8; }
+.block p:last-child { margin-bottom: 0; }
+.block ul { padding-left: 20px; }
+.block li { margin-bottom: 5px; font-size: 13.5px; color: var(--mid); line-height: 1.7; }
+.callout { border-left: 3px solid var(--ink); border-radius: 0 8px 8px 0; background: var(--surface2); padding: 16px 20px; margin: 20px 0; font-size: 13.5px; line-height: 1.85; color: var(--mid); }
+.callout strong { color: var(--text); font-weight: 700; }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.quote { background: var(--surface2); border-left: 3px solid var(--ink); border-radius: 0 8px 8px 0; padding: 20px 24px; margin: 24px 0; font-style: italic; font-size: 14.5px; line-height: 1.9; color: var(--text); }
+.quote cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; color: var(--muted); }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.stat-tile { background: var(--bg); padding: 22px 18px; }
+.stat-label { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.stat-value { font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; line-height: 1.2; }
+.stat-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+.data-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); background: var(--surface2); padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.data-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--mid); vertical-align: top; line-height: 1.7; }
+.data-table td strong, .data-table td b { color: var(--text); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table.kv th { width: 30%; font-size: 13px; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--mid); }
+.tag { display: inline-block; border: 1px solid var(--border); border-radius: 20px; padding: 4px 14px; font-size: 11.5px; color: var(--mid); font-weight: 600; }
+.tag.good { color: var(--good); border-color: var(--good); }
+.tag.warn { color: var(--warn); border-color: var(--warn); }
+.tag.bad  { color: var(--bad);  border-color: var(--bad); }
+.tag.accent { color: var(--accent); border-color: var(--accent); }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before { content: ''; position: absolute; left: 6px; top: 8px; bottom: 4px; width: 1px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 20px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -24px; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.tl-year { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; color: var(--text); margin-bottom: 3px; }
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-text, .tl-item p { font-size: 13.5px; color: var(--mid); line-height: 1.75; margin-top: 2px; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 8px 0; }
+.card, .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+.card h3, .info-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; margin-top: 0; }
+.card p, .card ul, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.75; }
+.card ul { padding-left: 18px; }
+.card ul li { margin-bottom: 4px; }
+.info-card-eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.8; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+.src-list { columns: 2; column-gap: 24px; font-size: 11.5px; color: var(--muted); line-height: 1.9; }
+.src-list a { color: var(--muted); }
+@media (max-width: 640px) { .src-list { columns: 1; } }
+img, svg { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+@media (max-width: 600px) { .hero h1 { font-size: 28px; } .card-grid { gap: 12px; } .card, .info-card { padding: 16px 18px; } }
+</style>
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">USA / California — Industrial &amp; Urban Deep Dive</div>
+    <h1>サンフランシスコ・ベイエリア</h1>
+    <p class="hero-sub">1776年の伝道所から始まった半島の街は、金鉱発見（1848年）で1年のうちに1,000人から4万人へ膨れ上がった。以後も地震（1906・1989年）・戦時造船・カウンターカルチャー・半導体・バイオテック・生成AIと、破壊と再発明を繰り返しながら世界2位の都市圏経済（GDP約1兆5,000億ドル）へ育った。骨格にあるのはスタンフォード大学発の産学連携という、130年前に仕込まれた一つの装置。</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="label">ベイエリア9郡人口</div><div class="value">約770万人（2025）</div></div>
+      <div class="hero-meta-item"><div class="label">ベイエリアGDP</div><div class="value">約1兆5,210億ドル（2025推計・世界2位都市圏）</div></div>
+      <div class="hero-meta-item"><div class="label">建市起点</div><div class="value">1776年伝道所建設</div></div>
+      <div class="hero-meta-item"><div class="label">Updated</div><div class="value">2026-09-03</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="summary">
+    <strong>この街を一言で言うと——「大学が仕込んだ産業装置が、地震と好景気を繰り返すたびに世代交代する街」。</strong> ゴールドラッシュ（1848年）と1906年大地震からの復興で都市の骨格ができ、スタンフォード大学のフレデリック・ターマンが1930年代から蒔いた産学連携の種が、ショックレー半導体研究所（1956年）→トレイターラス8のフェアチャイルド設立（1957年）→サンドヒル・ロードのVC集積（1972年〜）という系譜でシリコンバレーへ結実。テック産業の成功は同時に住宅価格高騰・立ち退き・コロナ後のオフィス空洞化という副作用も生んでいる。
+  </div>
+
+  <!-- 1. 都市形成の歴史 -->
+  <section>
+    <div class="eyebrow">01 · City Formation</div>
+    <h2>都市形成の歴史</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1776</div><div class="tl-title">伝道所・要塞の建設</div><div class="tl-text">スペインが「サン・フランシスコ・デ・アシス伝道所」（現ミッション・ドロレス）と軍事要塞プレシディオを建設。ヨーロッパ人による最初の恒久的入植。</div></div>
+      <div class="tl-item"><div class="tl-year">1846–48</div><div class="tl-title">米国領化・改称</div><div class="tl-text">米墨戦争でアメリカが接収した当時、人口は漁師・水夫ら約1,000人（地名「イェルバ・ブエナ」）。1848年に「サンフランシスコ」へ改称。同年シエラネバダ山麓で金鉱発見。</div></div>
+      <div class="tl-item"><div class="tl-year">1849</div><div class="tl-title">ゴールドラッシュ流入</div><div class="tl-text">「フォーティナイナーズ」の大量流入で人口が1,000人から2.5万人へ急増、年末には毎月4,000人ペースの流入で4万人都市に変貌。</div></div>
+      <div class="tl-item"><div class="tl-year">1852</div><div class="tl-title">ウェルズ・ファーゴ創業</div><div class="tl-text">金塊の売買・輸送を扱う銀行業として金融街（現420モンゴメリー・ストリート）の起点に。創業以来一貫して同地に本社。</div></div>
+      <div class="tl-item"><div class="tl-year">1906</div><div class="tl-title">大地震・大火</div><div class="tl-text">M7.9、当時人口約40万人の半数が家を失い死者3,000人超、建物約2万8,000棟破壊。市街地約500ブロックを焼失するも3年以内に人口水準が回復。1915年パナマ太平洋万博で復興を世界にアピール。</div></div>
+      <div class="tl-item"><div class="tl-year">1937</div><div class="tl-title">ゴールデンゲートブリッジ開通</div><div class="tl-text">工期4年4カ月、完成当時世界最長の吊り橋（後述）。</div></div>
+      <div class="tl-item"><div class="tl-year">1941–45</div><div class="tl-title">戦時造船拠点化</div><div class="tl-text">リッチモンドのカイザー造船所がリバティ船・ビクトリー船を計747隻建造。リッチモンド人口は1940年2.36万人→1943年9.37万人へ急増、労働者最大10万人超。</div></div>
+      <div class="tl-item"><div class="tl-year">1957</div><div class="tl-title">トレイターラス8の離反</div><div class="tl-text">ショックレー半導体研究所の技術者8人が離反、フェアチャイルドセミコンダクター設立。シリコンバレー企業文化のテンプレートに（詳細7章）。</div></div>
+      <div class="tl-item"><div class="tl-year">1967</div><div class="tl-title">サマー・オブ・ラブ</div><div class="tl-text">ヘイト・アシュベリー地区に推定10万人のヒッピー・ビートニクが集結、対抗文化の象徴的事件に。</div></div>
+      <div class="tl-item"><div class="tl-year">1972–77</div><div class="tl-title">ゲイカルチャーの中心地化</div><div class="tl-text">ハーヴェイ・ミルクがカストロにカメラ店開業（1972年）、1977年に全米初の公然同性愛者の主要都市公職者として市監督委員会議員に当選。</div></div>
+      <div class="tl-item"><div class="tl-year">1976</div><div class="tl-title">ジェネンテック設立</div><div class="tl-text">サウスサンフランシスコでバイオテック産業が起点を得る（詳細2章）。</div></div>
+      <div class="tl-item"><div class="tl-year">1989</div><div class="tl-title">ロマ・プリータ地震</div><div class="tl-text">M6.9。エンバーカデロ・フリーウェイが損傷し撤去へ（詳細5章）。</div></div>
+      <div class="tl-item"><div class="tl-year">1995–2000</div><div class="tl-title">ドットコムバブル</div><div class="tl-text">テック産業の市経済シェアが1990年の1%未満から2000年ピーク時4%へ。2000年3月バブル崩壊、オフィス空室率は2010年までに約20%へ上昇。</div></div>
+      <div class="tl-item"><div class="tl-year">2010s</div><div class="tl-title">テック・ブーム2.0とジェントリフィケーション</div><div class="tl-text">2009-2015年に市内雇用約12.3万人増（多くがテック）に対し住宅供給は1.1万戸増のみ。エビクションが2011年1,300件未満→2016年2,100件超に倍増（詳細5章）。</div></div>
+      <div class="tl-item"><div class="tl-year">2020s</div><div class="tl-title">コロナ後の人口減・ドゥームループ</div><div class="tl-text">2020年4月〜2025年1月にSF市人口が3.1万人超減少（2025年約84.2万人）。ダウンタウンオフィス空室率は2024年Q3-Q4に36.7〜36.9%でピーク。2025年以降AIブームで需要回復の兆し。</div></div>
+    </div>
+
+    <h3 style="margin-top:32px;">人口推移</h3>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="stat-label">1846年</div><div class="stat-value">約1,000人</div></div>
+      <div class="stat-tile"><div class="stat-label">1849年</div><div class="stat-value">約2.5〜4万人</div></div>
+      <div class="stat-tile"><div class="stat-label">1906年</div><div class="stat-value">約40万人</div></div>
+      <div class="stat-tile"><div class="stat-label">1943年リッチモンド</div><div class="stat-value">9.37万人</div></div>
+      <div class="stat-tile"><div class="stat-label">2025年SF市</div><div class="stat-value">約84.2万人</div><div class="stat-sub">コロナ前比▲3.1万人</div></div>
+      <div class="stat-tile"><div class="stat-label">2025年ベイエリア9郡</div><div class="stat-value">約770万人</div></div>
+    </div>
+  </section>
+
+  <!-- 2. 産業クラスターの形成史 -->
+  <section>
+    <div class="eyebrow">02 · Industry Origins</div>
+    <h2>産業クラスターの形成史 — なぜここに根付いたか</h2>
+    <div class="block">
+      <h3>テック産業（シリコンバレー）</h3>
+      <p>起点はスタンフォード大学工学部長フレデリック・ターマン。1930年代からビル・ヒューレット、デイブ・パッカードら学生に起業を奨励し、産学連携の思想的原型を作った。1939年HPがパロアルトのガレージで創業（「シリコンバレー発祥の地」）。1951年、大学とパロアルト市の共同事業で世界初の大学付属リサーチパーク「スタンフォード・リサーチ・パーク」を開設（当初209エーカー）。1956年ターマンの誘致でウィリアム・ショックレーがパロアルトに半導体研究所を設立するも独裁的経営が組織を機能不全に陥らせ、1957年に中核研究者8人が離反しフェアチャイルドセミコンダクターを設立（詳細7章）。以後の企業文化・スピンオフ連鎖・VC集積の起点となった。</p>
+      <h3>金融業</h3>
+      <p>1852年ウェルズ・ファーゴ創業。ゴールドラッシュで生じた金塊の購入・売却・東海岸輸送需要に対応する銀行・急送便事業として発足、本社は創業以来一貫して420モンゴメリー・ストリート（金融街）。</p>
+      <h3>バイオテック産業</h3>
+      <p>1976年4月7日、VCのロバート・A・スワンソンと生化学者ハーバート・W・ボイヤーがジェネンテックを設立（世界初の遺伝子工学企業）。「10分だけ」の面会予定が3時間の議論に発展しその場で創業が決まったという逸話が残る。安価な立地を求めサウスサンフランシスコの半空き倉庫を拠点に選定、後にキロン・アムジェン等の後発バイオ企業が集積し「バイオテックの聖地」と呼ばれるように。</p>
+      <h3>港湾・海運の衰退</h3>
+      <p>1960年代、オークランド港が西海岸で最初に本格的なコンテナターミナルへ投資。平坦な後背地と3本の鉄道接続という地理的優位を持ち、丘陵地形かつ主要鉄道網から離れたサンフランシスコ港は構造的に不利だった。1969年に総取扱トン数で逆転され、現在オークランド港が北カリフォルニアのコンテナ貨物の99%を取り扱う。</p>
+    </div>
+  </section>
+
+  <!-- 3. 主要産業・代表企業 -->
+  <section>
+    <div class="eyebrow">03 · Key Industries &amp; Companies</div>
+    <h2>主要産業・代表企業</h2>
+    <table class="data-table">
+      <thead><tr><th>企業</th><th>本社</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Nvidia</strong></td><td>サンタクララ</td><td>時価総額 約5.31兆ドル（2026年8月時点、世界1位。2025年10月に5兆ドル突破）</td></tr>
+        <tr><td><strong>Alphabet (Google)</strong></td><td>マウンテンビュー</td><td>時価総額 約4.53兆ドル（世界2位）</td></tr>
+        <tr><td><strong>Apple</strong></td><td>クパチーノ（Apple Park）</td><td>時価総額上位（要検証の詳細数値）</td></tr>
+        <tr><td><strong>Meta</strong></td><td>メンロパーク</td><td>時価総額 約1.92兆ドル</td></tr>
+        <tr><td><strong>Salesforce</strong></td><td>SFダウンタウン（セールスフォース・タワー）</td><td>FY2026売上高415億ドル</td></tr>
+        <tr><td><strong>OpenAI</strong></td><td>SFミッションベイ</td><td>評価額は2025年約3,250億ドル→従業員株式売却後約5,000億ドルへ（要検証）</td></tr>
+      </tbody>
+    </table>
+
+    <h3>ベイエリアのGDP・VC投資規模</h3>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="stat-label">ベイエリアGDP（2024）</div><div class="stat-value">1兆4,080億ドル</div><div class="stat-sub">2015年比+76%、世界2位都市圏経済</div></div>
+      <div class="stat-tile"><div class="stat-label">全米VC投資に占める割合（2024）</div><div class="stat-value">57%</div><div class="stat-sub">全米1,780億ドル中900億ドル</div></div>
+      <div class="stat-tile"><div class="stat-label">SF単独のVCシェア</div><div class="stat-value">24.2%</div><div class="stat-sub">2023年21.8%から上昇</div></div>
+      <div class="stat-tile"><div class="stat-label">カリフォルニア州の全米シェア</div><div class="stat-value">63%</div><div class="stat-sub">2位NY州11%、3位MA州5%</div></div>
+    </div>
+  </section>
+
+  <!-- 4. インフラ -->
+  <section>
+    <div class="eyebrow">04 · Infrastructure</div>
+    <h2>インフラ</h2>
+    <div class="block">
+      <h3>水インフラ：ヘッチヘッチ・システム</h3>
+      <p>1913年12月19日、ウッドロウ・ウィルソン大統領がレイカー法に署名し、ヨセミテ国立公園内トゥオラミ川（ヘッチヘッチ渓谷）でのオショーネシー・ダム建設を正式に認可。自然保護運動家ジョン・ミューアらが強硬に反対（全米200以上の新聞が反対論説を掲載）したが議会はほぼ議論なく可決、ミューア自身は翌1914年に死去した（詳細7章）。</p>
+      <h3>電力：PG&amp;E</h3>
+      <p>2015-2018年の一連の山火事の原因が同社の送電設備不良と裁判所が認定し、経営破綻（連邦破産法11章）に至った。負債総額は山火事関連だけで約300億ドル規模、焼失した住宅・事業所は2万3,000件超、死者100人超。2021年に高リスク地域の送電線1万マイルの地中化計画を発表（全米最大級）、2021年以降800マイルを埋設済み（1マイルあたり300万〜400万ドル）。</p>
+      <h3>空港</h3>
+      <p><strong>SFO</strong>は2024年実績で旅客数5,453万人、貨物53万7,115メトリックトン、全米空港ランキング13位。オークランド国際空港がLCC・貨物、サンノゼ国際空港がシリコンバレー企業のビジネス需要を担う3空港分業体制。</p>
+      <h3>橋梁インフラ</h3>
+      <p><strong>ゴールデンゲートブリッジ</strong>：1933年1月5日着工、1937年4月19日完成（工期4年4カ月22日）、完成当時世界最長の吊り橋。強潮流・頻繁な暴風霧の中の難工事で死者11人。<strong>ベイブリッジ</strong>：1933年7月9日着工、1936年11月12日開通、開通当時水上横断橋として世界最長（4.3マイル）、建設費7,720万ドルで当時世界最高額。</p>
+      <h3>地震リスク</h3>
+      <p>サンアンドレアス断層をまたぎヘイワード断層にも近接。USGSによれば今後100年以内にベイエリアで被害を伴う地震が発生する確率は<strong>95%以上</strong>。市内約2,800棟のソフトストーリー木造集合住宅のうち43-85%がM7.2級地震後に「危険」判定を受けると推計され、うち4分の1が倒壊すると見込まれる。</p>
+    </div>
+  </section>
+
+  <!-- 5. 都市計画上の転換点 -->
+  <section>
+    <div class="eyebrow">05 · Urban Turning Points</div>
+    <h2>都市計画上の転換点</h2>
+    <div class="callout"><strong>エンバーカデロ・フリーウェイ撤去:</strong> 1989年ロマ・プリータ地震（M6.9）で水際の二層式高架高速道路が構造的損傷。カルトランス技術者は「耐震補強費用は解体・再建より高くつく」と結論、アート・アグノス市長が撤去・親水緑地大通り化を主導し市監督委員会が6対5の僅差で可決。1991-93年に撤去完了。「サンフランシスコの現代史上、都市とウォーターフロントの関係を最も劇的に変えた単一の都市計画決定」と評される。</div>
+    <div class="callout bad"><strong>住宅価格高騰とジェントリフィケーション:</strong> 住宅価格中央値は1970年2.8万ドル→2000年50万ドル超→2019年140万ドル（7年で倍増）→2024年も約140万ドル。2009-2015年、市内雇用約12.3万人増に対し住宅供給1.1万戸増のみという需給ギャップ。エビクションは2011年1,300件未満→2016年2,100件超に倍増、エリス法によるものは2010-2013年で170%増。2013年12月以降の「グーグルバス反対運動」では、無過失立ち退きの69%がテック企業通勤バス停から4ブロック以内で発生していたとの分析も。</div>
+    <div class="callout warn"><strong>コロナ後のオフィス空洞化「ドゥームループ」:</strong> コロナ前は空室率5-10%程度だったが、2023年Q2に31.6%（過去最高）、2024年Q3-Q4に36.7-36.9%へ悪化。全米大都市の中で最も回復が遅い市場の一つと評された。2024年末以降、AIセクターの需要拡大で改善の兆しが見え始めている（要検証の最新動向）。</div>
+  </section>
+
+  <!-- 6. エリア別ドリルダウン -->
+  <section>
+    <div class="eyebrow">06 · Area Breakdown</div>
+    <h2>エリア別ドリルダウン</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら丸の内・大手町＋汐留</div>
+        <div class="info-card-title">Financial District / SoMa</div>
+        <div class="info-card-text">金融街にウェルズ・ファーゴ本社（1852年創業以来420モンゴメリーに所在）、トランスアメリカ・ピラミッド（1972年、旧最高層）が林立。SoMaにはセールスフォース・タワー（2017年、現市内最高層）を筆頭にテック企業オフィスが集積。平日夜はビジネス街色が強くやや閑散。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら下北沢・高円寺</div>
+        <div class="info-card-title">Mission District</div>
+        <div class="info-card-text">1776年建立のミッション・ドロレス（市内最古の建造物）が地名の由来。1930-40年代からメキシコ系移民が流入しラティーノ地区の性格を確立。メキシコ料理の名店とカラフルな壁画（Clarion Alley等）が密集、スタートアップ創業者・クリエイター層の居住地。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">新宿二丁目を大規模・観光地化した原型</div>
+        <div class="info-card-title">Castro District</div>
+        <div class="info-card-text">1972年ハーヴェイ・ミルクがカメラ店開業、カストロ・ビレッジ・アソシエーション設立。1977年ミルクが全米初の公然同性愛者の主要都市公職者に。世界的ゲイタウンの原型。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら松濤・広尾・南麻布</div>
+        <div class="info-card-title">Pacific Heights / Marina</div>
+        <div class="info-card-text">フレンチシャトー様式・スパニッシュ様式の豪邸が並ぶ市内屈指の高級住宅街。ブロードウェイ通り（ライアン〜ディビサデロ間）は「ビリオネアズ・ロウ」の異名。テック企業幹部の居住地としても知られる。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら本郷・目白</div>
+        <div class="info-card-title">Palo Alto / Stanford</div>
+        <div class="info-card-text">1939年HPがガレージ創業（発祥の地）。1951年スタンフォード・リサーチ・パーク開設。サンドヒル・ロードに約50のVCファーム（クライナー・パーキンス、セコイア・キャピタル等）が集積。Meta本社はメンロパーク。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">複数の巨大テック企業城下町</div>
+        <div class="info-card-title">Mountain View / Cupertino</div>
+        <div class="info-card-text">Google本社（Googleplex）、Apple本社（Apple Park）、Nvidia本社（サンタクララ）が至近距離に立地。オフィス街的性格が強くベッドタウン色。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら吉祥寺・国分寺＋川崎・横浜</div>
+        <div class="info-card-title">Berkeley / Oakland</div>
+        <div class="info-card-text">UCバークレー校とローレンス・バークレー国立研究所を核とした研究シーズ。オークランド港は北カリフォルニアのコンテナ貨物の99%を取り扱う物流拠点。第二次大戦期はリッチモンドがカイザー造船所の軍需生産拠点として急拡大。</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px;">エリア間移動時間の目安</h3>
+    <table class="data-table">
+      <thead><tr><th>区間</th><th>手段</th><th>所要時間</th></tr></thead>
+      <tbody>
+        <tr><td>SF ⇔ バークレー／オークランド</td><td>BART</td><td>25〜35分</td></tr>
+        <tr><td>SF ⇔ マウンテンビュー</td><td>Caltrain</td><td>約59分</td></tr>
+        <tr><td>パロアルト ⇔ マウンテンビュー</td><td>Caltrain</td><td>6〜7分</td></tr>
+        <tr><td>パロアルト ⇔ サンノゼ・ディリドン</td><td>Caltrain</td><td>28〜32分</td></tr>
+        <tr><td>パロアルト ⇔ Googleplex</td><td>車</td><td>約9分</td></tr>
+        <tr><td>マウンテンビュー ⇔ クパチーノ</td><td>バス／車</td><td>約33分／約15分</td></tr>
+      </tbody>
+    </table>
+    <p class="note">※BARTはSF・オークランド・バークレーなど東西ベイの主要都市間を結ぶ高速鉄道（1972年開業）で南のシリコンバレー中心部へは直通せず、その区間はCaltrainが担う——南北で鉄道モードが分かれる点がベイエリア公共交通の基本構造。</p>
+  </section>
+
+  <!-- 7. Deep Dive -->
+  <section>
+    <div class="eyebrow">07 · Deep Dive</div>
+    <h2>シリコンバレーの形成史 — トレイターラス8からVCエコシステムまで</h2>
+    <p>フレデリック・ターマンはスタンフォード大学工学部で1930年代から学生（ビル・ヒューレット、デイブ・パッカード、ラス・ヴァリアン）に起業を奨励し、産学連携の思想的原型を作った。1939年、ヒューレットとパッカードがパロアルトのガレージでHPを創業（現在「シリコンバレー発祥の地」として史跡指定）。1951年、ターマンは「スタンフォードの秘密兵器」と自ら呼んだ構想を実現し、大学とパロアルト市の共同事業として世界初の大学付属リサーチパーク「スタンフォード・リサーチ・パーク」を開設（当初209エーカー）。1953年ヴァリアン・アソシエイツが最初のテナントとして入居し、HPも1960年に本社移転を完了させた。</p>
+    <p>1956年、トランジスタ共同発明者でノーベル賞受賞者のウィリアム・ショックレーがターマンの誘致でパロアルトに移住しショックレー半導体研究所を設立、全米から最優秀の若手エンジニアを集めた。しかし独裁的・偏執的な経営スタイルが組織を機能不全に陥らせ、1957年10月1日、8人の中核研究者（ジュリアス・ブランク、ヴィクター・グリニッチ、ジーン・ホーニ、ユージン・クライナー、ジェイ・ラスト、ゴードン・ムーア、シェルドン・ロバーツ、ロバート・ノイス）が経営者交代要求を拒否されたことを機に一斉離反した。</p>
+    <div class="quote">ショックレー自身が彼らを「トレイターラス・エイト（裏切り者の8人）」と呼んだことが定着した通称の由来。<cite>8人はその日のうちにフェアチャイルドセミコンダクター設立へ動いた</cite></div>
+    <p>フェアチャイルドはショックレーの有害な管理文化への直接的な反動として非公式・協調的な組織文化を採用し、以後のシリコンバレー企業に共通する「社風のテンプレート」となった。「シリコンバレーの母体企業」と評され、そこから多数の技術者が独立してスピンオフする「フェアチャイルドの子孫たち」の系譜が形成された（ゴードン・ムーア、ロバート・ノイスはのちにインテルを創業）。</p>
+    <p>スピンオフの連鎖を資金面で支えたのがサンドヒル・ロードのVC集積である。1972年、クライナー・パーキンス・コーフィールド&amp;バイヤーズが同地に本拠を構えた最初のVCとなり、以後20社以上が追随。現在は同地1マイル圏内に約50のVCファーム（セコイア・キャピタル、アンドリーセン・ホロウィッツ等）が集積し、Google・Facebook・Appleを含むシリコンバレーのほぼすべての主要企業が同地のVCから早期資金調達を受けた。</p>
+    <p><strong>「大学の産学連携インフラ→軍需研究資金と半導体技術の蓄積→トレイターラス8によるフェアチャイルド設立と協調的企業文化の確立→フェアチャイルドからのスピンオフ連鎖→サンドヒル・ロードのVC集積による資金供給の制度化」</strong>という一連の流れが、今日にいたるシリコンバレーのスタートアップ・エコシステムの骨格を形成した。</p>
+  </section>
+
+  <div class="page-footer">
+    <strong>参照情報源（抜粋）</strong>
+    <div class="src-list" style="margin-top:10px;">
+      <a href="https://en.wikipedia.org/wiki/Timeline_of_San_Francisco">Timeline of San Francisco - Wikipedia</a><br>
+      <a href="https://www.britannica.com/event/San-Francisco-earthquake-of-1906">1906 SF Earthquake - Britannica</a><br>
+      <a href="https://en.wikipedia.org/wiki/Traitorous_eight">Traitorous eight - Wikipedia</a><br>
+      <a href="https://en.wikipedia.org/wiki/Sand_Hill_Road">Sand Hill Road - Wikipedia</a><br>
+      <a href="https://en.wikipedia.org/wiki/Stanford_Research_Park">Stanford Research Park - Wikipedia</a><br>
+      <a href="https://www.gene.com/about-us/leadership/our-founders">Genentech: Our Founders</a><br>
+      <a href="https://en.wikipedia.org/wiki/Raker_Act">Raker Act - Wikipedia</a><br>
+      <a href="https://en.wikipedia.org/wiki/Golden_Gate_Bridge">Golden Gate Bridge History</a><br>
+      <a href="https://www.utilitydive.com/news/wildfires-pushed-pge-into-bankruptcy-should-other-utilities-be-worried/588435/">PG&amp;E Wildfire Bankruptcy - Utility Dive</a><br>
+      <a href="https://www.spur.org/publications/urbanist-article/2010-02-01/when-freeways-came-down">Embarcadero Freeway Removal - SPUR</a><br>
+      <a href="https://www.sfchronicle.com/realestate/article/s-f-office-vacancy-record-high-could-change-2024-18561543.php">SF Office Vacancy - SF Chronicle</a><br>
+      <a href="https://en.wikipedia.org/wiki/Harvey_Milk">Harvey Milk - Wikipedia</a>
+    </div>
+    <p style="margin-top:16px;">Koshikawa Research Notes — personal knowledge base, published via GitHub Pages. LLM調査に基づく一次情報のため、数値・年号は要検証箇所を含む。</p>
+  </div>
+
+  <a class="back-link" href="index.html">&larr; California一覧へ戻る</a>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ロサンゼルス — Industrial & Urban Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f3;
+  --surface2:#ebeae6;
+  --ink:     #111111;
+  --text:    #111111;
+  --mid:     #555555;
+  --muted:   #949494;
+  --dim:     #cccccc;
+  --border:  #e2e1da;
+  --good:   #2f7a4f;
+  --bad:    #b3382c;
+  --warn:   #a67c2e;
+  --accent: #2b4a6f;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.75;
+}
+h1, h2, h3, .section-label, .hero-eyebrow, .stat-label, .info-card-eyebrow,
+.tl-year, .block-label, .toc-title, .eyebrow { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
+.hero { background: var(--ink); padding: 64px 40px 48px; }
+.hero-inner { max-width: 860px; margin: 0 auto; }
+.hero-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; font-weight: 600; }
+.hero h1 { font-size: clamp(26px, 4.2vw, 44px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; color: #fff; margin-bottom: 14px; }
+.hero-sub { font-size: 13.5px; color: rgba(255,255,255,.68); line-height: 1.8; max-width: 640px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 18px 28px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.15); }
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-size: 10.5px; color: rgba(255,255,255,.45); letter-spacing: .1em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 13.5px; font-weight: 600; color: #fff; }
+@media (max-width: 640px) { .hero { padding: 44px 20px 32px; } }
+.wrap { max-width: 860px; margin: 0 auto; padding: 64px 40px 100px; }
+@media (max-width: 900px) { .wrap { padding: 40px 20px 72px; } }
+.hero + .wrap { padding-top: 40px; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.summary { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--ink); border-radius: 10px; padding: 22px 26px; margin: 36px 0; font-size: 14px; line-height: 1.85; color: var(--mid); }
+.summary strong { color: var(--text); font-weight: 700; }
+section, .block { margin-top: 44px; }
+section:first-child, .block:first-child { margin-top: 0; }
+.section-label, .block-label { font-size: 10.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+h2, .block-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -.01em; color: var(--text); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin: 0 0 22px; }
+.block h3 { font-size: 13.5px; font-weight: 700; color: var(--text); margin: 24px 0 12px; }
+.block p { color: var(--mid); margin-bottom: 12px; font-size: 13.5px; line-height: 1.8; }
+.block p:last-child { margin-bottom: 0; }
+.block ul { padding-left: 20px; }
+.block li { margin-bottom: 5px; font-size: 13.5px; color: var(--mid); line-height: 1.7; }
+.callout { border-left: 3px solid var(--ink); border-radius: 0 8px 8px 0; background: var(--surface2); padding: 16px 20px; margin: 20px 0; font-size: 13.5px; line-height: 1.85; color: var(--mid); }
+.callout strong { color: var(--text); font-weight: 700; }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.quote { background: var(--surface2); border-left: 3px solid var(--ink); border-radius: 0 8px 8px 0; padding: 20px 24px; margin: 24px 0; font-style: italic; font-size: 14.5px; line-height: 1.9; color: var(--text); }
+.quote cite { display: block; margin-top: 8px; font-style: normal; font-size: 12px; color: var(--muted); }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+.stat-tile { background: var(--bg); padding: 22px 18px; }
+.stat-label { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.stat-value { font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; line-height: 1.2; }
+.stat-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+.data-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); background: var(--surface2); padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.data-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--mid); vertical-align: top; line-height: 1.7; }
+.data-table td strong, .data-table td b { color: var(--text); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table.kv th { width: 30%; font-size: 13px; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--mid); }
+.tag { display: inline-block; border: 1px solid var(--border); border-radius: 20px; padding: 4px 14px; font-size: 11.5px; color: var(--mid); font-weight: 600; }
+.tag.good { color: var(--good); border-color: var(--good); }
+.tag.warn { color: var(--warn); border-color: var(--warn); }
+.tag.bad  { color: var(--bad);  border-color: var(--bad); }
+.tag.accent { color: var(--accent); border-color: var(--accent); }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before { content: ''; position: absolute; left: 6px; top: 8px; bottom: 4px; width: 1px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 20px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -24px; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.tl-year { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; color: var(--text); margin-bottom: 3px; }
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-text, .tl-item p { font-size: 13.5px; color: var(--mid); line-height: 1.75; margin-top: 2px; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 8px 0; }
+.card, .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+.card h3, .info-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; margin-top: 0; }
+.card p, .card ul, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.75; }
+.card ul { padding-left: 18px; }
+.card ul li { margin-bottom: 4px; }
+.info-card-eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.8; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+.src-list { columns: 2; column-gap: 24px; font-size: 11.5px; color: var(--muted); line-height: 1.9; }
+.src-list a { color: var(--muted); }
+@media (max-width: 640px) { .src-list { columns: 1; } }
+img, svg { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+@media (max-width: 600px) { .hero h1 { font-size: 28px; } .card-grid { gap: 12px; } .card, .info-card { padding: 16px 18px; } }
+</style>
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">USA / California — Industrial &amp; Urban Deep Dive</div>
+    <h1>ロサンゼルス</h1>
+    <p class="hero-sub">1781年、44人の入植者が拓いた砂漠の農業集落は、鉄道運賃戦争・石油ブーム・特許トラストからの逃避・戦時航空機需要という4つの「偶然」を積み重ねて、全米第2の都市圏へ膨張した。水を持たない土地が233マイル先から水を奪うことで拡大を続けた、という一点にこの街の骨格がある。</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="label">LA郡人口</div><div class="value">1,001万人（2020）</div></div>
+      <div class="hero-meta-item"><div class="label">都市圏GDP</div><div class="value">約1兆4,880億ドル（2025推計）</div></div>
+      <div class="hero-meta-item"><div class="label">建市</div><div class="value">1781年9月4日</div></div>
+      <div class="hero-meta-item"><div class="label">Updated</div><div class="value">2026-09-03</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="summary">
+    <strong>この街を一言で言うと——「水を輸入して大きくなった砂漠都市」。</strong> 農業集落だったLAは、鉄道運賃戦争（1885年）で年12万人が流入し、石油ブーム（1892年〜）と東海岸映画トラストからの逃避（1908年〜）で産業の芽を得た。だが人口の受け皿になったのは水利権の政治的獲得（LA水道橋、1913年）であり、以後も航空宇宙（戦時特需）・港湾物流（アジア太平洋近接）・エンタメ（配信シフト）と主力産業を乗り換えながら、水インフラという単一のボトルネックの上に拡張を続けている。
+  </div>
+
+  <!-- 1. 都市形成の歴史 -->
+  <section>
+    <div class="eyebrow">01 · City Formation</div>
+    <h2>都市形成の歴史</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1781</div><div class="tl-title">エル・プエブロ建設</div><div class="tl-text">スペイン総督フェリペ・デ・ネーヴェの命で、ソノラ州から集めた44〜46人の入植者が集落を建設。10年後の人口139人、1820年時点でも約650人の農業集落。</div></div>
+      <div class="tl-item"><div class="tl-year">1848–50</div><div class="tl-title">米国領化</div><div class="tl-text">米墨戦争終結（グアダルーペ・イダルゴ条約）でカリフォルニアが米国領に。1850年州昇格。</div></div>
+      <div class="tl-item"><div class="tl-year">1876 / 1885</div><div class="tl-title">鉄道運賃戦争</div><div class="tl-text">サザン・パシフィック（1876）に続きサンタフェ鉄道が参入（1885）、運賃競争でセントルイス〜LA間が一時1ドルまで下落。1887年だけで年12万人がLAに流入する移住ブームが発生。</div></div>
+      <div class="tl-item"><div class="tl-year">1892</div><div class="tl-title">石油ブームの起点</div><div class="tl-text">エドワード・ドヘニーが現ドジャースタジアム付近で油田発見。1895年には市内の油井が3,000本超に増殖、州内石油生産の60%をLAシティ油田だけで占めた。</div></div>
+      <div class="tl-item"><div class="tl-year">1908</div><div class="tl-title">映画トラストからの逃避が始まる</div><div class="tl-text">東海岸でエジソン系「モーション・ピクチャー・パテンツ・カンパニー」結成。特許独占を嫌う独立系映画人が法の手が届きにくいカリフォルニアへ移転を開始。</div></div>
+      <div class="tl-item"><div class="tl-year">1907–1913</div><div class="tl-title">LA水道橋の建設</div><div class="tl-text">2,300万ドルの起債を市民投票で承認、233マイル離れたオーウェンズ・バレーから重力のみで導水。1913年11月5日完成、水道局長ウィリアム・マリオンズが「There it is; take it!」と演説。</div></div>
+      <div class="tl-item"><div class="tl-year">1915</div><div class="tl-title">映画トラスト解体</div><div class="tl-text">連邦裁判所がMPPCを違法トラストと認定。ハリウッド・スタジオシステムの勃興が本格化。</div></div>
+      <div class="tl-item"><div class="tl-year">1920s</div><div class="tl-title">航空機産業の誘致・人口倍増</div><div class="tl-text">1921年ダグラス・エアクラフト創業（地元実業家ハリー・チャンドラーが誘致）、1926年ロッキード創業。市域人口は1920年代の10年間で倍増。</div></div>
+      <div class="tl-item"><div class="tl-year">1924</div><div class="tl-title">カリフォルニア水戦争</div><div class="tl-text">水を失ったオーウェンズ・バレーの農民・牧場主が水道橋の一部をダイナマイトで爆破。「リトル・シビル・ウォー」と呼ばれる妨害工作が続発。</div></div>
+      <div class="tl-item"><div class="tl-year">1939–45</div><div class="tl-title">戦時航空機生産の爆発</div><div class="tl-text">カリフォルニア州全体で軍用機82,117機を受領。ダグラスは最盛期従業員62,000人超。戦争終結時点で米航空宇宙産業の60〜70%が南カリフォルニアに集積。</div></div>
+      <div class="tl-item"><div class="tl-year">1940–56</div><div class="tl-title">フリーウェイ網の形成</div><div class="tl-text">1940年、米西部初のフリーウェイ「アロヨセコ・パークウェイ」開通。1953年世界初の4層インターチェンジ「フォーレベル」完成。1956年連邦道路援助法で建設加速。</div></div>
+      <div class="tl-item"><div class="tl-year">1961</div><div class="tl-title">路面電車の全廃</div><div class="tl-text">最盛期1,100マイルを誇ったパシフィック・エレクトリック「赤い電車」が完全廃止。自動車社会化が完了。</div></div>
+      <div class="tl-item"><div class="tl-year">1991</div><div class="tl-title">航空宇宙の冷戦後縮小開始</div><div class="tl-text">冷戦終結を機に雇用が急減、1990年127,705人→2003年39,693人（約70%減）。</div></div>
+      <div class="tl-item"><div class="tl-year">2002</div><div class="tl-title">SpaceX創業</div><div class="tl-text">イーロン・マスクがエルセグンドで創業、後にホーソーンへ拠点集約。ニュースペース時代の航空宇宙再興が始まる。</div></div>
+      <div class="tl-item"><div class="tl-year">2028</div><div class="tl-title">夏季オリンピック（予定）</div><div class="tl-text">1932年・1984年に続き3回目の開催。メトロDライン延伸など交通インフラ投資が加速中。</div></div>
+    </div>
+
+    <h3 style="margin-top:32px;">人口推移</h3>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="stat-label">1900年（市域）</div><div class="stat-value">102,479人</div></div>
+      <div class="stat-tile"><div class="stat-label">1920年（市域）</div><div class="stat-value">576,673人</div></div>
+      <div class="stat-tile"><div class="stat-label">1950年（市域）</div><div class="stat-value">197.0万人</div></div>
+      <div class="stat-tile"><div class="stat-label">2020年（市域ピーク）</div><div class="stat-value">388.9万人</div></div>
+      <div class="stat-tile"><div class="stat-label">2022年（都市圏）</div><div class="stat-value">1,248.8万人</div></div>
+      <div class="stat-tile"><div class="stat-label">2020年（LA郡）</div><div class="stat-value">1,001.4万人</div></div>
+    </div>
+  </section>
+
+  <!-- 2. 産業クラスターの形成史 -->
+  <section>
+    <div class="eyebrow">02 · Industry Origins</div>
+    <h2>産業クラスターの形成史 — なぜここに根付いたか</h2>
+    <div class="block">
+      <h3>エンターテインメント産業</h3>
+      <p>東海岸ニュージャージー州のエジソン系映画会社連合「モーション・ピクチャー・パテンツ・カンパニー」（1908年結成）による特許独占とブロックブッキングを嫌った独立系映画人が、法執行の及びにくいカリフォルニアへ逃避。決め手は<strong>年間を通じた晴天と、海・砂漠・山岳・平野が数十マイル圏内に共存する地形の多様性</strong>（ロケの利便性）だった。1915年に連邦裁判所がMPPCを違法トラストと認定し解体、東海岸トラスト崩壊とハリウッド・スタジオシステムの勃興が表裏一体で進行した。</p>
+      <h3>航空宇宙・防衛産業</h3>
+      <p><strong>乾燥した気候（雨天による試験飛行の中断が少ない）・広大で安価な平地・豊富な起業家精神</strong>が立地要因。1920年、地元紙経営者ハリー・チャンドラーの誘致でダグラス・エアクラフトがサンタモニカ創業（1921年）。ロッキードは1926年ハリウッド創業。第二次大戦の特需で爆発的に拡大し、戦争終結時点で米航空宇宙産業の60〜70%が南カリフォルニアに集積、1980年代には全米航空宇宙ビジネスの約40%・雇用約50万人規模に達した。<strong>JPL（ジェット推進研究所）</strong>は1936年カルテック大学院生3名のロケット実験に端を発し、1958年NASA発足でカルテック運営のNASA施設に（パサデナ近郊、敷地177エーカー、従業員約6,000人、年間予算約27億ドル）。</p>
+      <h3>港湾物流</h3>
+      <p>全米最大級の港湾複合体になった理由は3つ——(1) アジア太平洋航路への地理的近接性（サンペドロ湾の天然遮蔽港湾）、(2) BNSF・ユニオンパシフィックの大陸横断幹線鉄道との直結、(3) LA盆地の巨大な後背消費地・物流倉庫用地（インランド・エンパイア）。</p>
+      <h3>ファッション・アパレル産業</h3>
+      <p>1888年にドイツ系移民モリス・コーンが到着、1890年に「モリス・コーン&amp;カンパニー」（LA初の既製服メーカー）を設立。1921年「LA被服製造業者協会」設立、1937年時点で会員130社。ハリウッド映画の衣装需要拡大も後押しし、100街区規模の「ファッション・ディストリクト」が形成された。</p>
+    </div>
+  </section>
+
+  <!-- 3. 主要産業・代表企業 -->
+  <section>
+    <div class="eyebrow">03 · Key Industries &amp; Companies</div>
+    <h2>主要産業・代表企業</h2>
+    <table class="data-table">
+      <thead><tr><th>企業</th><th>本社／主要拠点</th><th>設立</th><th>規模</th></tr></thead>
+      <tbody>
+        <tr><td><strong>The Walt Disney Company</strong></td><td>バーバンク</td><td>1923年</td><td>全社約23.1万人（FY25）、バーバンク拠点1万人超</td></tr>
+        <tr><td><strong>Universal (NBCUniversal)</strong></td><td>ユニバーサル・シティ</td><td>1912年</td><td>拠点1.4万人超、敷地約400エーカー</td></tr>
+        <tr><td><strong>Mattel</strong></td><td>エルセグンド</td><td>1945年</td><td>約3.1万人（2025）</td></tr>
+        <tr><td><strong>Snap Inc.</strong></td><td>サンタモニカ</td><td>2011年</td><td>全社約8,400人、市内約2,200人（市最大の民間雇用主）</td></tr>
+        <tr><td><strong>Northrop Grumman</strong></td><td>南湾（エルセグンド／レドンドビーチ等）※全社本社はバージニア州</td><td>1939年（ホーソーン創業）</td><td>全社約9.5万人（2025）</td></tr>
+        <tr><td><strong>SpaceX</strong></td><td>ホーソーン（製造拠点）※本社機能は2024年8月にテキサス州スターベースへ移転</td><td>2002年3月14日</td><td>全社1.2万人超</td></tr>
+      </tbody>
+    </table>
+    <p class="note">※Netflix（法人本社はロスガトス／北カリフォルニア）はLA域内に制作拠点を多数持つが本社所在企業ではない。</p>
+
+    <h3>港湾取扱量</h3>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="stat-label">ロサンゼルス港（2024年）</div><div class="stat-value">1,030万TEU</div><div class="stat-sub">前年比約20%増、港史上2番目の高水準</div></div>
+      <div class="stat-tile"><div class="stat-label">ロングビーチ港（2025年）</div><div class="stat-value">990万TEU</div><div class="stat-sub">過去最高、初の900万台突破</div></div>
+      <div class="stat-tile"><div class="stat-label">LAX旅客数（2024年）</div><div class="stat-value">7,659万人</div><div class="stat-sub">2019年ピーク比▲13%、全米順位2位→5位</div></div>
+      <div class="stat-tile"><div class="stat-label">LAX貨物（2024年）</div><div class="stat-value">240万トン</div><div class="stat-sub">LA地域4空港貨物の約4分の3</div></div>
+    </div>
+  </section>
+
+  <!-- 4. インフラ -->
+  <section>
+    <div class="eyebrow">04 · Infrastructure</div>
+    <h2>インフラ</h2>
+    <div class="block">
+      <h3>水インフラ</h3>
+      <p>現在の水源構成（2022年実績）：MWD経由の輸入水73%、LA水道橋（オーウェンズ・バレー）15%、地下水10%、再生水2%。1913年の取水開始でオーウェンズ湖は急速に干上がり、現在は最盛期の3分の1未満の面積に縮小。露出した湖底が全米最悪級のPM10汚染源となり、無対策時はEPA基準の<strong>130倍のPM10</strong>を放出し400km先まで飛散。LADWPは粉塵抑制策に<strong>25億ドル超</strong>を投資し、現在<strong>99.4%抑制</strong>を達成（全米最大規模の粉塵対策プログラム）。</p>
+      <h3>電力</h3>
+      <p>主要事業者は<strong>LADWP</strong>（全米最大級の市営公益事業体）。再生可能エネルギー比率は2022年35.6%→2023年39.5%（太陽光14.0%、風力13.5%、地熱9.5%、適格水力2.4%、別途大規模水力3.9%）。</p>
+      <h3>高速道路網</h3>
+      <p>1940年、米西部初のフリーウェイ「アロヨセコ・パークウェイ」（現110号線）開通。1953年、101号線×110号線に世界初の4層インターチェンジ「フォーレベル」完成。1956年連邦道路援助法を契機に405号線・134号線（1960年）、605号線（1964年）が開通。現在405号線は全米屈指の渋滞路線とされる（要検証：最新順位）。</p>
+    </div>
+  </section>
+
+  <!-- 5. 都市計画上の転換点 -->
+  <section>
+    <div class="eyebrow">05 · Urban Turning Points</div>
+    <h2>都市計画上の転換点</h2>
+    <div class="callout"><strong>公共交通の盛衰:</strong> 最盛期1,100マイルの路線網を誇ったパシフィック・エレクトリック「赤い電車」は1930年代から段階的縮小、1961年に完全廃止。戦後の高速道路拡張・自動車中心の都市設計と表裏一体で進行した。1990年、メトロAライン（旧ブルーライン）開業でカリフォルニア初の近代ライトレールが復活、1993年にBライン（旧レッドライン）地下鉄が開業し、現在8路線を運行。2028年オリンピックへ向けDライン（旧パープルライン）をUCLAまで延伸中。</div>
+    <div class="callout"><strong>航空宇宙の構造転換:</strong> 冷戦終結（1991年）を機に1990年代の業界再編（ノースロップ+グラマン、ロッキード+マーティン、ボーイング+マクドネル・ダグラス）で雇用が10年強で約70%減。「LA生まれ」の名門企業の多くが本社機能を域外に移転し、2014年時点で地域産業規模は1990年の半分まで縮小。2000年代以降はSpaceX等「ニュースペース」企業がホーソーン・エルセグンドで再興。</div>
+    <div class="callout"><strong>エンタメ産業のグローバル化・配信シフト:</strong> 1948年連邦最高裁「パラマウント判決」でスタジオによる映画館チェーン保有（垂直統合）が禁止、旧スタジオシステムが崩壊（判決自体は2020年に正式終了）。配信時代には皮肉にも垂直統合が事実上復活（ディズニーが制作〈マーベル/ルーカスフィルム/ピクサー〉・配信〈Disney+/Hulu〉を一体保有）。2023年、LA郡の全米映画・TV雇用シェアは27%まで低下（前年比8ポイント減）。TV撮影日数は2021年ピークの18,560日から2024年に7,716日へ58%減。</div>
+  </section>
+
+  <!-- 6. エリア別ドリルダウン -->
+  <section>
+    <div class="eyebrow">06 · Area Breakdown</div>
+    <h2>エリア別ドリルダウン</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら丸の内＋秋葉原</div>
+        <div class="info-card-title">Downtown LA</div>
+        <div class="info-card-text">金融・法曹の高層ビル街と、旧倉庫街を転用したアーツディストリクト（3.5平方マイル、壁画約100点）が同居。リトルトーキョー隣接、旧工業建物のロフト転用住宅が多い。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら渋谷＋六本木</div>
+        <div class="info-card-title">Hollywood / West Hollywood</div>
+        <div class="info-card-text">映画産業発祥地。ウェストハリウッドはナイトライフ・LGBTQ文化・ロックンロールの聖地（サンセット・ストリップ）。観光名所と夜遊びが混在。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら湘南・鎌倉＋下北沢</div>
+        <div class="info-card-title">Santa Monica / Venice</div>
+        <div class="info-card-text">Snap本社（従業員約2,200人）を含む「シリコンビーチ」の中核。Googleが2003年進出、2011年ヴェニスにゲーリー設計「双眼鏡ビル」含むキャンパス開設。ビーチカルチャーとテック企業が共存。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら銀座＋麻布</div>
+        <div class="info-card-title">Beverly Hills</div>
+        <div class="info-card-text">ハイブランド路面店が並ぶロデオドライブ、高級ホテル・セレブ居住区。富裕層向け商業・観光の中心。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら五反田・品川</div>
+        <div class="info-card-title">Culver City</div>
+        <div class="info-card-text">Amazonが旧カルヴァー・スタジオを6億2,000万ドルで拡張（延床約72万平方フィート）。TikTokも進出し、旧スタジオ都市からテック拠点へ変貌中。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら吉祥寺＋本郷</div>
+        <div class="info-card-title">Pasadena</div>
+        <div class="info-card-text">カルテック・JPL（従業員約6,000人）を擁する学術・研究都市。伝統的な美術館文化が根付く。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら横浜・川崎</div>
+        <div class="info-card-title">Long Beach</div>
+        <div class="info-card-text">ロングビーチ港（2025年990万TEU）を擁する物流拠点。イーストビレッジ・アーツディストリクトも近年発展中。</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-eyebrow">東京なら川崎工業地帯＋田町</div>
+        <div class="info-card-title">South Bay (El Segundo / Hawthorne)</div>
+        <div class="info-card-text">SpaceX製造拠点（延床110万平方フィート）、ノースロップグラマン・レイセオン・ロッキードマーティン・マテル等が集積する「エアロスペース・コリドー」。LAX至近。</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px;">エリア間移動時間の目安（車）</h3>
+    <table class="data-table">
+      <thead><tr><th>区間</th><th>距離</th><th>所要時間</th></tr></thead>
+      <tbody>
+        <tr><td>Downtown LA ⇔ Santa Monica</td><td>約15マイル</td><td>渋滞なし30分／ラッシュ時1時間超</td></tr>
+        <tr><td>Downtown LA ⇔ Long Beach</td><td>約20マイル</td><td>25〜40分</td></tr>
+        <tr><td>Hollywood ⇔ Beverly Hills</td><td>約6マイル</td><td>15〜20分</td></tr>
+        <tr><td>Santa Monica ⇔ El Segundo</td><td>約10マイル</td><td>20〜30分</td></tr>
+        <tr><td>Downtown LA ⇔ Pasadena</td><td>約11マイル</td><td>20〜30分</td></tr>
+      </tbody>
+    </table>
+    <p class="note">※LA特有のラッシュ時渋滞で大幅に変動する点に留意（要検証）。</p>
+  </section>
+
+  <!-- 7. Deep Dive -->
+  <section>
+    <div class="eyebrow">07 · Deep Dive</div>
+    <h2>水インフラの歴史 — オーウェンズ・バレー水戦争と『チャイナタウン』</h2>
+    <p>主役は元LA市長<strong>フレッド・イートン</strong>（水道橋構想の発案者）と、アイルランド系移民の独学技師<strong>ウィリアム・マリオンズ</strong>。1900年代初頭、両者はLA市の代理人であることを隠して「農民・牧場主を装い」オーウェンズ・バレーの土地・水利権を買い占め、水道橋建設の土台を作った。1907年に2,300万ドルの市債を承認、1908年着工、4,000人の労働者を動員し1913年11月5日完成——マリオンズの「There it is; take it!」は今も語り継がれる。</p>
+    <p>完成後、LA市はオーウェンズ湖への水供給を止め全量を導水管に回したため、湖は急速に干上がり最盛期の3分の1未満の面積に縮小。1924年5月21日、水を失った農民・牧場主が水道橋の一部をダイナマイトで爆破し「カリフォルニア水戦争」が勃発。1928年にはマリオンズが設計監督したサンフランシスキート・ダムが決壊、400人超が死亡する惨事となり、マリオンズは公職から追放される形で失脚した。</p>
+    <div class="quote">映画『チャイナタウン』（1974年、ロマン・ポランスキー監督）の悪役「ノア・クロス」はイートンとマリオンズを合成したキャラクター。ただし舞台は1937年に設定され、マリオンズをモデルにした「ホリス・マルウェイ」はプロジェクトの反対者として殺害される設定に脚色されている。<cite>史実と創作の乖離が大きい点は要注意</cite></div>
+    <p>粉塵問題という「負の遺産」——乾燥したオーウェンズ湖底は長年全米最悪級のPM10汚染源となり、無対策時はEPA基準の130倍の粒子状物質を400km先まで飛散させた。LADWPは是正に25億ドル超を投じ現在99.4%の粉塵抑制を達成している。<strong>都市の成長が100年後の環境負債として跳ね返った象徴的事例</strong>である。</p>
+  </section>
+
+  <div class="page-footer">
+    <strong>参照情報源（抜粋）</strong>
+    <div class="src-list" style="margin-top:10px;">
+      <a href="https://en.wikipedia.org/wiki/History_of_Los_Angeles">History of Los Angeles - Wikipedia</a><br>
+      <a href="https://www.history.com/articles/water-wars-los-angeles-aquaduct">The California Water Wars - HISTORY</a><br>
+      <a href="https://aoghs.org/petroleum-pioneers/los-angeles-oil-field/">Discovering Los Angeles Oilfields - AOGHS</a><br>
+      <a href="https://en.wikipedia.org/wiki/Motion_Picture_Patents_Company">Motion Picture Patents Company - Wikipedia</a><br>
+      <a href="https://www.pbssocal.org/shows/blue-sky-metropolis/the-history-and-revival-of-southern-californias-aerospace-industry">Aerospace History &amp; Revival - PBS SoCal</a><br>
+      <a href="https://portoflosangeles.org/business/statistics/facts-and-figures">Port of Los Angeles - Facts and Figures</a><br>
+      <a href="https://gcaptain.com/port-of-long-beach-shatters-record-with-9-6-million-teus-in-2024/">Port of Long Beach Records - gCaptain</a><br>
+      <a href="https://en.wikipedia.org/wiki/SpaceX">SpaceX - Wikipedia</a><br>
+      <a href="https://www.ladwp.com/who-we-are/water-system/las-drinking-water-quality-report/la-water-sources-2022">LA Water Sources 2022 - LADWP</a><br>
+      <a href="https://ladwpnews.com/ladwp-achieves-99-4-dust-control-reduction-at-owens-lake/">Owens Lake Dust Control - LADWP</a><br>
+      <a href="https://en.wikipedia.org/wiki/Pacific_Electric">Pacific Electric - Wikipedia</a><br>
+      <a href="https://en.wikipedia.org/wiki/Chinatown_(1974_film)">Chinatown (1974 film) - Wikipedia</a>
+    </div>
+    <p style="margin-top:16px;">Koshikawa Research Notes — personal knowledge base, published via GitHub Pages. LLM調査に基づく一次情報のため、数値・年号は要検証箇所を含む。</p>
+  </div>
+
+  <a class="back-link" href="index.html">&larr; California一覧へ戻る</a>
+
+</div>
+</body>
+</html>
