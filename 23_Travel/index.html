@@ -3,51 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>23 Travel — Koshikawa Research Notes</title>
+<title>travel — 54111</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#ffffff; --surface:#f5f5f3; --surface2:#ebeae6; --ink:#111111;
-  --text:#111111; --mid:#555555; --muted:#949494; --dim:#cccccc; --border:#e2e1da;
-  --good:#2f7a4f; --bad:#b3382c; --warn:#a67c2e; --accent:#2b4a6f;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.75;}
-h1,h2,h3,.section-label,.hero-eyebrow,.stat-label,.tl-year,.block-label,.eyebrow{font-family:'Poppins','Noto Sans JP',sans-serif;}
-.hero{background:var(--ink);padding:56px 40px 40px;}
-.hero-inner{max-width:860px;margin:0 auto;}
-.hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:12px;font-weight:600;}
-.hero h1{font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.15;color:#fff;margin-bottom:10px;}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;}
-.hero-crumb{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:14px;}
-.hero-crumb a{color:rgba(255,255,255,.65);text-decoration:none;}
-.hero-crumb a:hover{color:#fff;}
-.wrap{max-width:860px;margin:0 auto;padding:40px 40px 90px;}
-@media (max-width:640px){.hero{padding:36px 20px 28px;} .wrap{padding:28px 20px 64px;}}
-.block{margin-top:40px;}
-.block:first-child{margin-top:0;}
-.block-label{font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.index-folder-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:8px 0;}
-.index-folder-list a{display:block;border:1px solid var(--border);border-radius:10px;padding:18px 20px;text-decoration:none;color:var(--text);background:var(--surface);}
-.index-folder-list a:hover{border-color:var(--ink);}
-.index-folder-list .index-folder-title{font-size:13.5px;font-weight:700;margin-bottom:4px;}
-.index-folder-list .index-folder-count{font-size:11.5px;color:var(--muted);}
-.index-folder-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:8px 0;}
-.index-folder-list a{display:block;border:1px solid var(--border);border-radius:10px;padding:18px 20px;text-decoration:none;color:var(--text);background:var(--surface);}
-.index-folder-list a:hover{border-color:var(--ink);}
-.index-folder-list .index-folder-title{font-size:13.5px;font-weight:700;margin-bottom:4px;}
-.index-folder-list .index-folder-count{font-size:11.5px;color:var(--muted);}
-.index-list{list-style:none;border-top:1px solid var(--border);}
-.index-list li{border-bottom:1px solid var(--border);}
-.index-list a{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 4px;text-decoration:none;color:var(--text);}
-.index-list a:hover .index-title{color:var(--accent);}
-.index-title{font-size:14px;font-weight:700;letter-spacing:-.01em;}
-.index-date{font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap;}
-.empty-note{font-size:13px;color:var(--muted);padding:16px 0;}
-.back-link{display:inline-block;margin-top:36px;font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;}
-.back-link:hover{color:var(--mid);}
-.page-footer{border-top:1px solid var(--border);padding-top:20px;margin-top:36px;font-size:11.5px;color:var(--muted);line-height:1.8;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--surface:#f5f5f5;--hover:#ededed;--border:#e0e0e0;--text:#111;--mid:#444;--muted:#888;--dim:#ccc}
+body{background:var(--bg);color:var(--text);font-family:'Poppins','Noto Sans JP',sans-serif;min-height:100vh;padding-bottom:68px}
+.page-header{background:#111;color:#fff;padding:36px 48px 32px}
+.breadcrumb{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-bottom:10px}
+.breadcrumb a{color:rgba(255,255,255,.45);text-decoration:none}
+.breadcrumb a:hover{color:rgba(255,255,255,.8)}
+.page-header h1{font-size:1.4rem;font-weight:700;letter-spacing:-.02em}
+.main{max-width:1100px;padding:0 48px 80px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid #111;margin:40px 0 36px;overflow-x:auto}
+.tab{appearance:none;background:none;border:none;font-family:'Poppins','Noto Sans JP',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 22px;cursor:pointer;position:relative;bottom:-2px;border-bottom:2px solid transparent;transition:color .12s,border-color .12s;white-space:nowrap}
+.tab:hover{color:var(--mid)}
+.tab.active{color:#111;border-bottom-color:#111}
+.tab .t-count{font-size:9px;font-weight:500;color:var(--dim);margin-left:6px;letter-spacing:.04em}
+.panel{display:none}
+.panel.active{display:block}
+.cat-block{margin-bottom:52px}
+.cat-header{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #111}
+.cat-title{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#111}
+.cat-title a{color:inherit;text-decoration:none}
+.cat-title a:hover{text-decoration:underline}
+.cat-count{font-size:9px;font-weight:500;color:var(--dim);letter-spacing:.06em;margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;padding:20px 18px 16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);min-height:118px;transition:background .12s,border-color .12s,box-shadow .12s;position:relative}
+.tile:hover{background:var(--hover);border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tile:hover .tile-arrow{opacity:1}
+.tile-top{flex:1;margin-bottom:14px}
+.tile-name{font-size:13.5px;font-weight:700;letter-spacing:-.02em;line-height:1.25;margin-bottom:7px}
+.tile-meta{font-size:9px;color:var(--dim);letter-spacing:.04em;margin-bottom:6px}
+.tile-meta .m-year{font-weight:600;color:var(--muted)}
+.tile-desc{font-size:10px;font-weight:400;color:var(--muted);line-height:1.55}
+.tile-bottom{display:flex;align-items:center;justify-content:space-between}
+.tile-tags{display:flex;flex-wrap:wrap;gap:4px}
+.tile-tag{font-size:8px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);border:1px solid var(--dim);padding:2px 5px}
+.tile-arrow{font-size:11px;color:var(--dim);opacity:0;transition:opacity .12s;flex-shrink:0;margin-left:8px}
+.table-tools{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.table-search{flex:1;max-width:320px;font-family:'Poppins','Noto Sans JP',sans-serif;font-size:12px;padding:8px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none}
+.table-search:focus{border-color:#111}
+.table-hint{font-size:10px;color:var(--dim);letter-spacing:.04em}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border)}
+table.co{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+table.co col.c-w-name{width:36%}
+table.co col.c-w-kind{width:22%}
+table.co col.c-w-dir{width:20%}
+table.co col.c-w-date{width:14%}
+table.co col.c-w-read{width:8%}
+table.co th.th-read{text-align:center}
+table.co td.c-read{text-align:center;vertical-align:middle}
+.readck{width:15px;height:15px;cursor:pointer;accent-color:#111;margin:0}
+table.co tbody tr.is-read{opacity:.4}
+table.co tbody tr.is-read:hover{opacity:.8}
+table.co tbody tr.is-read td.c-name a{text-decoration:line-through;text-decoration-color:var(--dim)}
+table.co thead th{background:#111;color:#fff;font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:11px 14px;cursor:pointer;user-select:none;white-space:nowrap}
+table.co thead th:hover{background:#2a2a2a}
+table.co thead th .arr{color:rgba(255,255,255,.35);font-size:8px;margin-left:5px}
+table.co thead th.sorted .arr{color:#fff}
+table.co tbody td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--mid);word-break:break-word;overflow-wrap:anywhere}
+table.co tbody tr:hover{background:var(--surface)}
+table.co tbody tr:nth-child(even){background:#fafafa}
+table.co tbody tr:nth-child(even):hover{background:var(--surface)}
+table.co td.c-name a{color:#111;font-weight:700;text-decoration:none;font-size:12.5px;letter-spacing:-.01em}
+table.co td.c-name a:hover{text-decoration:underline}
+table.co td.c-name .c-desc{display:block;font-size:10.5px;color:var(--muted);font-weight:400;margin-top:3px}
+table.co td.c-kind{font-size:11px}
+table.co td.c-date{font-weight:600;color:var(--text);white-space:nowrap}
+table.co .tier{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:1px 5px;border:1px solid var(--dim);color:var(--muted);white-space:nowrap}
+@media (max-width:720px){table.co{table-layout:auto;min-width:640px}}
+@media (max-width:600px){.page-header{padding:28px 24px 24px}.main{padding:0 24px 60px}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.tabs{margin:28px 0}.tab{padding:10px 14px}}
+
+.stats-footer{position:fixed;bottom:0;left:0;right:0;height:62px;background:#111;border-top:1px solid #222;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-family:'Poppins',sans-serif;z-index:9997}
+.footer-stats{display:flex;align-items:center;font-size:10px;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:.06em}
+.footer-stats .stat{white-space:nowrap}
+.footer-stats .sep{margin:0 9px;color:rgba(255,255,255,.15)}
+.footer-home{color:rgba(255,255,255,.4);text-decoration:none;font-size:11px;font-weight:500;letter-spacing:.06em}
+.footer-home:hover{color:rgba(255,255,255,.9)}
 </style>
 <!-- snav:head:start -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -73,6 +107,12 @@ body{padding-top:56px!important}
 .snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
 .snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
 .snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
 @media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
 </style>
 <!-- snav:head:end -->
@@ -104,6 +144,7 @@ body{padding-top:56px!important}
   <div class="snav-sec">
     <div class="snav-sec-label">Travel</div>
     <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
   </div>
   <div class="snav-sec">
     <div class="snav-sec-label">Research</div>
@@ -111,6 +152,8 @@ body{padding-top:56px!important}
     <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
     <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
     <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
     <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
     <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
     <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
@@ -124,18 +167,283 @@ body{padding-top:56px!important}
 </nav>
 <script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
 <!-- snav:panel:end -->
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-crumb"><a href="../index.html">root</a> / 23_Travel</div>
-    <div class="hero-eyebrow">RESEARCH NOTES</div>
-    <h1>23 Travel</h1>
+<header class="page-header">
+  <div class="breadcrumb"><a href="/research-notes/index.html">54111</a></div>
+  <h1>travel</h1>
+</header>
+
+<main class="main">
+
+  <div class="tabs">
+    <button class="tab active" data-tab="all" onclick="switchTab('all')">All<span class="t-count">12</span></button>
+    <button class="tab" data-tab="USA" onclick="switchTab('USA')">usa<span class="t-count">5</span></button>
+    <button class="tab" data-tab="other" onclick="switchTab('other')">Other<span class="t-count">7</span></button>
   </div>
-</div>
-<div class="wrap">
-  <div class="block"><div class="block-label">Folders</div><div class="index-folder-list"><a href="USA/index.html"><div class="index-folder-title">USA</div><div class="index-folder-count">1件</div></a></div></div>
-  <div class="block"><div class="block-label">Files</div><ul class="index-list"><li><a href="2026-04-18_ナイジェリア.html"><span class="index-title">ナイジェリア</span><span class="index-date">2026-04-18</span></a></li><li><a href="2026-04-23_cote-divoire.html"><span class="index-title">cote-divoire</span><span class="index-date">2026-04-23</span></a></li><li><a href="2026-04-23_egypt.html"><span class="index-title">egypt</span><span class="index-date">2026-04-23</span></a></li><li><a href="2026-04-23_ghana.html"><span class="index-title">ghana</span><span class="index-date">2026-04-23</span></a></li><li><a href="2026-04-23_nigeria.html"><span class="index-title">nigeria</span><span class="index-date">2026-04-23</span></a></li><li><a href="2026-04-23_senegal.html"><span class="index-title">senegal</span><span class="index-date">2026-04-23</span></a></li><li><a href="2026-04-23_turkey.html"><span class="index-title">turkey</span><span class="index-date">2026-04-23</span></a></li><li><a href="2026-06-18_hokkaido-2night3day_plan.md"><span class="index-title">hokkaido-2night3day plan</span><span class="index-date">2026-06-18</span></a></li><li><a href="2026-06-18_hokkaido-tomamu-sapporo_plan.md"><span class="index-title">hokkaido-tomamu-sapporo plan</span><span class="index-date">2026-06-18</span></a></li><li><a href="2026-07-04_hokkaido-sapporo-otaru_plan.md"><span class="index-title">hokkaido-sapporo-otaru plan</span><span class="index-date">2026-07-04</span></a></li><li><a href="2026-07-17_salmon-aquaculture-geography.html"><span class="index-title">salmon-aquaculture-geography</span><span class="index-date">2026-07-17</span></a></li><li><a href="2026-07_osaka_kyoto_plan.md"><span class="index-title">2026-07 osaka kyoto plan</span><span class="index-date"></span></a></li></ul></div>
-  <a class="back-link" href="../index.html">&larr; 上の階層へ戻る</a>
-  <div class="page-footer">Koshikawa Research Notes &mdash; personal knowledge base, published via GitHub Pages.</div>
-</div>
+
+  <!-- ===================== ALL (sortable list) ===================== -->
+  <section class="panel active" id="panel-all">
+    <div class="table-tools">
+      <input type="text" class="table-search" id="tblSearch" placeholder="検索（タイトル・種別・フォルダ…）" oninput="filterTable()">
+      <span class="table-hint">列見出しをクリックで並び替え・✓は読了記録（この端末に保存）</span>
+      <span class="table-hint" id="readCounter" style="margin-left:auto;font-weight:600;color:var(--muted)"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="co" id="coTable">
+        <colgroup><col class="c-w-name"><col class="c-w-kind"><col class="c-w-dir"><col class="c-w-date"><col class="c-w-read"></colgroup>
+        <thead>
+          <tr>
+            <th data-type="str" onclick="sortTable(0,this)">Title<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(1,this)">Type<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(2,this)">Folder<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(3,this)">Date<span class="arr">↓</span></th>
+            <th class="th-read" data-type="num" onclick="sortTable(4,this)" title="読んだらチェック（未読を上に並べ替え可）">✓<span class="arr">↕</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="c-name"><a href="USA/California/2026-09-03_los-angeles.html">ロサンゼルス</a><span class=c-desc>1781年、44人の入植者が拓いた砂漠の農業集落は、鉄道運賃戦争・石油ブーム・特許トラストからの逃避・戦時航空機需要という4つの「偶然」を積み重…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">usa / california</span></td>
+            <td class="c-date" data-sort="2026-09-03">2026-09-03</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="USA/California/2026-09-03_san-francisco.html">サンフランシスコ・ベイエリア</a><span class=c-desc>1776年の伝道所から始まった半島の街は、金鉱発見（1848年）で1年のうちに1,000人から4万人へ膨れ上がった。以後も地震（1906・198…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">usa / california</span></td>
+            <td class="c-date" data-sort="2026-09-03">2026-09-03</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="USA/Illinois/2026-09-03_chicago.html">シカゴ</a><span class=c-desc>五大湖水系とミシシッピ川水系をつなぐ「ポーテージ」という地理的特異点だけを資源に生まれた町は、1871年の大火で街の大半を失った直後に鉄骨構造技…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">usa / illinois</span></td>
+            <td class="c-date" data-sort="2026-09-03">2026-09-03</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="USA/New_York/2026-09-03_new-york-city.html">ニューヨーク市</a><span class=c-desc>1626年、オランダ商人が先住民から「マンハッタン島」を得たという逸話から始まった小さな交易拠点は、天然の良港と1825年のエリー運河が生んだ独…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">usa / new york</span></td>
+            <td class="c-date" data-sort="2026-09-03">2026-09-03</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="USA/Texas/2026-09-03_houston.html">ヒューストン</a><span class=c-desc>1836年、不動産投機家のアレン兄弟が湿地帯を買って始めた交易拠点は、1901年のスピンドルトップ油田発見と1914年のヒューストン運河開通とい…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">usa / texas</span></td>
+            <td class="c-date" data-sort="2026-09-03">2026-09-03</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-23_cote-divoire.html">コートジボワール</a><span class=c-desc>Republic of Côte d&#x27;Ivoire / République de Côte d&#x27;Ivoire</span></td>
+            <td class="c-kind">Country Profile</td>
+            <td><span class="tier">travel</span></td>
+            <td class="c-date" data-sort="2026-04-23">2026-04-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-23_egypt.html">エジプト</a><span class=c-desc>Arab Republic of Egypt / جمهورية مصر العربية</span></td>
+            <td class="c-kind">Country Profile</td>
+            <td><span class="tier">travel</span></td>
+            <td class="c-date" data-sort="2026-04-23">2026-04-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-23_ghana.html">ガーナ</a><span class=c-desc>Republic of Ghana / Gaana</span></td>
+            <td class="c-kind">Country Profile</td>
+            <td><span class="tier">travel</span></td>
+            <td class="c-date" data-sort="2026-04-23">2026-04-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-23_nigeria.html">ナイジェリア</a><span class=c-desc>Federal Republic of Nigeria / Jamhuriyar Tarayyar Nijeriya</span></td>
+            <td class="c-kind">Country Profile</td>
+            <td><span class="tier">travel</span></td>
+            <td class="c-date" data-sort="2026-04-23">2026-04-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-23_senegal.html">セネガル</a><span class=c-desc>Republic of Senegal / République du Sénégal</span></td>
+            <td class="c-kind">Country Profile</td>
+            <td><span class="tier">travel</span></td>
+            <td class="c-date" data-sort="2026-04-23">2026-04-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-23_turkey.html">トルコ</a><span class=c-desc>Republic of Türkiye / Türkiye Cumhuriyeti</span></td>
+            <td class="c-kind">Country Profile</td>
+            <td><span class="tier">travel</span></td>
+            <td class="c-date" data-sort="2026-04-23">2026-04-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-18_ナイジェリア.html">ナイジェリア連邦共和国</a><span class=c-desc>Country Research Report · 2026-04-18</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">travel</span></td>
+            <td class="c-date" data-sort="2026-04-18">2026-04-18</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-USA">
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="USA/California/index.html">usa / california</a></span>
+      <span class="cat-count">2 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="USA/California/2026-09-03_los-angeles.html">
+        <div class="tile-top"><div class="tile-name">ロサンゼルス</div><div class="tile-meta"><span class="m-year">2026-09-03</span></div><div class="tile-desc">1781年、44人の入植者が拓いた砂漠の農業集落は、鉄道運賃戦争・石油ブーム・特許トラストからの逃避・戦時航空機需要という4つの「偶然」を積み重…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="USA/California/2026-09-03_san-francisco.html">
+        <div class="tile-top"><div class="tile-name">サンフランシスコ・ベイエリア</div><div class="tile-meta"><span class="m-year">2026-09-03</span></div><div class="tile-desc">1776年の伝道所から始まった半島の街は、金鉱発見（1848年）で1年のうちに1,000人から4万人へ膨れ上がった。以後も地震（1906・198…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="USA/Illinois/index.html">usa / illinois</a></span>
+      <span class="cat-count">1 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="USA/Illinois/2026-09-03_chicago.html">
+        <div class="tile-top"><div class="tile-name">シカゴ</div><div class="tile-meta"><span class="m-year">2026-09-03</span></div><div class="tile-desc">五大湖水系とミシシッピ川水系をつなぐ「ポーテージ」という地理的特異点だけを資源に生まれた町は、1871年の大火で街の大半を失った直後に鉄骨構造技…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="USA/New_York/index.html">usa / new york</a></span>
+      <span class="cat-count">1 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="USA/New_York/2026-09-03_new-york-city.html">
+        <div class="tile-top"><div class="tile-name">ニューヨーク市</div><div class="tile-meta"><span class="m-year">2026-09-03</span></div><div class="tile-desc">1626年、オランダ商人が先住民から「マンハッタン島」を得たという逸話から始まった小さな交易拠点は、天然の良港と1825年のエリー運河が生んだ独…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="USA/Texas/index.html">usa / texas</a></span>
+      <span class="cat-count">1 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="USA/Texas/2026-09-03_houston.html">
+        <div class="tile-top"><div class="tile-name">ヒューストン</div><div class="tile-meta"><span class="m-year">2026-09-03</span></div><div class="tile-desc">1836年、不動産投機家のアレン兄弟が湿地帯を買って始めた交易拠点は、1901年のスピンドルトップ油田発見と1914年のヒューストン運河開通とい…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  </section>
+  <section class="panel" id="panel-other">
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title">travel</span>
+      <span class="cat-count">7 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="2026-04-23_cote-divoire.html">
+        <div class="tile-top"><div class="tile-name">コートジボワール</div><div class="tile-meta"><span class="m-year">2026-04-23</span> · Country Profile</div><div class="tile-desc">Republic of Côte d&#x27;Ivoire / République de Côte d&#x27;Ivoire</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-23_egypt.html">
+        <div class="tile-top"><div class="tile-name">エジプト</div><div class="tile-meta"><span class="m-year">2026-04-23</span> · Country Profile</div><div class="tile-desc">Arab Republic of Egypt / جمهورية مصر العربية</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-23_ghana.html">
+        <div class="tile-top"><div class="tile-name">ガーナ</div><div class="tile-meta"><span class="m-year">2026-04-23</span> · Country Profile</div><div class="tile-desc">Republic of Ghana / Gaana</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-23_nigeria.html">
+        <div class="tile-top"><div class="tile-name">ナイジェリア</div><div class="tile-meta"><span class="m-year">2026-04-23</span> · Country Profile</div><div class="tile-desc">Federal Republic of Nigeria / Jamhuriyar Tarayyar Nijeriya</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-23_senegal.html">
+        <div class="tile-top"><div class="tile-name">セネガル</div><div class="tile-meta"><span class="m-year">2026-04-23</span> · Country Profile</div><div class="tile-desc">Republic of Senegal / République du Sénégal</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-23_turkey.html">
+        <div class="tile-top"><div class="tile-name">トルコ</div><div class="tile-meta"><span class="m-year">2026-04-23</span> · Country Profile</div><div class="tile-desc">Republic of Türkiye / Türkiye Cumhuriyeti</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-18_ナイジェリア.html">
+        <div class="tile-top"><div class="tile-name">ナイジェリア連邦共和国</div><div class="tile-meta"><span class="m-year">2026-04-18</span></div><div class="tile-desc">Country Research Report · 2026-04-18</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  </section>
+
+</main>
+<footer class="stats-footer"><div class="footer-stats"><span class="stat">12 notes</span><span class="sep">·</span><span class="stat">1 folders</span><span class="sep">·</span><span class="stat">2026.10</span></div><a class="footer-home" href="/research-notes/index.html">54111</a></footer>
+<script>
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
+  try{ history.replaceState(null,'','#'+name); }catch(e){}
+}
+(function(){ var h=location.hash.slice(1); if(h && document.getElementById('panel-'+h)) switchTab(decodeURIComponent(h)); })();
+
+let sortState = { col: 3, dir: -1 };  // 初期表示は日付の新しい順
+function sortTable(col, th){
+  const tbody = document.getElementById('coTable').tBodies[0];
+  const rows = Array.from(tbody.rows);
+  const type = th.dataset.type;
+  sortState.dir = (sortState.col === col) ? -sortState.dir : 1;
+  sortState.col = col;
+  rows.sort((a,b)=>{
+    if(type==='num'){
+      return (parseFloat(a.cells[col].dataset.sort||'0') - parseFloat(b.cells[col].dataset.sort||'0'))*sortState.dir;
+    }
+    const x = (a.cells[col].dataset.sort||a.cells[col].innerText).trim();
+    const y = (b.cells[col].dataset.sort||b.cells[col].innerText).trim();
+    return x.localeCompare(y,'ja')*sortState.dir;
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+  document.querySelectorAll('#coTable thead th').forEach(h=>{
+    h.classList.toggle('sorted', h===th);
+    h.querySelector('.arr').textContent = h===th ? (sortState.dir>0 ? '↑' : '↓') : '↕';
+  });
+}
+
+function filterTable(){
+  const q = document.getElementById('tblSearch').value.trim().toLowerCase();
+  document.querySelectorAll('#coTable tbody tr').forEach(r=>{
+    r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+/* ---- 読了トラッキング（localStorage・この端末に保存。全一覧ページ共通） ---- */
+(function(){
+  const KEY = 'rn_read_v1';
+  function load(){ try { return new Set(JSON.parse(localStorage.getItem(KEY)||'[]')); } catch(e){ return new Set(); } }
+  function save(set){ try { localStorage.setItem(KEY, JSON.stringify(Array.from(set))); } catch(e){} }
+  const read = load();
+  const rows = Array.from(document.querySelectorAll('#coTable tbody tr:not(.empty)'));
+  rows.forEach(tr=>{
+    const a = tr.querySelector('.c-name a');
+    const key = a ? new URL(a.getAttribute('href'), location.href).pathname : null;
+    const td = document.createElement('td');
+    td.className = 'c-read';
+    const isRead = key && read.has(key);
+    td.dataset.sort = isRead ? '1' : '0';
+    const ck = document.createElement('input');
+    ck.type = 'checkbox'; ck.className = 'readck'; ck.checked = !!isRead;
+    ck.setAttribute('aria-label','読了');
+    if(isRead) tr.classList.add('is-read');
+    ck.addEventListener('click', e=>e.stopPropagation());
+    ck.addEventListener('change', ()=>{
+      if(!key) return;
+      if(ck.checked){ read.add(key); tr.classList.add('is-read'); td.dataset.sort='1'; }
+      else { read.delete(key); tr.classList.remove('is-read'); td.dataset.sort='0'; }
+      save(read); updateCounter();
+    });
+    td.appendChild(ck);
+    tr.appendChild(td);
+  });
+  function updateCounter(){
+    const c = document.querySelectorAll('#coTable tbody tr.is-read').length;
+    const el = document.getElementById('readCounter');
+    if(el) el.textContent = c + ' / ' + rows.length + ' 読了';
+  }
+  updateCounter();
+})();
+</script>
 </body>
 </html>
