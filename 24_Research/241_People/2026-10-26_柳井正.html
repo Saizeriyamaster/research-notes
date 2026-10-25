@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>柳井正 — Diff Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+</style>
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-10-26</span>
+  </div>
+  <h1>柳井正を微分する</h1>
+  <div class="hero-sub">宇部の炭鉱町の紳士服店の息子で、成績は振るわず、ジャスコも9ヶ月で辞めた。そこから一代でユニクロを世界企業にした。燃料は<strong>「劣っているのが嫌だ」というコンプレックス</strong>。それを<strong>「絶対はない」という悲観的なリスク観</strong>で制御し、<strong>「一勝九敗」で大量に試して素早く撤退する</strong>。この3つが噛み合ったのが、偉大さの構造だ。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">3.96兆円</div><div class="lbl">売上収益（2026年8月期）</div></div>
+    <div class="kpi"><div class="val">7,431億円</div><div class="lbl">営業利益（同・過去最高）</div></div>
+    <div class="kpi"><div class="val">$61.8B</div><div class="lbl">資産（Forbes 2026・日本1位）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜学生時代</a></li>
+    <li><a href="#s4">原体験エピソード</a></li>
+    <li><a href="#s5">キャリア・業績の軌跡</a></li>
+    <li><a href="#s6">一勝九敗の失敗台帳</a></li>
+    <li><a href="#s7">偉大さの構造分析</a></li>
+    <li><a href="#s8">思想・原理原則</a></li>
+    <li><a href="#s9">光と影：批判と矛盾</a></li>
+    <li><a href="#s10">雑学・意外な側面</a></li>
+    <li><a href="#s11">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>コンプレックスを燃料に、悲観で制御し、失敗の数で勝った</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>柳井正の偉大さは才能より<strong>構造</strong>から来ている。①世界一周で受けた差別と「劣っている現状が嫌だ」という感情がエンジンになった。②炭鉱閉山で学んだ「絶対はない」がブレーキとハンドルになった。③「10回やれば9回失敗する」を前提に試行回数を稼いだ。香港で見つけたSPA（製造小売）という型に、この3つを40年間注ぎ続けた結果がいまのユニクロだ。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1949年2月7日（77歳）</div></div>
+    <div class="kv-item"><div class="k">出身</div><div class="v">山口県宇部市</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">早稲田大学 政治経済学部 経済学科（1971卒）</div></div>
+    <div class="kv-item"><div class="k">現職</div><div class="v">ファーストリテイリング 代表取締役会長兼社長</div></div>
+    <div class="kv-item"><div class="k">家族</div><div class="v">妻・照代、長男・一海、次男・康治（2人ともFR取締役）</div></div>
+    <div class="kv-item"><div class="k">主著</div><div class="v">『一勝九敗』(2003)・『成功は一日で捨て去れ』(2009)・『経営者になるためのノート』(2015)</div></div>
+  </div>
+  <div class="tag-row">
+    <span class="tag good">✓ Web確認済</span>
+    <span class="tag solid">◆ 一次情報（ヒアリング）＝信頼できる筋から直接聞いた話</span>
+    <span class="tag warn">△ 未確認＝二次資料のみ・Webでは裏取りできず</span>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1949</td><td>宇部市に生まれる。同年3月、父・等が宇部新川駅前の銀天街で「メンズショップ小郡商事」を開業。家で唯一の男の子</td><td>—</td></tr>
+        <tr><td>〜18歳</td><td>1950s–67</td><td>炭鉱町で育つ。父は土建業・喫茶店・映画館・VAN代理店まで手を広げる親分肌。口癖は「何でもいいから一番になれ」。閉山で友人の家が次々に職を失うのを見る</td><td>★★</td></tr>
+        <tr><td>18歳</td><td>1967</td><td>宇部高校から早稲田大学政経学部に進学。数学が苦手で、入試に数学がない学部を選んだ</td><td>★</td></tr>
+        <tr><td>19–20歳</td><td>1968–69頃</td><td>大学紛争でキャンパスが封鎖され、授業がほぼなかった。映画・パチンコ・麻雀の日々。父の資金で世界一周旅行に出て、客船で差別を体験する</td><td>★★★</td></tr>
+        <tr><td>22歳</td><td>1971</td><td>大学卒業。父の勧めでジャスコに入社（四日市・家庭雑貨売場）するが、約9ヶ月で退職</td><td>★</td></tr>
+        <tr><td>23歳</td><td>1972</td><td>友人宅に居候したのち、8月に小郡商事へ入社。9月に取締役、翌73年に専務。口出しが続いた結果、従業員7人のうち6人が辞める</td><td>★★★</td></tr>
+        <tr><td>20代後半〜</td><td>1970s後半</td><td>浦利治と2人で店を立て直す「暗黒の10年」。雑誌『商業界』で倉本長治の言葉に出会う。経営理念の原型を書き始める</td><td>★★</td></tr>
+        <tr><td>35歳</td><td>1984</td><td>6月2日、広島・袋町にユニクロ1号店を朝6時に開店し、行列ができる。9月に社長就任</td><td>★★★</td></tr>
+        <tr><td>37歳</td><td>1986</td><td>香港でジョルダーノの79香港ドルのポロシャツを見て衝撃を受け、創業者ジミー・ライに会う。本格的なSPAへの転換を決める</td><td>★★★</td></tr>
+        <tr><td>42歳</td><td>1991</td><td>社名をファーストリテイリングに変更。翌92年に全店をユニクロに統一</td><td>★</td></tr>
+        <tr><td>45歳</td><td>1994</td><td>広島証券取引所に上場し、公募で約130億円を調達</td><td>★★</td></tr>
+        <tr><td>49歳</td><td>1998</td><td>ファミクロ・スポクロから撤退。11月に原宿店を開き、フリース1,900円が社会現象になる</td><td>★★★</td></tr>
+        <tr><td>50歳</td><td>1999</td><td>父・等が死去（「人生最大のライバルだった」）。古参の浦・岩村が退任。東証一部へ</td><td>★★</td></tr>
+        <tr><td>52歳</td><td>2001</td><td>ロンドンに21店を一斉出店するが失敗し、大幅縮小</td><td>★★</td></tr>
+        <tr><td>53歳</td><td>2002</td><td>玉塚元一に社長を譲り会長に。野菜事業SKIPを開始。上海に中国1号店</td><td>★</td></tr>
+        <tr><td>54歳</td><td>2003</td><td>『一勝九敗』を出版。東レと組んだヒートテックを発売</td><td>★</td></tr>
+        <tr><td>56歳</td><td>2005</td><td>9月に社長へ復帰し、11月に持株会社体制へ。香港の大型店が成功し、グローバル旗艦店戦略に舵を切る</td><td>★★★</td></tr>
+        <tr><td>57歳</td><td>2006</td><td>GUを設立。NYソーホーにグローバル旗艦店を開く</td><td>★</td></tr>
+        <tr><td>60歳</td><td>2009</td><td>Forbes日本長者番付で初の首位。GUが990円ジーンズを発売</td><td>★</td></tr>
+        <tr><td>64歳</td><td>2013</td><td>連結売上が初めて1兆円を超える</td><td>★★</td></tr>
+        <tr><td>67歳</td><td>2016</td><td>「情報製造小売業」を宣言。翌年、有明本部が稼働</td><td>★</td></tr>
+        <tr><td>74歳</td><td>2023</td><td>ユニクロ社長を生え抜きの塚越大介に譲る（自身はFRの会長兼社長を継続）</td><td>★</td></tr>
+        <tr><td>77歳</td><td>2026</td><td>8月期決算で売上収益3兆9,634億円、営業利益7,431億円。5期連続の過去最高</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜学生時代：「一番になれ」の重圧と、何者でもない自分</h2>
+  <h3>炭鉱町の紳士服店の一人息子</h3>
+  <p>戦後の宇部は炭鉱で栄えた町だ。父・柳井等は1949年に駅前の商店街で紳士服店を開き、その後は土建業や喫茶店、映画館まで手を広げた。気性の荒い親分肌の商売人で、家で唯一の男の子だった正には特に厳しかった。叱られた記憶ばかりだと本人は振り返る。口癖は<strong>「何でもいいから一番になれ」</strong>。後年、「当時は叱られてばかりだと思っていたが、今思えば励ましだったのかもしれない」と書いている。</p>
+  <p>本人の自己評価は「内向的で、経営者向きではない」だった。宇部高校での成績は後ろから数えたほうが早く、数学が苦手だったので、入試に数学がない早稲田の政経を選んだ。</p>
+  <h3>封鎖されたキャンパスと、世界一周</h3>
+  <p>早稲田では大学紛争でキャンパスが封鎖され、長い間講義がなかった（2022年の早稲田入学式の祝辞で本人が語っている）。映画・パチンコ・麻雀の日々で、就職活動にも本気になれなかった。</p>
+  <p>この時期の大事な出来事が、父の援助（当時で200万円超）で出かけた<strong>世界一周旅行</strong>だ。ここでの体験は「④ 原体験」で詳しく書く。</p>
+  <div class="callout"><strong>この時期に育ったパラメータ：</strong>①父の「一番になれ」が刷り込んだ<b>序列への敏感さ</b>。②炭鉱閉山が教えた<b>無常観</b>。③落ちこぼれの自己認識から来る<b>見返したいという欲求</b>。どれも一見マイナスに見えるが、後で全部が燃料になる。</div>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは5つ</h2>
+
+  <div class="episode">
+    <h3>🔑 炭鉱閉山と「絶対はない」（少年期 / 1950〜60年代）</h3>
+    <p><span class="tag solid">◆ 一次情報（ヒアリング）</span></p>
+    <p>石炭から石油へのエネルギー転換で宇部の炭鉱は次々に閉山し、仲の良かった友人の家が仕事を失っていった。町を支えていた産業でも、ある日なくなる。少年の柳井はそこで<strong>「何も永遠ではない」</strong>と悟った。</p>
+    <p>→ <b>どう繋がったか：</b>病的なほどのリスク感度の源になった。物事は悲観的に見て、徹底的にリスクを潰してから大きく打って出る。成功した起業家は皆「注意深い」と言い、ビル・ゲイツの<strong>「You must worry」</strong>を引く。後の「成功は一日で捨て去れ」も、根は同じ無常観だ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 世界一周の客船で受けた差別（19〜20歳 / 1968〜69年頃）</h3>
+    <p><span class="tag solid">◆ 一次情報（ヒアリング）</span> <span class="tag warn">△ 船上の具体的場面はWebで未確認</span></p>
+    <p>イギリス客船の一等に乗ったが、日本人は隅の席に回された。「これが人種差別か」と、アジア人であることの力のなさを肌で知った。それまでボンボン気質だった自分が、<strong>「劣っている現状が嫌だ」</strong>と初めて強く感じた瞬間だった。後に妻になる照代とも、この旅がきっかけで出会ったとされる。</p>
+    <p>→ <b>どう繋がったか：</b>「劣っているのが嫌だ」は、柳井を一生動かし続ける燃料になった（モテたいという欲求も混じっていた、と聞く）。同時に、宇部の外、日本の外にも商売の場はあると身体で知った。後の「若者よ、日本を出よ」（TIME誌）、世界同一賃金の構想、ロンドンで失敗した後も海外を諦めなかった執念は、ここにつながる。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 家業で7人中6人に辞められた（23歳 / 1972年〜）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>ジャスコを9ヶ月で辞め、友人宅での居候を経て家業に入った柳井は、古いやり方に片っ端から口を出した。従業員7人のうち6人が去り、残ったのは、柳井が小学生のころから住み込みで働いていた<strong>浦利治</strong>だけだった。2人で品出しから経理まで全部やる日々が始まる。後に社内で「暗黒の10年」と呼ばれる時期だ。</p>
+    <p>父・等は会社を丸ごと任せた。口出しせず、失敗も含めて息子に背負わせた。1999年に父が亡くなったとき、柳井は遺影に向かって<strong>「父は私の人生最大のライバルだった」</strong>と語っている。</p>
+    <p>→ <b>どう繋がったか：</b>「人はついてこない」という現実を、22歳で突きつけられた。自分で全部やる経験が、店舗運営・在庫・数字の勘所を身体に入れた。理念を言葉にして配る（業務連絡・23ヶ条）という習慣も、言葉で人を動かすしかなかったこの時期に生まれた。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 1号店の行列と「金鉱をつかんだ」（35歳 / 1984年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>1984年6月2日（土）、広島・袋町の裏通りに「ユニーク・クロージング・ウエアハウス」を開いた。約3万点の在庫を置き、ほとんどが1,000円か1,900円。開店は<strong>朝6時</strong>という奇策で、ベテラン社員は「さすがに6時には来んよなぁ」と言っていたが、開店直前に大行列ができた。ラジオで「もうお店に来ないでください！」と呼びかける羽目になった。朝礼で柳井はこう叫んだ。<strong>「僕たちは金の鉱脈をつかんだんだぞ！」</strong></p>
+    <p>チラシは「お客様への手紙」と位置づけた。コピーは「本屋みたいな、レコードショップみたいな、在庫ドッサリ、服屋さん。どうしてなかったんだろうね」。</p>
+    <p>→ <b>どう繋がったか：</b>「普段着をセルフで、大量に、安く」という需要が確かにあると確かめた瞬間だった。ただ、この時点ではまだ他社ブランドの安売り倉庫で、偽物混入問題で評判を落とすこともあった。本当の転換点は次の香港だ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 香港のポロシャツ79ドルとジミー・ライ（37歳 / 1986年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>香港の下町のジョルダーノで、79香港ドル（当時約1,500円）のポロシャツを見つけた。ユニクロでは1,900円で売っていて、これより安くは無理だと思っていた品だ。「なんで、どうやったら、こんな値段で売れるんだ」。その場で何枚も買って宇部へ持ち帰った。答えは、卸を通さず自社でデザインして工場に直接発注し、大量に買い取る<strong>SPA（製造小売）</strong>だった。</p>
+    <p>知人の紹介で、創業者のジミー・ライ（黎智英）と会食した。12歳で密航船に乗って広州から香港に逃れ、工場勤めから成り上がった男だ。年齢は1歳しか違わない。<strong>「自分にもできるはずだ」</strong>。ここで「カジュアルウエアの倉庫」を捨て、本格的なSPAへ転換すると決めた。1988年には香港経由の直接調達を始めている。</p>
+    <p>→ <b>どう繋がったか：</b>コンプレックス（劣っていたくない）に、同世代のアジア人が世界で戦っているという具体的なロールモデルが重なった。ユニクロの事業モデルそのものが、ここで決まった。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Career</div>
+  <h2>キャリア・業績の軌跡：地方の安売り倉庫から「情報製造小売業」へ</h2>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1972–1984</span><span class="tl-title">暗黒の10年：紳士服店の立て直し</span></div><div class="tl-body">郊外型紳士服チェーン（青山・アオキ）が台頭し、紳士服で後発になるのを避けてカジュアルのセルフ販売に活路を求めた。この時期に倉本長治の「店は客のためにあり、店員とともに栄え、店主とともに滅びる」を座右の銘にする。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1984–1994</span><span class="tl-title">ユニクロ誕生からSPA化、上場まで</span></div><div class="tl-body">1号店 → 1985年に郊外ロードサイド型 → 1986年に香港で着想 → 1988年に直接調達 → 1991年に社名変更 → 1992年に全店をユニクロに統一 → 1994年に<b>広島証券取引所に上場（約130億円調達）</b>。銀行は長年、広島銀行宇部支店だけだったが、1991年に長銀広島支店が「ベンチャー企業」と評価して融資し、他行が続いた。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1998–2000</span><span class="tl-title">フリース革命で全国区に</span></div><div class="tl-body">1998年2月の中間期は既存店売上が約10%減と過去最悪だった。そこから1998年11月に<b>原宿店</b>を開き、1,900円のフリースが爆発的に売れる（販売枚数は1998年約200万枚、1999年約850万枚、2000年約2,600万枚といわれる）。「安かろう悪かろう」のイメージを「安くて良い」に書き換えた。</div></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2001–2005</span><span class="tl-title">海外の挫折と社長交代の失敗</span></div><div class="tl-body">ロンドンの21店は大失敗。野菜事業も撤退。2002年に玉塚元一へ社長を譲ったが、安定志向の経営に満足できず、2005年に自ら社長に戻った。2005年8月期は経常利益が8.7%減。「守りに入った会社は死ぬ」を体感した期間だ。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2005–2013</span><span class="tl-title">グローバル旗艦店戦略と機能性素材</span></div><div class="tl-body">2005年の香港大型店の成功を受けて、「小さく多く」から「大都市に巨大な旗艦店を置いてブランドを立てる」へ切り替えた。2006年ソーホー、2007年ロンドン311オックスフォードストリート、2009年パリ、2010年上海。2006年には佐藤可士和をクリエイティブディレクターに起用し、2009年にはジル・サンダーとの「+J」。東レと組んだヒートテック・エアリズムで「素材のユニクロ」に。2013年8月期に<b>連結売上1兆円</b>を突破。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2016–2026</span><span class="tl-title">LifeWear と情報製造小売業</span></div><div class="tl-body">2016年に「情報製造小売業」を宣言し、2017年に有明本部が稼働。ダイフク・MUJIN・Exotecと物流を自動化した。「服を変え、常識を変え、世界を変えていく」というLifeWearを旗印に、2023年にはユニクロ社長を塚越大介へ。2026年8月期は売上収益<b>3兆9,634億円</b>（+16.6%）、営業利益<b>7,431億円</b>（+31.7%）で、5期連続の過去最高。</div></div></div>
+  </div>
+  <div class="col-num">
+    <div class="n"><div class="v">71.7億</div><div class="l">売上（1991年8月期）</div></div>
+    <div class="n"><div class="v">1.14兆</div><div class="l">売上（2013年8月期）</div></div>
+    <div class="n"><div class="v">3.96兆</div><div class="l">売上収益（2026年8月期）</div></div>
+  </div>
+  <p class="note">35年で約550倍。1991年の数字は日本基準の売上高、2026年はIFRSの売上収益なので厳密な比較ではない。</p>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>One Win, Nine Losses</div>
+  <h2>一勝九敗の失敗台帳：負け方が上手い</h2>
+  <p>「10回新しいことを始めれば9回は失敗する」。柳井の失敗は数が多いだけでなく、<strong>撤退が速く、学びを次の勝ちに転用している</strong>のが特徴だ。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>時期</th><th>失敗</th><th>何が起きたか</th><th>転用された学び</th></tr></thead>
+      <tbody>
+        <tr><td>1980s</td><td>他社ブランドの安売り</td><td>偽物の混入で評判を落とした</td><td>品質を自分で握るために<b>オリジナル商品・SPA</b>へ</td></tr>
+        <tr><td>〜1998</td><td>ファミクロ・スポクロ</td><td>ファミリー・スポーツの別業態が不振で撤退</td><td>ブランドを「ユニクロ」に<b>一本化</b></td></tr>
+        <tr><td>2001–03</td><td>ロンドン21店一斉出店</td><td>初年度から不振が続き、大半を閉鎖</td><td>小さな店を数多く出すのをやめ、<b>巨大旗艦店でブランドを先に立てる</b>（2007年オックスフォード街で再挑戦）</td></tr>
+        <tr><td>2002–04</td><td>野菜事業「SKIP」（エフアール・フーズ）</td><td>永田農法の野菜をネット・店舗で販売。欠品と客離れで2004年3月に撤退し、<b>特別損失約26億円</b></td><td>責任者の柚木治はその後<b>GUの社長</b>として再起する。失敗した人を切らない文化</td></tr>
+        <tr><td>2002–05</td><td>玉塚元一への社長交代</td><td>安定成長路線で減益。柳井が社長に復帰した</td><td>後継者育成の難しさを知る。<b>「経営者になるためのノート」</b>を社内に配る</td></tr>
+        <tr><td>2007</td><td>バーニーズ・ニューヨーク買収</td><td>入札で競り負け、断念</td><td>以後のM&amp;Aは慎重になり、自社ブランドの育成に集中</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="quote">「成功は一日で捨て去れ」<cite>— 柳井正, 2009年の著書タイトル</cite></div>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜ柳井だけが？</h2>
+  <p>同じ時代に地方の衣料チェーンは何百とあった。青山もアオキもしまむらもいた。それでも世界企業になったのが柳井だけだった理由は、次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① コンプレックス燃料</b></td><td>「劣っているのが嫌だ」という感情は、成功しても消えない。だから満足して止まらない</td><td>世界一周での差別。ジミー・ライに対する「自分にもできるはず」。77歳でもCEOを続けている</td></tr>
+        <tr><td><b>② 悲観的なリスク観</b></td><td>「絶対はない」が前提にあるので、楽観で賭けない。潰せるリスクを全部潰してから大胆に出る</td><td>炭鉱閉山の記憶。「You must worry」。上場や大型出店の前の周到な準備</td></tr>
+        <tr><td><b>③ 試行回数×撤退速度</b></td><td>9敗を前提にしているので挑戦の数が多く、損切りが速い。勝ちの1つが全体を回収する</td><td>ファミクロ、ロンドン、SKIPをどれも2〜3年以内に撤退。フリースとヒートテックが全体を回収した</td></tr>
+        <tr><td><b>④ 原理原則の言語化</b></td><td>理念を23ヶ条にして社員に配る。人が辞めていった経験から、言葉で組織を動かす技術を身につけた</td><td>家業での離職。毎週の業務連絡。経営理念23ヶ条。『経営者になるためのノート』</td></tr>
+        <tr><td><b>⑤ 型の発見と40年の反復</b></td><td>SPAを日本の普段着に適用し、素材（東レ）・物流（ダイフク）・情報（有明）へと深掘りし続けた</td><td>1986年の香港。ヒートテック。情報製造小売業の宣言</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>①がアクセル、②がブレーキとハンドル、③がエンジンの回転数、④が組織への伝達、⑤が車体。アクセルだけの起業家は事故を起こし、ブレーキだけの経営者は止まる。柳井は<b>両方を同時に最大まで踏む</b>稀なタイプだ。「臆病なのに大胆」という矛盾こそが本質といえる。</div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Philosophy</div>
+  <h2>思想・原理原則：理念がない会社は、精神がない人間と同じ</h2>
+  <h3>思想体系マップ</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>概念</th><th>一言定義</th><th>思想内での役割</th></tr></thead>
+      <tbody>
+        <tr><td>絶対はない</td><td>あらゆる成功・産業・会社は終わりうる</td><td><b>基盤</b>：世界観</td></tr>
+        <tr><td>店は客のためにあり</td><td>儲けは客に喜ばれた結果であって、目的ではない</td><td><b>基盤</b>：商売の倫理（倉本長治）</td></tr>
+        <tr><td>一勝九敗</td><td>挑戦の大半は失敗する。早く失敗して早く学べ</td><td><b>方法論</b></td></tr>
+        <tr><td>成功は一日で捨て去れ</td><td>成功体験は保守化と慢心の種になる</td><td><b>方法論</b>：自己否定のルーチン</td></tr>
+        <tr><td>全員経営</td><td>社員一人ひとりが経営者の視点で考え、動く</td><td><b>組織論</b></td></tr>
+        <tr><td>LifeWear</td><td>服を変え、常識を変え、世界を変えていく</td><td><b>結論</b>：事業の存在理由</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>経営理念23ヶ条（抜粋）</h3>
+  <p>30歳前後から書き始め、追記を重ねて23ヶ条になった。社員に配る「憲法」で、『一勝九敗』に全文が載っている。</p>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">1</div><div><div class="ind-title">顧客の要望に応え、顧客を創造する経営</div><div class="ind-desc">ドラッカーの「顧客の創造」と重なる。客の不満の中に次の商品がある。</div></div></div>
+    <div class="ind-item"><div class="ind-num">2</div><div><div class="ind-title">良いアイデアを実行し、世の中を動かし、社会を変革し、社会に貢献する経営</div><div class="ind-desc">考えるだけでは意味がない。実行して社会を変えるのが経営だ。</div></div></div>
+    <div class="ind-item"><div class="ind-num">3</div><div><div class="ind-title">いかなる企業の傘の中にも入らない自主独立の経営</div><div class="ind-desc">炭鉱町の下請け構造を見て育った人間の矜持。</div></div></div>
+    <div class="ind-item"><div class="ind-num">4</div><div><div class="ind-title">現実を直視し、時代に適応し、自ら能動的に変化する経営</div><div class="ind-desc">「絶対はない」を経営の言葉に翻訳したもの。</div></div></div>
+    <div class="ind-item"><div class="ind-num">5</div><div><div class="ind-title">公明正大、信賞必罰、完全実力主義の経営</div><div class="ind-desc">世襲を否定する立場の根拠。ただし息子2人は取締役（⑨で後述）。</div></div></div>
+  </div>
+  <h3>知的系譜</h3>
+  <pre style="font-size:12px;line-height:1.7;background:var(--surface);padding:16px;border-radius:10px;overflow-x:auto">倉本長治（商業界）── 商人の倫理 ──┐
+P.F.ドラッカー ──── 顧客の創造 ───┤
+ジミー・ライ（ジョルダーノ）─ SPA ─┼──→ 柳井正 ──→ 塚越大介ら生え抜き経営陣
+ビル・ゲイツ ──── You must worry ─┤            ──→ GU（柚木治）
+ハロルド・ジェニーン ─ 逆算経営 ──┘            ──→ 日本の若手起業家への檄</pre>
+  <p class="note">ジェニーン『プロフェッショナルマネジャー』は柳井が「最高の経営の教科書」と推薦し、復刊に関わった本。「本を読む時は、初めから終わりへと読む。ビジネスの経営はそれとは逆だ」という終わりから逆算する発想を共有している。</p>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Light &amp; Shadow</div>
+  <h2>光と影：批判と内部矛盾</h2>
+  <div class="callout bad"><strong>① ウイグル綿「ノーコメント」（2021年4月）：</strong>決算会見で新疆綿の使用を問われ、「政治的な問題なのでノーコメント」と繰り返した。SNSで批判が殺到し、中国市場への依存が背景にあると見られた。会社側は、監査では同地区の工場は確認されていないと説明している。<b>「自主独立」「公明正大」を掲げながら、最大の海外市場に対しては沈黙する</b>。理念と現実がぶつかる場面だ。</div>
+  <div class="callout warn"><strong>② 労働環境への批判：</strong>ジャーナリスト横田増生の『ユニクロ帝国の光と影』（2011）や潜入ルポ『ユニクロ潜入一年』（2017）が、店長の長時間労働や現場の疲弊を報じた。「全員経営」「完全実力主義」は、現場から見ると過酷さと表裏一体になる。</div>
+  <div class="callout warn"><strong>③ 世襲否定と息子2人の取締役：</strong>柳井は何度も世襲を否定し、「息子は社長にしない」と言い続けている。一方で長男・一海と次男・康治はFRの取締役で、それぞれ数千億円規模の株を持つ（2024年6月時点で各約5,980億円）。所有は一族、経営は生え抜きという分離を意図していると読めるが、外からは見えにくい。</div>
+  <div class="callout"><strong>④ 後継者問題：</strong>2002年の玉塚への交代は3年で撤回。一時は「65歳で退く」と語っていたが、77歳の今もFRの会長兼社長だ。ユニクロ社長の塚越大介は2025年11月にFR取締役になり、本命と目されている。<b>「絶対はない」と言う人が、自分の退場だけは先送りし続けている</b>のは最大の内部矛盾といえる。</div>
+  <div class="callout"><strong>⑤ 移民・日本論での発言（2024年）：</strong>日本の生産性を上げる手段として移民の受け入れに言及し、経済界でも賛否が割れた。「日本はこのままでは滅びる」という危機感からの発言で、炭鉱閉山を見た人間が日本そのものを見ている構図だ。</div>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">生活習慣</div><div class="info-card-title">朝6時半に出社、16時に退社</div><div class="info-card-text">早朝型で知られる。華やかな会食は好まず、夕食は自宅で妻の手料理が日課。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">趣味</div><div class="info-card-title">ゴルフ好きが高じてハワイの名門コースを買収</div><div class="info-card-text">理由は「世界一好きなコースだから」。渋谷区の自宅（敷地約2,600坪）にもゴルフ練習場とテニスコートがあると報じられている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">アート</div><div class="info-card-title">世界のトップコレクター200人に選出</div><div class="info-card-text">2013年、米ARTnews誌の「Top 200 Collectors」に選ばれた。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">早稲田への恩返し</div><div class="info-card-title">村上春樹ライブラリーの改築費約12億円を全額寄付</div><div class="info-card-text">隈研吾の設計で2021年10月に開館。UCLAとの「柳井イニシアティブ」にも累計数十億円を拠出（2024年は人文学部史上最大の3,100万ドル）。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">科学への投資</div><div class="info-card-title">京都大学へ個人で100億円</div><div class="info-card-text">2020年。本庶佑のがん免疫に50億円、山中伸弥のiPS細胞に45億円、コロナ研究に5億円。2025年にはiPS細胞研究財団へさらに45億円。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">苦手</div><div class="info-card-title">数学が苦手だから早稲田政経</div><div class="info-card-text">入試に数学がない学部を選んだ。その彼が、数字に厳しい経営者として知られるようになる。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">野菜屋の社長</div><div class="info-card-title">ユニクロがトマトを売っていた</div><div class="info-card-text">2002〜04年の「SKIP」。野菜事業の失敗責任者が後にGUを立て直したのは、一勝九敗の象徴的な話だ。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">古参との別れ</div><div class="info-card-title">「僕もそう思います」</div><div class="info-card-text">1999年、40年仕えた浦利治が「商売は分かるが経営はできない」と辞意を伝えると、柳井はこう答えた。手作りの感謝状を渡し、花火を上げて送り出している。</div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：劣等感は捨てるな、制御しろ</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① コンプレックスは消さずに燃料にする。ただし悲観で制御する。</strong>「劣っているのが嫌だ」だけでは無謀な賭けで終わる。「絶対はない」とセットにして初めて、大胆さが続くものになる。<b>自分の劣等感を1つ言語化し、それと対になるリスクの見方を1つ決めておく。</b>これは誰でも再現できる。</p>
+    <p><strong>② 打率ではなく、試行回数と撤退の速さで勝つ。</strong>柳井の勝率は1割だが、負けを小さく早く切ったので、1勝が9敗を回収した。<b>新しい挑戦には始める前に「撤退ライン」（期間・金額）を決めておく。</b>SKIPは2年で切った。この速さが、野菜の失敗をGUの成功に変えた。</p>
+    <div class="col-sub">One more</div>
+    <p>落ちこぼれで、9ヶ月で会社を辞めた23歳が、7人中6人に去られた店から始めた。偉大さは出発点の高さではなく、<strong>変化率を上げ続けた積分値</strong>だ。</p>
+  </div>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li>一次情報（ヒアリング）：コンプレックス・世界一周の差別体験・炭鉱閉山と「絶対はない」・リスク観</li>
+    <li><a href="https://ja.wikipedia.org/wiki/%E6%9F%B3%E4%BA%95%E6%AD%A3" target="_blank" rel="noopener">Wikipedia — 柳井正</a></li>
+    <li><a href="https://bookplus.nikkei.com/atcl/column/042600369/042600001/" target="_blank" rel="noopener">日経BOOKプラス — 杉本貴司『ユニクロ』抜粋（1号店開店）</a></li>
+    <li><a href="https://bookplus.nikkei.com/atcl/column/042600369/042600002/" target="_blank" rel="noopener">日経BOOKプラス — 同（浦利治・岩村の退任）</a></li>
+    <li><a href="https://bookplus.nikkei.com/atcl/column/042600369/053000004/" target="_blank" rel="noopener">日経BOOKプラス — 同（香港・ジミー・ライ）</a></li>
+    <li><a href="https://the-shashi.com/tse/9983/timeline/" target="_blank" rel="noopener">the-shashi — ファーストリテイリング沿革年表</a></li>
+    <li><a href="https://www.waseda.jp/top/?p=80065" target="_blank" rel="noopener">早稲田大学 — 2022年度入学式祝辞 柳井正</a></li>
+    <li><a href="https://archive.jcci.or.jp/100th/seminar_vol1.pdf" target="_blank" rel="noopener">日本商工会議所 — 柳井正 講演録</a></li>
+    <li><a href="https://www.flierinc.com/summary/3812" target="_blank" rel="noopener">flier — 『一勝九敗』要約</a></li>
+    <li><a href="https://www.businesstoday.com.tw/article/category/80407/post/201210240032/" target="_blank" rel="noopener">今周刊 — 柳井正と父・柳井等</a></li>
+    <li><a href="https://www.ctee.com.tw/news/20250710700004-431001" target="_blank" rel="noopener">工商時報 — 柳井等と照代</a></li>
+    <li><a href="https://www.daiwa-grp.jp/dfa/report/dir_dfa_report_2.pdf" target="_blank" rel="noopener">大和総研 — エフアール・フーズ撤退（特損26億円）</a></li>
+    <li><a href="https://xtech.nikkei.com/it/free/NNB/NEWS/20021003/2/" target="_blank" rel="noopener">日経 — "ユニクロ野菜"はやや高め（2002）</a></li>
+    <li><a href="https://www.fashionsnap.com/article/2026-10-08/fast-retailing-2026-result/" target="_blank" rel="noopener">FASHIONSNAP — ファストリ2026年8月期決算</a></li>
+    <li><a href="https://www.nippon.com/fr/news/yjj2026031200292/" target="_blank" rel="noopener">nippon.com / 時事 — Forbes 2026 長者番付</a></li>
+    <li><a href="https://business-humanrights.org/ja/%E6%9C%80%E6%96%B0%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9/%E3%83%95%E3%82%A1%E3%83%BC%E3%82%B9%E3%83%88%E3%83%AA%E3%83%86%E3%82%A4%E3%83%AA%E3%83%B3%E3%82%B0%E6%9F%B3%E4%BA%95%E7%A4%BE%E9%95%B7%E3%82%A6%E3%82%A4%E3%82%B0%E3%83%AB%E5%95%8F%E9%A1%8C%E3%81%AF%E6%94%BF%E6%B2%BB%E7%9A%84%E3%81%AA%E3%81%AE%E3%81%A7%E3%83%8E%E3%83%BC%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88/" target="_blank" rel="noopener">BHRRC — ウイグル問題「ノーコメント」</a></li>
+    <li><a href="https://www.moneypost.jp/1064019" target="_blank" rel="noopener">マネーポスト — 塚越大介と後継問題</a></li>
+    <li><a href="https://forbesjapan.com/articles/detail/32112" target="_blank" rel="noopener">Forbes JAPAN — 柳井正の素顔</a></li>
+    <li><a href="https://www.waseda.jp/top/news/67503" target="_blank" rel="noopener">早稲田大学 — 村上春樹ライブラリー改築費寄付</a></li>
+    <li><a href="https://www.kyoto-u.ac.jp/ja/news/2020-06-24" target="_blank" rel="noopener">京都大学 — 柳井正氏による100億円寄付</a></li>
+  </ul>
+  <p style="font-size:11px;color:var(--muted);margin-top:14px">Kohki 54111 · Last updated: 2026-10-26 · フリースの販売枚数、居候、船上の具体的な場面は二次情報またはヒアリングによるもので、Webでは完全に裏取りできていない。</p>
+</div>
+
+</div>
+<!--
+  在ページ目次（page-toc）スニペット。h2/h3見出しをJSが自動収集してリンク化し、
+  スクロール位置に応じてactive表示する左固定サイドバー。手書きのTOC（.layout.toc-left
+  内の.toc）とは別物で、こちらは中身を書く必要がない。
+
+  対象: _Templates/web/style.css を使う長文コンテンツページ全般
+  （diff/coanal/deep-research/country-info/phi/hist 等のskill生成物）。
+  見出しが少ない（3個未満）ページでは自動的に非表示になる。
+
+  使い方:
+    新規ページ: style.css の内容を<style>に埋め込む際、この.page-toc CSSブロックも
+    一緒に含める（style.cssに既に入っている）。本体には下記の<aside>+<script>を
+    </body>直前に1回だけ貼るだけでよい（中身は空でOK、JSが自動で埋める）。
+
+    既存ページへの後付け注入:
+      python3 _Templates/web/inject_page_toc.py            # 未注入ファイルにのみ注入
+      python3 _Templates/web/inject_page_toc.py --force     # 既存注入分を剥がして全ファイル再注入
+
+  仕組み:
+    - body内の h2 / h3 を上から順に収集し、id が無ければ見出しテキストから自動採番する
+    - 見出しが3個未満のページはTOC自体を非表示にする（目次にする意味がないため）
+    - スクロール位置から現在地セクションを判定し、該当リンクに .active を付与する
+    - 1400px以下の画面幅では .page-toc { display:none } （style.css側で制御）
+-->
+
+<!-- ===== <head> 終了直前（style.cssに.page-tocが無い旧ページ向けの後付けCSS。
+     style.cssを最新の内容でそのまま埋め込んでいる新規ページには不要） ===== -->
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+
+<!-- ===== </body> 直前に挿入する部分 ===== -->
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>

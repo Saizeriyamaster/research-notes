@@ -3,46 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>241 People — Koshikawa Research Notes</title>
+<title>people — 54111</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#ffffff; --surface:#f5f5f3; --surface2:#ebeae6; --ink:#111111;
-  --text:#111111; --mid:#555555; --muted:#949494; --dim:#cccccc; --border:#e2e1da;
-  --good:#2f7a4f; --bad:#b3382c; --warn:#a67c2e; --accent:#2b4a6f;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.75;}
-h1,h2,h3,.section-label,.hero-eyebrow,.stat-label,.tl-year,.block-label,.eyebrow{font-family:'Poppins','Noto Sans JP',sans-serif;}
-.hero{background:var(--ink);padding:56px 40px 40px;}
-.hero-inner{max-width:860px;margin:0 auto;}
-.hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:12px;font-weight:600;}
-.hero h1{font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.15;color:#fff;margin-bottom:10px;}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;}
-.hero-crumb{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:14px;}
-.hero-crumb a{color:rgba(255,255,255,.65);text-decoration:none;}
-.hero-crumb a:hover{color:#fff;}
-.wrap{max-width:860px;margin:0 auto;padding:40px 40px 90px;}
-@media (max-width:640px){.hero{padding:36px 20px 28px;} .wrap{padding:28px 20px 64px;}}
-.block{margin-top:40px;}
-.block:first-child{margin-top:0;}
-.block-label{font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.index-folder-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:8px 0;}
-.index-folder-list a{display:block;border:1px solid var(--border);border-radius:10px;padding:18px 20px;text-decoration:none;color:var(--text);background:var(--surface);}
-.index-folder-list a:hover{border-color:var(--ink);}
-.index-folder-list .index-folder-title{font-size:13.5px;font-weight:700;margin-bottom:4px;}
-.index-folder-list .index-folder-count{font-size:11.5px;color:var(--muted);}
-.index-list{list-style:none;border-top:1px solid var(--border);}
-.index-list li{border-bottom:1px solid var(--border);}
-.index-list a{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 4px;text-decoration:none;color:var(--text);}
-.index-list a:hover .index-title{color:var(--accent);}
-.index-title{font-size:14px;font-weight:700;letter-spacing:-.01em;}
-.index-date{font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap;}
-.empty-note{font-size:13px;color:var(--muted);padding:16px 0;}
-.back-link{display:inline-block;margin-top:36px;font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;}
-.back-link:hover{color:var(--mid);}
-.page-footer{border-top:1px solid var(--border);padding-top:20px;margin-top:36px;font-size:11.5px;color:var(--muted);line-height:1.8;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--surface:#f5f5f5;--hover:#ededed;--border:#e0e0e0;--text:#111;--mid:#444;--muted:#888;--dim:#ccc}
+body{background:var(--bg);color:var(--text);font-family:'Poppins','Noto Sans JP',sans-serif;min-height:100vh;padding-bottom:68px}
+.page-header{background:#111;color:#fff;padding:36px 48px 32px}
+.breadcrumb{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-bottom:10px}
+.breadcrumb a{color:rgba(255,255,255,.45);text-decoration:none}
+.breadcrumb a:hover{color:rgba(255,255,255,.8)}
+.page-header h1{font-size:1.4rem;font-weight:700;letter-spacing:-.02em}
+.main{max-width:1100px;padding:0 48px 80px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid #111;margin:40px 0 36px;overflow-x:auto}
+.tab{appearance:none;background:none;border:none;font-family:'Poppins','Noto Sans JP',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 22px;cursor:pointer;position:relative;bottom:-2px;border-bottom:2px solid transparent;transition:color .12s,border-color .12s;white-space:nowrap}
+.tab:hover{color:var(--mid)}
+.tab.active{color:#111;border-bottom-color:#111}
+.tab .t-count{font-size:9px;font-weight:500;color:var(--dim);margin-left:6px;letter-spacing:.04em}
+.panel{display:none}
+.panel.active{display:block}
+.cat-block{margin-bottom:52px}
+.cat-header{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #111}
+.cat-title{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#111}
+.cat-title a{color:inherit;text-decoration:none}
+.cat-title a:hover{text-decoration:underline}
+.cat-count{font-size:9px;font-weight:500;color:var(--dim);letter-spacing:.06em;margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;padding:20px 18px 16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);min-height:118px;transition:background .12s,border-color .12s,box-shadow .12s;position:relative}
+.tile:hover{background:var(--hover);border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tile:hover .tile-arrow{opacity:1}
+.tile-top{flex:1;margin-bottom:14px}
+.tile-name{font-size:13.5px;font-weight:700;letter-spacing:-.02em;line-height:1.25;margin-bottom:7px}
+.tile-meta{font-size:9px;color:var(--dim);letter-spacing:.04em;margin-bottom:6px}
+.tile-meta .m-year{font-weight:600;color:var(--muted)}
+.tile-desc{font-size:10px;font-weight:400;color:var(--muted);line-height:1.55}
+.tile-bottom{display:flex;align-items:center;justify-content:space-between}
+.tile-tags{display:flex;flex-wrap:wrap;gap:4px}
+.tile-tag{font-size:8px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);border:1px solid var(--dim);padding:2px 5px}
+.tile-arrow{font-size:11px;color:var(--dim);opacity:0;transition:opacity .12s;flex-shrink:0;margin-left:8px}
+.table-tools{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.table-search{flex:1;max-width:320px;font-family:'Poppins','Noto Sans JP',sans-serif;font-size:12px;padding:8px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none}
+.table-search:focus{border-color:#111}
+.table-hint{font-size:10px;color:var(--dim);letter-spacing:.04em}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border)}
+table.co{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+table.co col.c-w-name{width:36%}
+table.co col.c-w-kind{width:22%}
+table.co col.c-w-dir{width:20%}
+table.co col.c-w-date{width:14%}
+table.co col.c-w-read{width:8%}
+table.co th.th-read{text-align:center}
+table.co td.c-read{text-align:center;vertical-align:middle}
+.readck{width:15px;height:15px;cursor:pointer;accent-color:#111;margin:0}
+table.co tbody tr.is-read{opacity:.4}
+table.co tbody tr.is-read:hover{opacity:.8}
+table.co tbody tr.is-read td.c-name a{text-decoration:line-through;text-decoration-color:var(--dim)}
+table.co thead th{background:#111;color:#fff;font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:11px 14px;cursor:pointer;user-select:none;white-space:nowrap}
+table.co thead th:hover{background:#2a2a2a}
+table.co thead th .arr{color:rgba(255,255,255,.35);font-size:8px;margin-left:5px}
+table.co thead th.sorted .arr{color:#fff}
+table.co tbody td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--mid);word-break:break-word;overflow-wrap:anywhere}
+table.co tbody tr:hover{background:var(--surface)}
+table.co tbody tr:nth-child(even){background:#fafafa}
+table.co tbody tr:nth-child(even):hover{background:var(--surface)}
+table.co td.c-name a{color:#111;font-weight:700;text-decoration:none;font-size:12.5px;letter-spacing:-.01em}
+table.co td.c-name a:hover{text-decoration:underline}
+table.co td.c-name .c-desc{display:block;font-size:10.5px;color:var(--muted);font-weight:400;margin-top:3px}
+table.co td.c-kind{font-size:11px}
+table.co td.c-date{font-weight:600;color:var(--text);white-space:nowrap}
+table.co .tier{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:1px 5px;border:1px solid var(--dim);color:var(--muted);white-space:nowrap}
+@media (max-width:720px){table.co{table-layout:auto;min-width:640px}}
+@media (max-width:600px){.page-header{padding:28px 24px 24px}.main{padding:0 24px 60px}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.tabs{margin:28px 0}.tab{padding:10px 14px}}
+
+.stats-footer{position:fixed;bottom:0;left:0;right:0;height:62px;background:#111;border-top:1px solid #222;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-family:'Poppins',sans-serif;z-index:9997}
+.footer-stats{display:flex;align-items:center;font-size:10px;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:.06em}
+.footer-stats .stat{white-space:nowrap}
+.footer-stats .sep{margin:0 9px;color:rgba(255,255,255,.15)}
+.footer-home{color:rgba(255,255,255,.4);text-decoration:none;font-size:11px;font-weight:500;letter-spacing:.06em}
+.footer-home:hover{color:rgba(255,255,255,.9)}
 </style>
 <!-- snav:head:start -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -68,6 +107,12 @@ body{padding-top:56px!important}
 .snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
 .snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
 .snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
 @media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
 </style>
 <!-- snav:head:end -->
@@ -99,6 +144,7 @@ body{padding-top:56px!important}
   <div class="snav-sec">
     <div class="snav-sec-label">Travel</div>
     <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
   </div>
   <div class="snav-sec">
     <div class="snav-sec-label">Research</div>
@@ -106,6 +152,8 @@ body{padding-top:56px!important}
     <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
     <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
     <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
     <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
     <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
     <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
@@ -119,17 +167,328 @@ body{padding-top:56px!important}
 </nav>
 <script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
 <!-- snav:panel:end -->
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-crumb"><a href="../../index.html">root</a> / <a href="../index.html">24_Research</a> / 241_People</div>
-    <div class="hero-eyebrow">24_Research</div>
-    <h1>241 People</h1>
+<header class="page-header">
+  <div class="breadcrumb"><a href="/research-notes/index.html">54111</a> / <a href="/research-notes/24_Research/index.html">research</a></div>
+  <h1>people</h1>
+</header>
+
+<main class="main">
+
+  <div class="tabs">
+    <button class="tab active" data-tab="all" onclick="switchTab('all')">All<span class="t-count">20</span></button>
+    <button class="tab" data-tab="grid" onclick="switchTab('grid')">Grid<span class="t-count">20</span></button>
   </div>
-</div>
-<div class="wrap">
-  <div class="block"><div class="block-label">Files</div><ul class="index-list"><li><a href="2026-03-21_吉田松陰.md"><span class="index-title">吉田松陰</span><span class="index-date">2026-03-21</span></a></li><li><a href="2026-04-04_Lee_Kuan_Yew.md"><span class="index-title">Lee Kuan Yew</span><span class="index-date">2026-04-04</span></a></li><li><a href="2026-04-04_PayPal-Mafia.md"><span class="index-title">PayPal-Mafia</span><span class="index-date">2026-04-04</span></a></li><li><a href="2026-04-04_Peter_Thiel.md"><span class="index-title">Peter Thiel</span><span class="index-date">2026-04-04</span></a></li><li><a href="2026-04-10_patrick-collison.md"><span class="index-title">patrick-collison</span><span class="index-date">2026-04-10</span></a></li><li><a href="2026-04-10_yokogawa-tsuyoshi.md"><span class="index-title">yokogawa-tsuyoshi</span><span class="index-date">2026-04-10</span></a></li><li><a href="2026-04-10_マキャベリ.md"><span class="index-title">マキャベリ</span><span class="index-date">2026-04-10</span></a></li><li><a href="2026-04-11_Vincent_van_Gogh_and_Theo.md"><span class="index-title">Vincent van Gogh and Theo</span><span class="index-date">2026-04-11</span></a></li><li><a href="2026-04-16_伊藤啓二.md"><span class="index-title">伊藤啓二</span><span class="index-date">2026-04-16</span></a></li><li><a href="2026-06-02_Christopher_Nolan.md"><span class="index-title">Christopher Nolan</span><span class="index-date">2026-06-02</span></a></li><li><a href="2026-06-10_Alexander-Wang.md"><span class="index-title">Alexander-Wang</span><span class="index-date">2026-06-10</span></a></li><li><a href="2026-06-10_Alexandr-Wang-ScaleAI.md"><span class="index-title">Alexandr-Wang-ScaleAI</span><span class="index-date">2026-06-10</span></a></li><li><a href="2026-06-10_bill-gates.md"><span class="index-title">bill-gates</span><span class="index-date">2026-06-10</span></a></li><li><a href="2026-06-11_渋沢栄一.md"><span class="index-title">渋沢栄一</span><span class="index-date">2026-06-11</span></a></li><li><a href="2026-06-14_paul_graham.md"><span class="index-title">paul graham</span><span class="index-date">2026-06-14</span></a></li><li><a href="2026-06-19_Palmer_Luckey.md"><span class="index-title">Palmer Luckey</span><span class="index-date">2026-06-19</span></a></li><li><a href="2026-07-08_藤田晋.md"><span class="index-title">藤田晋</span><span class="index-date">2026-07-08</span></a></li><li><a href="2026-07-09_Elon_Musk.md"><span class="index-title">Elon Musk</span><span class="index-date">2026-07-09</span></a></li><li><a href="2026-08-28_Sam_Altman.html"><span class="index-title">Sam Altman</span><span class="index-date">2026-08-28</span></a></li></ul></div>
-  <a class="back-link" href="../index.html">&larr; 上の階層へ戻る</a>
-  <div class="page-footer">Koshikawa Research Notes &mdash; personal knowledge base, published via GitHub Pages.</div>
-</div>
+
+  <!-- ===================== ALL (sortable list) ===================== -->
+  <section class="panel active" id="panel-all">
+    <div class="table-tools">
+      <input type="text" class="table-search" id="tblSearch" placeholder="検索（タイトル・種別・フォルダ…）" oninput="filterTable()">
+      <span class="table-hint">列見出しをクリックで並び替え・✓は読了記録（この端末に保存）</span>
+      <span class="table-hint" id="readCounter" style="margin-left:auto;font-weight:600;color:var(--muted)"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="co" id="coTable">
+        <colgroup><col class="c-w-name"><col class="c-w-kind"><col class="c-w-dir"><col class="c-w-date"><col class="c-w-read"></colgroup>
+        <thead>
+          <tr>
+            <th data-type="str" onclick="sortTable(0,this)">Title<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(1,this)">Type<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(2,this)">Folder<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(3,this)">Date<span class="arr">↓</span></th>
+            <th class="th-read" data-type="num" onclick="sortTable(4,this)" title="読んだらチェック（未読を上に並べ替え可）">✓<span class="arr">↕</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="c-name"><a href="2026-10-26_柳井正.html">柳井正を微分する</a><span class=c-desc>宇部の炭鉱町の紳士服店の息子で、成績は振るわず、ジャスコも9ヶ月で辞めた。そこから一代でユニクロを世界企業にした。燃料は「劣っているのが嫌だ」と…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-10-26">2026-10-26</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-08-28_Sam_Altman.html">Sam Altman</a><span class=c-desc>サム・アルトマンの偉大さは「確信の非対称性」という構造から生まれた。他者が「まだ早い」「リスクが高い」と感じる領域に、根拠ある確信を持って賭け続…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-08-28">2026-08-28</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-07-09_Elon_Musk.md">Elon Musk</a><span class=c-desc>イーロン・マスクの偉大さは「自分の死への恐怖を人類の滅亡への恐怖に昇華した」構造にある。 幼少期の孤独・いじめ・父との確執が「現実逃避としての書…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-07-09">2026-07-09</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-07-08_藤田晋.md">藤田晋</a><span class=c-desc>「麻雀という一人遊びの極致」を10代で体得した男が、その勝負哲学を会社経営に転写した。凡人なら無駄に終わる雀荘での数万時間が、彼の中では「運・忍…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-07-08">2026-07-08</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-19_Palmer_Luckey.md">Palmer Luckey</a><span class=c-desc>VRヘッドセットを50台集めた少年が、「なぜ誰も本物を作らないのか」という怒りでOculusを創り、Facebookに売却後は「なぜシリコンバレ…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-06-19">2026-06-19</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-14_paul_graham.md">Paul Graham</a><span class=c-desc>Paul Graham の偉大さは「三つの異種知性の交差点」に立ち続けた点にある。ハッカー・画家・哲学者という相容れない知的世界を一人の人間に統…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-06-14">2026-06-14</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-11_渋沢栄一.md">渋沢栄一</a><span class=c-desc>農家の息子として商売の現場で育ち、尊王攘夷の志士から幕臣、官僚、実業家へと3度の大転換を遂げた男。偉大さの核心は「道徳と経済は矛盾しない」という…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-06-11">2026-06-11</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-10_Alexander-Wang.md">Alexander Wang</a><span class=c-desc>サンフランシスコ育ちの台湾系アメリカ人が、「高級なのに街に着ていける服」という矛盾を解いた。ファッションを聖域から降ろし、クラブと路地と地下鉄に…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-06-10">2026-06-10</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-10_Alexandr-Wang-ScaleAI.md">Alexandr Wang（Scale AI）</a><span class=c-desc>ロスアラモスの物理学者の息子が、「AIに必要なのはアルゴリズムではなくデータだ」という真実を19歳で見抜き、世界最年少の自力億万長者になった。偉…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-06-10">2026-06-10</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-10_bill-gates.md">ビル・ゲイツ</a><span class=c-desc>ゲイツの偉大さは「圧倒的な知性 × 異常な集中力 × 勝者総取り思考」の三角形で成り立つ。コンピュータという波に乗ったのではなく、その波を自分で…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-06-10">2026-06-10</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-02_Christopher_Nolan.md">クリストファー・ノーラン</a><span class=c-desc>「英文学を学びながら独学で映画を作る」という逆張りキャリアが、映画業界の常識を疑わないまま内側に入ってしまう呪縛から彼を解放した。£6,000の…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-06-02">2026-06-02</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-16_伊藤啓二.md">伊藤啓二（angle reserve株式会社 創業者・CEO）</a><span class=c-desc>米国生まれの連続起業家。リクルート・gengo・Selanを経て、2024年にangleReserveを創業。カーボンクレジット・生物多様性クレ…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-16">2026-04-16</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-11_Vincent_van_Gogh_and_Theo.md">ヴィンセント・ファン・ゴッホ &amp; テオ</a><span class=c-desc>ゴッホの偉大さは、一人の天才の孤独な戦いではなく、兄弟という有機体の共同プロジェクトから生まれた。テオが経済的・精神的基盤を供給し、ヴィンセント…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-11">2026-04-11</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-10_patrick-collison.md">Patrick Collison</a><span class=c-desc>アイルランドの人口150人の村で育ち、インターネットなし・母親の自由放任的ホームスクーリングという「制約の贈り物」の中で、自律的知的好奇心という…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-10">2026-04-10</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-10_yokogawa-tsuyoshi.md">横川毅</a><span class=c-desc>「金融のエリートが全てを失い、孤独なデイトレーダーとして3年間画面と向き合い続けた末に、その経験ごと&quot;金融インフラ&quot;に昇華した」</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-10">2026-04-10</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-10_マキャベリ.md">マキャベリ</a><span class=c-desc>最も辛辣な権力論者は、最も無力だった人間だった。14年間フィレンツェ外交の最前線で権力の実態を観察し、拷問・追放で全てを失った瞬間に筆を執った。…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-10">2026-04-10</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-04_Lee_Kuan_Yew.md">Lee Kuan Yew</a><span class=c-desc>日本軍占領下の「恐怖と権力の解剖」が彼を作った。19歳の少年が「最強の帝国（英国）が一夜で崩れ、最悪の帝国（日本）が人を動かす」という現実を肉眼…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-04">2026-04-04</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-04_PayPal-Mafia.md">PayPal マフィア</a><span class=c-desc>1998年の小さな決済スタートアップが、シリコンバレー史上最大の「人材輸出装置」になった。彼らの偉大さの構造は「知性の密集 × 生死を共にした信…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-04">2026-04-04</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-04_Peter_Thiel.md">Peter Thiel</a><span class=c-desc>頻繁な移住で「同調圧力の外側」から世界を見る目を育てたThielは、ルネ・ジラールの模倣理論によって「競争そのものが罠である」という思想を確立し…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-04-04">2026-04-04</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-03-21_吉田松陰.md">吉田松陰（1830–1859）</a><span class=c-desc>29歳で処刑された「失敗だらけの過激派」が、なぜ明治維新の精神的父になれたのか。 その答えは死そのものが最大の教育行為だったという逆説にある。…</span></td>
+            <td class="c-kind">Diff Analysis</td>
+            <td><span class="tier">people</span></td>
+            <td class="c-date" data-sort="2026-03-21">2026-03-21</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-grid">
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title">people</span>
+      <span class="cat-count">20 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="2026-10-26_柳井正.html">
+        <div class="tile-top"><div class="tile-name">柳井正を微分する</div><div class="tile-meta"><span class="m-year">2026-10-26</span></div><div class="tile-desc">宇部の炭鉱町の紳士服店の息子で、成績は振るわず、ジャスコも9ヶ月で辞めた。そこから一代でユニクロを世界企業にした。燃料は「劣っているのが嫌だ」と…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-08-28_Sam_Altman.html">
+        <div class="tile-top"><div class="tile-name">Sam Altman</div><div class="tile-meta"><span class="m-year">2026-08-28</span></div><div class="tile-desc">サム・アルトマンの偉大さは「確信の非対称性」という構造から生まれた。他者が「まだ早い」「リスクが高い」と感じる領域に、根拠ある確信を持って賭け続…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-07-09_Elon_Musk.md">
+        <div class="tile-top"><div class="tile-name">Elon Musk</div><div class="tile-meta"><span class="m-year">2026-07-09</span> · Diff Analysis</div><div class="tile-desc">イーロン・マスクの偉大さは「自分の死への恐怖を人類の滅亡への恐怖に昇華した」構造にある。 幼少期の孤独・いじめ・父との確執が「現実逃避としての書…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-07-08_藤田晋.md">
+        <div class="tile-top"><div class="tile-name">藤田晋</div><div class="tile-meta"><span class="m-year">2026-07-08</span> · Diff Analysis</div><div class="tile-desc">「麻雀という一人遊びの極致」を10代で体得した男が、その勝負哲学を会社経営に転写した。凡人なら無駄に終わる雀荘での数万時間が、彼の中では「運・忍…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-19_Palmer_Luckey.md">
+        <div class="tile-top"><div class="tile-name">Palmer Luckey</div><div class="tile-meta"><span class="m-year">2026-06-19</span> · Diff Analysis</div><div class="tile-desc">VRヘッドセットを50台集めた少年が、「なぜ誰も本物を作らないのか」という怒りでOculusを創り、Facebookに売却後は「なぜシリコンバレ…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-14_paul_graham.md">
+        <div class="tile-top"><div class="tile-name">Paul Graham</div><div class="tile-meta"><span class="m-year">2026-06-14</span> · Diff Analysis</div><div class="tile-desc">Paul Graham の偉大さは「三つの異種知性の交差点」に立ち続けた点にある。ハッカー・画家・哲学者という相容れない知的世界を一人の人間に統…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-11_渋沢栄一.md">
+        <div class="tile-top"><div class="tile-name">渋沢栄一</div><div class="tile-meta"><span class="m-year">2026-06-11</span> · Diff Analysis</div><div class="tile-desc">農家の息子として商売の現場で育ち、尊王攘夷の志士から幕臣、官僚、実業家へと3度の大転換を遂げた男。偉大さの核心は「道徳と経済は矛盾しない」という…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-10_Alexander-Wang.md">
+        <div class="tile-top"><div class="tile-name">Alexander Wang</div><div class="tile-meta"><span class="m-year">2026-06-10</span> · Diff Analysis</div><div class="tile-desc">サンフランシスコ育ちの台湾系アメリカ人が、「高級なのに街に着ていける服」という矛盾を解いた。ファッションを聖域から降ろし、クラブと路地と地下鉄に…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-10_Alexandr-Wang-ScaleAI.md">
+        <div class="tile-top"><div class="tile-name">Alexandr Wang（Scale AI）</div><div class="tile-meta"><span class="m-year">2026-06-10</span> · Diff Analysis</div><div class="tile-desc">ロスアラモスの物理学者の息子が、「AIに必要なのはアルゴリズムではなくデータだ」という真実を19歳で見抜き、世界最年少の自力億万長者になった。偉…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-10_bill-gates.md">
+        <div class="tile-top"><div class="tile-name">ビル・ゲイツ</div><div class="tile-meta"><span class="m-year">2026-06-10</span> · Diff Analysis</div><div class="tile-desc">ゲイツの偉大さは「圧倒的な知性 × 異常な集中力 × 勝者総取り思考」の三角形で成り立つ。コンピュータという波に乗ったのではなく、その波を自分で…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-02_Christopher_Nolan.md">
+        <div class="tile-top"><div class="tile-name">クリストファー・ノーラン</div><div class="tile-meta"><span class="m-year">2026-06-02</span> · Diff Analysis</div><div class="tile-desc">「英文学を学びながら独学で映画を作る」という逆張りキャリアが、映画業界の常識を疑わないまま内側に入ってしまう呪縛から彼を解放した。£6,000の…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-16_伊藤啓二.md">
+        <div class="tile-top"><div class="tile-name">伊藤啓二（angle reserve株式会社 創業者・CEO）</div><div class="tile-meta"><span class="m-year">2026-04-16</span></div><div class="tile-desc">米国生まれの連続起業家。リクルート・gengo・Selanを経て、2024年にangleReserveを創業。カーボンクレジット・生物多様性クレ…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-11_Vincent_van_Gogh_and_Theo.md">
+        <div class="tile-top"><div class="tile-name">ヴィンセント・ファン・ゴッホ &amp; テオ</div><div class="tile-meta"><span class="m-year">2026-04-11</span> · Diff Analysis</div><div class="tile-desc">ゴッホの偉大さは、一人の天才の孤独な戦いではなく、兄弟という有機体の共同プロジェクトから生まれた。テオが経済的・精神的基盤を供給し、ヴィンセント…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-10_patrick-collison.md">
+        <div class="tile-top"><div class="tile-name">Patrick Collison</div><div class="tile-meta"><span class="m-year">2026-04-10</span> · Diff Analysis</div><div class="tile-desc">アイルランドの人口150人の村で育ち、インターネットなし・母親の自由放任的ホームスクーリングという「制約の贈り物」の中で、自律的知的好奇心という…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-10_yokogawa-tsuyoshi.md">
+        <div class="tile-top"><div class="tile-name">横川毅</div><div class="tile-meta"><span class="m-year">2026-04-10</span> · Diff Analysis</div><div class="tile-desc">「金融のエリートが全てを失い、孤独なデイトレーダーとして3年間画面と向き合い続けた末に、その経験ごと&quot;金融インフラ&quot;に昇華した」</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-10_マキャベリ.md">
+        <div class="tile-top"><div class="tile-name">マキャベリ</div><div class="tile-meta"><span class="m-year">2026-04-10</span></div><div class="tile-desc">最も辛辣な権力論者は、最も無力だった人間だった。14年間フィレンツェ外交の最前線で権力の実態を観察し、拷問・追放で全てを失った瞬間に筆を執った。…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-04_Lee_Kuan_Yew.md">
+        <div class="tile-top"><div class="tile-name">Lee Kuan Yew</div><div class="tile-meta"><span class="m-year">2026-04-04</span> · Diff Analysis</div><div class="tile-desc">日本軍占領下の「恐怖と権力の解剖」が彼を作った。19歳の少年が「最強の帝国（英国）が一夜で崩れ、最悪の帝国（日本）が人を動かす」という現実を肉眼…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-04_PayPal-Mafia.md">
+        <div class="tile-top"><div class="tile-name">PayPal マフィア</div><div class="tile-meta"><span class="m-year">2026-04-04</span> · Diff Analysis</div><div class="tile-desc">1998年の小さな決済スタートアップが、シリコンバレー史上最大の「人材輸出装置」になった。彼らの偉大さの構造は「知性の密集 × 生死を共にした信…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-04_Peter_Thiel.md">
+        <div class="tile-top"><div class="tile-name">Peter Thiel</div><div class="tile-meta"><span class="m-year">2026-04-04</span> · Diff Analysis</div><div class="tile-desc">頻繁な移住で「同調圧力の外側」から世界を見る目を育てたThielは、ルネ・ジラールの模倣理論によって「競争そのものが罠である」という思想を確立し…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-03-21_吉田松陰.md">
+        <div class="tile-top"><div class="tile-name">吉田松陰（1830–1859）</div><div class="tile-meta"><span class="m-year">2026-03-21</span> · Diff Analysis</div><div class="tile-desc">29歳で処刑された「失敗だらけの過激派」が、なぜ明治維新の精神的父になれたのか。 その答えは死そのものが最大の教育行為だったという逆説にある。…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  </section>
+
+</main>
+<footer class="stats-footer"><div class="footer-stats"><span class="stat">20 notes</span><span class="sep">·</span><span class="stat">people</span><span class="sep">·</span><span class="stat">2026.10</span></div><a class="footer-home" href="/research-notes/index.html">54111</a></footer>
+<script>
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
+  try{ history.replaceState(null,'','#'+name); }catch(e){}
+}
+(function(){ var h=location.hash.slice(1); if(h && document.getElementById('panel-'+h)) switchTab(decodeURIComponent(h)); })();
+
+let sortState = { col: 3, dir: -1 };  // 初期表示は日付の新しい順
+function sortTable(col, th){
+  const tbody = document.getElementById('coTable').tBodies[0];
+  const rows = Array.from(tbody.rows);
+  const type = th.dataset.type;
+  sortState.dir = (sortState.col === col) ? -sortState.dir : 1;
+  sortState.col = col;
+  rows.sort((a,b)=>{
+    if(type==='num'){
+      return (parseFloat(a.cells[col].dataset.sort||'0') - parseFloat(b.cells[col].dataset.sort||'0'))*sortState.dir;
+    }
+    const x = (a.cells[col].dataset.sort||a.cells[col].innerText).trim();
+    const y = (b.cells[col].dataset.sort||b.cells[col].innerText).trim();
+    return x.localeCompare(y,'ja')*sortState.dir;
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+  document.querySelectorAll('#coTable thead th').forEach(h=>{
+    h.classList.toggle('sorted', h===th);
+    h.querySelector('.arr').textContent = h===th ? (sortState.dir>0 ? '↑' : '↓') : '↕';
+  });
+}
+
+function filterTable(){
+  const q = document.getElementById('tblSearch').value.trim().toLowerCase();
+  document.querySelectorAll('#coTable tbody tr').forEach(r=>{
+    r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+/* ---- 読了トラッキング（localStorage・この端末に保存。全一覧ページ共通） ---- */
+(function(){
+  const KEY = 'rn_read_v1';
+  function load(){ try { return new Set(JSON.parse(localStorage.getItem(KEY)||'[]')); } catch(e){ return new Set(); } }
+  function save(set){ try { localStorage.setItem(KEY, JSON.stringify(Array.from(set))); } catch(e){} }
+  const read = load();
+  const rows = Array.from(document.querySelectorAll('#coTable tbody tr:not(.empty)'));
+  rows.forEach(tr=>{
+    const a = tr.querySelector('.c-name a');
+    const key = a ? new URL(a.getAttribute('href'), location.href).pathname : null;
+    const td = document.createElement('td');
+    td.className = 'c-read';
+    const isRead = key && read.has(key);
+    td.dataset.sort = isRead ? '1' : '0';
+    const ck = document.createElement('input');
+    ck.type = 'checkbox'; ck.className = 'readck'; ck.checked = !!isRead;
+    ck.setAttribute('aria-label','読了');
+    if(isRead) tr.classList.add('is-read');
+    ck.addEventListener('click', e=>e.stopPropagation());
+    ck.addEventListener('change', ()=>{
+      if(!key) return;
+      if(ck.checked){ read.add(key); tr.classList.add('is-read'); td.dataset.sort='1'; }
+      else { read.delete(key); tr.classList.remove('is-read'); td.dataset.sort='0'; }
+      save(read); updateCounter();
+    });
+    td.appendChild(ck);
+    tr.appendChild(td);
+  });
+  function updateCounter(){
+    const c = document.querySelectorAll('#coTable tbody tr.is-read').length;
+    const el = document.getElementById('readCounter');
+    if(el) el.textContent = c + ' / ' + rows.length + ' 読了';
+  }
+  updateCounter();
+})();
+</script>
 </body>
 </html>
