@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>松下幸之助</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+</style>
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-10-27</span>
+  </div>
+  <h1>松下幸之助</h1>
+  <div class="hero-sub">4歳で家が米相場に失敗して没落し、兄や姉は次々に病で亡くなった。小学校を4年で辞め、9歳で大阪へ丁稚奉公に出た。体は弱く、3日働いて4日休むような時期もあった。<strong>学歴がない・お金がない・体が弱い</strong>。この3つの「ない」が、<strong>「自分ひとりではできないから、人に任せる」</strong>という経営を生んだ。事業部制、衆知を集める全員経営、水道哲学。妻と義弟の3人で始めた町工場は、売上8兆円のグループになった。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">9歳</div><div class="lbl">大阪へ丁稚奉公に出た年齢（1904年・小学校4年で中退）</div></div>
+    <div class="kpi"><div class="val">1933年</div><div class="lbl">事業部制を導入（日本初とされる・38歳）</div></div>
+    <div class="kpi"><div class="val">8.05兆円</div><div class="lbl">パナソニックHD売上高（2026年3月期）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜青年期</a></li>
+    <li><a href="#s4">原体験エピソード</a></li>
+    <li><a href="#s5">事業の時系列変化</a></li>
+    <li><a href="#s6">経営の仕組み：任せる・貯める・集める</a></li>
+    <li><a href="#s7">偉大さの構造分析</a></li>
+    <li><a href="#s8">思想・原理原則</a></li>
+    <li><a href="#s9">光と影</a></li>
+    <li><a href="#s10">雑学・意外な側面</a></li>
+    <li><a href="#s11">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>「ない」から始めて、人に任せる仕組みを作った</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>松下幸之助の偉大さは、<strong>自分の弱さを前提にした経営の仕組み</strong>を作ったことにある。①家の没落・兄姉の死・9歳での奉公が、「一人では生きられない」という現実を早くに教えた。②学歴がないから人に聞き、体が弱いから人に任せた。その習慣が<b>1933年の事業部制</b>と「衆知を集めた全員経営」という制度になった。③1932年の「水道哲学」で、会社の目的を「儲け」から「物を水道の水のように安く行き渡らせて貧しさをなくすこと」に置き直し、社員の働く意味を一つにした。戦後は公職追放の危機を<b>約1万5,000人の社員の署名</b>で救われ、家電ブームで日本一の電機メーカーを作った。一方で、定価を守るための出荷停止、「マネシタ電器」と呼ばれた後追い戦略、死後の巨額赤字など、影も大きい。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生没</div><div class="v">1894年11月27日 – 1989年4月27日（94歳・肺炎）</div></div>
+    <div class="kv-item"><div class="k">出身</div><div class="v">和歌山県海草郡和佐村（現・和歌山市）。8人きょうだいの末っ子。父・政楠は地主</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">尋常小学校4年で中退。のちに関西商工学校の夜間部に通うが1914年に中退</div></div>
+    <div class="kv-item"><div class="k">創業</div><div class="v">1918年3月7日 松下電気器具製作所（大阪・大開町）→ 1935年 松下電器産業 → 2008年 パナソニック → 2022年 パナソニックHD</div></div>
+    <div class="kv-item"><div class="k">理念</div><div class="v">水道哲学（1932年・命知元年）／衆知を集めた全員経営／素直な心</div></div>
+    <div class="kv-item"><div class="k">主な設立</div><div class="v">PHP研究所（1946）・松下政経塾（1979）</div></div>
+  </div>
+  <div class="tag-row">
+    <span class="tag good">✓ Web確認済</span>
+    <span class="tag solid">◆ 社内伝承・語録として広まっている話（原典未確認）</span>
+    <span class="tag warn">△ 資料間で食い違いあり／未確認</span>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1894</td><td>和歌山県和佐村に、地主の家の8人きょうだいの末っ子として生まれる</td><td>—</td></tr>
+        <tr><td>4歳</td><td>1899頃</td><td>父・政楠が米相場に失敗。先祖代々の土地と家を手放し、和歌山市内へ移る。同じころ兄や姉が相次いで病気で亡くなる</td><td>★★★</td></tr>
+        <tr><td>9歳</td><td>1904</td><td>小学校4年で中退し、大阪・八幡筋の宮田火鉢店へ丁稚奉公。約3ヶ月後、船場の五代自転車商会へ移る</td><td>★★★</td></tr>
+        <tr><td>11歳</td><td>1906</td><td>父・政楠が病死</td><td>★</td></tr>
+        <tr><td>15歳</td><td>1910</td><td>大阪電灯（現・関西電力の前身の一つ）に入社。屋内配線の見習工から始める</td><td>★★★</td></tr>
+        <tr><td>18〜19歳</td><td>1913–14</td><td>関西商工学校の夜間部に入るが、翌年中退。1913年には母・とく枝も亡くなる</td><td>★</td></tr>
+        <tr><td>22歳</td><td>1917</td><td>検査員に昇進（24歳とする資料もある<span class="tag warn">△</span>）。改良ソケットを上司に認められず、退職して独立</td><td>★★</td></tr>
+        <tr><td>23歳</td><td>1918</td><td>3月7日、妻むめの（22歳）・義弟の井植歳男（15歳）と松下電気器具製作所を創業。アタッチメントプラグを改良</td><td>★★★</td></tr>
+        <tr><td>25歳</td><td>1920</td><td>2股ソケットを発売</td><td>★</td></tr>
+        <tr><td>28歳</td><td>1923</td><td>砲弾型電池式ランプ（自転車用）を発売。電池が30時間以上もつ</td><td>★★</td></tr>
+        <tr><td>32歳</td><td>1927</td><td>角型ランプで「ナショナル」ブランドを初めて使う</td><td>★</td></tr>
+        <tr><td>34歳</td><td>1929</td><td>世界恐慌で売上が半減。病床から「一人も解雇しない」と指示し、在庫を売り切る</td><td>★★</td></tr>
+        <tr><td>37歳</td><td>1932</td><td>5月5日、店員168名を集めて「命知元年」を宣言。水道哲学と250年計画を発表</td><td>★★★</td></tr>
+        <tr><td>38歳</td><td>1933</td><td>5月、事業部制を導入。製品分野ごとに3事業部を置く</td><td>★★★</td></tr>
+        <tr><td>40歳</td><td>1935</td><td>株式会社に改組し、松下電器産業となる。社長に就任</td><td>★</td></tr>
+        <tr><td>50〜52歳</td><td>1945–47</td><td>敗戦。GHQから財閥指定・公職追放など7つの制限を受ける。社員約1万5,000人の署名嘆願もあり、1947年に復帰</td><td>★★★</td></tr>
+        <tr><td>51歳</td><td>1946</td><td>PHP研究所を設立</td><td>★★</td></tr>
+        <tr><td>57歳</td><td>1952</td><td>オランダのフィリップスと提携し、松下電子工業を設立</td><td>★★</td></tr>
+        <tr><td>61歳</td><td>1956</td><td>「5カ年計画」を発表。年商220億円を800億円にする目標を約4年で達成</td><td>★★</td></tr>
+        <tr><td>66歳</td><td>1961</td><td>社長を娘婿の松下正治に譲り、会長に</td><td>★</td></tr>
+        <tr><td>69〜70歳</td><td>1964</td><td>熱海会談。会長のまま営業本部長代行に戻り、販売制度を作り直す。同年、ダイエーとの「30年戦争」が始まる</td><td>★★★</td></tr>
+        <tr><td>78歳</td><td>1973</td><td>相談役に退く</td><td>★</td></tr>
+        <tr><td>82歳</td><td>1977</td><td>取締役26人中25番目の山下俊彦を社長に抜擢（「山下跳び」）</td><td>★★</td></tr>
+        <tr><td>84歳</td><td>1979</td><td>私財を投じて松下政経塾を設立（翌1980年開塾）</td><td>★★</td></tr>
+        <tr><td>94歳</td><td>1989</td><td>4月27日、肺炎で死去</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜青年期：地主の末っ子が、9歳で丁稚になるまで</h2>
+  <h3>米相場の失敗と、きょうだいの死</h3>
+  <p>松下は和歌山の地主の家に、8人きょうだいの末っ子として生まれた。ところが4歳ごろ、父・政楠が<strong>米相場に手を出して失敗</strong>し、先祖から受け継いだ土地と家を手放すことになる。一家は和歌山市内に移った。</p>
+  <p>同じころ、兄や姉が相次いで病気で亡くなった。家はお金だけでなく、働き手も失った。父は1906年に、母は1913年に亡くなる。英語版の自伝紹介には「病弱、学校教育の不足、両親ときょうだいの早い死というハンディを負っていた」とある。<b>頼れる家族も、頼れる財産も、早くになくなった</b>のが松下の出発点だった。</p>
+  <h3>火鉢店から自転車店、そして電気の世界へ</h3>
+  <p>1904年、9歳の松下は小学校を4年で辞め、ひとりで大阪へ奉公に出た。最初は八幡筋の宮田火鉢店。約3ヶ月で店が閉じ、船場の<strong>五代自転車商会</strong>に移って5年余りを過ごす。自転車は当時の最先端の乗り物で、店には裕福な客が来た。丁稚の松下は、店番の合間に講談本を読み、客への接し方と商いの基本を体で覚えた。</p>
+  <p>1910年、15歳で大阪電灯に入る。大阪に路面電車が走り始めたのを見て、「これからは電気の時代だ」と考えたとされる<span class="tag solid">◆</span>。見習いの配線工から始めて、22歳で検査員に上がった。ところが検査員の仕事は1日の実働が2〜3時間ほどで物足りない。自分で考えた改良ソケットを上司に見せたが、採用されなかった。1917年、松下は会社を辞める。</p>
+  <div class="callout"><strong>この時期に育ったパラメータ：</strong>①家の没落が教えた<b>「お金はなくなる」という感覚</b>。②丁稚奉公で身についた<b>客の側に立つ商人の目</b>。③学校に行けなかったことで生まれた<b>「知らないから人に聞く」習慣</b>。④電灯会社で知った<b>電気という伸びる市場</b>。江副浩正の燃料が「飢えたくない」なら、松下の燃料は「自分には何もないから、人と一緒にやるしかない」だった。</div>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは5つ</h2>
+
+  <div class="episode">
+    <h3>🔑 家の没落と、きょうだいの病死（4歳〜 / 1899年頃〜）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>父が米相場で失敗し、地主の家は一気に貧しくなった。そのうえ兄や姉が次々に亡くなり、一家は財政的にも精神的にも苦しい時期を迎える。松下自身も体が弱かった。</p>
+    <p>→ <b>どう繋がったか：</b>「相場で一発当てる」ことの怖さと、「健康も家族もいつ失うかわからない」という感覚が残った。後の<b>ダム式経営（余裕を貯めておく）</b>や、無理な借金を嫌う慎重さの根はここにある（<a href="#s6">⑥</a>）。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 9歳の丁稚奉公と、五代自転車商会（9〜15歳 / 1904〜1910年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>ひとりで大阪へ出た9歳の少年は、火鉢店を経て自転車店で5年余り働いた。掃除、店番、使い走り。店番の合間には講談本を読んだ。商品を売るとは、客の困りごとを先回りして片づけることだと、ここで学んだ。</p>
+    <p>→ <b>どう繋がったか：</b>松下の経営は終生<b>「商売人」</b>の目線だった。技術者でも学者でもなく、売り場と客から考える。1923年のランプを小売店に配って点灯して見せた売り方も、1964年に販売店の社長たちと向き合った熱海会談も、この丁稚時代の延長にある。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 3日働いて4日休む体（20代 / 1910年代）</h3>
+    <p><span class="tag good">✓ Web確認済</span> <span class="tag warn">△ 病名は資料により「結核」「肺尖カタル」など</span></p>
+    <p>大阪電灯で頭角を現したころ、松下は肺を患った。非常に病弱で、<strong>3日働いたら4日休む</strong>ような時期が長く続いたと伝えられる。晩年の死因も、長年の肺の弱さと関係する肺炎だった。</p>
+    <p>→ <b>どう繋がったか：</b>自分が毎日現場に立てないなら、<b>任せるしかない</b>。体が弱かった松下は、自分一人の力の限界を早くから知り、他人に仕事を任せるやり方を身につけていった。これが1933年の事業部制という<b>制度</b>になる（<a href="#s6">⑥</a>）。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 売れないソケットと、扇風機の部品1,000枚（22〜23歳 / 1917〜18年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>独立して作った改良ソケットはまったく売れず、仲間は去り、資金は尽きかけた。そこへ扇風機用の碍盤（絶縁板）を1,000枚作る注文が入り、ようやく一息つく。1918年3月7日、松下は妻むめの、15歳の義弟・井植歳男と3人で松下電気器具製作所を立ち上げ、アタッチメントプラグ（通称アタチン）の改良に挑んだ。</p>
+    <p>→ <b>どう繋がったか：</b>最初の成功は「自分が作りたい物」ではなく<b>「客が欲しい物」</b>から来た。以後の松下の製品は、2股ソケットも自転車ランプも、<b>暮らしの不便を安く解決する物</b>に絞られていく。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 ある宗教団体の本部で見た「使命」（37歳 / 1932年）</h3>
+    <p><span class="tag good">✓ Web確認済</span> <span class="tag warn">△ 天理教と特定するのは一部の記事。公式資料は「ある宗教」とだけ書く</span></p>
+    <p>取引先に誘われて、ある宗教団体の本部を見学した。信者たちが報酬もなく、喜んで奉仕している姿に衝撃を受ける。宗教が人の心を救うなら、事業は<b>物の貧しさ</b>を救えるのではないか。その年の5月5日、松下は店員168名を大阪の中央電気倶楽部に集め、この年を<strong>「命知元年」</strong>とした。</p>
+    <p>→ <b>どう繋がったか：</b>ここで生まれたのが水道哲学と250年計画だ（<a href="#s8">⑧</a>）。会社の目的が「松下家の商売」から「社会の貧しさをなくす使命」に変わり、社員一人ひとりが自分の仕事の意味を持てるようになった。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Business History</div>
+  <h2>事業の時系列変化：配線器具の町工場から、8兆円のグループへ</h2>
+  <p>松下の事業は100年で大きく姿を変えたが、根っこは同じだ。<strong>暮らしの中の不便を見つけ、それを解決する物を、誰でも買える値段で大量に届ける</strong>。配線器具、ランプ、ラジオ、家電、電池、そして今の車載電池や住宅設備まで、この型の上に積み上がっている。</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1918–1931</span><span class="tl-title">第1期：配線器具とランプの町工場</span></div><div class="tl-body">1918年、大開町の借家で創業。改良アタッチメントプラグ、1920年の2股ソケットで、電灯しかない家庭でも電気製品を使えるようにした。1923年3月の<b>砲弾型電池式ランプ</b>は、当時2〜3時間しかもたなかった自転車ランプを<b>30時間以上</b>に延ばした。全国の小売店に無償で配って点灯して見せ、性能を示して販路を開いた。1925年に「ナショナル」を命名し、1927年の角型ランプから使い始める。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1929–1944</span><span class="tl-title">第2期：恐慌・使命・事業部制</span></div><div class="tl-body">1929年の恐慌で売上が半減し、倉庫に入りきらない在庫を抱えた。病床の松下は幹部の人員削減案を退け、生産を落としつつ社員総出で在庫を売り切った。1929年には事業をランプ・電池、配線器具、ラジオの3分野に整理。1932年に命知元年、<b>1933年5月に事業部制</b>。1935年に株式会社化して松下電器産業となり、事業部を分社化していく。戦争が進むと、軍の要請で軍需生産にも入った。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1945–1950</span><span class="tl-title">第3期：7つの制限と、社員に救われた社長</span></div><div class="tl-body">敗戦後、軍需生産と財閥指定を理由に、GHQから<b>財閥指定・公職追放・賠償指定工場・持株整理・制限会社指定・特別経理会社指定・集中排除法</b>の7つの制限を受けた。松下は「財閥ではない」と主張し続ける。公職追放ではA級に指定され、約1ヶ月後にB級へ改められた。賃上げで争っていた労働組合が逆に<b>社長留任運動</b>を起こし、約1万5,000人が一人ずつ署名捺印して嘆願した。1947年に経営に復帰。財閥指定は1949年末に解除された。売上は1950年に27億円。</div></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1952</span><span class="tl-title">第4期：フィリップス提携──「経営指導料」をもらう</span></div><div class="tl-body">戦争で遅れた技術を取り戻すため、オランダのフィリップスと組む。相手はイニシャル・ペイメント55万ドル、出資30%、<b>技術指導料6%</b>を求めた。松下は前の2つを呑んだが、6%は拒否。「松下にも販売力と経営力がある」と主張し、最終的に<b>技術指導料4.5%を払い、経営指導料3%を受け取る</b>形で1952年10月18日に調印した。12月に松下電子工業が発足。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1953–1963</span><span class="tl-title">第5期：三種の神器と家電ブーム</span></div><div class="tl-body">白黒テレビ・洗濯機・冷蔵庫は、後に「三種の神器」と呼ばれた。冷蔵庫の1号機は1953年。1956年1月の「5カ年計画」は、1955年の年商220億円を1960年に800億円にする目標で、約4年で達成した。単体売上は1960年11月期に1,054億円。1954年には日本ビクターに資本参加。全国の販売店網「ナショナルショップ」が、この量を消費者に届けた。1961年、松下は会長に退く。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1964–1989</span><span class="tl-title">第6期：熱海会談と、販売の作り直し</span></div><div class="tl-body">1964年の金融引き締めで、販売会社・代理店の赤字が急増した。単体売上も1963年11月期の2,201億円から1964年11月期の2,071億円に落ちる。松下は全国の販売会社・代理店の社長を熱海に集め、3日間の激論の末に「結局は松下電器が悪かった」と頭を下げた（熱海会談）。その後、会長のまま<b>営業本部長代行</b>に戻り、1965年2月から一地域一販社制・事業部直販制・新月販制度を実施。長期手形の慣行をやめ、月末の現金払いにそろえた。1973年に相談役、1977年には「山下跳び」で創業家以外から初の社長を選んだ。</div></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1989–2021</span><span class="tl-title">第7期：創業者の死後──ブランド統一と巨額赤字</span></div><div class="tl-body">2008年10月、社名を「パナソニック」に変え、創業者の名前が社名から消えた。国内の「ナショナル」ブランドも2009年度中に廃止。直後にリーマン・ショック、三洋電機の買収、プラズマテレビの不振が重なり、<b>2012年3月期に7,721億円、2013年3月期に7,542億円</b>の最終赤字を出した。2期続けて7,000億円を超える赤字は、日本の製造業でも過去最大級だった。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2022–2026</span><span class="tl-title">第8期：持株会社パナソニックHDと構造改革</span></div><div class="tl-body">2022年4月に持株会社制へ移り、パナソニックホールディングスとなる。創業期の「事業部制」を、事業会社ごとの自主責任経営という形で受け継いだ。2025年5月にはグローバルで1万人規模の人員削減を打ち出し、2026年2月には1万2,000人規模に広げた。2026年3月期は売上高<b>8兆487億円</b>（前期比4.8%減）、営業利益2,364億円（同44.6%減・利益率2.9%）。構造改革の費用が利益を押し下げた。一方、2027年3月期第1四半期は営業利益1,825億円（前年同期比110%増）と回復を見せている。</div></div></div>
+  </div>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>暮らしの不便</th><th>松下の答え</th><th>年</th></tr></thead>
+      <tbody>
+        <tr><td><b>電灯しかない家で電気製品を使いたい</b></td><td>アタッチメントプラグ・2股ソケット</td><td>1918・1920</td></tr>
+        <tr><td><b>夜道で自転車ランプがすぐ消える</b></td><td>砲弾型電池式ランプ（30時間以上）</td><td>1923</td></tr>
+        <tr><td><b>家事に時間がかかる</b></td><td>洗濯機・冷蔵庫・炊飯器などの家電</td><td>1950年代</td></tr>
+        <tr><td><b>情報や娯楽が家にない</b></td><td>ラジオ・白黒テレビ・カラーテレビ</td><td>1930年代〜1960年代</td></tr>
+        <tr><td><b>電気自動車の電池が足りない</b></td><td>車載用リチウムイオン電池（現在のエナジー事業）</td><td>2010年代〜</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-num">
+    <div class="n"><div class="v">27億</div><div class="l">売上（1950年）</div></div>
+    <div class="n"><div class="v">220億</div><div class="l">売上（1955年）</div></div>
+    <div class="n"><div class="v">1,054億</div><div class="l">単体売上（1960年11月期）</div></div>
+    <div class="n"><div class="v">8.05兆</div><div class="l">パナソニックHD売上（2026年3月期）</div></div>
+  </div>
+  <p class="note">売上の数字は出典（the-shashi・決算短信）により連結・単体の範囲が異なるため、単純比較はできない<span class="tag warn">△</span>。</p>
+  <div class="callout"><strong>読み解き：</strong>松下は発明家ではなかった。2股ソケットもランプも家電も、ほかに作っている会社はあった。勝ったのは、<b>①少し良くして安くする改良力</b>、<b>②全国の販売店網という届ける力</b>、<b>③事業部ごとに責任を持たせて同時にたくさんの製品を回す組織力</b>の3つを、同時に持っていたからだ。</div>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Management System</div>
+  <h2>経営の仕組み：任せる・貯める・集める・育てる</h2>
+  <p>松下の経営は「名言」で語られがちだが、本当に強かったのは<strong>弱さを補う仕組み</strong>を次々に制度にしたことだ。体が弱いから任せる、家が没落した記憶があるから貯める、学がないから人の知恵を集める、自分がいなくなっても続くように人を育てる。</p>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">1</div><div><div class="ind-title">事業部制（1933年）：任せる仕組み</div><div class="ind-desc">製品分野ごとに3つの事業部を置き、<b>開発から製造・販売・収支まで</b>を一貫して事業部長に任せた。日本で初めての事業部制とされる。一つひとつの事業部が独立した会社のように動くので、<b>社内で経営者が育つ</b>。病弱で毎日現場に立てない社長にとって、任せることは選択ではなく必要だった。1978年に山下俊彦が事業部を社長直結に戻し、2022年の持株会社制も同じ発想の延長にある。</div></div></div>
+    <div class="ind-item"><div class="ind-num">2</div><div><div class="ind-title">ダム式経営（1965年頃）：貯める仕組み</div><div class="ind-desc">川の水をダムに貯めて流量を調整するように、<b>資金・設備・人員・在庫・技術に余裕を持たせておく</b>経営。昭和40年不況のころに唱えた。講演で「どうすればダムが作れるのか」と聞かれた松下は、「まず、作ろうと思わなあかん」と答えたと伝えられ<span class="tag solid">◆</span>、聴衆にいた若き稲盛和夫が「ガツーンと感じた」と後に語っている。父の米相場の失敗を見た男の、<b>一発勝負をしない</b>経営哲学だった。</div></div></div>
+    <div class="ind-item"><div class="ind-num">3</div><div><div class="ind-title">衆知を集めた全員経営：集める仕組み</div><div class="ind-desc">「一人の知恵には限界がある」として、社員一人ひとりの知恵を集めることを説いた。学校に4年しか行かなかった松下は、わからないことは誰にでも聞いた。社員も部下も客も、全員が先生だった。この「衆知を集めた全員経営」は、今もパナソニックグループの経営基本方針として残っている。</div></div></div>
+    <div class="ind-item"><div class="ind-num">4</div><div><div class="ind-title">PHP研究所（1946年）：考える仕組み</div><div class="ind-desc">敗戦直後の混乱と貧困のなか、「繁栄によって平和と幸福を」（Peace and Happiness through Prosperity）を掲げて設立した。公職追放で経営から離れていた時期に、<b>人間とは何か、社会はなぜ貧しいのか</b>を考える場を作ったことになる。月刊誌『PHP』と出版事業は今も続く。</div></div></div>
+    <div class="ind-item"><div class="ind-num">5</div><div><div class="ind-title">松下政経塾（1979年）：育てる仕組み</div><div class="ind-desc">84歳で私財を投じ、21世紀の国の指導者を育てる塾を作った（設立1979年6月、開塾1980年4月）。会社の経営者を事業部で育てたように、<b>国の経営者</b>を育てようとした。多くの国会議員・首長を送り出している。2019年に松下幸之助記念財団と合併し、松下幸之助記念志財団となった。</div></div></div>
+  </div>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>弱さ（原体験）</th><th>補い方（考え方）</th><th>仕組み（制度）</th></tr></thead>
+      <tbody>
+        <tr><td><b>体が弱い</b></td><td>自分でやらず、人に任せる</td><td>事業部制・自主責任経営・持株会社制</td></tr>
+        <tr><td><b>学歴がない</b></td><td>知らないから、人に聞く</td><td>衆知を集めた全員経営・PHP研究所</td></tr>
+        <tr><td><b>家が没落した</b></td><td>一発勝負をせず、余裕を貯める</td><td>ダム式経営・無借金志向</td></tr>
+        <tr><td><b>家族を早く失った</b></td><td>社員を家族のように守る</td><td>恐慌時の雇用維持（1929）</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-box">
+    <div class="col-lbl">Diff Reading</div>
+    <p><strong>松下の仕組みは、すべて「自分がいなくても回る」ように作られている。</strong>病弱な人は、自分がいつ倒れるかわからない前提で考える。だから松下は、判断を事業部長に、知恵を全員に、余裕をダムに、未来を塾に分散させた。<b>「弱い一人」を前提にした組織は、強い一人を前提にした組織より長生きする</b>。その証拠に、松下が相談役に退いた後も、亡くなった後も、会社は形を変えて続いている。</p>
+  </div>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜ松下だけが？</h2>
+  <p>同じ時代の大阪には、電気器具の町工場がいくつもあった。東京には東芝・日立という財閥系の大企業もいた。それでも小学校中退の丁稚が日本一の電機メーカーを作れた理由は、次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 弱さの自覚</b></td><td>体・学歴・お金の「ない」を隠さず、他人の力を借りる前提で経営した</td><td>3日働いて4日休む体。事業部制（1933）</td></tr>
+        <tr><td><b>② 商人の目</b></td><td>技術ではなく、暮らしの不便と客の財布から製品を考えた</td><td>丁稚奉公。2股ソケット。小売店で点けて見せたランプ</td></tr>
+        <tr><td><b>③ 使命の言語化</b></td><td>「儲け」ではなく「貧しさをなくす」を会社の目的にし、社員の働く意味を一つにした</td><td>命知元年・水道哲学・250年計画（1932）</td></tr>
+        <tr><td><b>④ 届ける仕組み</b></td><td>全国の販売店網を作り、販売会社と「共存共栄」で結んだ</td><td>ナショナルショップ。熱海会談（1964）</td></tr>
+        <tr><td><b>⑤ 人を守る・育てる</b></td><td>不況でも人を切らず、社員を経営者として育てた。その信頼が危機で返ってきた</td><td>恐慌時の雇用維持（1929）。社員約1万5,000人の署名嘆願</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>①が出発点、②が製品を選ぶ目、③が組織のエンジン、④が市場への道、⑤が危機での保険。特に⑤は見落とされがちだが、1929年に人を守ったことが、1946年に人に守られることにつながった。<b>任せた人に救われる</b>という循環が、松下の経営の核心だ。</div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Philosophy</div>
+  <h2>思想・原理原則：水道の水のように、物を行き渡らせる</h2>
+  <h3>思想体系マップ</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>概念</th><th>一言定義</th><th>思想内での役割</th></tr></thead>
+      <tbody>
+        <tr><td>水道哲学</td><td>物資を水道の水のように安く、たっぷり供給して、この世から貧しさをなくす</td><td><b>基盤</b>：事業の使命</td></tr>
+        <tr><td>250年計画</td><td>25年を1節として10回繰り返し、250年かけて使命を果たす</td><td><b>基盤</b>：時間軸</td></tr>
+        <tr><td>素直な心</td><td>利害・感情・知識・先入観にとらわれず、物事をありのままに見る</td><td><b>方法論</b>：判断の前提</td></tr>
+        <tr><td>衆知を集める</td><td>一人の知恵には限界がある。全員の知恵を集めて経営する</td><td><b>組織論</b></td></tr>
+        <tr><td>自主責任経営</td><td>一人ひとりが自分の仕事の経営者として責任を持つ</td><td><b>組織論</b>：事業部制の根拠</td></tr>
+        <tr><td>共存共栄</td><td>メーカーも販売店も適正な利益を得てこそ、社会が繁栄する</td><td><b>結論</b>：取引先との関係</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>水道哲学は「安ければいい」という意味ではない。水道の水は、通りがかった人が飲んでもとがめられないほど安い。生活に必要な物をそこまで安く豊かにすれば、人は物の奪い合いをしなくてすむ。<b>貧しさを、物の量で解決する</b>という考えだ。同時に松下は、定価販売で販売店も適正な利益を得るべきだとも考えた。「安く届ける」と「みんなが儲かる」を両立させようとしたところに、この思想の難しさがある（<a href="#s9">⑨</a>）。</p>
+  <p>「素直な心」について、松下は自分がその「初段」になるまでに約30年かかったと語ったと伝えられる<span class="tag solid">◆</span>。</p>
+  <div class="quote">「好況よし、不況さらによし」<cite>— 松下幸之助（不況は経営の欠点がはっきり見える好機だという意味）</cite></div>
+  <div class="quote">「まず、ダムを作ろうと思わなあかん」<cite>— 松下幸之助（ダム式経営の講演で。稲盛和夫の回想による<span class="tag solid">◆</span>）</cite></div>
+  <h3>知的系譜</h3>
+  <pre style="font-size:12px;line-height:1.7;background:var(--surface);padding:16px;border-radius:10px;overflow-x:auto">大阪・船場の商家の作法（丁稚奉公）──┐
+宗教団体の本部で見た「無償の奉仕」──┤
+大阪電灯で見た「電気の時代」 ────┼──→ 松下幸之助 ──→ 稲盛和夫（ダム式経営に衝撃）
+フィリップスの経理・管理手法 ────┘                ──→ 山下俊彦ら社内の経営者
+                                                ──→ 松下政経塾出身の政治家
+                                                ──→ 日本型経営（終身雇用・共存共栄）</pre>
+  <p class="note">宗教団体を天理教とする説は一部の記事による<span class="tag warn">△</span>。フィリップスの手法は山下俊彦が松下電子工業で学んだとされるもので、松下本人への直接の影響は未確認。</p>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Light &amp; Shadow</div>
+  <h2>光と影：「経営の神様」の見えにくい部分</h2>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1940s</span><span class="tl-title">軍需生産と公職追放</span></div><div class="tl-body">戦時中は軍の要請で軍需生産を行い、それが戦後の財閥指定・公職追放の理由になった。社員の署名で救われたが、「平和と繁栄」を説く人物が戦争に協力した過去は、本人にとっても重いものだった。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1964–1994</span><span class="tl-title">ダイエーとの「30年戦争」</span></div><div class="tl-body">1964年、ダイエーが松下製品を許容範囲の15%を超える<b>20%引き</b>で売った。松下は出荷を止め、ダイエーは独占禁止法違反の疑いで訴える。1975年に松下が中内㓛を京都に招いて諭したが、中内は応じなかった。和解して取引が戻ったのは<b>1994年</b>、松下の死後だった。</div></div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">1977</span><span class="tl-title">後継と創業家</span></div><div class="tl-body">1961年に娘婿の松下正治を社長にしたが、1977年には取締役26人中25番目の山下俊彦を社長に抜擢した。創業家以外から初めてのトップである。人事は松下・正治・高橋荒太郎会長の3人で決めたとされる。孫の松下正幸もパナソニックの副会長を務めた。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2012–2013</span><span class="tl-title">2期で約1.5兆円の最終赤字</span></div><div class="tl-body">プラズマテレビへの巨額投資、三洋電機買収ののれんの減損、テレビ工場の閉鎖が重なり、2012年3月期に7,721億円、2013年3月期に7,542億円の赤字。「家電で日本中に物を行き渡らせる」という水道哲学の成功体験が、家電が安くあふれた時代に足かせになったとも読める。</div></div></div>
+  </div>
+  <div class="callout bad"><strong>① 水道哲学と定価販売の矛盾：</strong>「物を水道の水のように安く」と説きながら、店頭での値引きは許さなかった。松下にとって定価販売は販売店を守る「共存共栄」だったが、消費者の側から見れば値段を決める権利をメーカーが握っていたことになる。ダイヤモンド誌は、この30年戦争を「価格は店頭で決まるべき」という考えを捨てなかった<b>中内の勝利</b>と評している。</div>
+  <div class="callout warn"><strong>② 「マネシタ電器」：</strong>ソニーなどが新しい製品を出すと、少し遅れて参入し、販売網の力で追い抜く。後発で参入するたびに「マネシタ電器」と批判された。ただし統一ブランド「ナショナル」は、新製品のたびに既存製品の信用を使える仕組みでもあった。<b>先に作るより、良くして安く大量に届ける</b>のが松下の型であり、それは強みと弱みの両面だった。呼び名を広めたのが評論家の大宅壮一だとする説は、今回は確認できていない<span class="tag warn">△</span>。</div>
+  <div class="callout warn"><strong>③ 大きすぎた神格化：</strong>「経営の神様」と呼ばれ、語録が教科書のように扱われたことで、後継者は松下の言葉と比べられ続けた。2008年に社名から「松下」の名を外すまで、創業者の影は会社の意思決定にも残っていた。</div>
+  <div class="callout"><strong>④ それでも残ったもの：</strong>事業部制は多くの日本企業が取り入れ、ダム式経営は稲盛和夫の京セラ経営に引き継がれた。恐慌で人を切らなかった判断は、日本型雇用の原型の一つとして語られている。<b>会社の業績が落ちても、作った「仕組み」と「考え方」は外に広がって生き続けた</b>。</div>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">長者番付</div><div class="info-card-title">所得番付1位の常連</div><div class="info-card-text">1955年度以降、1960年度を除いて長者番付の首位を続けた。1954〜68年度で1位が9回、ほかの年もすべて2位だった。1964年度に大正製薬の上原正吉に首位を譲る。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">三洋電機</div><div class="info-card-title">義弟に工場を貸して、ライバルが生まれた</div><div class="info-card-text">創業メンバーの義弟・井植歳男は戦後に独立。1947年、松下が使っていない工場を貸して自転車ランプを作らせたのが、三洋電機の始まりになった。その三洋を2009年に子会社化したのは、皮肉にも松下側だった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">TIME</div><div class="info-card-title">米TIME誌の表紙に</div><div class="info-card-text">1962年2月23日号のTIMEの表紙を飾った。1964年9月にはLIFE誌の表紙にも登場している。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">交渉術</div><div class="info-card-title">経営指導料をもらった</div><div class="info-card-text">1952年のフィリップス提携で、技術指導料を払うだけでなく、松下側が経営指導料3%を受け取る契約にした。「技術はないが、経営力はある」という自負だった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ブランド</div><div class="info-card-title">「ナショナル」は国民のため</div><div class="info-card-text">1925年に「国民のための」という意味で命名。海外ではすでに同じ名前が使われていたため、輸出品には「パナソニック」を使った。2008年、社名もパナソニックに統一された。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">山下跳び</div><div class="info-card-title">25番目の取締役を社長に</div><div class="info-card-text">1977年、取締役26人中25番目の山下俊彦を社長にした。年功序列が当たり前の時代の大抜擢で、「山下跳び」と呼ばれた。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">著作</div><div class="info-card-title">『道をひらく』の著者</div><div class="info-card-text">1968年に出した随筆集『道をひらく』は、今も読まれ続けるロングセラーだ。生涯で40冊以上の本を出した。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">遺産</div><div class="info-card-title">史上最高額の遺産といわれる</div><div class="info-card-text">死去時の遺産は約2,500億円とされ、日本人の遺産として史上最高額といわれる<span class="tag warn">△ 東洋経済の記事による</span>。</div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：弱さを隠さず、仕組みに変えよ</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 自分の「ない」を書き出し、それを補う仕組みを1つ作る。</strong>松下は体が弱いから任せ、学がないから聞き、お金を失った記憶があるから貯めた。弱さそのものを直すのではなく、<b>弱さがあっても回る仕組み</b>を作った。<b>自分ができないことを3つ書き、そのうち1つを人に任せる・ルールにする・余裕を持たせるのどれかで補ってみる。</b>これは誰でも再現できる。</p>
+    <p><strong>② 仕事の目的を「儲け」より一段上の言葉にする。</strong>水道哲学は、社員168名に「自分たちは何のために働くのか」を一言で渡した。<b>自分のチームの仕事が、誰のどんな不便をなくしているのかを一文で書き、次の会議で共有する。</b>目的が一つになれば、任せても方向がぶれない。</p>
+    <div class="col-sub">One more</div>
+    <p>1929年に人を守った松下は、1946年に人に守られた。任せることは、相手を信じることだ。<strong>信じて任せた量が、危機のときに返ってくる量になる。</strong></p>
+  </div>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/K%C5%8Dnosuke_Matsushita" target="_blank" rel="noopener">Wikipedia — Kōnosuke Matsushita</a></li>
+    <li><a href="https://news.panasonic.com/jp/stories/17165" target="_blank" rel="noopener">Panasonic Newsroom — 松下幸之助「自転車」パナソニックの歴史ものがたり Episode 01</a></li>
+    <li><a href="https://news.panasonic.com/jp/stories/18404" target="_blank" rel="noopener">Panasonic Newsroom — 松下幸之助「自分を信じ、人を信じる」Episode 07</a></li>
+    <li><a href="https://news.panasonic.com/jp/stories/18521" target="_blank" rel="noopener">Panasonic Newsroom — 松下幸之助「使命があればこそ」Episode 08</a></li>
+    <li><a href="https://news.panasonic.com/jp/stories/18716" target="_blank" rel="noopener">Panasonic Newsroom — 松下幸之助「いかなる仕事も一つの経営」Episode 09</a></li>
+    <li><a href="https://news.panasonic.com/jp/stories/18954" target="_blank" rel="noopener">Panasonic Newsroom — 松下幸之助「最高の経営とは」Episode 10</a></li>
+    <li><a href="https://holdings.panasonic/jp/corporate/about/history/panasonic-museum/pdf/2014/PART1j-1.pdf" target="_blank" rel="noopener">パナソニックミュージアム — 松下幸之助歴史館 展示資料（命知元年）</a></li>
+    <li><a href="https://konosuke-matsushita.com/images/cn/pdf/biography.pdf" target="_blank" rel="noopener">松下幸之助.com（PHP研究所）— 年譜</a></li>
+    <li><a href="https://www.panasonic.com/jp/energy/company/history/energy01/cb_0001.html" target="_blank" rel="noopener">パナソニック エナジー — 砲弾型電池式ランプ（1923）</a></li>
+    <li><a href="https://the-shashi.com/tse/6752/founding/" target="_blank" rel="noopener">the-shashi — パナソニック 創業経緯</a></li>
+    <li><a href="https://the-shashi.com/tse/6752/decisions/division-system-1933/" target="_blank" rel="noopener">the-shashi — 事業部制の導入（1933）</a></li>
+    <li><a href="https://the-shashi.com/tse/6752/chapter-3/" target="_blank" rel="noopener">the-shashi — 戦後の制限・公職追放・売上推移</a></li>
+    <li><a href="https://the-shashi.com/tse/6752/decisions/philips-alliance-1952/" target="_blank" rel="noopener">the-shashi — フィリップス提携（1952）</a></li>
+    <li><a href="https://the-shashi.com/tse/6752/decisions/atami-conference-1964/" target="_blank" rel="noopener">the-shashi — 熱海会談（1964）</a></li>
+    <li><a href="https://the-shashi.com/tse/6752/decisions/yamashita-presidency-1977/" target="_blank" rel="noopener">the-shashi — 山下俊彦の社長就任（1977）</a></li>
+    <li><a href="https://toyokeizai.net/articles/-/561263" target="_blank" rel="noopener">東洋経済オンライン — 松下幸之助の生い立ち（兄姉の病没）</a></li>
+    <li><a href="https://toyokeizai.net/articles/-/561261" target="_blank" rel="noopener">東洋経済オンライン — 命知元年と宗教団体の見学</a></li>
+    <li><a href="https://toyokeizai.net/articles/-/561279?display=b" target="_blank" rel="noopener">東洋経済オンライン — 松下幸之助の年譜と遺産</a></li>
+    <li><a href="https://gendai.media/articles/-/1621" target="_blank" rel="noopener">現代ビジネス（福田和也）— 松下幸之助 vol.2</a></li>
+    <li><a href="https://gendai.media/articles/-/1850" target="_blank" rel="noopener">現代ビジネス（福田和也）— 松下幸之助 vol.8（GHQの7つの制限）</a></li>
+    <li><a href="https://president.jp/articles/-/115874" target="_blank" rel="noopener">PRESIDENT Online — 昭和恐慌で人を切らなかった松下幸之助</a></li>
+    <li><a href="https://diamond.jp/articles/-/211131" target="_blank" rel="noopener">ダイヤモンド・オンライン — 中内㓛と松下幸之助の30年戦争</a></li>
+    <li><a href="https://www.jri.co.jp/column/kokoro/detail/855/" target="_blank" rel="noopener">日本総研 — 松下幸之助と熱海会談・共存共栄</a></li>
+    <li><a href="https://www.moneypost.jp/1117695" target="_blank" rel="noopener">マネーポスト — 昭和の長者番付</a></li>
+    <li><a href="https://ypir.lib.yamaguchi-u.ac.jp/sc/1762/files/140724" target="_blank" rel="noopener">下関市立大学 論文 — ダム式経営</a></li>
+    <li><a href="https://www.shinchosha.co.jp/book/610317/" target="_blank" rel="noopener">新潮社 — 岩谷英昭『松下幸之助は生きている』（好況よし、不況さらによし）</a></li>
+    <li><a href="https://zaikei.co.jp/releases/3380123/" target="_blank" rel="noopener">財経新聞 — PHP研究所・松下政経塾の設立</a></li>
+    <li><a href="https://news.panasonic.com/jp/press/jn190401-1" target="_blank" rel="noopener">Panasonic — 松下幸之助記念志財団の発足（2019）</a></li>
+    <li><a href="https://www.j-cast.com/2008/02/01016217.html" target="_blank" rel="noopener">J-CAST — 松下「聖域なき改革」仕上げが社名変更だった（2008）</a></li>
+    <li><a href="https://news.panasonic.com/jp/press/data/2013/02/jn130201-7/jn130201-7-4.pdf" target="_blank" rel="noopener">Panasonic — 2013年3月期 決算資料</a></li>
+    <li><a href="https://www2.jpx.co.jp/disc/67520/081220260512524367_tse-acedifsm-67520-20260512367520-ixbrl.htm" target="_blank" rel="noopener">JPX — パナソニックHD 2026年3月期 決算短信</a></li>
+    <li><a href="https://www2.jpx.co.jp/disc/67520/081220260730502815_tse-qcedifsm-67520-20260730367520-ixbrl.htm" target="_blank" rel="noopener">JPX — パナソニックHD 2027年3月期 第1四半期決算短信</a></li>
+    <li><a href="https://monoist.itmedia.co.jp/mn/spv/2505/12/news082.html" target="_blank" rel="noopener">MONOist — パナソニックHDの1万人削減（2025年5月）</a></li>
+    <li><a href="https://kumanichi.com/articles/1953710" target="_blank" rel="noopener">熊本日日新聞（共同通信）— パナ人員減1万2千人規模（2026年2月）</a></li>
+  </ul>
+  <p style="font-size:11px;color:var(--muted);margin-top:14px">Kohki 54111 · Last updated: 2026-10-27 · 未確認事項：命知元年の宗教団体を天理教とする説、「マネシタ電器」の名付け親（大宅壮一説）、ダム式経営講演での「まず思わなあかん」の原文、「素直な心の初段に30年」の原典、遺産約2,500億円、検査員昇進の年齢（22歳/24歳）、病名（結核/肺尖カタル）、熱海会談の参加社数。2012年3月期の巨額赤字の内訳は報道ベース。</p>
+</div>
+
+</div>
+<!--
+  在ページ目次（page-toc）スニペット。h2/h3見出しをJSが自動収集してリンク化し、
+  スクロール位置に応じてactive表示する左固定サイドバー。手書きのTOC（.layout.toc-left
+  内の.toc）とは別物で、こちらは中身を書く必要がない。
+
+  対象: _Templates/web/style.css を使う長文コンテンツページ全般
+  （diff/coanal/deep-research/country-info/phi/hist 等のskill生成物）。
+  見出しが少ない（3個未満）ページでは自動的に非表示になる。
+
+  使い方:
+    新規ページ: style.css の内容を<style>に埋め込む際、この.page-toc CSSブロックも
+    一緒に含める（style.cssに既に入っている）。本体には下記の<aside>+<script>を
+    </body>直前に1回だけ貼るだけでよい（中身は空でOK、JSが自動で埋める）。
+
+    既存ページへの後付け注入:
+      python3 _Templates/web/inject_page_toc.py            # 未注入ファイルにのみ注入
+      python3 _Templates/web/inject_page_toc.py --force     # 既存注入分を剥がして全ファイル再注入
+
+  仕組み:
+    - body内の h2 / h3 を上から順に収集し、id が無ければ見出しテキストから自動採番する
+    - 見出しが3個未満のページはTOC自体を非表示にする（目次にする意味がないため）
+    - スクロール位置から現在地セクションを判定し、該当リンクに .active を付与する
+    - 1400px以下の画面幅では .page-toc { display:none } （style.css側で制御）
+-->
+
+<!-- ===== <head> 終了直前（style.cssに.page-tocが無い旧ページ向けの後付けCSS。
+     style.cssを最新の内容でそのまま埋め込んでいる新規ページには不要） ===== -->
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+
+<!-- ===== </body> 直前に挿入する部分 ===== -->
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>
