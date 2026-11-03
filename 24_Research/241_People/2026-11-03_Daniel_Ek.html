@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daniel Ek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-03</span>
+  </div>
+  <h1>Daniel Ek（ダニエル・エク）</h1>
+  <div class="hero-sub">ストックホルム南郊の団地の町ラグスヴェードで育ち、14歳でWeb制作を請け負い、23歳で「引退」して鬱になった。そこから<strong>「海賊版より良いものを作る」</strong>という一点に人生を賭け直し、Spotifyで音楽業界の稼ぎ方を書き換えた。偉大さの構造は、<strong>エンジニアの体感（遅延200ms）</strong>と<strong>交渉で業界を巻き込む粘り</strong>と<strong>エネルギー管理で20年走り切る持久力</strong>の掛け算だ。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">23歳</div><div class="lbl">Spotify共同創業（2006）</div></div>
+    <div class="kpi"><div class="val">約2年</div><div class="lbl">レーベル交渉で公開を待った期間</div></div>
+    <div class="kpi"><div class="val">約19年</div><div class="lbl">CEO在任（2006〜2025）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜学生時代</a></li>
+    <li><a href="#s4">原体験エピソード</a></li>
+    <li><a href="#s5">キャリア・業績の軌跡</a></li>
+    <li><a href="#s6">偉大さの構造分析</a></li>
+    <li><a href="#s7">思想・仕事術</a></li>
+    <li><a href="#s8">光と影：批判と矛盾</a></li>
+    <li><a href="#s9">雑学・意外な側面</a></li>
+    <li><a href="#s10">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>海賊版に「違法だ」と言わず、「もっと便利なもの」で勝った</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>エクの偉大さは「音楽をタダで聴く若者を責めず、<b>海賊版より速くて便利な合法サービス</b>を作れば、業界にもお金が戻る」という構造を見抜き、実際に通したことにある。技術の目利き（P2P・低遅延）、2年かけてメジャーレーベルを口説いた交渉力、そして23歳の燃え尽きで知った「お金では満たされない」という自覚。この3つが重なって、Spotifyは単なるアプリではなく<b>音楽産業の新しい収益の配管</b>になった。</div>
+  <div class="kv">
+    <div class="kv-row"><div class="k">生年月日</div><div class="v">1983年2月21日（スウェーデン・ストックホルム）</div></div>
+    <div class="kv-row"><div class="k">育った場所</div><div class="v">ラグスヴェード（Rågsved）。ストックホルム南部の労働者階級の郊外</div></div>
+    <div class="kv-row"><div class="k">学歴</div><div class="v">IT-Gymnasiet（スンドビュベリ）2002年卒 → 王立工科大学KTHを約8週間で中退</div></div>
+    <div class="kv-row"><div class="k">主な肩書き</div><div class="v">Spotify共同創業者・CEO（2006〜2025）→ 取締役会長（Executive Chairman、2026年1月〜の予定で発表）／Prima Materia共同創業者／Helsing会長／Neko Health共同創業者</div></div>
+    <div class="kv-row"><div class="k">共同創業者</div><div class="v">マーティン・ロレンツォン（TradeDoubler共同創業者。エクの会社Advertigoを買った側）</div></div>
+    <div class="kv-row"><div class="k">家族</div><div class="v">妻ソフィア・レヴァンダー（2016年結婚）、子ども2人 <span class="tag warn">△ 二次情報</span></div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1983</td><td>ストックホルムに生まれ、南郊ラグスヴェードで母・継父・弟と育つ。祖母はオペラ歌手、祖父はジャズピアニスト。家にはギターが掛かっていた</td><td>—</td></tr>
+        <tr><td>5歳頃</td><td>1988頃</td><td>ギターを弾き始め、同じ頃にコンピュータに触れる。音楽を聴きながらプログラムを書く子どもになる</td><td>★</td></tr>
+        <tr><td>13〜14歳</td><td>1996–97</td><td>自室でWebサイト制作を請け負い始める。やがて学校のパソコン室の同級生を雇って回すようになる</td><td>★★★</td></tr>
+        <tr><td>15歳前後</td><td>1998前後</td><td>スウェーデン政府の「Hem-PC改革」で家庭にPCとブロードバンドが一気に普及。同世代がネットで音楽を落とす文化の中で育つ</td><td>★★</td></tr>
+        <tr><td>19歳</td><td>2002</td><td>IT-Gymnasiet卒業。KTHに入るが約8週間で中退し、仕事に専念</td><td>★</td></tr>
+        <tr><td>19〜22歳</td><td>2002–05</td><td>オークションサイトTradera、ゲーム会社Stardoll（CTO）などで働きつつ、ネット広告会社Advertigoを創業</td><td>★★</td></tr>
+        <tr><td>23歳</td><td>2006</td><td>AdvertigoをTradeDoublerに売却（約1,000万クローナ）。「引退」してフェラーリを買い、夜遊びの末に深い鬱に。車を売り、森の小屋でギターと瞑想の日々</td><td>★★★</td></tr>
+        <tr><td>23歳</td><td>2006</td><td>μTorrentのCEOを短期間務める。同年、マーティン・ロレンツォンとSpotifyを創業。5月にはPirate Bayが警察に強制捜査される</td><td>★★★</td></tr>
+        <tr><td>25歳</td><td>2008</td><td>メジャーレーベルとの約2年の交渉の末、10月に欧州で招待制サービスを公開</td><td>★★★</td></tr>
+        <tr><td>28歳</td><td>2011</td><td>ショーン・パーカーの後押しとFacebook連携を得て、米国でサービス開始</td><td>★★</td></tr>
+        <tr><td>31歳</td><td>2014</td><td>テイラー・スウィフトが全楽曲を引き上げる。アーティスト報酬の議論が噴き出す（2017年に復帰）</td><td>★</td></tr>
+        <tr><td>32歳</td><td>2015</td><td>パーソナライズされたプレイリスト「Discover Weekly」を開始。「音楽を探す」から「音楽が届く」へ</td><td>★★</td></tr>
+        <tr><td>35歳</td><td>2018</td><td>4月、新株を出さない「ダイレクト・リスティング」でNYSEに上場</td><td>★★</td></tr>
+        <tr><td>36歳</td><td>2019</td><td>Appleの「App Store税」を欧州委員会に申し立て。同年からGimlet・Anchorなどを買収し、ポッドキャストへ大きく賭ける</td><td>★★</td></tr>
+        <tr><td>37〜38歳</td><td>2020–21</td><td>ジョー・ローガンと独占契約。投資会社Prima Materiaを設立し、欧州の「ムーンショット」に約10億ユーロを投じると表明。アーセナル買収を提案するが拒否される</td><td>★★</td></tr>
+        <tr><td>40歳</td><td>2023</td><td>12月、全社員の約17％（約1,500人）を削減。成長から利益への転換</td><td>★★</td></tr>
+        <tr><td>41歳</td><td>2024</td><td>創業以来初めて通年の営業黒字を達成。同年3月、EUがAppleに約18億ユーロの制裁金（Spotifyの申し立てが発端）</td><td>★★</td></tr>
+        <tr><td>42歳</td><td>2025</td><td>Prima Materiaが防衛AIのHelsingに約6億ユーロを主導出資し、アーティストのボイコットを招く。9月、CEO退任と会長就任を発表</td><td>★★</td></tr>
+        <tr><td>43歳</td><td>2026</td><td>1月からグスタフ・ソーデルストレムとアレックス・ノーストレムの共同CEO体制。エクは会長として資本配分と長期戦略を担う（予定どおりなら）</td><td>★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜学生時代：郊外の団地で、音楽とコードを同時に覚えた</h2>
+  <p>ラグスヴェードはストックホルム中心部から地下鉄で20分ほどの、移民と労働者の多い郊外だ。本人は2012年のラジオで<strong>「うちにはあまりお金がなかった」</strong>と語っている。一方で家には音楽があった。祖母はオペラ歌手、祖父はジャズピアニストで、壁のギターを4〜5歳で弾き始めた。</p>
+  <p>コンピュータに触れたのもほぼ同時期だ。音楽を聴きながらコードを書く子どもで、10代前半には自室からWebサイトを作って売るようになった。ここで育ったパラメータは3つある。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>パラメータ</th><th>どこで育ったか</th><th>後にどう効いたか</th></tr></thead>
+      <tbody>
+        <tr><td><b>音楽への愛着</b></td><td>音楽一家とギター</td><td>「音楽家にお金が戻る仕組み」をレーベルに本気で語れた。ただの配信技術屋では口説けなかった</td></tr>
+        <tr><td><b>エンジニアの体感</b></td><td>幼少期からのプログラミング</td><td>「再生ボタンを押して音が出るまでの遅延」を製品の核心と見抜けた</td></tr>
+        <tr><td><b>商売の早熟さ</b></td><td>10代のWeb制作業</td><td>人を雇い、値付けし、顧客と交渉する経験を、大学に行く年齢までに積んでいた</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>学歴は、IT専門の高校IT-Gymnasietを2002年に卒業し、王立工科大学KTHで工学を学び始めたが<strong>約8週間で中退</strong>した。授業の理論より、すでに手を動かして稼いでいる仕事の方が速く学べた。中退は挫折ではなく、優先順位の結果だった。</p>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは5つ</h2>
+
+  <div class="episode">
+    <h3>🔑 14歳のWeb制作屋、同級生を雇う（13〜18歳 / 1996〜2001年頃）</h3>
+    <p><span class="tag good">✓ 自室で起業はWeb確認済</span> <span class="tag warn">△ 金額・人数は諸説</span></p>
+    <p>ドットコム・バブルの頃、企業はとにかくWebサイトを欲しがっていた。エクは自室で1件100ドル程度から請け負い始め、需要に合わせて値を上げた。手が回らなくなると、学校のパソコン室で腕の立つ同級生に仕事を振り、報酬はゲームなどで払ったという話が残っている。高校卒業の頃には、月に数万ドルを稼いでいたとも言われる。</p>
+    <p>→ <b>どう繋がったか：</b>「作る人」から「作る人を束ねる人」への移行を、10代で一度経験している。Spotifyの初期、優秀なスウェーデン人エンジニアを集めてP2P配信を組み上げた動きは、この延長線上にある。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 Pirate Bay世代として育つ（10代 / 1998〜2006年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>スウェーデンは国策で家庭にPCとブロードバンドを広めた結果、世界でも早くネット普及が進んだ国だった。その裏で、Pirate Bayに代表される違法ダウンロードの拠点にもなった。エク自身もその文化の中にいた。彼が見たのは「みんな音楽にはお金を払いたくない」ではなく、<strong>「違法な方が速くて便利だから使っている」</strong>という現実だった。</p>
+    <p>→ <b>どう繋がったか：</b>2010年に英紙で語った<strong>「海賊行為は法律ではなくせない」</strong>、2012年の<strong>「海賊版より良いプロダクトを作ると決めた」</strong>はここから来ている。取り締まりではなく体験で勝つ、というSpotifyの設計思想の起点だ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 Googleに断られ、「なら自分で作る」（10代後半 / 時期は諸説）</h3>
+    <p><span class="tag warn">△ 本人談として広く流布。一次資料は未確認</span></p>
+    <p>10代のエクはGoogleに応募したが、学位がないことを理由に断られた、と語られることが多い。そこで「じゃあ自分で検索エンジンを作ろう」と考え、手を動かした（結果的にはうまくいかなかった）。</p>
+    <p>→ <b>どう繋がったか：</b>真偽の細部はともかく、エクの物語では「門前払いされた側から作り直す」構図が繰り返し現れる。レーベルに「無料」と言った瞬間に断られても、引かずに2年かけて条件を組み替えたのも同じ型だ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 23歳で引退し、フェラーリと鬱（23歳 / 2006年）</h3>
+    <p><span class="tag good">✓ 鬱は本人がポッドキャストで言及</span> <span class="tag warn">△ 小屋の場所・売却額は諸説</span></p>
+    <p>ネット広告のAdvertigoをTradeDoublerに売ってまとまったお金を得たエクは、「もう働かなくていい」と引退を決めた。赤いフェラーリを買い、ストックホルムのクラブで遊んだ。だが周りに集まる人は自分ではなくお金を見ていると感じ、<strong>「かなり深い鬱を経験した」</strong>と後に語っている。</p>
+    <p>彼はフェラーリを売り、ストックホルム郊外の小さな木の小屋にこもった。厳しい冬の間、ギターを弾き、瞑想し、自分が本当にやりたいことを考えた。答えは「音楽」と「テクノロジー」をつなぐことだった。</p>
+    <p>→ <b>どう繋がったか：</b>お金のために働く段階を、23歳で終わらせた。以後のエクは、売却して抜けるより<b>20年かけて一つの会社を育てる</b>方を選び続ける。「持続する幸せは、インパクトを出した結果として後からついてくる」という後の言葉は、この冬の答えだ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 Advertigoの買い手が、共同創業者になった（23歳 / 2006年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>Advertigoを買ったTradeDoublerの共同創業者が、マーティン・ロレンツォンだった。TradeDoublerの上場で資金を得ていたロレンツォンも、次に何をするかを探していた。2人はロレンツォンのアパートで何ヶ月も語り合い、2006年にSpotifyを立ち上げる。初期資金はロレンツォンが出した。</p>
+    <p>→ <b>どう繋がったか：</b>エクは技術とプロダクト、ロレンツォンは資金と経営経験。<b>売却という「出口」が、次の「入口」の人脈になった</b>。μTorrent（BitTorrentクライアント）のCEOを短期間務めた経験も、P2Pで大量の音楽を速く届ける技術の目利きにつながっている。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Career</div>
+  <h2>キャリア・業績の軌跡：アプリではなく、音楽産業の配管を作った</h2>
+
+  <h3>第1期（2006〜2008）：遅延200msと、2年の交渉</h3>
+  <p>エクがこだわったのは「再生ボタンを押した瞬間に音が鳴る」ことだった。ダウンロードを待つ海賊版に勝つには、体感でそれより速くなければ意味がない。初期のSpotifyは、ユーザー同士のPCで音楽データを分け合うP2P方式を使い、<strong>体感で待ち時間がない再生</strong>を実現した。</p>
+  <p>技術は2006年中にほぼできていた。足りなかったのは権利だ。レーベルに「無料で、広告付きで聴かせたい」と持ちかけると、「無料」という言葉の時点で話が止まった。エクたちは約2年かけて口説き、<strong>メジャーレーベルに株式と前払い金を渡す</strong>形で許諾を取り付けた。2008年10月、欧州で招待制のサービスが始まる。</p>
+  <div class="callout"><strong>ここがポイント：</strong>レーベルを「敵」ではなく「株主」にした。海賊版で売上が落ち続けていた業界にとって、Spotifyは「自分たちも儲かる側に立てる」初めての選択肢だった。</div>
+
+  <h3>第2期（2009〜2014）：米国上陸と、フリーミアムの完成</h3>
+  <p>米国のレーベルはさらに手強かった。エクはNapster共同創業者でFacebookの初代社長だったショーン・パーカーにメールを送り、協力を取り付ける。2011年、Facebookとの連携を武器に米国でサービスを開始した。無料版で裾野を広げ、広告を消したい人・オフラインで聴きたい人を有料に移す<strong>フリーミアム</strong>の型が、ここで固まった。</p>
+  <p>2014年にはテイラー・スウィフトが「音楽は無料であるべきではない」と全楽曲を引き上げる。アーティストへの支払いの少なさは、以後ずっとエクについて回る論点になる（2017年に復帰）。</p>
+
+  <h3>第3期（2015〜2018）：「探す」から「届く」へ、そして上場</h3>
+  <p>2015年の「Discover Weekly」は、毎週月曜に一人ひとり違う30曲を届ける。聴かれ方のデータが、そのまま製品の価値になった。2018年4月にはNYSEに上場したが、新株を発行しない<strong>ダイレクト・リスティング</strong>を選んだ。投資銀行に値付けを任せず、市場で直接価格を決める異例のやり方だ。</p>
+
+  <h3>第4期（2019〜2022）：Appleとの戦いと、ポッドキャストへの大賭け</h3>
+  <p>2019年、エクは「Time to Play Fair」と題して、AppleのApp Storeが課す手数料（いわゆるApple税）を欧州委員会に申し立てた。この件は2024年3月、EUがAppleに約18億ユーロの制裁金を科す決定につながる。</p>
+  <p>同じ2019年からはGimlet・Anchorなどを次々に買収し、2020年にはジョー・ローガンと独占契約を結んだ。音楽は利益の大半をレーベルに払う「原価の重い」事業だが、ポッドキャストは自社で持てる。<strong>原価構造を変えるための賭け</strong>だった。ただ、2022年にはローガンの番組のコロナ関連の発言に抗議して、ニール・ヤングらが楽曲を引き上げる騒動も起きた。</p>
+
+  <h3>第5期（2023〜2025）：黒字化と、会長への移行</h3>
+  <p>2023年、3度にわたる人員削減の最後として、12月に全社員の約17％を削った。エク自身が「想定以上に日々の業務に影響した」と認めた痛みを伴う転換だった。翌2024年、Spotifyは初めて通年の営業黒字を出す。2025年9月、エクはCEOを退き、2026年1月から取締役会長として資本配分と長期の方向付けを担うと発表した。</p>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜエクだけが？</h2>
+  <p>2000年代半ば、音楽ストリーミングを考えた人はたくさんいた。Napster、Rhapsody、Deezer、Pandora。それでもエクだけが世界標準を取れた理由は、次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 敵の再定義</b></td><td>競合を他社ではなく「海賊版」と置いた。勝負の基準が「違法ダウンロードより便利か」になり、製品の優先順位がぶれなかった</td><td>「海賊版より良いものを作る」。Pirate Bay世代としての実感</td></tr>
+        <tr><td><b>② エンジニアの体感</b></td><td>速さは機能ではなく体験そのものだと、肌で分かっていた</td><td>P2Pによる即時再生。μTorrentでの経験</td></tr>
+        <tr><td><b>③ 利害を組み替える交渉力</b></td><td>反対する相手を、株主・パートナーにして味方に変える</td><td>レーベルへの株式と前払い金。ショーン・パーカーとFacebook連携</td></tr>
+        <tr><td><b>④ 一度燃え尽きた人の持久力</b></td><td>23歳で「お金では満たされない」と知ったので、売却で抜けずに20年走れた</td><td>フェラーリと鬱、森の小屋。上場後もCEOを続け、会長として残る</td></tr>
+        <tr><td><b>⑤ 生まれた場所の追い風</b></td><td>国策でネット普及が早く、海賊版が社会問題化していたスウェーデンは、実験場として最適だった</td><td>Hem-PC改革。2006年のPirate Bay強制捜査</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>①が「何と戦うか」を決め、②が「どう勝つか」を作り、③が「勝てる土俵」を用意し、④が「勝ち続ける時間」を生み、⑤が「最初の一歩」を軽くした。とくに①と③の組み合わせは珍しい。<b>海賊版という共通の敵を立てたことで、本来は対立するはずのレーベルとユーザーを同じ側に並べられた</b>。</div>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Philosophy</div>
+  <h2>思想・仕事術：時間ではなく、エネルギーを管理する</h2>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>考え方</th><th>中身</th><th>役割</th></tr></thead>
+      <tbody>
+        <tr><td>エネルギー管理</td><td>時間を詰め込むより、何がエネルギーをくれて何が奪うかを知って配分する</td><td><b>基盤</b>：働き方の原則</td></tr>
+        <tr><td>空白のある予定表</td><td>会議は1日3〜4件まで。予定をあえて空け、朝は散歩しながら考える。始業が11時になる日もある</td><td><b>方法論</b>：考える時間の確保</td></tr>
+        <tr><td>容赦ない優先順位</td><td>友人の誘いも「誘ってほしいけど、たぶん行かない」と断る。何かに集中しているから</td><td><b>方法論</b>：やらないことを決める</td></tr>
+        <tr><td>改善の速さ ＞ 改善の質</td><td>一回の完成度より、回す速さで勝つ。だから官僚的な手続きを嫌う</td><td><b>組織論</b></td></tr>
+        <tr><td>北欧型リーダーシップ</td><td>「自分はSpotifyで一番権力のない人間かもしれない」。現場に任せ、方向と資本配分に集中する</td><td><b>組織論</b>：会長への移行にもつながる</td></tr>
+        <tr><td>幸せは遅行指標</td><td>持続する幸せは、インパクトを出した結果として後からついてくる</td><td><b>人生観</b>：23歳の鬱からの答え</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><span class="tag warn">△ 発言の多くはポッドキャスト（Tim Ferriss、David Senra、Steven Bartlett）や記事の要約経由。引用するときは原典の確認を推奨</span></p>
+  <div class="callout"><strong>読み解き：</strong>エクの仕事術は、23歳で燃え尽きた人の再発防止策として読むとつながる。予定を詰めない、誘いを断る、エネルギーを測る。どれも「長く走るための設計」だ。会長への移行も、日々の運営を共同CEOに渡し、自分は5年・10年先を考える側に回る、という同じ設計の延長にある。</div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Light &amp; Shadow</div>
+  <h2>光と影：批判と内部矛盾</h2>
+  <h3>アーティストへの支払い</h3>
+  <p>1再生あたりの支払いは1円にも満たず、テイラー・スウィフトの引き上げ（2014年）以来、「ストリーミングは音楽家を貧しくした」という批判は消えていない。2020年にエクが「3〜4年に一度アルバムを出すだけで十分だと思ってはいけない」と語ったときは、大きな反発を招いた。2024年からは年間1,000再生未満の曲には支払わないルールも導入している。</p>
+  <p>一方でSpotifyは、毎年数十億ドル規模を権利者に払っていると主張する。海賊版で売上が落ち続けていた業界を、再び成長に戻したのも事実だ。<strong>「業界全体は救ったが、個々の音楽家の取り分は薄い」</strong>。ここがエクの最大の矛盾だ。</p>
+
+  <h3>ジョー・ローガンと「プラットフォームの責任」</h3>
+  <p>独占契約は利用者を増やしたが、2022年にはコロナ関連の発言を理由にニール・ヤングやジョニ・ミッチェルが楽曲を引き上げた。エクは番組を削除せず、注意書きを付ける対応にとどめた。「表現の場」と「出版社」のどちらとして振る舞うか、という問いに、はっきり答え切れていない。</p>
+
+  <h3>Helsingと防衛AI</h3>
+  <p>エクの投資会社Prima Materiaは、ドイツの防衛AI企業Helsingに初期から出資し、2025年6月には約6億ユーロの資金調達を主導した。エク自身もHelsingの会長を務める。これに抗議して、Massive Attack、King Gizzard &amp; The Lizard Wizard、Deerhoof、Xiu Xiuなどが楽曲をSpotifyから引き上げた。Spotify側は「SpotifyとHelsingはまったく別の会社」と説明している。<span class="tag warn">△ 一部の報道はイスラエル関連のボイコットと混同しており、Helsingの兵器がイスラエルで使われたという主張は根拠が確認されていない</span></p>
+  <p>エクの立場は「ロシアの脅威に直面する欧州は、自前の防衛技術を持つべきだ」というものだ。音楽という平和の象徴で稼いだお金を兵器に投じる、という構図は、支持と反発をはっきり分けている。</p>
+
+  <h3>Appleとの戦いの二面性</h3>
+  <p>App Storeの手数料に対する申し立ては、多くの開発者から「巨大プラットフォームに挑んだ」と評価された。一方で、Spotify自身も音楽家にとっては巨大プラットフォームだ。「門番の取り分」を批判する立場と、自らが門番である立場が同居している。</p>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">社名</div><div class="info-card-title">「Spotify」は聞き間違いから</div><div class="info-card-text">ロレンツォンが叫んだ別の名前を、エクが「Spotify」と聞き間違えた。気に入って調べるとどこにも使われていなかったので採用し、後から「spot＋identify」の意味を付けたとされる。<span class="tag warn">△ 本人談</span></div></div>
+    <div class="info-card"><div class="info-card-eyebrow">サッカー</div><div class="info-card-title">8歳からのアーセナル・ファン</div><div class="info-card-text">2021年、欧州スーパーリーグ騒動の後に買収を提案。アンリ、ベルカンプ、ヴィエラが助言役に名を連ねたが、オーナーのクロエンケ家に拒否された。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ヘルスケア</div><div class="info-card-title">全身スキャンのNeko Health</div><div class="info-card-text">2018年にヤルマル・ニルソンネと共同創業。数分で全身の皮膚や血管などを測る予防医療サービスを、ストックホルムとロンドンで展開している。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">投資会社</div><div class="info-card-title">「Prima Materia」は錬金術の言葉</div><div class="info-card-text">すべての物質の元になる「第一質料」の意味。Spotifyの初期投資家シャキール・カーンと設立し、欧州の「ムーンショット」に約10億ユーロを投じると表明した。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">結婚式</div><div class="info-card-title">コモ湖でブルーノ・マーズが歌った</div><div class="info-card-text">2016年、イタリア・コモ湖でソフィア・レヴァンダーと結婚。司会はクリス・ロック、余興はブルーノ・マーズだったと報じられた。<span class="tag warn">△ 二次情報</span></div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ブログ</div><div class="info-card-title">「The Observer Effect」に登場</div><div class="info-card-text">2021年、経営者インタビューサイトで時間の使い方と意思決定について詳しく語った。中国語圏でも翻訳され、仕事術の定番として読まれている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">上場</div><div class="info-card-title">鐘を鳴らさなかった上場</div><div class="info-card-text">2018年のダイレクト・リスティングでは、NYSE恒例の鐘を鳴らすセレモニーを行わなかった。銀行主導の儀式に乗らない、というSpotifyらしい選択だった。<span class="tag warn">△ 二次情報</span></div></div>
+  </div>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Message</div>
+  <h2>現代へのメッセージ：敵を正しく選び、長く走れる体で戦え</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 戦う相手を、競合ではなく「ユーザーが今使っている代替手段」に置く。</strong>エクの敵は他の配信サービスではなく海賊版だった。「お客さんが今やっている一番ラクな方法より、ラクか？」を製品の物差しにすると、優先順位がぶれない。<b>自分のサービスの本当の競合は何か（Excel？手作業？我慢？）を一行で書いてみる</b>。</p>
+    <p><strong>② 反対する人を、儲かる側に入れてしまう。</strong>レーベルは株主になった瞬間に敵から味方に変わった。説得で動かない相手には、利害の構造ごと組み替えて提案する。<b>次の交渉で「相手が得をする形」を3通り用意してから臨む</b>。</p>
+    <p><strong>③ 時間ではなく、エネルギーを管理する。</strong>23歳で燃え尽きた人が20年走り切れたのは、予定を詰めず、断ることを恐れなかったからだ。<b>今週の予定のうち、エネルギーを奪うだけの会議を1つ断る</b>。それが長期戦の第一歩になる。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/Daniel_Ek">Wikipedia — Daniel Ek</a></li>
+    <li><a href="https://fasterthannormal.co/people/daniel-ek">Faster Than Normal — The Cabin in the Woods</a></li>
+    <li><a href="https://fasterthannormal.co/businesses/spotify">Faster Than Normal — The Pirate's Conversion</a></li>
+    <li><a href="https://www.businessinsider.in/How-Women-Booze-And-Money-Made-Spotifys-CEO-Completely-Depressed/articleshow/45265228.cms">Business Insider — How Women, Booze, And Money Made Spotify's CEO 'Completely Depressed'</a></li>
+    <li><a href="https://abcnews.go.com/blogs/technology/2012/12/spotify-founder-daniel-ek-wanted-to-create-something-better-than-piracy">ABC News — Ek Wanted to Create Something 'Better than Piracy'</a></li>
+    <li><a href="https://torrentfreak.com/spotify-was-designed-from-the-ground-up-to-combat-piracy-131204/">TorrentFreak — Spotify Was Designed to Combat Piracy</a></li>
+    <li><a href="https://faroutmagazine.co.uk/the-playlist-explained-spotify-secure-music-rights/">Far Out — How did Spotify acquire the rights</a></li>
+    <li><a href="https://www.businesswire.com/news/home/20250930875219/en/Spotify-Announces-Leadership-Evolution-Daniel-Ek-to-Become-Executive-Chairman-Alex-Norstrm-and-Gustav-Sderstrm-to-Become-Co-CEOs-in-January-2026">Business Wire — Ek to Become Executive Chairman</a></li>
+    <li><a href="https://www.forbes.com.au/news/leadership/why-spotify-ceo-daniel-ek-is-stepping-down-after-two-decades/">Forbes — Why Ek is stepping down</a></li>
+    <li><a href="https://www.musicweek.com/digital/read/daniel-ek-to-become-spotify-executive-chairman-gustav-s-derstr-m-alex-norstr-m-upped-to-co-ceos/092746">Music Week — co-CEOs</a></li>
+    <li><a href="https://www.cnbc.com/2018/04/04/spotify-chiefs-net-worth-tops-2-billion-after-nyse-debut.html">CNBC — Spotify NYSE debut</a></li>
+    <li><a href="https://radioink.com/2024/04/23/mass-layoffs-only-a-speedbump-on-spotifys-profitability-path/">Radio Ink — Layoffs and profitability</a></li>
+    <li><a href="https://fortune.com/europe/2024/11/13/daniel-ek-spotify-earnings-profits-stronger-position/">Fortune — Spotify profits</a></li>
+    <li><a href="https://www.fortune.com/europe/2024/01/18/spotify-ceo-daniel-ek-scandinavian-leadership-model">Fortune — Scandinavian leadership model</a></li>
+    <li><a href="https://www.cnbc.com/2018/08/09/spotify-ceo-daniel-elk-tips-for-prioritizing.html">CNBC — Ek's tips for prioritizing</a></li>
+    <li><a href="https://exde601e.blogspot.com/2020/11/the-observer-effect-daniel-ek.html">The Observer Effect — Daniel Ek</a></li>
+    <li><a href="https://rosetta.to/u/timferriss/daniel-ek-ceo-of-spotify-habits-systems-and-mental-models-for-performance-the-ti">Tim Ferriss Show — Daniel Ek</a></li>
+    <li><a href="https://rosetta.to/u/davidsenra/daniel-ek-spotify-david-senra">David Senra — Daniel Ek</a></li>
+    <li><a href="https://worldsoccertalk.com/afp/spotify-boss-says-bid-for-arsenal-rejected-remains-interested-20210515-CMS-334055.html">AFP — Arsenal bid rejected</a></li>
+    <li><a href="https://faroutmagazine.co.uk/spotify-ceo-daniel-ek-chairman-ai-military-million-investment/">Far Out — Ek becomes chairman of Helsing</a></li>
+    <li><a href="https://completemusicupdate.com/massive-attack-pull-music-off-spotify-over-eks-weapons-investments-and-join-no-music-for-genocide-campaign/">CMU — Massive Attack pull music off Spotify</a></li>
+    <li><a href="https://spotlight.ebu.ch/p/behind-the-spotify-boycott-daniel">EBU Spotlight — Behind the Spotify boycott</a></li>
+    <li><a href="https://www.thefader.com/2025/07/29/all-artists-bands-boycotting-spotify">The Fader — Artists boycotting Spotify</a></li>
+    <li><a href="https://app.dealroom.co/news/note/daniel-ek-doubles-down-on-european-deep-tech">Dealroom — Ek doubles down on European deep tech</a></li>
+  </ul>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>
