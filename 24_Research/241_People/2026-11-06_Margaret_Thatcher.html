@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Margaret Thatcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-logos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero-logo { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 10px; padding: 8px 14px; }
+.hero-logo img { height: 26px; width: auto; display: block; }
+.hero-logo .role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; border-left: 1px solid var(--border); padding-left: 10px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-06</span>
+  </div>
+  <h1>Margaret Thatcher（マーガレット・サッチャー）</h1>
+  <div class="hero-sub">グランサムの食料品店の2階で育ち、メソジストの説教師で町長も務めた父から<strong>「人に流されず、自分で決めよ」</strong>と教わった少女は、オックスフォードで化学を学び、1975年に現職党首ヒースに挑んで保守党を奪った。英国初の女性首相として11年半、インフレ・労組・国有企業という「戦後合意」の柱を一本ずつ折っていった。偉大さの構造は、<strong>小商店主の家計簿の倫理を国家にそのまま当てはめた単純で強い信念</strong>と、<strong>1974年のヒース政権の敗北を10年かけて復習した準備力</strong>と、<strong>引かないことそのものを武器にした政治スタイル</strong>の掛け算にある。そして同じ「引かない」が、1990年に自らを首相の座から降ろした。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">11年半</div><div class="lbl">首相在任（1979〜90）。20世紀の英首相で最長</div></div>
+    <div class="kpi"><div class="val">3連勝</div><div class="lbl">総選挙（1979・83・87）で保守党を勝たせ続けた</div></div>
+    <div class="kpi"><div class="val">362日</div><div class="lbl">炭鉱ストとの対決（1984年3月6日〜85年3月3日）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜学生時代</a></li>
+    <li><a href="#s4">原体験エピソード</a></li>
+    <li><a href="#s5">1984〜85年の炭鉱ストを分解する</a></li>
+    <li><a href="#s6">キャリア・業績の軌跡</a></li>
+    <li><a href="#s7">偉大さの構造分析</a></li>
+    <li><a href="#s8">思想・仕事術</a></li>
+    <li><a href="#s9">光と影：批判と矛盾</a></li>
+    <li><a href="#s10">雑学・意外な側面</a></li>
+    <li><a href="#s11">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>TL;DR と基本情報：「家計簿の倫理」で戦後英国を組み替えた</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>サッチャーの偉大さは、思想の独創性ではなく<strong>構造</strong>から来ている。①食料品店の父から受け継いだ「借金をするな、働いて稼げ、自分で決めよ」という<b>家計簿の倫理</b>を、国家運営の原理にまで押し広げた単純さ。②1974年、炭鉱ストに追い詰められたヒース政権の閣僚として敗北を間近で見た経験を、石炭の備蓄・法律・警察の準備に変えた<b>10年がかりの復習</b>。③世論や党内の空気に合わせて方針を変えない<b>「引かない」という政治スタイル</b>。この3つが、インフレと労使紛争で「英国病」と呼ばれた1970年代末という<b>時代の要請</b>と噛み合った。ただし③は、人頭税と欧州をめぐって党内の支持を失った1990年、彼女自身を退陣させる原因にもなった。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1925年10月13日（イングランド東部リンカンシャー州グランサム）。旧姓マーガレット・ヒルダ・ロバーツ</div></div>
+    <div class="kv-item"><div class="k">没年</div><div class="v">2013年4月8日、ロンドンのリッツ・ホテルで脳卒中により死去（87歳）。4月17日にセント・ポール大聖堂で葬儀</div></div>
+    <div class="kv-item"><div class="k">家族</div><div class="v">父アルフレッド・ロバーツ（食料品店主、メソジストの平信徒説教師、町議会議員・グランサム市長）、母ベアトリス、姉ミュリエル。夫デニス・サッチャー（実業家、1951年結婚、2003年死去）、双子のキャロルとマーク（1953年生）</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">ケスティーブン・アンド・グランサム女子校（奨学生、1942〜43年は生徒代表）→ オックスフォード大学サマーヴィル・カレッジで化学（1943〜47年）。X線結晶学をドロシー・ホジキンのもとで学ぶ</div></div>
+    <div class="kv-item"><div class="k">主な肩書き</div><div class="v">化学研究員（BXプラスチックス、J.ライオンズ社）→ 法廷弁護士（税法、1953年資格）→ 下院議員（フィンチリー選出、1959〜92年）→ 教育科学相（1970〜74年）→ 保守党党首（1975〜90年）→ 首相（1979年5月4日〜1990年11月28日）→ 貴族院議員（サッチャー女男爵、1992年〜）</div></div>
+    <div class="kv-item"><div class="k">異名</div><div class="v">「鉄の女（Iron Lady）」。1976年、ソ連の軍機関紙『赤い星（クラースナヤ・ズヴェズダー）』が反共演説を受けて付けた呼び名を、本人が気に入って自ら使った</div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1925</td><td>グランサムで食料品店を営むロバーツ家の次女として生まれる。一家は店の2階に住み、日曜はメソジスト教会に通う</td><td>—</td></tr>
+        <tr><td>13歳前後</td><td>1939</td><td>姉の文通相手だったウィーンのユダヤ人少女エディットを、父がロータリークラブを通じて受け入れる。ナチスの迫害を身近に知る</td><td>★★</td></tr>
+        <tr><td>16〜17歳</td><td>1942–43</td><td>奨学生として通う女子グラマースクールで生徒代表。父は町議会議員として地方政治に関わる（1945〜46年に市長）</td><td>★</td></tr>
+        <tr><td>18〜21歳</td><td>1943–47</td><td>オックスフォード大サマーヴィル・カレッジで化学を専攻。ホジキンのもとでX線結晶学。1946年、オックスフォード大学保守党協会の会長に。ハイエク『隷属への道』に出会う</td><td>★★★</td></tr>
+        <tr><td>21〜25歳</td><td>1947–51</td><td>BXプラスチックス、続いて食品大手J.ライオンズ社で研究員として働く</td><td>★</td></tr>
+        <tr><td>24〜25歳</td><td>1950–51</td><td>労働党の牙城ダートフォード選挙区から立候補。全国最年少の女性候補として注目されるが2連敗。選挙活動中にデニス・サッチャーと出会い、1951年12月に結婚</td><td>★★</td></tr>
+        <tr><td>27〜28歳</td><td>1953</td><td>8月に双子を出産。同じ年に法廷弁護士の資格を得て、税法を専門にする</td><td>★★</td></tr>
+        <tr><td>33歳</td><td>1959</td><td>ロンドン北部フィンチリー選挙区で初当選。以後1992年まで同じ選挙区で議席を守る</td><td>★★</td></tr>
+        <tr><td>44〜48歳</td><td>1970–74</td><td>ヒース内閣の教育科学相。7〜11歳の学校給食用牛乳の無償配布を打ち切り、「ミルク泥棒（Milk Snatcher）」と叩かれる</td><td>★★</td></tr>
+        <tr><td>48歳</td><td>1974</td><td>炭鉱ストの中で「誰が英国を統治するのか」を掲げたヒースが総選挙に敗れ、政権を失う。キース・ジョゼフとシンクタンク「政策研究センター（CPS）」を設立</td><td>★★★</td></tr>
+        <tr><td>49歳</td><td>1975</td><td>党首選で現職ヒースに挑戦。第1回投票で130対119とヒースを上回り、第2回投票（146票）で英国主要政党初の女性党首に</td><td>★★★</td></tr>
+        <tr><td>50歳</td><td>1976</td><td>反ソ演説を受け、ソ連軍機関紙が「鉄の女」と命名</td><td>★</td></tr>
+        <tr><td>53歳</td><td>1979</td><td>「不満の冬」（1978〜79年の大規模スト）の後の総選挙で勝利。5月4日、英国初の女性首相に</td><td>★★★</td></tr>
+        <tr><td>55歳</td><td>1980–81</td><td>不況と失業の急増の中で「この女は方向転換しない（The lady's not for turning）」と演説（1980年10月）。1981年3月、経済学者364人が政策転換を求める書簡を出すが拒否</td><td>★★★</td></tr>
+        <tr><td>56歳</td><td>1982</td><td>4月2日アルゼンチンがフォークランド諸島に侵攻。機動部隊を派遣し、6月14日にアルゼンチンが降伏。支持率が急回復</td><td>★★★</td></tr>
+        <tr><td>57〜59歳</td><td>1983–85</td><td>1983年総選挙で圧勝。1984年3月から炭鉱ストと全面対決し、85年3月に組合側が無条件で職場復帰。1984年10月にはブライトンでIRAの爆弾テロを生き延びる。同年、香港返還の中英共同声明に署名、ブリティッシュ・テレコム（BT）を民営化</td><td>★★★</td></tr>
+        <tr><td>60〜61歳</td><td>1986–87</td><td>金融市場の規制緩和「ビッグバン」、ブリティッシュ・ガス民営化。1987年総選挙で3連勝</td><td>★★</td></tr>
+        <tr><td>62〜64歳</td><td>1988–90</td><td>ブルージュ演説（1988年）で欧州統合の行き過ぎを批判。地方税を「人頭税（コミュニティ・チャージ）」に変え、1990年3月にロンドンで暴動</td><td>★★</td></tr>
+        <tr><td>65歳</td><td>1990</td><td>11月1日ハウ副首相が辞任。ヘーゼルタインが党首選に挑戦し、第1回投票で204対152。規定の差に4票届かず、22日に撤退を表明。28日に首相官邸を去る</td><td>★★★</td></tr>
+        <tr><td>66〜87歳</td><td>1992–2013</td><td>1992年に下院を引退し一代貴族に。2003年に夫デニスが死去。2005年に娘キャロルが認知症を公表。2013年4月8日死去</td><td>★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜学生時代：食料品店の2階と、化学の実験室</h2>
+  <p>グランサムはロンドンの北にある、鉄道が通る地方の町だ。父アルフレッドは自分の食料品店を営む叩き上げの商人だった。同時にメソジスト教会の平信徒説教師で、ロータリークラブの会長、町議会議員、そして1945〜46年には市長も務めた。<strong>商売・信仰・地方政治を一人で兼ねる人</strong>が、彼女の最初の手本だった。</p>
+  <p>家の暮らしは質素で規律正しかった。サッチャーは後年「私たちはメソジストだった。メソジストとは方法（メソッド）のことだ」と語っている。日曜日は教会、平日は店の手伝い。父は「他の人がそうしているから、という理由で何かをしてはいけない。自分で決めなさい」と娘に教えたと、本人が繰り返し回想している。ただし伝記作家のジョン・キャンベルらは、<b>家庭は本人が語るほど貧しくも牧歌的でもなかった</b>と指摘しており、「小さな店の娘」という物語は政治家としての自己演出の面もあった。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>パラメータ</th><th>どこで育ったか</th><th>後にどう効いたか</th></tr></thead>
+      <tbody>
+        <tr><td><b>家計簿の倫理</b></td><td>父の店の帳簿、借金を嫌う質素な暮らし</td><td>「国家も家計と同じで、収入以上に使ってはいけない」という財政観。インフレ退治の最優先</td></tr>
+        <tr><td><b>自分で決める頑固さ</b></td><td>「人に合わせるな」という父の教え、メソジストの規律</td><td>世論・党内・官僚の反対があっても方針を変えない政治スタイル</td></tr>
+        <tr><td><b>公共への関与</b></td><td>町議会・市長を務める父の姿、家で交わされる政治の話</td><td>10代で選挙の手伝い、大学で保守党協会の会長へ</td></tr>
+        <tr><td><b>データで考える頭</b></td><td>オックスフォードの化学、X線結晶学の研究</td><td>細かい数字まで資料を読み込み、官僚と議論で張り合う仕事ぶり</td></tr>
+        <tr><td><b>外の世界への視線</b></td><td>ナチスから逃れた少女エディットを家に迎えた経験</td><td>全体主義への強い嫌悪。ソ連への強硬姿勢</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>奨学金で進んだ女子グラマースクールで成績上位を保ち、1943年にオックスフォード大学サマーヴィル・カレッジへ進む。専攻は化学で、のちにノーベル化学賞を受けるドロシー・ホジキンのもとでX線結晶学を学んだ。ただ、彼女の熱が向かったのは実験室よりも政治だった。オックスフォード大学保守党協会で活動し、1946年に会長になる。この時期に読んだハイエク『隷属への道』は、計画経済への批判として生涯の座右の書になった。1947年、化学の学位（二等）を得て卒業した。</p>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは6つ</h2>
+
+  <div class="episode">
+    <h3>🔑 店の2階で学んだ「自分で決めよ」（幼少期 / 1930年代）</h3>
+    <p><span class="tag good">✓ 本人の回想・複数の伝記で確認</span>　<span class="tag warn">△ 家庭像の美化は伝記作家が指摘</span></p>
+    <p>父アルフレッドは、商売の帳尻を合わせることと、教会で説教することと、町の予算を議論することを同じ真剣さでやる人だった。娘はその横で、物の値段、借金の怖さ、町の財政の話を聞いて育った。友だちと同じことをしたいとせがむ娘に、父は「みんながそうしているからといって、同じことをする理由にはならない」と答えたという。</p>
+    <p>→ <b>どう繋がったか：</b>首相になったサッチャーは、国家財政を「家計」の比喩で語り続けた。そして「合意（コンセンサス）」を重んじる戦後政治そのものを、「みんなが合わせているだけ」として疑った。父の教えは、そのまま政治哲学になった。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 ウィーンから逃れてきた少女（13歳前後 / 1939年）</h3>
+    <p><span class="tag good">✓ 複数報道で確認</span>　<span class="tag warn">△ 到着時期・本人の年齢は資料で12〜13歳と幅</span></p>
+    <p>姉ミュリエルの文通相手だったウィーンのユダヤ人銀行家の娘エディット・ミュールバウアーが、1938年のナチスによるオーストリア併合の後、助けを求める手紙を送ってきた。父アルフレッドはロータリークラブを通じて受け入れ先を探し、1939年、エディットはロバーツ家にしばらく身を寄せた。姉妹は滞在費の募金にも走った。エディットはその後南米に渡り、1995年にブラジルで消息がわかった。彼女は「ウィーンに残っていたら殺されていた」と語っている。</p>
+    <p>→ <b>どう繋がったか：</b>全体主義が普通の家族に何をするかを、少女は具体的な一人の人間を通して知った。のちの強烈な反ソ姿勢と、「国家に人生を預けるな」という主張の、感情の根っこはここにある。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 化学者の頭と、ハイエクとの出会い（18〜21歳 / 1943〜47年）</h3>
+    <p><span class="tag good">✓ オックスフォード大学の追悼文・サッチャー財団で確認</span></p>
+    <p>サマーヴィル・カレッジで化学を学び、X線で分子の構造を解く研究に取り組んだ。指導したホジキンは政治的には左派寄りだったが、サッチャーは首相になってからも彼女の肖像を首相官邸に掛けていたとされる。同じ時期、計画経済が自由を奪うと説いたハイエクの『隷属への道』を読み、強い影響を受けた。</p>
+    <p>→ <b>どう繋がったか：</b>英国で初めて「理系の学位を持つ首相」になった彼女は、官僚の資料を細部まで読み込み、数字で反論した。一方でハイエクは、1974年以降に彼女が経済政策を組み立てるときの理論的な土台になった。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 勝てない選挙区で、2度負ける（24〜25歳 / 1950〜51年）</h3>
+    <p><span class="tag good">✓ ケンブリッジ大チャーチル・アーカイブ等で確認</span></p>
+    <p>23歳で保守党のダートフォード選挙区候補に選ばれた。労働党が圧倒的に強い選挙区で、彼女は全国最年少の女性候補として報道された。1950年と51年の総選挙でいずれも落選したが、労働党候補の票差を1950年に約6,000票、51年にさらに約1,000票縮めた。この選挙活動の中で、10歳年上の実業家デニス・サッチャーと出会う。</p>
+    <p>→ <b>どう繋がったか：</b>負け戦でも差を詰めることで党内の評価を得る、という経験は「最初から勝てる場所を選ぶ」より「不利な場所で結果を出す」という彼女の行動様式の原型になった。そして裕福なデニスとの結婚が、育児と法曹資格の勉強を両立させ、政界を目指し続ける経済的な余裕を与えた。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 ヒース政権の敗北を、閣僚席から見る（48歳 / 1974年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>1970〜74年、サッチャーはヒース内閣の教育科学相だった。ヒース政権は1972年と74年に全国炭鉱労働組合（NUM）のストに直面し、電力不足で週3日しか工場を動かせない状態に追い込まれる。1974年2月、ヒースは「誰が英国を統治するのか」を争点に総選挙に打って出て、敗れた。政権を失った後、サッチャーは盟友キース・ジョゼフと、自由市場の政策を研究するシンクタンク「政策研究センター（CPS）」を立ち上げる。</p>
+    <p>→ <b>どう繋がったか：</b>労組に政権を倒された屈辱を、彼女は「準備不足で負けた」と読んだ。この教訓が、10年後の炭鉱ストへの周到な備えにつながる（5章）。また、ヒース時代の「途中で方針を変える（Uターン）」政治への反発が、「方向転換しない」という彼女の看板を生んだ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 現職党首に挑み、勝つ（49歳 / 1975年2月）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>ヒース批判派の本命はキース・ジョゼフだったが、彼は1974年10月の演説で失言し、出馬を断念した。誰も現職に挑まない中、サッチャーが手を挙げる。1975年2月4日の第1回投票で、彼女は130票、ヒースは119票。ヒースは撤退し、2月11日の第2回投票で146票を得て党首になった。主要政党で初の女性党首だった。</p>
+    <p>→ <b>どう繋がったか：</b>党の重鎮たちが動かない中で、自分が出るしかないと判断して出る。この「空白に飛び込む」決断がなければ、彼女は優秀な閣僚の一人で終わっていた。同時に、自分を引き上げた後ろ盾を持たない党首として、彼女は最後まで党内の旧来派と緊張関係を抱え続けた。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Deep Dive</div>
+  <h2>1984〜85年の炭鉱ストを分解する：1974年の敗北を10年かけて復習した</h2>
+  <p>サッチャーを象徴する出来事として、フォークランド紛争（1982年）と1990年の退陣を挙げる人も多い。だが「なぜ彼女は勝てたのか」を最もよく示すのは、1984年3月6日から85年3月3日まで続いた炭鉱ストだ。<b>勝負は、ストが始まる前にほぼ決まっていた。</b></p>
+
+  <h3>準備の10年：何を用意していたか</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>時期</th><th>出来事</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td>1972・74年</td><td>NUMのストでヒース政権が電力不足に陥り、1974年の総選挙で敗北</td><td>「石炭が止まれば政権が倒れる」という前例</td></tr>
+        <tr><td>1977〜78年</td><td>保守党議員ニコラス・リドリーらが、国有産業の大規模ストに勝つための内部報告書（リドリー計画）をまとめる。1978年5月に『エコノミスト』誌が報道</td><td>石炭の備蓄、輸入炭の確保、機動的な警察部隊など、戦い方の設計図</td></tr>
+        <tr><td>1981年2月</td><td>政府は23の炭鉱の閉鎖を打ち出すが、全国ストの脅しを受けて撤回する</td><td>「今は勝てない」と判断した戦略的な後退。最低6か月分の石炭備蓄が必要だと結論</td></tr>
+        <tr><td>1980〜84年</td><td>雇用法の改正で、他の職場への応援ピケなどを制限。発電所に石炭を積み増す</td><td>法律と在庫の両面で持久戦に備える</td></tr>
+        <tr><td>1983年</td><td>英国鉄鋼公社で人員を2年で半減させたイアン・マクレガーを、石炭公社（NCB）の総裁に任命</td><td>閉鎖計画を実行できる人物を配置</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>1年間の対決で起きたこと</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>時期</th><th>出来事</th></tr></thead>
+      <tbody>
+        <tr><td>1984年3月</td><td>石炭公社が採算の悪い炭鉱の閉鎖を発表。ヨークシャーのコートンウッド炭鉱を皮切りにストが広がる。NUM委員長アーサー・スカーギルは「本当の計画は70以上の炭鉱閉鎖だ」と主張（サッチャーは回顧録で、3年で7万5千人削減の計画があったことを認めている）</td></tr>
+        <tr><td>1984年4月</td><td>NUMの代議員会は全国投票（組合員の一票による投票）を行わないことを69対54で決め、地域ごとのストを公認する方式を取る</td></tr>
+        <tr><td>1984年春〜</td><td>ノッティンガムシャーなどの炭鉱労働者の多くは投票がないことを理由に働き続け、のちに別組合「民主炭鉱労組（UDM）」を結成</td></tr>
+        <tr><td>1984年6月18日</td><td>オーグリーヴのコークス工場で、約5,000人のピケ隊と同規模の警察隊が衝突（「オーグリーヴの戦い」）</td></tr>
+        <tr><td>1984年7月19日</td><td>サッチャーが保守党の議員団に非公開で演説。フォークランドで「外の敵」を倒したのに続き、「内なる敵」と戦うと述べたと報じられ、大きな反発を呼ぶ</td></tr>
+        <tr><td>1984年9〜10月</td><td>高等法院が全国投票のないストを違法と判断。組合資産の差し押さえ命令。保安要員の組合（NACODS）もスト寸前まで行くが、妥協案で回避</td></tr>
+        <tr><td>1984〜85年冬</td><td>備蓄のおかげで発電所は止まらず、停電は起きない。職場に戻る炭鉱労働者が徐々に増える</td></tr>
+        <tr><td>1985年3月3日</td><td>NUMが合意なしでの職場復帰を決定。ストは終結</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>なぜ政府が勝ったのか</h3>
+  <p>理由は3つに整理できる。第一に<b>在庫</b>。1974年のヒース政権は冬の電力不足で負けたが、1984年は備蓄が冬を越えた。第二に<b>相手の弱点</b>。NUMが全国投票を避けたことで、働き続けた地域を説得する根拠を失い、裁判でも違法とされた。第三に<b>時機を選んだこと</b>。1981年に一度引いたことは「弱腰」と批判されたが、準備が整うまで決戦を避けたからこそ、1984年に石炭需要の少ない春から始まる戦いを持ちこたえられた。</p>
+
+  <h3>勝利の代償</h3>
+  <p>ストに関連する死者は6人、逮捕者は1万1千人を超えた。失われた労働日数は2,600万日以上で、1926年のゼネスト以来の規模だった。1984年に170以上あった炭鉱はその後次々に閉鎖され、2015年末までにすべての深部炭鉱が姿を消した。炭鉱町の多くは失業と貧困に沈み、ヨークシャーのグライムソープは1994年に「国内で最も貧しい町」とされた。<b>評価は今も真っ二つに割れる。</b>支持する側は「労組が政府を倒せる時代を終わらせ、英国経済を立て直した」と見る。批判する側は「地域社会を丸ごと切り捨てた、国家による階級闘争だった」と見る。どちらの見方にも、それぞれ事実の裏付けがある。</p>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Career</div>
+  <h2>キャリア・業績の軌跡：化学者から、戦後合意の解体者へ</h2>
+
+  <h3>第1期（1947〜1959）：研究員、弁護士、そして議員へ</h3>
+  <p>大学卒業後、プラスチック会社BXプラスチックス、次いで食品大手J.ライオンズ社で研究員として働いた。ダートフォードで2度落選した後、結婚・出産を経て1953年に法廷弁護士となり、税法を専門にした。1959年、ロンドン北部の保守党の安全区フィンチリーで初当選する。化学・法律・税という、<b>数字とルールを扱う専門職を3つ渡り歩いた</b>経歴は、政治家として細部に強い彼女の武器になった。</p>
+
+  <h3>第2期（1961〜1974）：下級大臣から閣僚へ</h3>
+  <p>1961年に年金・国民保険省の政務次官として初めて政府入り。1970年、ヒース内閣で教育科学相として初入閣する。学校の無償牛乳の打ち切りで「ミルク泥棒」と呼ばれ、世論の集中砲火を浴びた。一方で、彼女の在任中に多くの選抜制グラマースクールが総合制中学校に転換されたことも、のちによく指摘される。この時期の彼女はまだ「党の方針を忠実に実行する閣僚」だった。</p>
+
+  <h3>第3期（1974〜1979）：野党党首として思想を固める</h3>
+  <p>1974年の敗北後、キース・ジョゼフと政策研究センターを作り、通貨供給量の管理でインフレを抑えるマネタリズム、国有企業の縮小、労組の力の制限という政策の柱を固めた。1975年に党首となり、1978〜79年冬の「不満の冬」で労働党政権が公共部門のストに苦しむと、「労働は機能していない（Labour isn't working）」という広告で攻めた。1979年5月の総選挙で勝ち、首相になる。</p>
+
+  <h3>第4期（1979〜1982）：最も不人気な首相</h3>
+  <p>就任直後の政策は痛みを伴った。金利を上げ、財政支出を抑えた結果、インフレは1980年の約18%から1982年には8.6%まで下がったが、失業者は戦後初めて300万人を超えた。1980年末には支持率が23%まで落ちる。党内からも路線変更の声が上がったが、1980年10月の党大会で「Uターンしたければどうぞ。この女は方向転換しない」と言い切り、1981年3月には364人の経済学者の批判書簡も退けた。</p>
+
+  <h3>第5期（1982〜1987）：フォークランド、炭鉱、民営化</h3>
+  <p>1982年4月2日、アルゼンチン軍がフォークランド諸島を占領する。サッチャーは機動部隊を約1万3千km離れた南大西洋に送り、6月14日にアルゼンチン軍を降伏させた。英軍兵士255人と島民3人、アルゼンチン側649人が死亡した。勝利で支持率は回復し、1983年の総選挙で圧勝する。2期目は炭鉱スト（5章）と並行して、<b>国有企業の民営化</b>を本格化させた。1984年11月のブリティッシュ・テレコム、1986年12月のブリティッシュ・ガス（「シドに教えてあげて（Tell Sid）」という広告で一般の人に株を買うよう呼びかけた）などで、国有企業の売却収入は290億ポンドを超えた。公営住宅を住民に割安で売る「購入権（Right to Buy）」では100万戸以上が持ち家になった。外交では1984年に香港返還の中英共同声明に署名し、同年ソ連の若手指導者ゴルバチョフについて「一緒に仕事ができる人物だ」と評した。</p>
+
+  <h3>第6期（1987〜1990）：3連勝と、欧州・人頭税での孤立</h3>
+  <p>1986年の金融規制緩和「ビッグバン」でロンドンの金融街シティは国際金融センターとして息を吹き返し、1987年の総選挙で3連勝した。しかし3期目は、2つの問題で党内を割った。1つは<b>欧州</b>。1988年のブルージュ演説で「英国で国家の役割を縮めたのは、ブリュッセルで欧州の超国家に復活させるためではない」と述べ、統合の深化に反対した。もう1つは<b>人頭税</b>。地方税を、資産ではなく成人一人あたり定額で課す「コミュニティ・チャージ」に変え、1990年3月のロンドンのデモは暴動になった。</p>
+
+  <h3>第7期（1990〜2013）：退陣と晩年</h3>
+  <p>1990年11月1日、欧州政策に反発した副首相ジェフリー・ハウが辞任し、13日の下院演説で首相を痛烈に批判した。翌日、元国防相マイケル・ヘーゼルタインが党首選に名乗りを上げる。11月20日の第1回投票はサッチャー204票、ヘーゼルタイン152票。過半数は取ったが、規定の差に4票足りなかった。閣僚たちから一人ずつ「次は勝てない」と告げられ、22日に撤退を表明。28日、11年半住んだダウニング街10番地を去った。後任はジョン・メージャー。1992年に下院を引退して一代貴族となり、回顧録の執筆と講演を続けたが、2000年代に入って認知症が進み、2013年4月8日に87歳で亡くなった。</p>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜサッチャーだけが？</h2>
+  <p>1970年代の英国で「英国病」を憂えた政治家は大勢いた。労組の力を削ぐべきだと考えた保守党員も少なくない。それでも実際に戦後合意を解体できたのは彼女だけだった。理由は次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 単純で強い信念</b></td><td>「収入以上に使うな」「自分の責任で生きよ」という家計の倫理を国家に当てはめる。複雑な問題を一つの原理で裁断できる</td><td>父の食料品店、メソジストの規律、国家財政を家計にたとえる演説</td></tr>
+        <tr><td><b>② 敗北から学ぶ準備力</b></td><td>負けた戦いを分析し、次に勝てる条件が揃うまで決戦を避ける</td><td>1974年ヒースの敗北 → 1981年の一時撤退 → 1984年の石炭備蓄</td></tr>
+        <tr><td><b>③ 「引かない」政治スタイル</b></td><td>方針を変えないこと自体を信頼の源泉にする。支持率が23%でも路線を変えない</td><td>「方向転換しない」演説、364人の経済学者への反論、ブライトン爆破の翌朝の演説</td></tr>
+        <tr><td><b>④ 細部まで読む実務能力</b></td><td>化学・税法で鍛えた数字と文書の読解力で、官僚や閣僚と議論で負けない</td><td>オックスフォードの化学、税法専門の弁護士、深夜まで資料を読む働き方</td></tr>
+        <tr><td><b>⑤ 時代の要請</b></td><td>「不満の冬」で国民の多くが労組と停滞に疲れ、変化を求めていた。冷戦末期には米レーガン政権という強い同盟相手もいた</td><td>1979年の政権交代、1982年のフォークランド勝利、レーガンとの盟友関係</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>⑤が「舞台」を用意し、①が「進む方向」を一つに絞り、④が「それを政策の細部まで落とし込み」、②が「勝てる時まで待たせ」、③が「どれだけ批判されても進ませた」。とくに<b>②と③の組み合わせ</b>が決定的だった。引かない政治家は他にもいるが、多くは準備不足のまま正面衝突して負ける。サッチャーは1981年のように「引くべき時は引き、準備してから絶対に引かない」という順番を守った。<br><br><strong>ただし、同じ構造が裏返る。</strong>①の単純さは、炭鉱町のように市場の論理で切り捨てられる地域への想像力を弱めた。③の「引かない」は、3期目には人頭税と欧州で閣僚の忠告を聞かない孤立に変わった。1990年、彼女を倒したのは野党ではなく、彼女の頑固さに耐えかねた自党の閣僚たちだった。</div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Philosophy</div>
+  <h2>思想・仕事術：「合意」ではなく「信念」で政治をする</h2>
+  <p>サッチャーの政策は「サッチャリズム」と呼ばれる。ただし本人は体系的な理論家ではなく、ハイエクやフリードマンの考えを、父から学んだ道徳と組み合わせて使った<b>実践家</b>だった。よく引かれる言葉と考え方を並べると、彼女の頭の中が見える。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>言葉・考え方</th><th>中身</th><th>光と影</th></tr></thead>
+      <tbody>
+        <tr><td><b>The lady's not for turning</b><br>（この女は方向転換しない）</td><td>1980年の党大会。不況の中で路線変更を求める声に、政策を変えないと宣言</td><td>市場と国民に「本気」を示した ／ 誤りを認めて修正することを難しくした</td></tr>
+        <tr><td><b>There is no alternative</b><br>（他に選択肢はない）</td><td>市場経済の改革以外に道はないという口癖。頭文字から「TINA」と呼ばれた</td><td>改革の迷いを断つ ／ 異論を最初から締め出す</td></tr>
+        <tr><td><b>There is no such thing as society</b><br>（社会などというものはない）</td><td>1987年の雑誌インタビュー。続けて「いるのは個人としての男と女、そして家族だ」と述べ、まず自分で自分の面倒を見るべきだと説いた</td><td>自助と責任の強調 ／ 弱者への冷たさの象徴として切り取られ続ける</td></tr>
+        <tr><td><b>信念の政治</b><br>（conviction politics）</td><td>党派間の妥協で決める「合意の政治」ではなく、自分が正しいと信じる方針を掲げて選挙で信任を得る</td><td>戦後政治の停滞を破る ／ 党内の異論の居場所を減らす</td></tr>
+        <tr><td><b>財産を持つ民主主義</b></td><td>持ち家と株式を一般の人に広げ、国家に頼らない中間層を厚くする</td><td>購入権・民営化株の普及 ／ 株を手放す人も多く、公営住宅の不足を招いたと批判される</td></tr>
+        <tr><td><b>強い国防と反共</b></td><td>ソ連を「世界支配を狙う勢力」と呼び、米国と組んで対抗する。一方でゴルバチョフとの対話は早くから評価した</td><td>冷戦の終わりに存在感 ／ 南アフリカ制裁への反対など、反共優先が人権問題で批判を招く</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>仕事術</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>資料は自分で全部読む</b></td><td>赤い大臣用の書類箱を毎晩持ち帰り、深夜まで読み込んだ。閣僚だったジリアン・シェパードは、彼女が徹夜もしばしばしたと書いている</td></tr>
+        <tr><td><b>議論で決める</b></td><td>閣議や会議で、相手の論拠の弱いところを数字で突く。閣僚には厳しく、議論に負けた側は「ハンドバッグで叩かれた（handbagged）」と言われた</td></tr>
+        <tr><td><b>引く時は引く</b></td><td>1981年の炭鉱閉鎖撤回のように、勝てない戦いは公言せずに先送りし、条件を整えてから再戦する</td></tr>
+        <tr><td><b>危機の翌朝も予定通り</b></td><td>1984年のブライトン爆破の数時間後、党大会を予定通り朝9時半に開き、「テロで民主主義を止めることはできない」と演説した</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Light &amp; Shadow</div>
+  <h2>光と影：評価が今も真っ二つに割れる理由</h2>
+  <p>サッチャーほど、亡くなった日に追悼と祝賀が同時に起きた英国首相はいない。ここでは、彼女の功績とされる点と批判される点を、事実と評価に分けて並べる。</p>
+
+  <h3>功績とされる点</h3>
+  <p>インフレは就任後に大きく下がり、労組によるストは1985年以降に激減した。民営化と金融の規制緩和で、ロンドンは世界有数の金融センターに戻った。1980年代を通じて個人の実質的な資産は約8割増え、株式を持つ成人の割合も大きく上がった。英国の「衰退」を止めたという評価は、保守党だけでなく、のちに労働党の首相となるトニー・ブレアらも一部で受け継いでいる。</p>
+
+  <h3>失業と地域の荒廃</h3>
+  <p>一方で失業者は1984年に330万人のピークに達した。炭鉱・造船・製鉄など北部イングランド、スコットランド、ウェールズの重工業地帯は急速に縮み、仕事を失った地域社会の多くは長く回復しなかった。<b>「南の金融と北の衰退」</b>という地域格差は、今の英国政治にも影を落としている。所得格差もこの時期に大きく広がったとする研究が多い。</p>
+
+  <h3>人頭税</h3>
+  <p>資産や所得に関係なく、成人一人あたりほぼ同じ額を払う人頭税は、「公爵も清掃員も同じ額」として強い反発を受けた。世論調査では大多数が反対し、支払い拒否も広がった。1990年3月のロンドンの抗議は暴動となり、100人以上が負傷、300人以上が逮捕された。この税は後任のメージャーが1991年に廃止を決めた。</p>
+
+  <h3>北アイルランドと社会政策</h3>
+  <p>1981年、北アイルランドの刑務所でIRAの受刑者らが政治犯としての扱いを求めてハンガーストライキを行い、ボビー・サンズら10人が死亡した。サッチャーは要求に応じず、強硬さへの評価は英国内と北アイルランドのカトリック系住民の間で大きく分かれた。一方で1985年には、アイルランド政府に北アイルランド問題への助言の役割を認める英愛協定に署名し、今度は北アイルランドのプロテスタント系住民から激しい反発を受けた。また1988年には、地方自治体が同性愛を「推奨」することを禁じる条項（セクション28）を含む法律が成立し、のちに差別的だとして廃止された。</p>
+
+  <h3>内部矛盾：「国家を小さく」と「国家を強く」</h3>
+  <p>サッチャリズムは「国家の介入を減らす」と言いながら、労組の規制、警察の動員、地方自治体の権限の削減、中央からの統制の強化では、むしろ国家の力を大きく使った。経済では自由、政治と治安では強い国家。この2つを両立させたのが彼女の手腕だったとも言えるし、「自由」の範囲を自分で選んでいたとも言える。そして、女性として初めて最高権力に就きながら、女性の地位向上を政治の旗に掲げることはほとんどなく、閣僚に登用した女性もごくわずかだった。</p>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">命名</div><div class="info-card-title">「鉄の女」はソ連の造語</div><div class="info-card-text">1976年の反ソ演説を受け、ソ連の軍機関紙『赤い星』が「鉄の女が恐怖をあおる」と書いた。悪口のつもりだったが、本人は1週間ほどで自らこの呼び名を使い、看板にしてしまった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">都市伝説</div><div class="info-card-title">ソフトクリームの発明者？</div><div class="info-card-text">J.ライオンズ社でアイスクリームなどに使う乳化剤の研究チームにいたことから「ソフトクリームを発明した」と言われるが、決定的な証拠はない。<span class="tag warn">△ 俗説</span></div></div>
+    <div class="info-card"><div class="info-card-eyebrow">師弟</div><div class="info-card-title">左派のノーベル賞学者が恩師</div><div class="info-card-text">大学の指導教員ドロシー・ホジキンは1964年にノーベル化学賞を受けた。政治的立場は正反対だったが、サッチャーは首相官邸に恩師の肖像を掛けていたとされる。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">あだ名</div><div class="info-card-title">「ミルク泥棒」</div><div class="info-card-text">教育相時代、7〜11歳の児童への無償の牛乳を打ち切り、「サッチャー、ミルク・スナッチャー（牛乳泥棒）」と韻を踏んだあだ名で叩かれた。全国的に名前が知られた最初のきっかけは、この批判だった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">理系首相</div><div class="info-card-title">英国初の「科学の学位を持つ首相」</div><div class="info-card-text">化学の学位を持つ彼女は、首相として早い時期から地球温暖化の危険を国連などで訴えた。のちに晩年の著作では温暖化対策の行き過ぎに慎重な立場も示している。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">島の祝日</div><div class="info-card-title">「マーガレット・サッチャーの日」</div><div class="info-card-text">フォークランド諸島では、1983年1月の彼女の訪問を記念して、毎年1月10日を「マーガレット・サッチャーの日」として祝っている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">再会</div><div class="info-card-title">半世紀後にわかった消息</div><div class="info-card-text">1939年に一家が受け入れたウィーンの少女エディットは、1995年にブラジルで暮らしていることがわかった。サッチャーはこの件を生涯忘れなかったと伝えられる。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">動詞になった</div><div class="info-card-title">「ハンドバッグする」</div><div class="info-card-text">いつも持ち歩くハンドバッグから、相手を容赦なくやり込めることを「handbag（ハンドバッグする）」と言うようになった。本人の名前も「サッチャリズム」として辞書に残っている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">生き延びた朝</div><div class="info-card-title">「私たちは一度運が良ければいい」</div><div class="info-card-text">1984年のブライトン爆破の後、IRAは「今日は運が悪かった。だが我々は一度運が良ければいい。お前たちはいつも運が良くなければならない」と声明を出した。サッチャーは数時間後、予定通り演壇に立った。</div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：負けた戦いを分析し、準備が整うまで決戦しない</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 負けた戦いこそ、一番の教材になる。</strong>サッチャーが炭鉱ストに勝てたのは、10年前にヒース政権が負けるのを閣僚席から見ていたからだ。彼女は「何が足りなくて負けたか」を石炭の在庫、法律、人事に分解して準備した。<b>自分やチームが最近負けた仕事を1つ選び、敗因を「感情」ではなく「足りなかった資源」で3つ書き出す</b>。</p>
+    <p><strong>② 引くことと、折れることは違う。</strong>1981年、彼女は炭鉱閉鎖を撤回した。それは信念を曲げたのではなく、勝てる時まで決戦を延ばしただけだった。<b>今抱えている対立案件について、「今戦うと勝てるか」「勝てる条件は何か」「それはいつ揃うか」を一行ずつ書き、揃うまでは小さく引く選択肢も持っておく</b>。</p>
+    <p><strong>③ 自分の強みが裏返る場所を、先に決めておく。</strong>「引かない」強さで11年半を戦った彼女を倒したのは、同じ「引かない」だった。人頭税と欧州で、閣僚たちの忠告はもう届かなくなっていた。強みは、止めてくれる人がいないと必ず暴走する。<b>自分が最も頑固になるテーマを1つ挙げ、そのテーマで遠慮なく反対してくれる人を1人決めておく</b>。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/Margaret_Thatcher">Wikipedia — Margaret Thatcher</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Alfred_Roberts">Wikipedia — Alfred Roberts</a></li>
+    <li><a href="https://www.margaretthatcher.org/document/107638">Margaret Thatcher Foundation — Grantham years</a></li>
+    <li><a href="https://reviews.history.ac.uk/review/1515">Reviews in History — Moore, Authorized Biography Vol.1</a></li>
+    <li><a href="https://www.rotarygbi.org/news-archive/rotarian-influence-on-the-life-of-margaret-thatcher/">Rotary GB&amp;I — Rotarian influence on Thatcher</a></li>
+    <li><a href="https://www.jewishvirtuallibrary.org/margaret-thatcher-s-family-sheltered-austrian-jew">Jewish Virtual Library — Thatcher's family sheltered Austrian Jew</a></li>
+    <li><a href="https://www.thejc.com/opinion/analysis/rescuing-a-refugee-was-her-great-achievement-neukyvbg">The Jewish Chronicle — Rescuing a refugee</a></li>
+    <li><a href="https://ox.ac.uk/node/11331">University of Oxford — Margaret Thatcher 1925-2013</a></li>
+    <li><a href="https://chemistryworld.com/opinion/the-iron-lady/5028.article">Chemistry World — The Iron Lady</a></li>
+    <li><a href="https://www.popsci.com/science/article/2013-04/margaret-thatcher-politician-and-chemist-has-died/">Popular Science — Thatcher the chemist</a></li>
+    <li><a href="https://sciencenotes.org/today-science-history-october-13-margaret-thatcher/">Science Notes — Thatcher and soft serve</a></li>
+    <li><a href="https://archives.chu.cam.ac.uk/?p=2974">Churchill Archives Centre — Margaret Thatcher: A biography</a></li>
+    <li><a href="https://blogs.bodleian.ox.ac.uk/archivesandmanuscripts/2013/04/10/a-tribute-to-baroness-thatcher-of-kevesten/">Bodleian Archives — Finchley adoption memo</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/1975_Conservative_Party_leadership_election">Wikipedia — 1975 Conservative leadership election</a></li>
+    <li><a href="https://conservativehome.com/2025/02/11/anne-jenkin-the-fascinating-story-of-how-50-years-ago-today-thatcher-became-conservative-leader/">ConservativeHome — 50 years ago Thatcher became leader</a></li>
+    <li><a href="https://www.margaretthatcher.org/archive/Hayek">Margaret Thatcher Foundation — Thatcher, Hayek &amp; Friedman</a></li>
+    <li><a href="https://margaretthatcher.org/archive/CPS2">Margaret Thatcher Foundation — Centre for Policy Studies 1974-79</a></li>
+    <li><a href="https://www.nationalreview.com/corner/thatcher-and-hayek/amp/">National Review — Thatcher and Hayek</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/1984%E2%80%931985_United_Kingdom_miners%27_strike">Wikipedia — 1984–85 UK miners' strike</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Battle_of_Orgreave">Wikipedia — Battle of Orgreave</a></li>
+    <li><a href="https://www.historytoday.com/archive/feature/how-miners-strike-was-lost">History Today — How the Miners' Strike Was Lost</a></li>
+    <li><a href="https://www.newstatesman.com/long-reads/2014/06/how-miners-strike-1984-85-changed-britain-ever">New Statesman — How the miners' strike changed Britain</a></li>
+    <li><a href="https://www.statewatch.org/statewatch-database/thatcher-s-enemy-within-speech-1984">Statewatch — Thatcher's "enemy within" speech 1984</a></li>
+    <li><a href="https://www.cam.ac.uk/research/news/the-speech-that-never-was-thatcher-papers-for-1984-open-to-the-public">University of Cambridge — The speech that never was</a></li>
+    <li><a href="https://amp.cbc.ca/archives/the-deadly-hotel-bombing-that-margaret-thatcher-survived-in-1984-1.5314562">CBC — The hotel bombing Thatcher survived (1984)</a></li>
+    <li><a href="https://www.oxera.com/wp-content/uploads/2018/03/The-Thatcher-privatisation-legacy_1.pdf">Oxera — The Thatcher privatisation legacy</a></li>
+    <li><a href="https://www.amsr.org.uk/what-happened-to-margaret-thatchers-dream-of-a-share-owning-public/">AMSR — Thatcher's dream of a share-owning public</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/1990_Conservative_Party_leadership_election">Wikipedia — 1990 Conservative leadership election</a></li>
+    <li><a href="https://historyofparliament.com/2015/11/26/memories-of-thatchers-fall/">History of Parliament — Memories of Thatcher's fall</a></li>
+    <li><a href="https://www.history.com/news/10-things-you-may-not-know-about-margaret-thatcher">History.com — 10 things you may not know about Thatcher</a></li>
+    <li><a href="https://www.mentalfloss.com/article/638756/margaret-thatcher-facts">Mental Floss — Fascinating facts about Thatcher</a></li>
+  </ul>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>

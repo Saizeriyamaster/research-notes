@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alex Karp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-logos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero-logo { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 10px; padding: 8px 14px; }
+.hero-logo img { height: 26px; width: auto; display: block; }
+.hero-logo .role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; border-left: 1px solid var(--border); padding-left: 10px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-06</span>
+  </div>
+  <div class="hero-logos">
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MyAyMCIgd2lkdGg9IjgzIiBoZWlnaHQ9IjIwIj4KPHBhdGggZD0iTTIwLjExNSAyLjA5Mmg1LjExMmMxLjg5NiAwIDMuMTMzLjA4NCA0LjIwNCAxLjI1NS43NDIuODM3IDEuMTU0IDEuODQxIDEuMTU0IDMuMDEzIDAgMS4xNzEtLjQxMiAyLjE3Ni0xLjIzNiAzLjAxMi0uODI1LjgzNy0xLjg5NiAxLjM0LTQuNjE3IDEuMzRIMjIuMjZ2Ni45NDVoLTIuMTQ0VjIuMDkyem0yLjE0NCA2Ljg2MmgyLjQ3M2MxLjQwMiAwIDMuNTQ1LS4wODQgMy41NDUtMi42NzggMC0yLjQyNy0xLjk3OS0yLjQyNy0zLjEzMy0yLjQyN0gyMi4yNnY1LjEwNXptMTUuMTY5IDguNzAzYy0uMTY1LS41MDItLjE2NS0xLjA4OC0uMTY1LTEuNTktLjk5IDEuNzU3LTIuMzkgMS45MjUtMy4yOTggMS45MjUtMi40NzMgMC0zLjc5Mi0xLjQyMy0zLjc5Mi0zLjE4IDAtLjgzNy4zMy0yLjI2IDEuODk2LTMuMTggMS4xNTQtLjY3IDIuODAzLS42NyAzLjcxLS42Ny40OTUgMCAuODI0IDAgMS40MDIuMDg0IDAtMS4zMzkgMC0xLjkyNS0uNDEzLTIuNDI3LS40MTItLjUwMi0xLjIzNi0uNjctMS44MTMtLjY3LTEuOTc5IDAtMi4xNDQgMS40MjQtMi4xNDQgMS44NDJoLTEuOTc4Yy4wODItLjU4Ni4xNjUtMS4zMzkuNzQyLTIuMDA4LjgyNC0uOTIgMi4zMDgtMS4xNzIgMy40NjItMS4xNzIgMS41NjYgMCAzLjIxNS41MDIgMy43OTIgMS41OS4zMy42Ny4zMyAxLjE3Mi4zMyAxLjY3NGwtLjA4MiA1LjE4OGMwIC4xNjcgMCAxLjU5LjE2NSAyLjY3OGgtMS44MTR2LS4wODR6TTM2LjAyNiAxMi4zYy0uODI0IDAtMy44NzQgMC0zLjg3NCAyLjE3NiAwIC42Ny40MTIgMS44NDEgMi4yMjYgMS44NDEuOTg5IDAgMS44MTMtLjQxOCAyLjMwOC0xLjE3Mi40MTItLjc1My40OTUtMS4zMzguNDk1LTIuODQ1LS4zMy4wODQtLjY2IDAtMS4xNTUgMHpNNDAuODkgMi4wOTJoMS45Nzl2MTUuNTY1SDQwLjg5VjIuMDkyem0xMC41NTMgMTUuNTY1Yy0uMTY1LS41MDItLjE2NS0xLjA4OC0uMTY1LTEuNTktLjk5IDEuNzU3LTIuMzkgMS45MjUtMy4yOTggMS45MjUtMi40NzMgMC0zLjc5Mi0xLjQyMy0zLjc5Mi0zLjE4IDAtLjgzNy4zMy0yLjI2IDEuODk2LTMuMTggMS4xNTQtLjY3IDIuODAzLS42NyAzLjcxLS42Ny40OTUgMCAuODI0IDAgMS40MDIuMDg0IDAtMS4zMzkgMC0xLjkyNS0uNDEzLTIuNDI3LS40MTItLjUwMi0xLjIzNi0uNjctMS44MTMtLjY3LTEuOTc5IDAtMi4xNDQgMS40MjQtMi4xNDQgMS44NDJoLTEuOTc4Yy4wODItLjU4Ni4xNjQtMS4zMzkuNzQyLTIuMDA4LjgyNC0uOTIgMi4zMDgtMS4xNzIgMy40NjItMS4xNzIgMS41NjYgMCAzLjIxNS41MDIgMy43OTIgMS41OS4zMy42Ny4zMyAxLjE3Mi4zMyAxLjY3NGwtLjA4MiA1LjE4OGMwIC4xNjcgMCAxLjU5LjE2NSAyLjY3OGgtMS44MTR2LS4wODR6bS0xLjMyLTUuMzU2Yy0uODI0IDAtMy44NzQgMC0zLjg3NCAyLjE3NiAwIC42Ny40MTIgMS44NDEgMi4yMjYgMS44NDEuOTkgMCAxLjgxNC0uNDE4IDIuMzA4LTEuMTcyLjQxMy0uNzUzLjQ5NS0xLjMzOC40OTUtMi44NDUtLjQxMi4wODQtLjY2IDAtMS4xNTQgMHptNC44NjUtNC4xODRWNi44NjJoMS45Nzh2MS43NTdjLjI0OC0uNDE4Ljk5LTEuOTI0IDMuMzgtMS45MjQuOTkgMCAzLjg3NS4zMzQgMy44NzUgMy42ODJ2Ny4zNjRINjIuMTZ2LTYuODYyYzAtLjY3LS4wODItMS4zNC0uNTc3LTEuODQxLS40OTUtLjUwMi0xLjIzNy0uNzUzLTEuODk2LS43NTMtMS40ODQgMC0yLjgwMyAxLjA4Ny0yLjgwMyAzLjI2M3Y2LjE5M2gtMS45NzlWOC4xMTdoLjA4M3ptOS44OTMtMS4yNTVoMS44OTZWNC41MTlsMS45NzgtLjY3djIuOTNoMi4zOTF2MS41MDZoLTIuMzl2Ni40NDNjMCAuNTAyIDAgMS40MjMgMS40IDEuNDIzLjQxMyAwIC44MjUtLjA4NC45OS0uMDg0djEuNTljLS4zMy4wODQtLjkwNy4xNjctMS42NDkuMTY3LTEuODk2IDAtMi43Mi0uNTg2LTIuNzItMi4zNDNWOC4yODRINjQuODhWNi44NjJ6bTcuNjY2LTQuNzdoMi4zOTF2Mi4yNmgtMi4zOXYtMi4yNnptLjE2NSA0Ljc3aDEuOTc5djEwLjc5NWgtMS45NzlWNi44NjJ6bTMuODc1IDIuMTc2YzAtLjc1My0uMDgyLTEuNTA3LS4wODItMi4xNzZoMS45NzhsLjA4MyAyLjA5MmMuNDEyLTEuNTA2IDEuNjQ4LTIuMDA4IDIuNTU1LTIuMDkyYTkuMzc5IDkuMzc5IDAgMDExLjQwMi0uMDg0djIuMDA5Yy0uMDgzIDAtLjI0OC0uMDg0LS40MTItLjA4NGgtLjU3OGMtMi4zOSAwLTIuODg1IDEuNDIyLTIuODg1IDMuMjYzdjUuNzc0SDc2LjY3VjkuMDM3aC0uMDgzek03LjgzMiAwQzMuNzEgMCAuMzMgMy40MzEuMzMgNy42MTVzMy4zOCA3LjYxNSA3LjUwMiA3LjYxNSA3LjUwMi0zLjQzIDcuNTAyLTcuNjE1QzE1LjMzNCAzLjQzMSAxMS45NTQgMCA3LjgzMiAwem0wIDEyLjg4N2MtMi44ODYgMC01LjE5NC0yLjM0My01LjE5NC01LjI3MiAwLTIuOTI5IDIuMzA4LTUuMjcyIDUuMTk0LTUuMjcyIDIuODg1IDAgNS4xOTQgMi4zNDMgNS4xOTQgNS4yNzItLjA4MyAyLjkyOS0yLjM5MSA1LjI3Mi01LjE5NCA1LjI3MnptNi42NzcgMS42NzRsLTYuNjc3IDIuOTI4LTYuNjc4LTIuOTI4TDAgMTYuNjUzIDcuODMyIDIwbDcuODMyLTMuMzQ3LTEuMTU1LTIuMDkyeiIgLz4KPC9zdmc+" alt="Palantir"><span class="role">Co-founder / CEO 2004–</span></div>
+  </div>
+  <h1>Alex Karp（アレックス・カープ）</h1>
+  <div class="hero-sub">失読症で字を読むのに苦しんだ少年は、公民権運動の活動家の両親に連れられてデモに通い、ロースクールでは<strong>「マルクスの疎外論を語りたがる社会主義者」</strong>としてピーター・ティールと議論を戦わせた。フランクフルトで10年を過ごし、ハーバーマスに指導を断られながらドイツ語で社会理論の博士論文を書き上げ、職もないまま帰国した男に、ティールが電話をかける。「PayPalの不正検知の手法で、テロを止める会社をやらないか」。偉大さの構造は、<strong>エンジニアではない哲学者の目</strong>と、<strong>誰にも好かれなくていいという覚悟</strong>と、<strong>20年かけて国家の仕事を取りにいく持久力</strong>の掛け算だ。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">$10→約$199</div><div class="lbl">直接上場の初値（2020）→株価（2026年10月下旬）</div></div>
+    <div class="kpi"><div class="val">+96%</div><div class="lbl">2026年7〜9月期の売上成長率（23.1億ドル）</div></div>
+    <div class="kpi"><div class="val">22年</div><div class="lbl">創業期から続くCEO在任（2004〜）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜学生時代</a></li>
+    <li><a href="#s4">原体験エピソード</a></li>
+    <li><a href="#s5">2020年の上場書簡を分解する</a></li>
+    <li><a href="#s6">キャリア・業績の軌跡</a></li>
+    <li><a href="#s7">偉大さの構造分析</a></li>
+    <li><a href="#s8">思想・仕事術</a></li>
+    <li><a href="#s9">光と影：批判と矛盾</a></li>
+    <li><a href="#s10">雑学・意外な側面</a></li>
+    <li><a href="#s11">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>TL;DR：シリコンバレーで最も「テック企業らしくない」CEOが、最も国家に近いAI企業を作った</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>カープの偉大さは、技術力ではなく<strong>立ち位置の選び方</strong>から来ている。①失読症と、黒人の母とユダヤ人の父を持つ「どこにも完全には属さない」生い立ちが育てた、<b>多数派の空気に流されない頭</b>。②フランクフルトで社会理論を学び、「社会は攻撃性をどう制度の中に飼いならすか」を博士論文のテーマにした<b>哲学者の目</b>。③シリコンバレーが軍や情報機関を避けた20年間、あえてそこに張り続けた<b>不人気への耐性</b>。この3つが、9.11後の情報機関の需要、ウクライナとガザの戦争、そして生成AIを「現場で動かす」需要という<b>時代の波</b>と噛み合い、赤字の受託ソフト会社と言われたPalantirを、売上が前年比ほぼ倍増するAI企業に変えた。ただし同じ立ち位置は、移民当局・警察・戦場で使われるソフトの責任をめぐる批判を、創業以来ずっと引き寄せている。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1967年10月2日（米ニューヨーク市生まれ、ペンシルベニア州フィラデルフィア育ち）</div></div>
+    <div class="kv-item"><div class="k">家族</div><div class="v">父ロバート（ユダヤ系の小児科医）、母リア・ジェインズ（アフリカ系アメリカ人の画家）。両親は公民権運動の活動家。弟ベン（テンプル大学ジャパン教員）。叔父はイェール大学の経済学者ジェラルド・ジェインズ</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">フィラデルフィアのセントラル高校（1985）→ ハバフォード大学（哲学、1989）→ スタンフォード大学ロースクール（法務博士、1992）→ ゲーテ大学フランクフルト（社会理論の博士号、2002）</div></div>
+    <div class="kv-item"><div class="k">主な肩書き</div><div class="v">Palantir Technologies 共同創業者・CEO（2004〜）。過去にAxel Springer、BASFの取締役。『The Technological Republic』（2025、ニコラス・ザミスカとの共著）著者</div></div>
+    <div class="kv-item"><div class="k">共同創業者</div><div class="v">ピーター・ティール、ジョー・ロンズデール、スティーブン・コーエン、ネイサン・ゲッティングス</div></div>
+    <div class="kv-item"><div class="k">2026年の動き</div><div class="v">7〜9月期の売上は23.1億ドル（前年比+96%）で初めて20億ドルを超え、米国の民間向け売上（9.8億ドル）が米政府向け（9.5億ドル）を初めて上回った。通期の売上見通しを85.3億ドルに引き上げ。3月には恩師筋にあたるハーバーマスの死去を受け、Politicoに回想記を寄稿</div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1967</td><td>ニューヨークで生まれ、フィラデルフィアで育つ。父はユダヤ系の小児科医、母はアフリカ系の画家。両親に連れられて公民権運動のデモに通う</td><td>—</td></tr>
+        <tr><td>幼少期</td><td>1970s</td><td>失読症で字を読むのに苦しむ。両親の方針で公立校に通う</td><td>★★</td></tr>
+        <tr><td>18歳</td><td>1985</td><td>父と同じフィラデルフィアのセントラル高校を卒業</td><td>★</td></tr>
+        <tr><td>21歳</td><td>1989</td><td>ハバフォード大学で哲学の学士号</td><td>★</td></tr>
+        <tr><td>24歳</td><td>1992</td><td>スタンフォード大学ロースクールを修了。在学中にピーター・ティールと出会い、政治論争を重ねる。法律家にはならず、学者を目指してフランクフルトへ</td><td>★★★</td></tr>
+        <tr><td>20代後半〜33歳</td><td>1992–2001</td><td>ゲーテ大学で学び、ハーバーマスのコロキウムに出席。ジークムント・フロイト研究所で研究員として働く</td><td>★★</td></tr>
+        <tr><td>32歳</td><td>2000</td><td>8月、ハーバーマスから3枚のタイプ打ちの手紙で指導の継続を断られる。社会学者カローラ・ブレーデが指導を引き継ぐ</td><td>★★★</td></tr>
+        <tr><td>35歳</td><td>2002</td><td>11月、博士論文『生活世界の中の攻撃性』で博士号。この前後、祖父の遺産1万2,000ドルを元手にロンドンで資産運用会社「Caedmon Group」を始めたとされる</td><td>★★</td></tr>
+        <tr><td>35〜36歳</td><td>2003–04</td><td>ティールの構想でPalantirが生まれ、CEOに就く。ベンチャーキャピタルには相手にされず、CIAの投資部門In-Q-Telとティールの資金で船出する</td><td>★★★</td></tr>
+        <tr><td>37〜40歳</td><td>2005–08</td><td>エンジニアがCIAに通い詰めて情報分析ソフト「Gotham」を作る。2007年にNY市警とも試験運用を始める</td><td>★★</td></tr>
+        <tr><td>48〜49歳</td><td>2016</td><td>陸軍が自社開発にこだわる情報システムの調達をめぐり、顧客である陸軍を提訴して勝訴</td><td>★★★</td></tr>
+        <tr><td>52〜53歳</td><td>2020</td><td>本社をパロアルトからデンバーへ移す。9月30日、NY証券取引所に直接上場。上場書類で「シリコンバレーとは価値観を共有しない」と書簡を公開</td><td>★★★</td></tr>
+        <tr><td>54歳</td><td>2022</td><td>6月、ロシアの侵攻後に西側の大手企業トップとして初めてゼレンスキー大統領と会談</td><td>★★</td></tr>
+        <tr><td>55歳</td><td>2023</td><td>生成AIを業務データにつなぐ「AIP」を発表。顧客に数日で試させる「ブートキャンプ」で民間需要を一気に開く</td><td>★★★</td></tr>
+        <tr><td>56〜57歳</td><td>2024</td><td>9月、S&amp;P500に採用。11月、Nasdaqへ移籍。英エコノミスト誌の「CEO・オブ・ザ・イヤー」</td><td>★★</td></tr>
+        <tr><td>57〜58歳</td><td>2025</td><td>2月、『The Technological Republic』刊行。8月、米陸軍と最大100億ドル・10年の包括契約。11月、伝記『The Philosopher in the Valley』刊行</td><td>★★</td></tr>
+        <tr><td>58〜59歳</td><td>2026</td><td>3月、ハーバーマスが96歳で死去し、Politicoに回想記を寄稿。11月、7〜9月期の売上が前年比+96%と発表</td><td>★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜学生時代：デモに通う子ども、読めない少年、論争好きの法学生</h2>
+  <p>カープの両親は、フィラデルフィアで公民権運動や社会正義の活動に関わっていた。父ロバートはユダヤ系の小児科医、母リアはアフリカ系アメリカ人の画家。幼いカープは両親に連れられて、いくつもの抗議デモに参加した。本人は後に「黒人の中にも、僕を黒人と見る人とそうでない人がいた」と語っている。<strong>どの集団にも完全には属さない</strong>という感覚は、この頃からあった。</p>
+  <p>もう1つの壁は失読症だった。字を読むことに長く苦しみ、8歳頃まで読めなかったとする伝記もある（<span class="tag warn">△ 年齢は二次情報</span>）。本人はのちに、失読症の人は「直線的に読む代わりに、全体のパターンで考える」と語り、Palantirでも神経多様性（ニューロダイバーシティ）を持つ人材の採用を公言している。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>パラメータ</th><th>どこで育ったか</th><th>後にどう効いたか</th></tr></thead>
+      <tbody>
+        <tr><td><b>多数派に流されない頭</b></td><td>黒人とユダヤ人の家系、活動家の両親、デモの現場</td><td>シリコンバレーの「軍とは組まない」空気に逆らい続ける</td></tr>
+        <tr><td><b>パターンで考える癖</b></td><td>失読症で「普通の読み方」ができなかった</td><td>技術の細部ではなく、組織と制度の構造からプロダクトを考える</td></tr>
+        <tr><td><b>議論で鍛えた言葉</b></td><td>哲学専攻、ロースクールでのティールとの論争</td><td>上場書簡・株主への手紙・決算説明会での強烈な語り口</td></tr>
+        <tr><td><b>ドイツ語と欧州の目</b></td><td>フランクフルトでの約10年</td><td>欧州の政財界とのつながり、「西洋」という単位で物事を考える思想</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>セントラル高校、ハバフォード大学（哲学）を経て、スタンフォード大学のロースクールに進む。ここで出会ったのが、同じ法学生のピーター・ティールだった。2人はロースクールへの不満と政治論争好きで意気投合した（寮で同居していたとする報道もある）。ティールは後に、当時のカープを「マルクスの疎外論について話したがる社会主義者」と回想している。リバタリアンのティールと社会主義者のカープ。考えは正反対でも、<b>本気で議論できる相手</b>として互いを認めたことが、10年後の会社につながった。</p>
+  <p>1992年に修了すると、カープは弁護士にならず、24歳で学者を目指してドイツのフランクフルトへ渡った。</p>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは6つ</h2>
+
+  <div class="episode">
+    <h3>🔑 弁護士ではなく、フランクフルト学派の街へ（24歳 / 1992年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>スタンフォードの法務博士を持ちながら、カープは法律事務所ではなくフランクフルトのゲーテ大学を選んだ。社会研究所で開かれていたユルゲン・ハーバーマスのコロキウムに出席し、ジークムント・フロイト研究所で研究員として働いた。ドイツ語で考え、ドイツ語で書く生活が、2001年頃まで約10年続いた。</p>
+    <p>→ <b>どう繋がったか：</b>カープは今もドイツ語を流暢に話し、ドイツの政財界やAxel Springer、BASFの取締役会、ミュンヘン安全保障会議といった欧州の場に深く入り込んでいる。米国の安全保障を「西洋」という文明の単位で語る彼の思想は、この10年で作られた。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 ハーバーマスからの3枚の手紙（32歳 / 2000年8月）</h3>
+    <p><span class="tag good">✓ 論文の記録と指導教員の証言で確認</span>　<span class="tag warn">△ ハーバーマスが正式な指導教員だったかは、本人と関係者で説明が食い違う</span></p>
+    <p>カープが約40ページの草稿を送ると、ハーバーマスは3枚のタイプ打ちの手紙で、指導を続けないと伝えてきた。最近の文芸批評家や理論家の仕事に太刀打ちできていない、という率直で手厳しい内容だった。カープは2026年のPoliticoへの寄稿で「まったくの衝撃で、傷ついた」と振り返っている。指導は社会学者カローラ・ブレーデが引き継ぎ、2002年11月14日に博士号を得た。なお、ブレーデは「カープがハーバーマスのもとで博士号を取ったという報道は誤り」と述べている。</p>
+    <p>→ <b>どう繋がったか：</b>カープは今、あの容赦ない率直さこそ価値があり、今の文化が失ったものだと書いている。Palantirの社内で彼が求める「遠慮のない議論」や、株主への手紙で批判者をはっきり名指しするスタイルの源流は、この挫折にある。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 「攻撃性は、社会の中でどう飼いならされるか」という博士論文（35歳 / 2002年）</h3>
+    <p><span class="tag good">✓ ゲーテ大学の論文記録で確認</span></p>
+    <p>論文の題は『生活世界の中の攻撃性（Aggression in der Lebenswelt）』。社会学者タルコット・パーソンズの攻撃性の概念を、「ジャーゴン（仲間内の言葉）・攻撃性・文化」のつながりから広げようとした。ざっくり言えば、<strong>攻撃性は社会の外で暴れるだけでなく、言葉や文化を通じて社会の内側で受け入れられた形をとる</strong>という問題を扱った。ブレーデによれば、テーマは戦後ドイツの歴史とも結びついていた。</p>
+    <p>→ <b>どう繋がったか：</b>「人間の攻撃性はなくならない。だから社会がそれをどう管理し、どう抑止するかが問題になる」。国家の暴力を正面から肯定し、AIを抑止力として語る今のカープの思想は、学者時代のこのテーマの延長線上にある。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 職もなく帰国した男に、ティールが電話をかける（35歳 / 2002〜03年）</h3>
+    <p><span class="tag good">✓ 複数報道で確認</span>　<span class="tag warn">△ 同時期にロンドンで資産運用会社を始めたとする記述もあり、時系列に幅</span></p>
+    <p>博士号を取ったカープは、祖父の遺産1万2,000ドルを元手にロンドンで資産運用会社「Caedmon Group」を始め、欧州の富裕層の資金を集めた。一方で、帰国した頃は「金も仕事もなかった」とする記事もある。そこにティールから電話が来る。「PayPalで使っていた不正検知の手法がある。テロを止める会社にできると思う」。2001年の同時多発テロの後、米国の情報機関はバラバラのデータをつなげられないことを批判されていた。</p>
+    <p>→ <b>どう繋がったか：</b>ティールが選んだCEOは、プログラミングもビジネスも知らない哲学博士だった。ティールは後に「カープはいつも、難しくて複雑な道を選ぶ」と評している。技術者ではない人間が率いたからこそ、Palantirは最初から<b>技術ではなく「国家の問題」から逆算する会社</b>になった。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 ベンチャーキャピタルに笑われ、CIAに拾われる（36〜37歳 / 2004〜05年）</h3>
+    <p><span class="tag good">✓ 伝記『The Philosopher in the Valley』の抜粋で確認</span>　<span class="tag warn">△ 出資額は資料で幅</span></p>
+    <p>2004年、Palantirはセコイア・キャピタルに売り込んだが、伝説的投資家マイケル・モリッツは打ち合わせの大半を落書きをして過ごしたという。カープは「言い返してやればよかった」と後悔し、ベンチャーキャピタルへの恨みを何年も抱えた。そのベンチャー投資家の1人が紹介したのが、CIAの投資部門In-Q-Telだった。In-Q-Telは125万ドルを出資し、ティールが284万ドルを追加した。In-Q-Telは取締役の席を求めなかった。</p>
+    <p>→ <b>どう繋がったか：</b>カープは「お金よりも、CIAの分析官に会えたことの方が大きかった」と語る。2005年から、共同創業者スティーブン・コーエンらはパロアルトからラングレーのCIA本部へ2週間ごとに約200回通い、分析官の隣でソフトを作り直した。顧客の現場にエンジニアを常駐させるPalantir独自の「フォワード・デプロイド・エンジニア」の型は、ここで生まれた。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 顧客である陸軍を訴える（48〜49歳 / 2016年）</h3>
+    <p><span class="tag good">✓ Defense News・判決記録で確認</span></p>
+    <p>米陸軍は、戦場の情報分析システム「DCGS-A」を、既製品を検討せずに自前で開発し続けようとしていた。Palantirは会計検査院への異議申し立てに敗れた後、2016年6月に連邦請求裁判所に陸軍を提訴する。10月、裁判所は「陸軍は、既製品で要件を満たせるかの市場調査を義務づけた1994年の法律に違反した」とPalantirの主張を認め、控訴審でも政府が敗れた。</p>
+    <p>→ <b>どう繋がったか：</b>最大の潜在顧客を訴えるのは、普通なら自殺行為だ。だがこの勝訴で、国防総省が「既製のソフト」を買う道が開いた。2025年の陸軍との最大100億ドルの包括契約は、9年前のこの賭けの延長線上にある。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Deep Dive</div>
+  <h2>2020年の上場書簡を分解する：シリコンバレーとの決別宣言が、そのまま事業戦略だった</h2>
+  <p>2020年8月、Palantirは上場申請書類（S-1）を提出した。その冒頭に置かれたカープの書簡は、上場前の会社としては異例の内容だった。投資家に成長性を売り込むのではなく、<b>自分たちが生まれた業界そのものを批判した</b>のである。</p>
+
+  <h3>書簡の主な一節</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>原文（抜粋）</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td>Our company was founded in Silicon Valley. But we seem to share fewer and fewer of the technology sector's values and commitments.</td><td>我々はシリコンバレーで生まれたが、テック業界の価値観をますます共有しなくなっている</td></tr>
+        <tr><td>From the start, we have repeatedly turned down opportunities to sell, collect, or mine data.</td><td>創業以来、データを売る・集める・掘る機会を断ってきた。他の巨大テック企業はまさにそれで商売をしている</td></tr>
+        <tr><td>Our society has effectively outsourced the building of software … to a small group of engineers in an isolated corner of the country.</td><td>社会はソフト作りを、国の片隅の少数のエンジニアに外注してしまった。我々の時代の最も重い道徳的・哲学的な問いの判断まで外注したいのか</td></tr>
+        <tr><td>Our software is used to target terrorists and to keep soldiers safe.</td><td>我々のソフトはテロリストを狙い、兵士を守るために使われている。誰かに危険を冒させるなら、その仕事に必要なものを渡す義務がある</td></tr>
+        <tr><td>We have chosen sides … We stand by them when it is convenient, and when it is not.</td><td>我々はどちらの側につくかを選んだ。都合のいいときも、悪いときも、その側に立つ</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>背景：Googleが降りた仕事を、Palantirが取った</h3>
+  <p>書簡の2年前の2018年、Googleは国防総省のAI画像解析計画「Project Maven」への参加に社員から強い反発を受け、契約を更新しないと決めた。その仕事を引き継いだのがPalantirだと、2019年末に報じられた。同じ「軍のためのAI」に対して、Googleは社員の良心を理由に降り、Palantirは<b>「選んだ側に立つ」ことを理由に取りにいった</b>。2024年には陸軍から、Mavenの後継となる「Maven Smart System」の4.8億ドルの契約を得ている。</p>
+
+  <h3>上場の当日</h3>
+  <p>2020年9月30日、PalantirはIPOではなく、新株を売り出さない「直接上場」でNY証券取引所に上場した。取引所が示した参考価格は7.25ドル、初値は10ドル、終値は9.50ドル前後で、時価総額は約200億ドル強。同じ月、本社はカリフォルニア州パロアルトからコロラド州デンバーに移っていた。カープはかねてベイエリアの「リベラルな単一文化」を批判しており、移転は書簡の内容を地理的にも実行したものだった。</p>
+
+  <h3>なぜこれが「戦略」だったのか</h3>
+  <p>書簡は思想の表明に見えて、実は<b>顧客と社員を選別する仕組み</b>だった。①政府・軍の顧客には「この会社は世論が変わっても逃げない」という信頼を与える。②社員には「ここは軍の仕事をする会社だ」と最初から告げ、合わない人を入口で弾く。③投資家には「我々は広告モデルの会社ではない」と差別化する。批判は集めたが、その批判こそが、競合が入ってこない市場を守る堀になった。</p>
+
+  <h3>6年後の続き</h3>
+  <p>上場時に10ドルだった株価は、2026年10月下旬には200ドル前後で取引されている。2026年7〜9月期には、かつて「政府頼み」と言われた会社で、米国の民間向け売上が初めて米政府向けを上回った。「選んだ側に立つ」という書簡の一節は、政府の仕事で鍛えた製品を、民間にも売るための信用になった。</p>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Career</div>
+  <h2>キャリア・業績の軌跡：情報機関の受託ソフトから、AIの「オペレーティングシステム」へ</h2>
+
+  <h3>第1期（1992〜2003）：学者になりそこねた10年</h3>
+  <p>フランクフルトで研究し、ハーバーマスに指導を断られ、それでも博士号を取った。ロンドンでは小さな資産運用会社を始め、ティールのヘッジファンドClariumの資金集めも手伝った。この時期の経歴は、ソフトウェア会社のCEOとしては「空白」に見える。だが、国家・暴力・言葉について考え続けた10年は、のちにPalantirを率いる上での思想の背骨になった。</p>
+
+  <h3>第2期（2004〜2009）：CIAの隣でソフトを作る</h3>
+  <p>ベンチャーキャピタルに断られ、In-Q-Telとティールの資金で始めた会社は、約3年といくつもの倒産の危機をくぐって、最初の製品「Gotham」を完成させた。カープは、利用者が権限のある情報だけを見られ、アクセスの履歴がすべて残る仕組みを「ヘーゲル的な解決」と呼んだ。2007年にはNY市警が試験導入し、のちにロサンゼルス市警（2009年〜）にも広がる。</p>
+
+  <h3>第3期（2010〜2019）：「赤字の受託会社」と言われながら</h3>
+  <p>政府・金融機関・製造業へと顧客を広げ、企業向けの「Foundry」も作った。一方で、顧客ごとにエンジニアを常駐させるやり方は「ソフト会社ではなくコンサル会社だ」と批判され、長く赤字が続いた。2016年には陸軍を提訴して勝ち、防衛調達の扉をこじ開けた。</p>
+
+  <h3>第4期（2020〜2022）：上場と、戦争</h3>
+  <p>2020年に本社をデンバーへ移して直接上場。2022年6月、ロシアの侵攻を受けたウクライナで、西側の大手企業トップとして初めてゼレンスキー大統領と会談し、ソフトを無償で提供した。「戦場で実際に使われるソフト」という評価が、ここで固まった。</p>
+
+  <h3>第5期（2023〜2024）：AIPとブートキャンプ</h3>
+  <p>2023年、生成AIを企業の業務データと権限管理につなぐ「AIP（Artificial Intelligence Platform）」を発表した。長い試験導入の代わりに、顧客企業を数日間の「ブートキャンプ」に招いて、自社のデータで実際に動かしてもらう。この売り方で米国の民間顧客が急増し、2024年9月にS&amp;P500に採用、11月にNasdaqへ移籍した。英エコノミスト誌は2024年の「CEO・オブ・ザ・イヤー」にカープを選んだ。</p>
+
+  <h3>第6期（2025〜2026）：AIの国家インフラへ</h3>
+  <p>2025年8月、米陸軍と最大100億ドル・10年間の包括契約を結んだ。2026年7〜9月期の売上は23.1億ドル（前年比+96%）、調整後営業利益率62%、成長率と利益率を足した「Rule of 40」は158%に達した。通期の売上見通しは85.3億ドル。カープは決算発表で「主権AI（ソブリンAI）の動きが、持てる者と持たざる者の最も劇的な二極化を生んでいる」と述べた。</p>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜカープだけが？</h2>
+  <p>9.11の後、情報機関のデータ統合を狙った会社は数多くあった。大手の防衛企業もIBMのような巨大IT企業もいた。それでもPalantirだけが残り、AIの時代に主役になった理由は、次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 不人気への耐性</b></td><td>多数派に嫌われても立場を変えない。批判されることを前提に動ける</td><td>活動家の両親とデモ、失読症、上場書簡での業界批判、陸軍の提訴</td></tr>
+        <tr><td><b>② 哲学者の目で問題を選ぶ</b></td><td>技術ではなく「国家・暴力・制度」という問いから事業を逆算する</td><td>攻撃性を扱った博士論文、Gothamの権限管理を「ヘーゲル的」と呼んだこと</td></tr>
+        <tr><td><b>③ 現場に張りつく型</b></td><td>エンジニアを顧客の隣に置き、相手の業務の中でソフトを作り直す</td><td>CIAへの約200回の往復、フォワード・デプロイド・エンジニア、AIPブートキャンプ</td></tr>
+        <tr><td><b>④ 20年の持久力</b></td><td>赤字と「コンサル会社」という批判に耐え、受託の積み重ねを製品に変えるまで待つ</td><td>2004年創業から黒字化・上場まで約16〜19年</td></tr>
+        <tr><td><b>⑤ 時代の波</b></td><td>9.11後の情報統合、ウクライナとガザの戦争、生成AIを現場で動かす需要</td><td>In-Q-Telの出資、2022年のウクライナ支援、2023年のAIP</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>⑤が「需要」を用意し、②が「どこに張るか」を決め、③が「その需要を製品に変え」、④が「結果が出るまで続けさせ」、①が「その間ずっと浴びる批判に耐えさせた」。とくに<b>①と②の組み合わせ</b>が決定的だった。シリコンバレーの多くの起業家にとって、軍や情報機関の仕事は「社員と世論に嫌われる仕事」で、そもそも選択肢に入らなかった。哲学者のカープにとって、それは「誰かが引き受けなければならない仕事」だった。<br><br><strong>ただし、同じ構造が裏返る。</strong>①の「嫌われても平気」は、移民当局や警察への協力に対する正当な批判まで「敵の攻撃」として退ける危うさを持つ。②の「国家の側に立つ」思想は、政権が変われば、ソフトが誰に向けて使われるかを自分では選べなくなることを意味する。<b>彼を偉大にした構造と、彼に向けられる最大の批判は、同じものから出ている。</b></div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Philosophy</div>
+  <h2>思想・仕事術：「ハードパワーと、ソフトな信念」の共和国</h2>
+  <p>カープの思想は、2025年2月に刊行された『The Technological Republic: Hard Power, Soft Belief, and the Future of the West』（Palantir幹部ニコラス・ザミスカとの共著）にまとまっている。哲学の博士がCEOとして20年かけて考えたことを、そのまま政治の本にした一冊だ。</p>
+
+  <h3>『The Technological Republic』の主張</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>主張</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>シリコンバレーは道を見失った</b></td><td>かつての技術者は国家と組み、原爆や宇宙開発のような国の課題に挑んだ。今の才能ある技術者は、写真共有や広告や消費者向けアプリばかり作っている</td></tr>
+        <tr><td><b>テックと国家の同盟を作り直せ</b></td><td>ソフトウェア産業と政府が、国防やAIの開発で再び手を組むべきだ。それが「テクノロジカル・リパブリック（技術の共和国）」</td></tr>
+        <tr><td><b>原子の時代から、AIの抑止の時代へ</b></td><td>核兵器が支えてきた抑止は終わりつつあり、これからはAIを使ったソフトの力が抑止を左右する。だから民主主義国はAI兵器の開発で先行しなければならない</td></tr>
+        <tr><td><b>ハードパワーには「ソフトな信念」が要る</b></td><td>軍事力だけでは足りない。共同体として何を信じ、何を守るのかという共有の文化と物語がなければ、技術は方向を持たない</td></tr>
+        <tr><td><b>西洋の価値の擁護</b></td><td>西洋の生き方は守るに値する、と明言する。批判を恐れて自分の文明について語れなくなったエリートの「空洞化」を批判する</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Palantirがこの本の要点を22項目にまとめてXに投稿すると、強い批判を浴びた。「自社の売上を支える政治を、そのまま思想として売っている」という指摘だ。一方で、ウォルター・アイザックソンらは重要な本だと評価した。</p>
+
+  <h3>フランクフルトから続く3本の糸</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>学者時代の問い</th><th>今の思想</th></tr></thead>
+      <tbody>
+        <tr><td><b>攻撃性は社会の中でどう扱われるか</b>（博士論文）</td><td>人間の攻撃性はなくならない。だから国家が暴力を独占し、敵を抑止できる力を持つことが、平和の条件になる</td></tr>
+        <tr><td><b>ハーバーマスの「生活世界」とコミュニケーション</b></td><td>社会は、共有された言葉と信念で成り立つ。だからハードパワーには「ソフトな信念」が要る</td></tr>
+        <tr><td><b>戦後ドイツと記憶の問題</b></td><td>歴史の罪を自覚することと、自分の文明を守る意志を持つことは両立させるべきだ、という西洋擁護の議論へ</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>ただし、フランクフルト学派は本来、国家権力や道具化された理性を<b>批判する</b>伝統だ。その中で学んだ人間が、国家の情報・軍事インフラを作る会社の顔になったことは、カープの思想の最大のねじれでもある（9章）。</p>
+
+  <h3>仕事術</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>考え方</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>We have chosen sides.</b></td><td>どちらの側に立つかを先に決め、都合が悪くなっても降りない。顧客の信頼はそこから生まれる</td></tr>
+        <tr><td><b>現場に送り込め</b></td><td>エンジニアを顧客の現場に置き、相手の業務の中でソフトを作り直す。売るのはデモではなく、顧客自身のデータで動く実物</td></tr>
+        <tr><td><b>率直さは礼儀</b></td><td>ハーバーマスに受けた容赦ない批判を「失われた美徳」と呼ぶ。社内でも社外でも、遠回しな言い方をしない</td></tr>
+        <tr><td><b>神経多様性を強みに</b></td><td>失読症の自分を引き合いに、「普通」でない考え方をする人を採用すると公言する</td></tr>
+        <tr><td><b>鹿のように走るには、9割をカタツムリのように走れ</b></td><td>トレーニングの哲学。心拍を抑えた「ゾーン2」の運動を長時間続け、強度の高い練習は週1〜2回だけ。長い時間をかけて土台を作る考え方は、Palantirの20年にも重なる</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Light &amp; Shadow</div>
+  <h2>光と影：批判と内部矛盾</h2>
+
+  <h3>移民当局・警察との仕事</h3>
+  <p>Palantirは2014年から米移民・関税執行局（ICE）と仕事をしており、2025年4月には移民の追跡を支援する「ImmigrationOS」の3,000万ドルの契約を得た。カープは、家族の引き離しを「難しく、重い道徳の問題」と認めつつも、契約を擁護している。警察向けでは、ロサンゼルス市警の犯罪予測プログラムが人種的な偏りを強めると批判され、2021年に関係が終わった。NY市警も2017年に契約を打ち切っている。</p>
+
+  <h3>「敵を怖がらせ、時に殺す」</h3>
+  <p>カープは、Palantirの役割を「必要なときには敵を怖がらせ、時には殺すこと」と表現したことがある。2025年には、空売り投資家を挑発する冗談でも物議を醸した。軍事技術の会社のCEOが暴力について軽く語ることへの違和感は、繰り返し指摘されている。</p>
+
+  <h3>お金</h3>
+  <p>上場した2020年の報酬は約11億ドルで、米上場企業のCEOとして最高額だった（NYタイムズ）。2024年の「実質支払報酬」は約68億ドルで、これも米国1位。同年には約19億ドル分の自社株を売って批判された。株価収益率（PER）が100倍を大きく超える評価が続き、「期待が先走りすぎている」という声も根強い。</p>
+
+  <h3>政治の振れ幅</h3>
+  <p>2018年には「社会主義者で進歩派、ただしウォークではない」と語り、ヒラリー・クリントンに投票したと明かした。2024年にはバイデン陣営の大口献金者と報じられた。それが2025年には「古典的リベラル」を名乗り、トランプ政権のAI政策や中東政策を「とても良い」と評価した。伝記作家は、この軌跡を「社会主義者から保守的なナショナリストへ」とまとめている。</p>
+
+  <h3>内部矛盾：「フランクフルト学派の弟子」と「国家の道具」</h3>
+  <p>カープは長く「ハーバーマスに学んだ哲学者」として語られてきたが、指導教員のブレーデは、ハーバーマスのもとで博士号を取ったという話は誤りだと述べている。さらに、権力を批判する伝統の中で学んだ人間が、国家の監視・軍事インフラを提供する会社を率いるという、思想上のねじれがある。さらに、博士課程時代にはホロコーストの記憶を「過去のもの」にしようとする作家マルティン・ヴァルザーの議論を批判していたのに、<b>のちの著書ではそれに近い立場をとっている</b>という指摘もある。カープ本人にとっては「理論から現実へ」の成熟でも、批判者にとっては「哲学を売上の言い訳に使っている」ように見える。</p>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">運転</div><div class="info-card-title">車の運転を一度も覚えていない</div><div class="info-card-text">理由は本人いわく「最初は貧しすぎて、そのあとは金持ちすぎた」。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">武術</div><div class="info-card-title">陳式太極拳の使い手</div><div class="info-card-text">世界経済フォーラムの紹介にも「陳式太極拳の実践者」とある。オフィスに太極拳用の剣を置き、社員に太極拳を教えたこともある。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">スキー</div><div class="info-card-title">ほぼ毎日、クロスカントリースキー</div><div class="info-card-text">ノルウェーの選手から学んだ方法で、週5時間以上滑る。そのほとんどは「できるだけゆっくり」。ローラースキーの最中に取材を受けたこともある。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">家</div><div class="info-card-title">家は「クロスカントリースキー小屋」</div><div class="info-card-text">世界に約10〜11軒の家を持ち、山間部の家を冗談めかしてこう呼ぶ。拠点はニューハンプシャー州の山あいの町。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">引退後</div><div class="info-card-title">「隠者のダンス」</div><div class="info-card-text">Palantirをクビになったら、人里離れた場所で読書・射撃・太極拳・クロスカントリースキーの「隠者のダンス」をすると語った。2021年には、ニューハンプシャーの森で暮らす隠者「リバー・デイブ」に18万ドルを寄付している。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ドイツ語</div><div class="info-card-title">社内でドイツ語が飛び交う</div><div class="info-card-text">ドイツ語に堪能でフランス語も話す。オーストリア出身のアシスタントが付くことが多く、彼のオフィスではドイツ語がよく使われる。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">森</div><div class="info-card-title">スウェーデンの森を買う</div><div class="info-card-text">2026年、スウェーデンで会社を登記し、ヘリエダーレン地方の約3万7,000エーカーの森林を購入。狩猟の借地権を失った地元の人々から反発も出た。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">家族観</div><div class="info-card-title">子どもを持つ話は「じんましんが出る」</div><div class="info-card-text">結婚はしておらず、子どもを持つことを考えると「じんましんが出る」と語っている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ドキュメンタリー</div><div class="info-card-title">自分の映画には出なかった</div><div class="info-card-text">ドイツの監督クラウス・シュテルンのドキュメンタリー『Watching You』（2024/25）は、カープとPalantirを題材にしたが、本人は出演を断った。</div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：嫌われる場所に、長く張れ</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 回り道は、思想の背骨になる。</strong>弁護士にならず、10年かけてドイツで社会理論を学び、指導を断られた。ソフト会社のCEOとしては「空白」に見える時間が、のちに会社の立ち位置を決める思想になった。<b>今の仕事と関係なさそうな関心を1つ挙げ、それが自分の仕事の「なぜ」にどう効いているかを一行で書く</b>。</p>
+    <p><strong>② みんなが避ける仕事に、競争相手のいない市場がある。</strong>シリコンバレーが軍と組むことを嫌った20年間、Palantirはそこに張り続け、その不人気が参入障壁になった。<b>自分の業界で「やりたがる人が少ない仕事」を1つ書き出し、そこに10年張る価値があるかを考える</b>。</p>
+    <p><strong>③ 立場を選んだら、批判への答え方まで決めておく。</strong>「選んだ側に立つ」強さは、正当な批判まで退ける危うさと表裏一体だ。<b>自分が譲らない立場を1つ決め、それでも耳を傾けるべき批判とはどんなものかを、先に言葉にしておく</b>。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/Alex_Karp">Wikipedia — Alex Karp</a></li>
+    <li><a href="https://legrandcontinent.eu/fr/2026/03/18/le-fondateur-de-palantir-alexander-karp-a-t-il-vraiment-ete-leleve-dhabermas-entretien-exclusif-avec-sa-directrice-de-these/">Le Grand Continent — Karp a-t-il vraiment été l'élève d'Habermas ? Entretien avec Karola Brede (2026)</a></li>
+    <li><a href="https://legrandcontinent.eu/de/2026/03/18/alexander-karp-karola-brede/">Le Grand Continent (DE) — Alexander Karp / Karola Brede (2026)</a></li>
+    <li><a href="https://en.hvylya.net/news/1513-palantir-ceo-recalls-how-habermas-rejected-his-dissertation-and-why-it-mattered">Hvylya — Palantir CEO recalls how Habermas rejected his dissertation (2026)</a></li>
+    <li><a href="https://thehustle.co/05122021-story-behind-palantir">The Hustle — The unconventional story behind Palantir</a></li>
+    <li><a href="https://fastcompany.co.za/business/2025-11-24-the-evolution-of-palantir-from-cia-investments-to-police-partnerships/">Fast Company — The evolution of Palantir, from CIA investments to police partnerships (Steinberger excerpt, 2025)</a></li>
+    <li><a href="https://www.shortform.com/podcast/episode/npr-s-book-of-the-day-2026-01-06-episode-summary-the-philosopher-in-the-valley-paints-an-eccentric-portrait-of-palantirs-alex-karp">NPR Book of the Day (Shortform) — The Philosopher in the Valley (2026)</a></li>
+    <li><a href="https://in.marketscreener.com/quote/stock/PALANTIR-TECHNOLOGIES-INC-113108869/news/Factbox-Palantir-CEO-excoriates-Silicon-Valley-in-letter-ahead-of-market-debut-31178325/">Reuters via MarketScreener — Factbox: Palantir CEO excoriates Silicon Valley in letter (2020)</a></li>
+    <li><a href="https://foxbusiness.com/technology/palantir-ceo-letter-silicon-valley-ipo.amp">Fox Business — Palantir CEO rips Silicon Valley's values (2020)</a></li>
+    <li><a href="https://www.bloomberg.com/news/articles/2020-09-29/palantir-s-direct-listing-reference-price-set-at-7-25-by-nyse">Bloomberg — Palantir direct listing reference price set at $7.25 (2020)</a></li>
+    <li><a href="https://techcrunch.com/2020/09/30/palantir-asana-public-debut">TechCrunch — Palantir and Asana direct listings hit the public markets (2020)</a></li>
+    <li><a href="https://www.cnn.com/2020/09/30/tech/palantir-ipo">CNN — Palantir IPO (2020)</a></li>
+    <li><a href="https://www.defensenews.com/home/2016/07/01/palantir-takes-fight-with-army-to-federal-court/">Defense News — Palantir takes fight with Army to federal court (2016)</a></li>
+    <li><a href="https://www.defensenews.com/articles/judge-rules-in-favor-of-palantir-in-lawsuit-against-us-army">Defense News — Judge rules in favor of Palantir in lawsuit against US Army (2016)</a></li>
+    <li><a href="https://thenextweb.com/artificial-intelligence/2019/12/11/report-palantir-took-over-project-maven-the-military-ai-program-too-unethical-for-google">The Next Web — Palantir took over Project Maven (2019)</a></li>
+    <li><a href="https://www.artificialintelligence-news.com/news/palantir-project-maven-defense-contract-google-out/">AI News — Palantir and Project Maven</a></li>
+    <li><a href="https://interestingengineering.com/military/palantir-us-army-project-maven">Interesting Engineering — Palantir's $480M Maven Smart System contract</a></li>
+    <li><a href="https://thedefensepost.com/2025/08/02/palantir-us-army-contract/">The Defense Post — Palantir gets US Army contract worth up to $10B (2025)</a></li>
+    <li><a href="https://www.fool.com/investing/2024/09/13/meet-the-newest-stock-in-the-sp-500-it-soared-430">Motley Fool — Palantir joins the S&amp;P 500 (2024)</a></li>
+    <li><a href="https://www.sec.gov/Archives/edgar/data/0001321655/000132165526000045/a2026q3ex991pressrelease.htm">SEC / Palantir — Q3 2026 earnings press release</a></li>
+    <li><a href="https://www.xtb.com/en/market-analysis/palantir-nearly-doubles-revenue-shares-edge-higher-following-strong-earnings">XTB — Palantir nearly doubles revenue (2026)</a></li>
+    <li><a href="https://www.heygotrade.com/en/news/palantir-pltr-stock-news-october-28-2026/">Gotrade — Palantir stock news (Oct 28, 2026)</a></li>
+    <li><a href="https://www.shortform.com/summary/the-technological-republic-summary-alexander-c-karp-and-nicholas-w-zamiska">Shortform — The Technological Republic summary</a></li>
+    <li><a href="https://prometheusroot-com.pages.dev/books/9780593798690/the-technological-republic-hard-power-soft-belief-and-the-future-of-the-west-karp/">Review — The Technological Republic: AI as deterrence</a></li>
+    <li><a href="https://gizmodo.com/palantirs-billionaire-ceo-just-cant-stop-talking-about-killing-people-2000560597">Gizmodo — Palantir's CEO can't stop talking about killing people (2025)</a></li>
+    <li><a href="https://gizmodo.com/palantir-ceo-says-only-the-neurodivergent-will-survive-the-ai-takeover-2000738192">Gizmodo — Karp on neurodivergence</a></li>
+    <li><a href="https://www.insidehook.com/wellness/palantir-ceo-alex-karp-workout-routine">InsideHook — The CEO of Palantir's strategy for staying in shape</a></li>
+    <li><a href="https://www.axios.com/2023/02/02/palantir-ceo-alex-karp-exercise">Axios — How Palantir CEO Alex Karp trains (2023)</a></li>
+    <li><a href="https://weforum.org/people/alex-karp">World Economic Forum — Alex Karp</a></li>
+    <li><a href="https://www.aol.com/palantir-ceo-alex-karp-reveals-030422329.html">AOL / Business Insider — What Karp would do if he weren't running the company</a></li>
+    <li><a href="https://www.inkl.com/news/fear-really-drives-him-is-alex-karp-of-palantir-the-world-s-scariest-ceo">The Guardian via inkl — Is Alex Karp the world's scariest CEO?</a></li>
+    <li><a href="https://afsc.org/sites/default/files/2026-06/palantir-factsheet.pdf">AFSC — Palantir factsheet (2026)</a></li>
+  </ul>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>

@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palmer Luckey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-logos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero-logo { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 10px; padding: 8px 14px; }
+.hero-logo img { height: 26px; width: auto; display: block; }
+.hero-logo .role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; border-left: 1px solid var(--border); padding-left: 10px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-06</span>
+  </div>
+  <div class="hero-logos">
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgaWQ9Ikhvcml6b250YWwiIHZpZXdCb3g9IjAgMCA5ODYuMjAwMDEgMjEyLjM4IgogICB3aWR0aD0iOTg2LjIwMDAxIgogICBoZWlnaHQ9IjIxMi4zOCIKICAgdmVyc2lvbj0iMS4xIgogICB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlCiAgIHR5cGU9InRleHQvY3NzIgogICBpZD0ic3R5bGUzOSI+Cgkuc3Qwe2ZpbGw6IzFDMUUyMDt9Cjwvc3R5bGU+CjxnCiAgIHRyYW5zZm9ybT0ibWF0cml4KDEuNDE1MiwwLDAsMS40MTUyLC04NjUuNTM2MzIsLTY1OC4wMzI2MikiCiAgIGZpbGw9IiMxYzFlMjAiCiAgIGlkPSJnNTUiPgoJPHBhdGgKICAgY2xhc3M9InN0MCIKICAgZD0ibSA5NTYuMiw1MDcuNyBjIC04LjgsMCAtMTcuNCwzLjMgLTIzLjcsOS42IC02LjMsNi4zIC05LjUsMTUgLTkuNSwyMy43IDAsOC44IDMuMSwxNy40IDkuMywyMy44IDYuMiw2LjQgMTQuOCw5LjcgMjMuNiw5LjcgOC44LDAgMTcuNCwtMy4zIDIzLjcsLTkuNiA2LjMsLTYuMyA5LjUsLTE1IDkuNSwtMjMuNyAwLC04LjggLTMuMSwtMTcuNCAtOS4zLC0yMy44IC02LjMsLTYuMyAtMTQuOCwtOS43IC0yMy42LC05LjcgeiBtIDE3LjYsMzcuMyBjIC0wLjIsMS4yIC0wLjYsMi40IC0xLDMuNiAtMC40LDEuMSAtMSwyLjIgLTEuNiwzLjIgLTAuNiwxIC0xLjMsMS45IC0yLjEsMi43IC0wLjgsMC44IC0xLjcsMS41IC0yLjYsMi4yIC0xLDAuNiAtMiwxLjIgLTMuMSwxLjYgLTEuMSwwLjUgLTIuMywwLjggLTMuNSwxIC0xLjIsMC4yIC0yLjUsMC4zIC0zLjcsMC4zIC0xLjMsMCAtMi41LC0wLjEgLTMuNywtMC40IC0xLjIsLTAuMiAtMi40LC0wLjYgLTMuNSwtMSAtMS4xLC0wLjQgLTIuMSwtMSAtMy4xLC0xLjYgLTAuOSwtMC42IC0xLjgsLTEuNCAtMi42LC0yLjIgLTAuOCwtMC44IC0xLjUsLTEuNyAtMi4xLC0yLjcgLTAuNiwtMSAtMS4yLC0yLjEgLTEuNiwtMy4yIC0wLjUsLTEuMiAtMC44LC0yLjQgLTEsLTMuNiAtMC4yLC0xLjMgLTAuMywtMi42IC0wLjMsLTMuOSAwLC0xLjMgMC4xLC0yLjYgMC40LC0zLjkgMC4yLC0xLjIgMC42LC0yLjQgMSwtMy42IDAuNCwtMS4xIDEsLTIuMiAxLjYsLTMuMiAwLjYsLTEgMS4zLC0xLjkgMi4xLC0yLjcgMC44LC0wLjggMS43LC0xLjUgMi42LC0yLjIgMSwtMC42IDIsLTEuMiAzLjEsLTEuNiAxLjEsLTAuNSAyLjMsLTAuOCAzLjUsLTEgMS4yLC0wLjIgMi41LC0wLjMgMy43LC0wLjMgMS4zLDAgMi41LDAuMSAzLjcsMC40IDEuMiwwLjIgMi40LDAuNiAzLjUsMSAxLjEsMC40IDIuMSwxIDMuMSwxLjYgMC45LDAuNiAxLjgsMS40IDIuNiwyLjIgMC44LDAuOCAxLjUsMS43IDIuMSwyLjcgMC42LDEgMS4yLDIuMSAxLjYsMy4yIDAuNSwxLjIgMC44LDIuNCAxLDMuNiAwLjIsMS4zIDAuMywyLjYgMC4zLDMuOSAtMC4xLDEuNCAtMC4yLDIuNiAtMC40LDMuOSB6IgogICBpZD0icGF0aDQxIiAvPgoJPHBhdGgKICAgY2xhc3M9InN0MCIKICAgZD0ibSA4MzIuMiw0ODIgYyAtOC43LC03IC0xOC44LC0xMS45IC0yOS43LC0xNC41IC02LjIsLTEuNSAtMTIuNSwtMi4yIC0xOC45LC0yLjQgLTQuNywtMC4yIC05LjUsLTAuMSAtMTQuMiwtMC4xIGggLTY3LjMgYyAtNC43LDAgLTkuNSwwIC0xNC4yLDAuMSAtNi40LDAuMiAtMTIuNiwwLjkgLTE4LjksMi40IC0xMC45LDIuNiAtMjAuOSw3LjUgLTI5LjYsMTQuNSAtMTcuNiwxNC4xIC0yNy44LDM1LjQgLTI3LjgsNTggMCwyMi42IDEwLjIsNDMuOSAyNy44LDU4IDguNyw3IDE4LjgsMTEuOSAyOS43LDE0LjUgNi4yLDEuNSAxMi41LDIuMiAxOC45LDIuNCA0LjcsMC4yIDkuNSwwLjEgMTQuMiwwLjEgaCA2Ny4zIGMgNC43LDAgOS41LDAgMTQuMiwtMC4xIDYuNCwtMC4yIDEyLjYsLTAuOSAxOC45LC0yLjQgMTAuOSwtMi42IDIwLjksLTcuNSAyOS42LC0xNC41IDE3LjYsLTE0LjEgMjcuOCwtMzUuNCAyNy44LC01OCAwLC0yMi42IC0xMC4yLC00My45IC0yNy44LC01OCB6IG0gLTMyLjksNzguMiBjIC0zLjMsMi4zIC03LDMuNyAtMTAuOSw0LjMgLTMuOSwwLjYgLTcuOSwwLjUgLTExLjgsMC41IGggLTgxLjUgYyAtNCwwIC03LjksMC4xIC0xMS44LC0wLjUgLTQsLTAuNiAtNy42LC0yIC0xMC45LC00LjMgLTYuNiwtNC42IC0xMC42LC0xMi4xIC0xMC42LC0yMC4yIDAsLTguMSA0LC0xNS42IDEwLjYsLTIwLjIgMy4zLC0yLjMgNywtMy43IDEwLjksLTQuMyAzLjksLTAuNiA3LjksLTAuNSAxMS44LC0wLjUgaCA4MS41IGMgNCwwIDcuOSwtMC4xIDExLjgsMC41IDQsMC42IDcuNiwyIDEwLjksNC4zIDYuNiw0LjYgMTAuNiwxMi4xIDEwLjYsMjAuMiAwLjEsOC4xIC0zLjksMTUuNiAtMTAuNiwyMC4yIHoiCiAgIGlkPSJwYXRoNDMiIC8+Cgk8cGF0aAogICBjbGFzcz0ic3QwIgogICBkPSJtIDEyMjUuOCw1MzkuMiBjIDAsMS44IDAsMy42IC0wLjEsNS4zIC0wLjEsMS4xIC0wLjIsMi4zIC0wLjQsMy40IC0wLjQsMi4xIC0xLjEsNC4xIC0yLjIsNS45IC0yLjgsNC40IC03LjgsNi42IC0xMi44LDYuNyAtNS4xLDAuMSAtMTAsLTIgLTEyLjcsLTYuNiAtMS4xLC0xLjkgLTEuOCwtMy45IC0yLjIsLTYgLTAuNSwtMi44IC0wLjcsLTUuOCAtMC43LC04LjYgMCwtMS45IC0wLjEsLTMuNyAtMC4xLC01LjYgdiAtOS42IC0xNS4yIGggLTE1LjIgdiAyNS45IGMgMCwyLjUgMCw1IDAuMSw3LjUgMC4xLDEuOCAwLjEsMy43IDAuMyw1LjUgMC40LDQuMyAxLjIsOC41IDMuMSwxMi41IDQsOC4xIDExLjgsMTIuOCAyMC41LDEzLjggNC4zLDAuNSA4LjcsMC4xIDEyLjgsLTEuMSA0LC0xLjIgOC4yLC0zLjIgMTEuMSwtNi4zIDAuMSwyIDAuMyw0LjIgMC40LDYuMiBoIDEzLjMgdiAtNjQgaCAtMTUuMiB6IgogICBpZD0icGF0aDQ1IiAvPgoJPHBhdGgKICAgY2xhc3M9InN0MCIKICAgZD0ibSAxMzA3LjQsNTQ3LjkgYyAtMi4yLC02LjIgLTcuNiwtMTAgLTEzLjMsLTEyLjIgLTMuMiwtMS4zIC02LjUsLTIgLTkuOCwtMi44IC0xLjUsLTAuMyAtMi45LC0wLjYgLTQuNCwtMSAtMS4yLC0wLjMgLTIuNSwtMC43IC0zLjcsLTEuMiAtMS4zLC0wLjYgLTIuNiwtMS4zIC0zLjUsLTIuNCAtMC44LC0wLjkgLTEuMiwtMi4xIC0xLC0zLjMgMC4yLC0xLjQgMSwtMi42IDIuMSwtMy41IDAuOCwtMC42IDEuNiwtMS4xIDIuNSwtMS40IDEuMiwtMC41IDIuNCwtMC43IDMuNiwtMC45IDIuNSwtMC4zIDUsLTAuMSA3LjQsMC40IDMuNywwLjggNy4xLDIuMiAxMC4zLDQuMiAyLjUsLTMuNSA1LjEsLTYuOSA3LjYsLTEwLjQgLTUuMSwtMy43IC0xMC44LC02IC0xNywtNyAtMy41LC0wLjUgLTcsLTAuNiAtMTAuNCwtMC4xIC0yLjcsMC40IC01LjMsMSAtNy44LDIuMSAtMy4zLDEuNCAtNi4zLDMuNCAtOC42LDYuMyAtMS43LDIgLTIuOSw0LjQgLTMuNiw2LjkgLTAuOSwzLjEgLTAuOSw2LjQgMC4xLDkuNiAwLjksMi45IDIuNiw1LjMgNC44LDcuMyA0LjcsNC4xIDExLjQsNS42IDE3LjEsNi44IDIsMC40IDQsMC44IDYsMS40IDEuNiwwLjUgMy4zLDEgNC43LDEuOSAxLjEsMC43IDIuMiwxLjYgMi45LDIuNyAwLjYsMSAwLjksMi4xIDAuOCwzLjIgLTAuMSwxLjEgLTAuNSwyIC0xLjIsMi45IC0wLjgsMSAtMS44LDEuNyAtMi45LDIuMyAtMS41LDAuNyAtMy4xLDEuMSAtNC43LDEuMyAtMi4yLDAuMyAtNC42LDAuMiAtNi44LC0wLjEgLTIuNSwtMC4zIC00LjgsLTAuOSAtNy4yLC0xLjcgLTMuNiwtMS4zIC02LjcsLTMuMiAtOS43LC01LjUgLTIuNywzLjYgLTUuNCw3LjIgLTguMSwxMC44IDQuOCw0IDEwLjMsNi45IDE2LjMsOC43IDMuMywwLjkgNi43LDEuNSAxMC4yLDEuNiAyLjgsMC4xIDUuNSwtMC4xIDguMywtMC41IDMuNSwtMC42IDcsLTEuNyAxMC4xLC0zLjYgMi4zLC0xLjQgNC4yLC0zLjEgNS45LC01LjIgMi4xLC0yLjcgMy40LC01LjkgMy45LC05LjMgMC4zLC0yLjggMC4xLC01LjYgLTAuOSwtOC4zIHoiCiAgIGlkPSJwYXRoNDciIC8+Cgk8cGF0aAogICBjbGFzcz0ic3QwIgogICBkPSJtIDEwMzguMyw1NTkgYyAtMy41LDAuOCAtNy4zLDAuNyAtMTAuOCwtMC40IC0zLjUsLTEuMSAtNi41LC0zLjMgLTguNywtNi4zIC0yLjEsLTMgLTMuMiwtNi42IC0zLjQsLTEwLjIgLTAuMiwtMy42IDAuNSwtNy40IDIuMiwtMTAuNiAxLjgsLTMuNCA0LjQsLTUuNyA3LjksLTcuMiAxLjUsLTAuNiAzLC0xLjEgNC42LC0xLjMgMi4xLC0wLjMgNCwtMC40IDYuMSwtMC4xIDMuNywwLjQgNy4xLDEuOCAxMC4yLDMuOCAzLjEsLTMuOSA2LjEsLTcuOCA5LjIsLTExLjYgLTUuMywtNC4yIC0xMS4zLC02LjYgLTE3LjksLTcuMyAtNi41LC0wLjcgLTEzLjIsMC4zIC0xOS4yLDMuMSAtNiwyLjkgLTEwLjgsNy40IC0xNCwxMy4zIC0zLjEsNS44IC00LjQsMTIuNSAtNC4xLDE5IDAuMyw2LjUgMi4zLDEzIDYuMSwxOC40IDMuOCw1LjUgOS4yLDkuNCAxNS41LDExLjUgNi4yLDIuMSAxMywyLjUgMTkuNCwxLjEgNi40LC0xLjQgMTIuNCwtNC41IDE3LC05LjMgLTMuNSwtMy42IC02LjksLTcuMiAtMTAuNCwtMTAuOCAtMi45LDIuNCAtNi4yLDQuMSAtOS43LDQuOSB6IgogICBpZD0icGF0aDQ5IiAvPgoJPHJlY3QKICAgY2xhc3M9InN0MCIKICAgeD0iMTE0NyIKICAgeT0iNDc1IgogICB3aWR0aD0iMTYiCiAgIGhlaWdodD0iOTgiCiAgIGlkPSJyZWN0NTEiIC8+Cgk8cGF0aAogICBjbGFzcz0ic3QwIgogICBkPSJtIDExMTQuMiw1MzkuMiBjIDAsMS44IDAsMy42IC0wLjEsNS4zIC0wLjEsMS4xIC0wLjIsMi4zIC0wLjQsMy40IC0wLjQsMi4xIC0xLjEsNC4xIC0yLjIsNS45IC0yLjgsNC40IC03LjgsNi42IC0xMi44LDYuNyAtNS4xLDAuMSAtMTAsLTIgLTEyLjcsLTYuNiAtMS4xLC0xLjkgLTEuOCwtMy45IC0yLjIsLTYgLTAuNSwtMi44IC0wLjcsLTUuOCAtMC43LC04LjYgMCwtMS45IC0wLjEsLTMuNyAtMC4xLC01LjYgdiAtOS42IC0xNS4yIGggLTE1LjIgdiAyNS45IGMgMCwyLjUgMCw1IDAuMSw3LjUgMC4xLDEuOCAwLjEsMy43IDAuMyw1LjUgMC40LDQuMyAxLjIsOC41IDMuMSwxMi41IDQsOC4xIDExLjgsMTIuOCAyMC41LDEzLjggNC4zLDAuNSA4LjcsMC4xIDEyLjgsLTEuMSA0LC0xLjIgOC4yLC0zLjIgMTEuMSwtNi4zIDAuMSwyIDAuMyw0LjIgMC40LDYuMiBoIDEyLjkgdiAtNjQgaCAtMTQuOCB6IgogICBpZD0icGF0aDUzIiAvPgo8L2c+Cjwvc3ZnPg==" alt="Oculus"><span class="role">Founder 2012–2017</span></div>
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDU0Ni4wODA5MiA5OS45OTk5OTkiIHdpZHRoPSI1NDYuMDgwOTMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0ibTE2Ni44MzEyOCAxMy40NjM5MTIgMjYuMzUwODEgNzAuMjA0NzFoLTE0LjU2OTg4bC01LjU3NzkxLTE1LjA1MDczaC0yOC45OTU1bC01LjU3NzkyIDE1LjA5ODgyaC0xNC4yODEzNmwyNi4yMDY1NS03MC4yMDQ3MXptLTE4LjI3MjQ2IDQyLjk0MDI4aDE5Ljg1OTI4bC05Ljk1MzY5LTI2Ljk3NTkzem0xMTAuNjkyNjMgMjcuMzEyNTJoLTEyLjUwMjIxbC0zMi44NDIzMy00OC40MjIwMnY0OC40MjIwMmgtMTMuODAwNTJ2LTcwLjIwNDcxaDE0LjU2OTg4bDMwLjgyMjc1IDQ2LjAxNzczdi00Ni4wNjU4MmgxMy44MDA1MnptMTIuMzA5ODctNzAuMjUyOGgyNC4xODY5NmMyMi4xMTkzIDAgMzUuNTgzMjEgMTMuNzA0MzQgMzUuNTgzMjEgMzUuMTAyMzYgMCAyMS4zOTgwMS0xMy40NjM5MSAzNS4xMDIzNS0zNS41ODMyMSAzNS4xMDIzNWgtMjQuMTg2OTZ6bTI0LjE4Njk2IDU3Ljk0Mjk0YzEzLjU2MDEgMCAyMS4zOTgwMi04Ljk5MTk4IDIxLjM5ODAyLTIyLjc0NDQxIDAtMTMuOTQ0NzctNy44Mzc5Mi0yMi43OTI1LTIxLjQ5NDE4LTIyLjc5MjVoLTEwLjAwMTc3djQ1LjUzNjkxem00My40MjExNC0xNS43NzIwMnYtNDIuMTIyODNoMTQuNDI1NjJ2NDEuNjQxOTdjMCAxMS44MjkwMSA1Ljc3MDI2IDE2LjkyNjA3IDE0LjUyMTgxIDE2LjkyNjA3IDguNzk5NjMgMCAxNC41Njk4Ny01LjA5NzA2IDE0LjU2OTg3LTE2LjkyNjA3di00MS42NDE5N2gxNC4zNzc1NHY0Mi4xMjI4M2MwIDE5LjM3ODQyLTExLjY4NDc2IDI5LjA0MzU5LTI4Ljk5NTUxIDI5LjA0MzU5LTE3LjMxMDc0IDAtMjguODk5MzMtOS42NjUxNy0yOC44OTkzMy0yOS4wNDM1OXptODMuNDc2MjkgMjguMDgxODhoLTE0LjM3NzU1di03MC4yMDQ3MWgyOC43NTUwOGMxNi4xNTY3MSAwIDI2LjIwNjU1IDcuNTk3NSAyNi4yMDY1NSAyMi4xMTkyOSAwIDEwLjYyNjg3LTUuNzcwMjUgMTcuNzkxNjEtMTUuNjI3NzYgMjAuNjI4NjVsMTcuNTAzMSAyNy40NTY3N2gtMTYuNDQ1MjJsLTE2LjIwNDc5LTI2LjExMDM4aC05LjgwOTQxem0xMy42MDgxNy0zOC4xMzE3NGM4LjQxNDk1IDAgMTIuNjk0NTQtMy42NTQ1IDEyLjY5NDU0LTkuOTA1NiAwLTYuMzQ3MjctNC4zMjc2OC05Ljk1MzY3LTEyLjY5NDU0LTkuOTUzNjdoLTEzLjYwODE3djE5Ljg1OTI3em01MC45MjI0NSAzOC4xMzE3NGgtMTQuMzc3NTR2LTcwLjIwNDcxaDE0LjQyNTYzem0xMi4yMTM3LTcwLjI1MjhoMTQuNDI1NjN2NTcuNzk4NjdoMzIuMjY1M3YxMi40NTQxM2gtNDYuNjQyODV6bS0zOTIuNzEzNjEgNTAuMjQ5MjdjLTEuMzk0NDctLjY3MzIxLTIuNzQwODYtMS40NDI1Ny00LjA4NzI2LTIuMjExOTRhNjkuODY4MTEyIDY5Ljg2ODExMiAwIDAgMSAtMTIuNDA2MDMxLTkuMjgwNDljLTEuMjk4MzA2LTEuMjAyMTItMi41OTY2MTQtMi40NTIzNS0zLjc5ODc0OC0zLjc5ODc0YTY5LjgyMDAyNyA2OS44MjAwMjcgMCAwIDEgLTE4LjMyMDU0NS00My4wODQ1MzAybC0uMTQ0MjU3LTQuMTgzNDN2LS4zODQ2OTAwMmEuNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDAgLS43MjEyOC0uNzY5MzZoLTI3LjY5NzIwMWEuNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDAgLS43MjEyODEuNzY5MzZ2LjM4NDY5MDAybC0uMTQ0MjU2IDQuMTgzNDNhNjkuOTE2MTk3IDY5LjkxNjE5NyAwIDAgMSAtMTcuOTM1ODYyIDQyLjY1MTc2MDJjLTEuMjAyMTM0IDEuMzQ2MzktMi41MDA0NDIgMi42NDQ3LTMuNzk4NzQ4IDMuODQ2ODNhNzAuNjg1NTY0IDcwLjY4NTU2NCAwIDAgMSAtMTIuNDA2MDM3NSA5LjQ3Mjg0IDcwLjIwNDcxIDcwLjIwNDcxIDAgMCAxIC00LjA4NzI2MDQ2IDIuMjExOTMuNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDAgLS4zMzY1OTc5Mi45NjE3Yy42MjUxMTA0MyAxLjQ0MjU3IDEuMjUwMjIwODggMi43ODg5NiAxLjkyMzQxNjY4IDQuMDM5MTdhNTcuODQ2NzU4IDU3Ljg0Njc1OCAwIDAgMCA5LjA4ODE0NDIgMTIuODg2OWMxLjA1Nzg3OSAxLjE1NDA0IDIuMjExOTI5IDIuMjYwMDEgMy4zNjU5OCAzLjM2NTk3YTU3Ljk0MjkyOCA1Ny45NDI5MjggMCAwIDAgNzguMTM4ODAzLjE0NDI2YzEuMjAyMTM2LTEuMTA1OTYgMi4zMDgxLTIuMjExOTMgMy4zNjU5NzktMy4zMTc4OWE1Ny45NDI5MjggNTcuOTQyOTI4IDAgMCAwIDkuMTM2MjIyLTEyLjgzODgyIDQ5LjA0NzEyNiA0OS4wNDcxMjYgMCAwIDAgMS45MjM0Mi00LjA4NzI1LjcyMTI4MTI3LjcyMTI4MTI3IDAgMCAwIC0uMzM2Ni0uOTYxN3ptLTgzLjQyODE5MyAxOC44MDEzOWEuNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDEgLTEuMTU0MDUuNjI1MTFxLTEuMjk4MzA2LS45NjE3LTIuNTAwNDQyLTIuMDE5NThjLTEuMjUwMjIxLTEuMDU3ODgtMi4zMDgxLTIuMTE1NzctMy4zMTc4OTQtMy4xMjU1NWE1MS45MzIyNTIgNTEuOTMyMjUyIDAgMCAxIC04LjIyMjYwNjUtMTEuMjAzOS43MjEyODEyNy43MjEyODEyNyAwIDAgMSAuMjQwNDI3LS45NjE3MiA3Ni4zNTk2NDMgNzYuMzU5NjQzIDAgMCAwIDExLjI1MTk4ODUtOC4zNjY4NmMxLjI1MDIyMS0xLjEwNTk3IDIuNTAwNDQyLTIuMzA4MSAzLjY1NDQ5MS0zLjUxMDI0YTc1LjAxMzI1MiA3NS4wMTMyNTIgMCAwIDAgMTkuMjM0MTY3LTM0LjYyMTQ5LjcyMTI4MTUuNzIxMjgxNSAwIDAgMSAxLjQ0MjU2MyAwIDk0LjQzOTc2IDk0LjQzOTc2IDAgMCAwIDYuMTA2ODQ4IDE5LjcxNTAxLjcyMTI4MTI3LjcyMTI4MTI3IDAgMCAxIDAgLjYyNTExIDg5LjY3OTMwNSA4OS42NzkzMDUgMCAwIDEgLTE4Ljk0NTY1NCAyNi4yMDY1NSA0MS4wMTY4NjIgNDEuMDE2ODYyIDAgMCAwIC0zLjM2NTk3OSAzLjM2NTk5IDE4LjU2MDk3MiAxOC41NjA5NzIgMCAwIDAgLTQuMTgzNDMyIDguODk1OCAxNy45ODM5NDYgMTcuOTgzOTQ2IDAgMCAwIC0uMjg4NTEzIDMuMjIxNzJ2MS4xNTQwNXptNDYuNzg3MTEyLTEzLjk0NDc3YS43MjEyODEyNy43MjEyODEyNyAwIDAgMSAtLjE0NDI1NyAxLjE1NDA1IDMyLjIxNzIyOSAzMi4yMTcyMjkgMCAwIDEgLTE2LjE1NjcgNC40NzE5NGgtLjE0NDI1N2EzMi4wNzI5NzQgMzIuMDcyOTc0IDAgMCAxIC0xNi42Mzc1NTQtNC42NjQyOC43MjEyODEyNy43MjEyODEyNyAwIDAgMSAtLjE0NDI1Ny0xLjEwNTk3YzEuNDQyNTYzLTEuNDQyNTYgMi44ODUxMjYtMi45ODEzIDQuMTgzNDMyLTQuNTIwMDNhOTUuNzM4MDY2IDk1LjczODA2NiAwIDAgMCAxMS43MzI4NDItMTYuNjg1NjQuNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDEgMS4yNTAyMjEgMCA5NS43ODYxNTEgOTUuNzg2MTUxIDAgMCAwIDE2LjA2MDUzIDIxLjM5ODAyem0tMzguNjYwNjc3IDUuNDgxNzRhLjcyMTI4MTI3LjcyMTI4MTI3IDAgMCAxIDEuMDA5Nzk0LS4xOTIzNCAzOC4wODM2NSAzOC4wODM2NSAwIDAgMCAyMS4yMDU2NjkgNi40NDM0NGwxLjczMTA3Ni0uMDQ4YTM2LjczNzI1OSAzNi43MzcyNTkgMCAwIDAgNC41MjAwMjktLjQ4MDg2IDM4LjM3MjE2MyAzOC4zNzIxNjMgMCAwIDAgMTUuMDUwNzM2LTUuOTYyNi43MjEyODEyNy43MjEyODEyNyAwIDAgMSAuODY1NTM3LjA0ODEgOTUuNzg2MTUxIDk1Ljc4NjE1MSAwIDAgMCAxMC4wNDk4NTIgNy41MDEzMi43MjEyODEyNy43MjEyODEyNyAwIDAgMSAwIDEuMjAyMTMgNTEuODM2MDggNTEuODM2MDggMCAwIDEgLTMxLjczNjM3NSAxMS4yNTJoLS40MzI3N2E1NC4zMzY1MjIgNTQuMzM2NTIyIDAgMCAxIC03LjA2ODU1NS0uNDgwODcgNTEuMTE0Nzk5IDUxLjExNDc5OSAwIDAgMSAtMTQuNzYyMjI0LTQuMzI3NjguNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDEgLS4yODg1MTItLjI0MDQyIDEyLjc0MjYzNiAxMi43NDI2MzYgMCAwIDEgLS4wOTYxNy0xNC43MTQxNHptNDcuOTg5MjQ3LTQuODA4NTQtMy40NjIxNDktMy4xMjU1NmE4OS43MjczOSA4OS43MjczOSAwIDAgMSAtMTkuNDc0NTk1LTI3LjA3MjA5IDc5LjgyMTc5NCA3OS44MjE3OTQgMCAwIDEgLTIuNDA0MjcxLTUuNjc0MDggODguODYxODUxIDg4Ljg2MTg1MSAwIDAgMSAtNS43NzAyNS0yNi40NDY5ODAyLjcyMTI4MTI3LjcyMTI4MTI3IDAgMCAxIC43MjEyODEtLjgxNzQ1aDEyLjUwMjIwOWEuNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDEgLjc2OTM2Ni42NzMxOWwuMzg0Njg0IDQuMDg3MjcwMmE3NS45NzQ5NiA3NS45NzQ5NiAwIDAgMCAyMS4yNTM3NTUgNDMuNDY5MjJjMS4xNTQwNDkgMS4yMDIxMyAyLjQwNDI3IDIuMzU2MTkgMy42NTQ0OTEgMy40NjIxNWE3NS41NDIxOTEgNzUuNTQyMTkxIDAgMCAwIDExLjI1MTk4OCA4LjI3MDY4LjcyMTI4MTI3LjcyMTI4MTI3IDAgMCAxIC4yNDA0MjcuOTYxNzIgNTEuNjkxODI1IDUxLjY5MTgyNSAwIDAgMSAtNy41MDEzMjUgMTAuMjkwMjcuNzIxMjgxMjcuNzIxMjgxMjcgMCAwIDEgLS45MTM2MjMuMTQ0MjYgODkuOTY3ODE3IDg5Ljk2NzgxNyAwIDAgMSAtMTEuMjUxOTg4LTguMjIyNnoiIHN0cm9rZS13aWR0aD0iLjQ4MDg1NCIvPgo8L3N2Zz4K" alt="Anduril"><span class="role">Founder 2017–</span></div>
+  </div>
+  <h1>Palmer Luckey（パーマー・ラッキー）</h1>
+  <div class="hero-sub">学校に通わず、母のホームスクールと親のガレージで育った少年は、50台を超えるVRヘッドセットを買い集め、<strong>「どれも本物じゃない」</strong>と怒って自作を始めた。19歳でOculusを起こしてVRという死んだ産業を生き返らせ、21歳で<strong>20億ドル</strong>でFacebookに売り、24歳で追い出された。そこで彼は、もう1つの「誰もやらない仕事」である<strong>国防</strong>に向かう。Andurilは創業9年で評価額610億ドルに達し、彼を追い出したMetaと組んで兵士用ヘッドセットを作っている。偉大さの構造は、<strong>オタク的な深さ</strong>と<strong>「誰もやらないなら自分が作る」という反射</strong>と<strong>空気を読まない政治性</strong>の3つでできている。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">$240万</div><div class="lbl">Kickstarter調達額（2012）</div></div>
+    <div class="kpi"><div class="val">$20億</div><div class="lbl">Oculus売却額（21歳・2014）</div></div>
+    <div class="kpi"><div class="val">$610億</div><div class="lbl">Anduril評価額（2026年5月）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR：二度とも「誰もやらないなら自分が作る」で産業を起こした</a></li>
+    <li><a href="#s2">年表：変化率の山は16歳・19歳・24歳に来る</a></li>
+    <li><a href="#s3">幼少期〜学生時代：ホームスクールとガレージが「没入」と「自力調達」を育てた</a></li>
+    <li><a href="#s4">原体験エピソード：偉大さのトリガーは6つ</a></li>
+    <li><a href="#s5">2016〜17年の追放を分解する：1万ドルの献金が、国防という次の問いを解き放った</a></li>
+    <li><a href="#s6">キャリア・業績の軌跡：VRから国防へ、そして再びヘッドセットへ</a></li>
+    <li><a href="#s7">偉大さの構造分析：なぜラッキーだけが二度も産業を起こせたのか</a></li>
+    <li><a href="#s8">思想・仕事術：「劣った技術を使うことに、道徳的な優位はない」</a></li>
+    <li><a href="#s9">光と影：国境監視・自律兵器・政治との近さが常に問われる</a></li>
+    <li><a href="#s10">雑学・意外な側面：アロハシャツ、潜水艦、そして「死ぬVRヘッドセット」</a></li>
+    <li><a href="#s11">現代へのメッセージ：オタクの深さは、最後に国家規模の問題を解く武器になる</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>TL;DR：二度とも「誰もやらないなら自分が作る」で産業を起こした</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>ラッキーの偉大さは、天才的なひらめきではなく<strong>構造</strong>から来ている。①学校のカリキュラムに縛られず、1つのテーマを底まで掘る<b>オタク的な深さ</b>（50台超のヘッドセット収集、モッド文化、フォーラムのモデレーター）。②既製品に不満を持ったとき、文句を言う代わりに<b>自分で作ってしまう反射</b>（Oculus、Anduril、ModRetro）。③周りの空気より自分の信念を優先する<b>政治的な頑固さ</b>。③は2017年にFacebookを追われる原因になったが、同時に「シリコンバレーが避ける国防」という空白に飛び込む原動力にもなった。<b>「誰もまともなVRを作らない」と「誰もまともな国防技術を作らない」は、彼の中では同じ形の怒りだった</b>。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1992年9月19日（米カリフォルニア州ロングビーチ）。2026年11月時点で34歳</div></div>
+    <div class="kv-item"><div class="k">家族</div><div class="v">父ドナルド（自動車ディーラー勤務）、母ジュリー（専業主婦で、ラッキーと3人の妹をホームスクール）。妹ジンジャーは元下院議員マット・ゲイツの妻。妻ニコール・エーデルマン（2019年結婚）、子ども1人</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">ホームスクール → 14〜15歳からゴールデンウェスト・カレッジ、ロングビーチ・シティ・カレッジで受講 → 2010年カリフォルニア州立大学ロングビーチ校（ジャーナリズム専攻）、Oculusのため中退</div></div>
+    <div class="kv-item"><div class="k">主な肩書き</div><div class="v">Oculus VR創業者（2012〜17）／Anduril Industries共同創業者（2017〜）／ModRetro創業者（ゲーム機）／Warhound共同創業者（2026、Colossalのベン・ラムと）</div></div>
+    <div class="kv-item"><div class="k">資産</div><div class="v">Forbes推計 約60億ドル（2026年9月時点）。大半はAnduril株</div></div>
+    <div class="kv-item"><div class="k">2026年の動き</div><div class="v">3月、米陸軍と最大200億ドルの包括契約。5月、50億ドル調達で評価額610億ドル。10月、海軍の潜水艦部品で最大29億ドルの契約、国防総省の新組織「Project Meridian」のメンバーに。社員持ち株の売却は約900億ドルの評価で実施</div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：変化率の山は16歳・19歳・24歳に来る</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1992</td><td>ロングビーチに生まれる。父は自動車のセールスマン、母は専業主婦。のちに妹が3人できる</td><td>—</td></tr>
+        <tr><td>幼少期</td><td>1990s–2000s</td><td>学校に通わず、母のホームスクールで育つ。親からガレージの半分以上を実験場として与えられる</td><td>★★</td></tr>
+        <tr><td>10代前半</td><td>2000s後半</td><td>電子工作から高電圧に進み、レーザー、コイルガン、テスラコイルを自作。けがもする。14〜15歳でコミュニティカレッジの授業を受け始める</td><td>★</td></tr>
+        <tr><td>16歳</td><td>2009</td><td>壊れたiPhoneを修理・転売して少なくとも3万6千ドルを稼ぎ、中古のヘッドセットを買い集める。コレクションは50台超に。どれにも満足できず、自作を始める。友人と「ModRetro Forums」を立ち上げる</td><td>★★★</td></tr>
+        <tr><td>17歳</td><td>2009–10</td><td>親のガレージで最初の試作機「PR1」を完成させる</td><td>★★</td></tr>
+        <tr><td>17〜18歳</td><td>2010–11</td><td>カリフォルニア州立大学ロングビーチ校に入学。並行して南カリフォルニア大学（USC）ICTの複合現実ラボで、退役軍人のPTSD治療用の安価なVR機器づくりを手伝う</td><td>★★</td></tr>
+        <tr><td>19歳</td><td>2012</td><td>4月 Oculus VR設立。6月 ジョン・カーマックがE3で、ラッキーから借りた試作機で『Doom 3』を披露。8〜9月 Kickstarterで243万ドルを集める。大学を中退</td><td>★★★</td></tr>
+        <tr><td>21歳</td><td>2014</td><td>3月、FacebookがOculusを20億ドルで買収</td><td>★★★</td></tr>
+        <tr><td>22歳</td><td>2015</td><td>『TIME』誌の表紙に。ヘッドセットをつけて浮かぶ写真がネットで大いにからかわれる</td><td>★</td></tr>
+        <tr><td>23〜24歳</td><td>2016</td><td>3月、製品版Riftを発売。9月、トランプ支持の政治団体「Nimble America」への1万ドルの献金が報じられ、炎上。表舞台から姿を消す</td><td>★★★</td></tr>
+        <tr><td>24歳</td><td>2017</td><td>2月、ZeniMax訴訟で陪審が総額5億ドルの評決（うちラッキー個人に5千万ドル）。3月、Facebookを去る。6月、5人でAndurilを創業</td><td>★★★</td></tr>
+        <tr><td>25〜27歳</td><td>2018–20</td><td>国境での監視塔パイロット。2020年、税関・国境警備局（CBP）と監視塔の5年契約。空軍の次世代指揮統制（ABMS）で最大9.67億ドルの契約枠</td><td>★★</td></tr>
+        <tr><td>29〜30歳</td><td>2022</td><td>特殊作戦軍（SOCOM）の対ドローン事業で最大10億ドルの契約。11月、ゲームで死ぬと爆薬が作動するVRヘッドセットを「アート作品」として発表</td><td>★</td></tr>
+        <tr><td>31歳</td><td>2024</td><td>ModRetroからゲームボーイ互換機「Chromatic」を発売</td><td>★</td></tr>
+        <tr><td>32〜33歳</td><td>2025</td><td>マイクロソフトから陸軍の兵士用ヘッドセット事業（IVAS）を引き継ぐ。5月、古巣Metaと提携。10月、無人戦闘機YFQ-44Aが初飛行。12月、台湾への武器売却を理由に中国が制裁</td><td>★★★</td></tr>
+        <tr><td>33〜34歳</td><td>2026</td><td>3月、陸軍と最大200億ドルの包括契約。5月、評価額610億ドル。7月、オハイオの工場「Arsenal-1」で量産1号機。10月、海軍と最大29億ドルの契約、遺伝子操作した軍用犬のWarhoundを発表</td><td>★★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜学生時代：ホームスクールとガレージが「没入」と「自力調達」を育てた</h2>
+  <p>ラッキーの家は裕福ではなかった。父ドナルドは自動車ディーラーで働き、週6日スーツを着て車を売った。母ジュリーは専業主婦で、ラッキーと3人の妹を家で教えた。この<strong>ホームスクール</strong>が全ての起点になる。決まった時間割がないので、興味を持ったことに何日でも、何か月でも没頭できた。</p>
+  <p>両親はガレージの半分以上を息子の実験場として明け渡した。小さな電子工作はすぐに「高電圧のもの」に移り、レーザー、電磁石で弾を撃ち出すコイルガン、テスラコイルを作った。けがもした。それでも実験はやめなかった。14〜15歳になると、地元のコミュニティカレッジ（ゴールデンウェスト・カレッジ、ロングビーチ・シティ・カレッジ）で授業を取り始める。</p>
+  <p>お金は自分で稼いだ。壊れたiPhoneを買って直して売る商売で<strong>少なくとも3万6千ドル</strong>を稼ぎ、ほかにも芝生の手入れ、子ども向けヨット教室のコーチ、パソコン修理の仕事をした。稼いだお金はほぼ全部、中古のVRヘッドセットに消えた。2010年にカリフォルニア州立大学ロングビーチ校に入り、専攻はなんとジャーナリズム。学生新聞のオンライン編集者も務めた。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>パラメータ</th><th>どこで育ったか</th><th>後にどう効いたか</th></tr></thead>
+      <tbody>
+        <tr><td><b>没入の深さ</b></td><td>時間割のないホームスクール、ガレージの実験場</td><td>ヘッドセットの歴史を研究者より詳しく知る。USCのラボ責任者を驚かせる</td></tr>
+        <tr><td><b>自力調達</b></td><td>iPhone修理・転売、アルバイトのかけもち</td><td>実験の資金を自分で作る習慣。Andurilの「自己資金で先に作って売る」方針</td></tr>
+        <tr><td><b>危険への鈍感さ</b></td><td>高電圧・レーザーの実験とけが</td><td>投資家や同業が避ける国防・兵器の領域に平気で入る</td></tr>
+        <tr><td><b>コミュニティを作る力</b></td><td>ModRetro Forums の立ち上げ、MTBS3Dフォーラムのモデレーター</td><td>Kickstarterで9,522人の支援者を集める。カーマックとつながる</td></tr>
+        <tr><td><b>伝える力</b></td><td>ジャーナリズム専攻、学生新聞の編集</td><td>挑発的な発言で議題を作る「自称プロパガンディスト」</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは6つ</h2>
+
+  <div class="episode">
+    <h3>🔑 50台のヘッドセットが、どれも「本物」ではなかった（16歳 / 2009年ごろ）</h3>
+    <p><span class="tag good">✓ Web確認済</span>　<span class="tag warn">△ 「9万7千ドルの機器を87ドルで落札」は単一ソース</span></p>
+    <p>iPhone修理で稼いだお金で、ラッキーは過去の商用・研究用・軍用のヘッドセットをオークションで買い集めた。Vuzix、eMagin、Fakespace、Liquid Image、Visionics、ソニーのHMZ-T1。数は50台を超えた。当時の価格で何万ドルもした機器が、捨て値で売られていた。しかしどれも、視野が狭い、遅延が大きい、画面が暗いといった欠点だらけで、「その中にいる」感覚にはほど遠かった。</p>
+    <p>→ <b>どう繋がったか：</b>「既製品を買う」という選択肢が消え、「自分で作る」しかなくなった。同時に、<b>過去に何が試され、なぜ失敗したかを誰よりも知る人間</b>になった。この「歴史の知識」が、のちに研究者や業界の大物から一目置かれる理由になる。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 ガレージで作った試作機と、フォーラムという居場所（17〜19歳 / 2009〜12年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>ラッキーは親のガレージで最初の試作機「PR1」を作り、改良を重ねた。同時に、ゲーム機を携帯できるように改造する「ポータブル化」の仲間と「ModRetro Forums」を作り、3D映像の愛好家フォーラム「MTBS3D」ではモデレーターを務めた。2012年4月、彼はMTBS3Dに「光学系・ディスプレイ・接続部ができた。Kickstarterをやるつもりだ」と書き込む。</p>
+    <p>→ <b>どう繋がったか：</b>大学や企業ではなく、<b>ネットのオタク仲間</b>が最初の評価者であり、最初の顧客だった。Kickstarterの支援者の多くは、こうしたコミュニティから来た。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 USCのラボで「安く作るVR」を学ぶ（17〜19歳 / 2010〜12年）</h3>
+    <p><span class="tag good">✓ USC ICTのエッセイで確認</span>　<span class="tag warn">△ 勤務開始は2010年説と2011年説がある</span></p>
+    <p>大学に通いながら、ラッキーはUSCクリエイティブ・テクノロジー研究所（ICT）の複合現実ラボで技術者として働いた。ラボは、退役軍人のPTSD治療に使う陸軍研究所の事業「BRAVEMIND」向けに、<b>安く作れるVR機器</b>を開発していた。ラボを率いていたマーク・ボラスは、ラッキーのヘッドセットの歴史に関する知識に驚いたという。</p>
+    <p>→ <b>どう繋がったか：</b>VRを「高価な研究機材」ではなく「安い部品で作れるもの」と捉える感覚が身についた。もう1つ、<b>軍がVRの大口顧客になりうる</b>ことを10代で目にしていた。Andurilでヘッドセットに戻ってくる伏線になっている。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 ジョン・カーマックに試作機をタダで貸す（19歳 / 2012年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>『Doom』『Quake』を作った伝説のプログラマー、ジョン・カーマックが、ネットのつながりを通じてラッキーの試作機に興味を示した。ラッキーは「すごい人だから」とお金を取らずに貸した。2012年6月のゲーム見本市E3で、カーマックはダクトテープだらけのその試作機で『Doom 3 BFG Edition』を動かしてみせた。業界の注目が一気に集まった。</p>
+    <p>→ <b>どう繋がったか：</b>8月1日に始めたKickstarterは、目標25万ドルに対し<b>9,522人から243万ドル</b>を集め、当時のテクノロジー部門で最高額になった。カーマックはのちにOculusのCTOに就く。ヒーローに「見せる」ことが、ラッキーの最強の営業になった。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 21歳、20億ドルで会社を売る（21歳 / 2014年3月）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>創業から2年足らず、製品版も出ていないOculusを、Facebookが20億ドルで買った。経営はゲーム業界出身のCEOブレンダン・イリーブが担い、ラッキーは「VRの顔」として残った。2015年には『TIME』誌の表紙を飾った。</p>
+    <p>→ <b>どう繋がったか：</b>20代前半で巨額の資産を得たことで、ラッキーは<b>誰にも頭を下げずに次の賭けができる</b>立場になった。Andurilの初期を自分のお金で支えられたのは、この売却があったからだ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 追放と「おもちゃを全部取り返した」日（24歳 / 2017年 → 32歳 / 2025年）</h3>
+    <p><span class="tag good">✓ 複数報道で確認</span></p>
+    <p>2017年3月にFacebookを去ったラッキーは、3か月後にAndurilを作った。8年後の2025年、Andurilはマイクロソフトが失敗した陸軍のヘッドセット事業を引き継ぎ、5月にはMetaと兵士用ヘッドセットの共同開発を発表する。ラッキーは「ようやく自分のおもちゃを全部取り返した」と語った。</p>
+    <p>→ <b>どう繋がったか：</b>追放は終わりではなく、VRの技術を「国防」という別の大きな問題につなぎ直すきっかけになった。詳しくは次章で分解する。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Deep Dive</div>
+  <h2>2016〜17年の追放を分解する：1万ドルの献金が、国防という次の問いを解き放った</h2>
+  <p>ラッキーの人生で最も示唆が深いのは、成功の瞬間ではなく<b>Facebookから追い出された半年間</b>だ。ここで彼は「VRの伝道師」という役を失い、代わりに「国防の起業家」という役を手に入れた。</p>
+
+  <h3>何が起きたか</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>時期</th><th>出来事</th><th>傷の種類</th></tr></thead>
+      <tbody>
+        <tr><td>2016年3月</td><td>製品版Riftを599ドルで発売。予約の出荷遅れなどで批判も受ける</td><td>製品</td></tr>
+        <tr><td>2016年9月</td><td>ニュースサイトDaily Beastが、ラッキーがトランプ支持の団体「Nimble America」に1万ドルを献金していたと報道。同団体はヒラリー・クリントンを攻撃するネットミームや看板広告を作っていた</td><td>評判</td></tr>
+        <tr><td>2016年9月</td><td>ラッキーが謝罪。「若い有権者に届く新しい手法に共感した」「自分はリバタリアンで、ゲイリー・ジョンソンに投票する」と説明。以後、公の場から姿を消す</td><td>本人</td></tr>
+        <tr><td>2017年2月</td><td>ZeniMax訴訟。テキサスの陪審が総額5億ドルの評決。秘密保持契約違反はラッキーにあると認定、虚偽の出所表示でラッキー個人に5千万ドル（2018年に判事が一部を取り消し）</td><td>法務</td></tr>
+        <tr><td>2017年3月</td><td>Facebookを退社。理由はどちらも公表しなかった</td><td>—</td></tr>
+        <tr><td>2017年6月</td><td>Andurilを創業</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>「辞めた」のか「クビ」なのか</h3>
+  <p><span class="tag warn">△ 両者の主張が食い違う</span>　2018年11月、ウォール・ストリート・ジャーナルは、ラッキーが休職させられた末に解雇されたと報じた。報道によれば、会社側は献金を隠していたことや、Oculusから身を引いていたことを問題にした。ラッキーは雇用問題の弁護士を立て、「政治的な支持を理由に圧力をかけるのはカリフォルニア州法違反だ」と主張し、<b>少なくとも1億ドル</b>の支払いを勝ち取ったとされる。ザッカーバーグは2018年4月の上院公聴会で「政治的見解が理由ではない」と答え、Facebook側も政治が原因であることを否定している。一方で、2016年の謝罪文にあった「ジョンソンに投票する」という表明は、トランプ支持を隠すよう会社から圧力を受けた結果だったとも報じられた。ラッキー自身は後にCNBCで「クビになったから辞めた。そうでなければ辞めなかった」と語った。</p>
+
+  <h3>なぜ「国防」に向かったのか</h3>
+  <p>追放されたラッキーには、3つのものが残った。<b>①巨額の自己資金</b>、<b>②シリコンバレーの主流から外れた人間という立場</b>、そして<b>③ハードウェアとソフトウェアを安く速く作る経験</b>だ。当時のシリコンバレーでは、大手テック企業も優秀な技術者も軍との仕事を避けていた（翌2018年にはGoogle社員が国防総省のAI事業「Project Maven」への反対運動を起こす）。ラッキーにとってこれは、2009年の「誰もまともなVRを作らない」と同じ形の空白だった。</p>
+  <p>Andurilの共同創業者には、ピーター・ティールのファンド「Founders Fund」のトレイ・スティーブンス、Palantir出身のブライアン・シンフ（CEO）、マット・グリム、ジョー・チェンが加わった。社名は、トールキン『指輪物語』でアラゴルンが持つ剣「アンドゥリル（西方の焔）」から取った。<b>既存のどの業界にも居場所がなくなった男が、既存の防衛産業そのものを作り直す側に回った</b>のである。</p>
+
+  <h3>8年後の続き：Metaと組み、マイクロソフトの事業を引き継ぐ</h3>
+  <p>2025年、陸軍はマイクロソフトのHoloLensをもとにした兵士用ヘッドセット「IVAS」の契約を、Andurilに引き継がせた。5月にはMetaとの提携が発表され、Metaがディスプレイなどの部品を、Andurilが軍用化と指揮統制ソフト「Lattice」を受け持つことになった。9月、後継事業「SBMC」で1.59億ドルの試作契約を獲得し、10月には自社開発のヘッドセット「EagleEye」を披露した。<b>自分を追い出した会社が、今度は自分の下請けのような形で戻ってきた</b>。ただし陸軍の本格調達の判断は2028年以降と報じられており、勝負はまだついていない。</p>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Career</div>
+  <h2>キャリア・業績の軌跡：VRから国防へ、そして再びヘッドセットへ</h2>
+
+  <h3>第1期（2009〜2012）：ガレージとフォーラム</h3>
+  <p>ヘッドセット収集、PR1の試作、USCのラボ、MTBS3Dのモデレーター。お金も肩書きもない時期だが、<b>ハードウェアの知識・コミュニティ・業界の大物とのつながり</b>という3つの資産をこの時期に全部そろえた。</p>
+
+  <h3>第2期（2012〜2014）：Oculusで「VRを生き返らせる」</h3>
+  <p>2012年4月にOculus VRを設立し、Kickstarterで243万ドルを集め、開発者向けキット（DK1）を出荷した。8月には経営をイリーブに任せ、自分は製品とVRの普及に専念した。90年代のブームが去ってから「終わった技術」とされていたVRが、ゲーム業界と投資家の注目を一気に取り戻した。2014年3月、Facebookが20億ドルで買収した。</p>
+
+  <h3>第3期（2014〜2017）：Facebookの中で</h3>
+  <p>買収後、ラッキーは入力装置の開発に力を入れ、手の動きを取り込むコントローラー「Oculus Touch」につながった。2016年3月に製品版Riftが出たが、同年9月の献金報道で表から消え、2017年3月に退社。ZeniMax訴訟でも秘密保持契約違反を認定された。</p>
+
+  <h3>第4期（2017〜2022）：Andurilで国境と基地を守る</h3>
+  <p>Andurilは最初に、<b>人や車両を自動で見つけて追跡する監視塔「Sentry」</b>を作った。2018年の国境パイロットでは、最初の12日間で55人の越境者が捕まったとされる。2020年に税関・国境警備局と監視塔の契約を結び、その後、監視塔は数百基規模に広がった。同じ年、空軍の次世代指揮統制（ABMS）で最大9.67億ドルの契約枠を獲得。2022年には特殊作戦軍の対ドローン事業で最大10億ドルの契約を得た。製品をばらばらに売るのではなく、センサー・ドローン・迎撃機をすべて<b>ソフトウェア「Lattice」でつなぐ</b>のが一貫した戦略だった。</p>
+
+  <h3>第5期（2023〜2025）：戦闘機ドローンと工場</h3>
+  <p>Andurilは無人戦闘機（CCA）の開発に乗り出し、YFQ-44A「Fury」は2025年10月31日、設計開始から<b>556日</b>で初飛行した。並行してオハイオ州コロンバスに約50万平方メートル規模の量産工場「Arsenal-1」を建設。2025年には陸軍のヘッドセット事業を引き継ぎ、Metaと提携した。2025年の売上高は約22億ドルと、前年の約2倍になった。</p>
+
+  <h3>第6期（2026〜）：国の「標準装備」へ</h3>
+  <div class="f-stack">
+    <div class="f-card corp"><span class="r-badge">Army</span><div class="f-amount">$200億</div><div class="f-detail"><div class="f-date">2026年3月</div><div class="f-desc">陸軍と最大10年・上限200億ドルの包括契約。120件以上あった個別の調達を1本にまとめ、Latticeを対ドローン作戦の指揮統制の中核に据える。ただし「上限」であり、確定した支出ではない</div></div></div>
+    <div class="f-card corp"><span class="r-badge">Series H</span><div class="f-amount">$50億</div><div class="f-detail"><div class="f-date">2026年5月</div><div class="f-desc">Thrive Capitalとa16zの主導で調達し、評価額は前回の305億ドルから610億ドルへ倍増</div></div></div>
+    <div class="f-card gov"><span class="r-badge">Arsenal-1</span><div class="f-amount">1号機</div><div class="f-detail"><div class="f-date">2026年7月</div><div class="f-desc">オハイオの工場でYFQ-44Aの量産1号機が完成。同じ月、評価額約1,000億ドルでの新規調達を協議中と報道</div></div></div>
+    <div class="f-card corp"><span class="r-badge">Navy</span><div class="f-amount">$29億</div><div class="f-detail"><div class="f-date">2026年10月</div><div class="f-desc">バージニア級潜水艦の部品で最大29億ドルの契約。メリーランド州スパローズ・ポイントの造船所に37億ドルを投じ、2030年ごろの稼働を目指す。同月、陸軍の次世代指揮統制（NGC2）の契約も拡大</div></div></div>
+    <div class="f-card gov"><span class="r-badge">Tender</span><div class="f-amount">$900億</div><div class="f-detail"><div class="f-date">2026年10月</div><div class="f-desc">社員の持ち株を1株94.80ドル、評価額約900億ドルで売却する機会を提供（上限約13億ドル、11月9日締切）</div></div></div>
+  </div>
+  <p>同じ時期、ラッキーは国防総省が将来の戦争に備える能力を探す新組織「Project Meridian」のメンバーに、イーロン・マスクらと並んで名を連ねた。10月には、Colossal Biosciencesのベン・ラムと、遺伝子技術とクローンで軍用犬を育てる新会社Warhound（2億ドル調達）を立ち上げている。</p>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜラッキーだけが二度も産業を起こせたのか</h2>
+  <p>2012年前後、VRに夢を見たエンジニアは他にもいた。2017年前後、「国防にシリコンバレーの技術を」と言う投資家もいた。それでも両方で産業を起こしたのはラッキーだけだ。理由は次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 歴史を知るオタクの深さ</b></td><td>過去に何が試され、なぜ失敗したかを誰よりも知っているので、何を変えれば勝てるかが見える</td><td>50台超のヘッドセット収集、USCのラボ責任者を驚かせた知識</td></tr>
+        <tr><td><b>② 「自分で作る」反射</b></td><td>不満を持ったら、文句を言う前に作る。ガレージからOculus、Andurilまで同じ動き</td><td>PR1、ModRetro、自己資金で作るEagleEye</td></tr>
+        <tr><td><b>③ コミュニティと大物を味方にする力</b></td><td>オタク仲間を最初の顧客に、業界の英雄を最初の証人にする</td><td>MTBS3D、Kickstarterの9,522人、カーマックへの無償貸し出し</td></tr>
+        <tr><td><b>④ 空気を読まない頑固さ</b></td><td>主流が避ける政治的立場や業界に、平気で踏み込む</td><td>トランプ支持の献金、シリコンバレーが避けた国防への参入</td></tr>
+        <tr><td><b>⑤ 時代の空白とタイミング</b></td><td>スマホ部品の低価格化がVRを、ウクライナ戦争とドローンの台頭が国防テックを後押しした</td><td>2012年のスマホ用ディスプレイ、2022年以降の安価なドローンと迎撃の需要</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>⑤が「空白」を用意し、①が「どこが空白か」を見抜き、②が「誰より先に作り」、③が「最初の味方を集め」、④が「周りが止めても進ませた」。とくに<b>①と④の組み合わせ</b>が決定的だった。深い知識を持つ専門家は多いが、多くは業界の空気に従って「やらない理由」を探す。ラッキーは空気を読まないので、知識をそのまま行動に変えられた。<br><br><strong>ただし、同じ構造が裏返る。</strong>④の頑固さは2016年の炎上と追放を招き、今は自律兵器や国境監視をめぐる批判の的になっている。強みと弱みは、同じ1つの性格から出ている。</div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Philosophy</div>
+  <h2>思想・仕事術：「劣った技術を使うことに、道徳的な優位はない」</h2>
+  <p>ラッキーは自分を「プロパガンディスト」と呼ぶ。挑発的な言葉でわざと議論を起こし、国防テックを世の中の議題に乗せるためだ。その発言を並べると、考え方の骨組みが見える。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>考え方</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>There's no moral high ground in using inferior technology.</b></td><td>「劣った技術を使うことに、道徳的な優位はない」。AIや自律兵器を避けても戦争はなくならず、弱い側が負けるだけだ、という主張</td></tr>
+        <tr><td><b>世界の警察から、世界の武器屋へ</b></td><td>2025年のCBS『60 Minutes』で「アメリカは世界の警察（world police）から、世界の武器屋（world gun store）に移るべきだ」と発言。自ら戦うのではなく、同盟国が自分で身を守れるよう武器を売る</td></tr>
+        <tr><td><b>抑止こそ平和</b></td><td>自律兵器は、相手に「攻めても勝てない」と思わせることで戦争を防ぐ。とくに台湾をめぐる抑止のために、安い自律兵器を大量生産すべきだと説く</td></tr>
+        <tr><td><b>「防衛請負業者」ではなく「防衛製品会社」</b></td><td>従来の請負業者は、成功しようが失敗しようが作業した分の費用を国から受け取る。Andurilは自分のお金で先に製品を作り、完成品を売る。失敗のリスクを自分で負う代わりに、速く作れる</td></tr>
+        <tr><td><b>戦士の階級は必要だ</b></td><td>ペパーダイン大学での対談で「社会にはいつも、良い目的のために力を振るうことに熱意を持つ戦士の階級が必要だった」と発言。兵器づくりを恥じる空気への反論</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>仕事術：3つの型</h3>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">1</div><div><div class="ind-title">自己資金で先に作る</div><div class="ind-desc">国の予算がつくのを待たず、自社のお金で試作まで進める。EagleEyeも自社資金の「寄り道」として始まった。顧客が欲しいものを見せてから売るので、調達の期間が短くなる。</div></div></div>
+    <div class="ind-item"><div class="ind-num">2</div><div><div class="ind-title">ソフトウェアで全部つなぐ</div><div class="ind-desc">監視塔・ドローン・迎撃機・ヘッドセットを、すべてLatticeという1つのソフトで動かす。ハードを売るたびにソフトの陣地が広がる。2026年の陸軍の包括契約は、この戦略の到達点だ。</div></div></div>
+    <div class="ind-item"><div class="ind-num">3</div><div><div class="ind-title">工場まで自分で持つ</div><div class="ind-desc">オハイオのArsenal-1、メリーランドの造船所。「量産できること自体が抑止力になる」という考えから、スタートアップでは珍しく巨大な工場に投資する。</div></div></div>
+  </div>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Light &amp; Shadow</div>
+  <h2>光と影：国境監視・自律兵器・政治との近さが常に問われる</h2>
+
+  <h3>国境と移民</h3>
+  <p>Andurilの最初の大口顧客は国境警備だった。移民の権利団体などは、テック企業が国境の監視と移民の取り締まりを強めることに反対してきた。2019年には、移民支援団体が情報公開請求で、海兵隊が日米の基地にAndurilのシステムを入れる1,350万ドルの契約を明らかにしている。</p>
+
+  <h3>自律兵器の倫理</h3>
+  <p>「人間が引き金を引かない兵器」をどこまで許すかは、国際的にも答えが出ていない。ラッキーは、自律化そのものが抑止になり、結果的に戦争を減らすと主張する。左派系の雑誌からは「最も恐ろしい億万長者」と名指しで批判されている。</p>
+
+  <h3>政治との近さ</h3>
+  <p>ラッキーは共和党の候補者に繰り返し献金し、2020年と2024年にはトランプの資金集めパーティーを開いた。妹の夫は元下院議員のマット・ゲイツだ。2026年10月には、国防総省の新組織「Project Meridian」のメンバーになった数日後に、海軍から最大29億ドルの契約を得たことが報じられ、<b>利益相反を疑う見方</b>も出ている。</p>
+
+  <h3>Oculus時代の傷</h3>
+  <p>ZeniMax訴訟で、陪審はラッキーが秘密保持契約に違反したと認めた。Oculusの「ガレージの天才」という物語には、他社の技術との関係をめぐる争いがついて回る。また2025年の『60 Minutes』では、2016年の献金額を「9千ドル」と語っており、当時の報道（1万ドル）と食い違う。</p>
+
+  <h3>内部矛盾：「自由な社会」のための「国家の武器」</h3>
+  <p>ラッキーはリバタリアンを自称し、政府の介入を嫌う。一方で、彼の会社の売上のほとんどは政府から来ている。「自由な社会を守るには強い武器が要る」という論理で両者をつないでいるが、民間企業が国の安全保障の中核を握ることへの懸念は、Andurilが大きくなるほど強まっていく。2025年12月には、台湾への武器売却を理由に中国から制裁を受けた（実質的な影響は小さいと報じられている）。</p>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面：アロハシャツ、潜水艦、そして「死ぬVRヘッドセット」</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">トレードマーク</div><div class="info-card-title">アロハシャツは父の休日着</div><div class="info-card-text">週6日スーツで車を売っていた父が、休みの日だけ着ていたのがアロハシャツだった。成功した後も、自分の出自を忘れないために着続けているという。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">アート作品</div><div class="info-card-title">ゲームで死ぬと本当に死ぬヘッドセット</div><div class="info-card-text">2022年、アニメ『ソードアート・オンライン』の「ナーヴギア」へのオマージュとして、ゲームオーバーで爆薬が作動するヘッドセットを作った。本人いわく「殺す半分だけ完成した」。かぶったことはなく、オフィスに飾っている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">コレクション</div><div class="info-card-title">潜水艦2隻とヘリ6機</div><div class="info-card-text">軍用の乗り物を集めており、特殊作戦用の高速艇Mark V、潜水艦2隻、UH-60ブラックホークを含むヘリコプター6機を持っている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ゲーム機</div><div class="info-card-title">ゲームボーイを「作り直す」会社</div><div class="info-card-text">10代で作ったModRetroを2024年にゲーム機メーカーとして再始動。ゲームボーイのカートリッジが動く「Chromatic」を199ドルで出し、独自版の『テトリス』まで付けた。ゲームボーイの改造は17年やってきたという。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">表紙</div><div class="info-card-title">からかわれたTIMEの表紙</div><div class="info-card-text">2015年の『TIME』誌「バーチャルリアリティの意外な喜び」特集で、ヘッドセットをつけて宙に浮かぶようなポーズの写真が表紙に。ネットで大量のコラ画像が作られた。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">専攻</div><div class="info-card-title">大学ではジャーナリズム専攻</div><div class="info-card-text">工学ではなくジャーナリズムを学び、学生新聞のオンライン編集者だった。今も自分を「プロパガンディスト」と呼び、メディアでの発信を武器にしている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">社名</div><div class="info-card-title">「Anduril」はアラゴルンの剣</div><div class="info-card-text">社名はトールキン『指輪物語』の剣から。オタク文化の言葉が、そのまま防衛企業のブランドになっている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">新会社</div><div class="info-card-title">遺伝子操作の軍用犬</div><div class="info-card-text">2026年10月、絶滅動物の「復活」で知られるColossalのベン・ラムとWarhoundを発表。クローン技術で優秀な軍用犬を増やし、Andurilが装甲とセンサーを提供する。最初の犬は2027年の予定。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">お買い得</div><div class="info-card-title">9万7千ドルの機器を87ドルで</div><div class="info-card-text">ヘッドセット収集の時代、発売時に9万7千ドルした機器を87ドルで手に入れたことがあるという。<span class="tag warn">△ 単一ソース</span></div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：オタクの深さは、最後に国家規模の問題を解く武器になる</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 好きなものの「歴史」まで掘る。</strong>ラッキーが勝てたのは、VRが好きだったからではなく、過去のヘッドセットが<b>なぜ失敗したかを全部知っていた</b>からだ。深さは、他人に見えない勝ち筋を見せてくれる。<b>自分の仕事の分野で、過去に失敗した試みを3つ調べ、失敗の理由を一行ずつ書き出す</b>。</p>
+    <p><strong>② 不満を持ったら、まず小さく作る。</strong>50台のヘッドセットに不満を持った少年は、評論ではなく試作で答えた。Andurilでも、国の予算を待たずに自分のお金で先に作った。<b>今いちばん不満な道具や仕組みを1つ選び、1週間で作れる最小の代わりを作ってみる</b>。</p>
+    <p><strong>③ 居場所を失ったら、誰も行かない場所を探す。</strong>Facebookを追われたラッキーは、シリコンバレーが避けていた国防に向かい、そこで最大の成功をつかんだ。主流から外れることは、空白を見つけるチャンスでもある。<b>自分の業界で「みんなが避けている仕事」を1つ書き出し、なぜ避けられているのか、そこに自分の強みが効かないかを考える</b>。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/Palmer_Luckey">Wikipedia — Palmer Luckey</a></li>
+    <li><a href="https://www.smithsonianmag.com/innovation/how-palmer-luckey-created-oculus-rift-180953049/">Smithsonian — How Palmer Luckey Created Oculus Rift</a></li>
+    <li><a href="https://ict.usc.edu/news/essays/memories-of-palmer-luckey-at-mxr-and-where-were-heading-next/">USC ICT — Memories of Palmer Luckey at MxR</a></li>
+    <li><a href="https://www.success.com/?p=21990">SUCCESS — Meet the Genius Behind Oculus Rift</a></li>
+    <li><a href="https://techcrunch.com/2014/03/26/a-brief-history-of-oculus/">TechCrunch — A Brief History of Oculus (2014)</a></li>
+    <li><a href="https://www.techradar.com/news/wearables/oculus-rift-then-and-now-its-journey-from-kickstarter-to-vr-firestarter-1317876">TechRadar — Oculus Rift: from Kickstarter to VR firestarter</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Oculus_Rift">Wikipedia — Oculus Rift</a></li>
+    <li><a href="https://uploadvr.com/palmer-luckey-facebook-fired/">UploadVR — Palmer Luckey was fired by Facebook (WSJ report)</a></li>
+    <li><a href="https://mobilesyrup.com/2019/05/22/oculus-co-founder-palmer-lucky-facebook/">MobileSyrup — "I left because I got fired" (CNBC interview)</a></li>
+    <li><a href="https://www.businessinsider.in/Facebook-denies-firing-Oculus-founder-Palmer-Luckey-for-supporting-Trump/articleshow/66589813.cms">Business Insider — Facebook denies firing Luckey for supporting Trump</a></li>
+    <li><a href="https://qz.com/1459726/facebook-pressured-exec-to-conceal-support-of-trump-report">Quartz — Facebook pressured exec to conceal support of Trump</a></li>
+    <li><a href="https://money.cnn.com/2017/02/01/technology/zenimax-oculus-lawsuit-500-million">CNN Money — Facebook loses $500 million Oculus lawsuit</a></li>
+    <li><a href="https://www.skadden.com/about/news-and-rankings/news/2017/02/client-wins-verdict-against-facebook-owned-oculus">Skadden — Verdict against Oculus and executives</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Anduril_Industries">Wikipedia — Anduril Industries</a></li>
+    <li><a href="https://www.defensenews.com/pentagon/2025/05/30/meta-and-anduril-work-on-mixed-reality-devices-for-the-us-military/">Defense News — Meta and Anduril work on mixed reality devices (2025)</a></li>
+    <li><a href="https://www.uploadvr.com/palmer-luckey-anudril-meta-partnership-military-xr-helmets/">UploadVR — Anduril &amp; Meta partnership for military XR</a></li>
+    <li><a href="https://www.ocbj.com/oc-homepage/luckeys-big-tent-leads-to-zuckerberg-reconciliation/">OCBJ — Luckey's big tent leads to Zuckerberg reconciliation</a></li>
+    <li><a href="https://www.congress.gov/crs-product/IF13022">CRS — Army's IVAS / Soldier Borne Mission Command</a></li>
+    <li><a href="https://defensescoop.com/2025/09/08/army-sbmc-contract-awards-anduril-rivet-soldier-borne-mission-command/">DefenseScoop — Army SBMC contract awards (2025)</a></li>
+    <li><a href="https://www.technologyreview.com/2026/05/18/1137412/inside-anduril-and-metas-quest-to-make-smart-glasses-for-warfare/">MIT Technology Review — Inside Anduril and Meta's quest (2026)</a></li>
+    <li><a href="https://theaviationist.com/2025/10/31/anduril-yfq-44a-cca-first-flight/">The Aviationist — YFQ-44A flies for the first time (2025)</a></li>
+    <li><a href="https://thedefensepost.com/2026/07/30/anduril-arsenal1-first-yfq-44a/amp/">The Defense Post — Arsenal-1 produces first YFQ-44A (2026)</a></li>
+    <li><a href="https://techcrunch.com/2026/03/14/us-army-announces-contract-with-anduril-worth-up-to-20b/">TechCrunch — Army contract worth up to $20B (2026)</a></li>
+    <li><a href="https://breakingdefense.com/2026/03/army-awards-anduril-counter-drone-task-order-as-first-in-new-20b-contract-vehicle/">Breaking Defense — First task order under $20B vehicle (2026)</a></li>
+    <li><a href="https://techcrunch.com/2026/05/13/anduril-raises-5b-doubles-valuation-to-61b/">TechCrunch — Anduril raises $5B at $61B (2026)</a></li>
+    <li><a href="https://www.bloomberg.com/news/articles/2026-05-13/anduril-valued-at-61-billion-in-round-led-by-thrive-andreessen">Bloomberg — Anduril valued at $61 billion (2026)</a></li>
+    <li><a href="https://techcrunch.com/2026/07/24/anduril-reportedly-in-talks-to-raise-funding-at-100b-valuation-more-than-3x-last-years-mark/">TechCrunch — Talks at $100B valuation (2026)</a></li>
+    <li><a href="https://www.bloomberg.com/news/articles/2026-10-14/anduril-in-talks-to-sell-insider-shares-at-roughly-90-billion-valuation">Bloomberg — Insider share sale at ~$90B (2026)</a></li>
+    <li><a href="https://www.cnbc.com/2026/10/06/anduril-navy-submarine-shipyard-contract.html">CNBC — $2.9B Navy submarine contract, Project Meridian (2026)</a></li>
+    <li><a href="https://www.defensenews.com/industry/techwatch/2026/10/13/anduril-awarded-contract-to-expand-us-armys-next-gen-battlefield-command-system/">Defense News — NGC2 contract expansion (2026)</a></li>
+    <li><a href="https://www.cbsnews.com/news/palmer-luckey-ai-powered-autonomous-weapons-future-of-warfare-60-minutes-transcript">CBS 60 Minutes — Palmer Luckey transcript (2025)</a></li>
+    <li><a href="https://techradar.com/pro/quote-of-the-day-by-anduril-ceo-palmer-luckey-theres-no-moral-high-ground-in-using-inferior-technology-challenging-the-dominant-narrative-over-ai-use-in-defense">TechRadar — "No moral high ground in using inferior technology"</a></li>
+    <li><a href="https://gizmodo.com/im-a-propagandist-palmer-luckey-on-the-future-of-warfare-2000506276">Gizmodo — "I'm a propagandist"</a></li>
+    <li><a href="https://www.currentaffairs.org/news/palmer-luckey-is-our-most-terrifyingly-deranged-billionaire">Current Affairs — critical essay on Luckey</a></li>
+    <li><a href="https://officechai.com/stories/why-oculus-anduril-founder-palmer-luckey-always-wears-hawaiian-shirts">OfficeChai — Why Luckey always wears Hawaiian shirts</a></li>
+    <li><a href="https://mixed-news.com/en/oculus-founder-built-a-vr-headset-that-can-kill-you/">MIXED — Oculus founder built a VR headset that can kill you (2022)</a></li>
+    <li><a href="https://gizmodo.com/palmer-luckey-gameboy-1851517999">Gizmodo — ModRetro Chromatic (2024)</a></li>
+    <li><a href="https://www.engadget.com/2295033/warho">Engadget — Warhound genetically engineers dogs (2026)</a></li>
+    <li><a href="https://www.dmagazine.com/business-economy/2026/10/ben-lamm-raises-200-million-to-genetically-enhance-military-dogs/">D Magazine — Ben Lamm raises $200M for Warhound (2026)</a></li>
+  </ul>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>

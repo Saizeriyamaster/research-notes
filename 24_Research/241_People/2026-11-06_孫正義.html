@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孫正義</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-logos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero-logo { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 10px; padding: 8px 14px; }
+.hero-logo img { height: 26px; width: auto; display: block; }
+.hero-logo .role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; border-left: 1px solid var(--border); padding-left: 10px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-06</span>
+  </div>
+  <div class="hero-logos">
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJzdmcyMjExIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSIxNTciIGhlaWdodD0iMzciIHZpZXdCb3g9IjAgMCAxNTcgMzciPiA8cGF0aCBpZD0icGF0aDIxODAiIGQ9Im0gNDguMTE1MywwLjAwMzYzMzEyIGMgLTIuNDI5NiwwIC00LjE1MDEsMC42MDUxNiAtNS4yNTc4LDEuNDc2NTU5OTggYSA0LjUyNjg1NzksNC41MjY4NTc5IDAgMCAwIC0xLjg0NTcsMy42NzM4MyA1LjIzMjEwMjUsNS4yMzIxMDI1IDAgMCAwIDAuOTI5NiwyLjk4MjQyIGMgMC45MDEsMS4yNzM4NyAzLjUxMjMsMi42NzMwMDk5IDUuNDEwMiwzLjYzNjcxOTkgMS44MDE5LDAuOTAwOTQgMy40ODUzLDEuNjQ4NTIgNC40Nzg1LDIuODMwMDggYSAzLjg3Njk5OTEsMy44NzY5OTkxIDAgMCAxIDAuOTk2MSwyLjc2NzU4IDMuOTY5MzA4NiwzLjk2OTMwODYgMCAwIDEgLTEuNTg3OSwzLjIzNjMyIDYuMTEwODg5LDYuMTEwODg5IDAgMCAxIC0zLjczMjQsMS4xNTA0IGMgLTMuMjk3MywwIC01LjA0LC0wLjkzMjczIC02LjAzMzIsLTQuNzYxNzIgbCAtMS4xMDc0LDAuMjgzMiBhIDI5Ljk2NzM1NywyOS45NjczNTcgMCAwIDEgMS4wMTk1LDQuNTg1OTQgMTguMzE0MjA1LDE4LjMxNDIwNSAwIDAgMCA1LjgwNDcsMS4wNzQyMiBjIDIuNzczLDAgNC44MjE4LC0wLjc3NTQ3IDYuMTI4OSwtMS45NTcwNCBhIDUuMzkwODc0OSw1LjM5MDg3NDkgMCAwIDAgMS43NDIyLC00LjEzNDc2IDUuOTI5OTYyNCw1LjkyOTk2MjQgMCAwIDAgLTEuMzA2NywtMy42OTMzNiBjIC0xLjMzNjYsLTEuNTE3NTcgLTMuMTcxOSwtMi4yMzI0NCAtNS42MDE1LC0zLjQ4MDQ2OTkgLTEuOTYwNywtMC45NzQ3OSAtMy4xNDIzLC0xLjY3NzcyIC0zLjk0NzMsLTIuNDUzMTIgYSAzLjc5NTc2NjcsMy43OTU3NjY3IDAgMCAxIC0xLjA2MDUsLTIuNDg4MjggMi45MDIyMTA3LDIuOTAyMjEwNyAwIDAgMSAxLjEwOTMsLTIuMzYzMjkgYyAwLjg2MDQsLTAuNzQ5NTUgMi4xMzMzLC0xLjE4MTY0IDMuNjkxNSwtMS4xODE2NCAzLjY3MzksMCA0LjM1NDIsMS4xMDg4MyA1LjAwNzgsNC4zMDI3NCBsIDEuMDc0MiwtMC4yNDgwNSBjIC0wLjI3MzMsLTEuNDAzMSAtMC41NTc0LC0zLjA3OTg2IC0wLjczODMsLTQuMzU3NDE5OTggYSAxMy43Nzk5NjIsMTMuNzc5OTYyIDAgMCAwIC01LjE3MzgsLTAuODgwODYgeiBtIDQ0LjQwODIsMC40NjA5NCBWIDEuMzY0OTYzMSBjIDIuMzI5OSwwIDIuNTE3NiwwLjE1NTIxIDIuNTE3NiwyLjM5NjQ4IFYgMTkuMjM2MDUzIGMgMCwyLjIxNTQzIC0wLjE4NzcsMi4zNjMyOCAtMi41MTc2LDIuMzYzMjggdiAwLjkwNDMgaCAxMC4xMzg2IGMgMy4yMzQ2LDAgNS4wNywtMC43MzkgNi4yNzc0LC0xLjkzMTY0IGEgNS43NzQ4ODI0LDUuNzc0ODgyNCAwIDAgMCAxLjc0NDEsLTQuMjg1MTYgNC43MzczMjM2LDQuNzM3MzIzNiAwIDAgMCAtMS45OTQxLC0zLjgzMDA4IGMgLTEuMzMzLC0xLjAyNjQ4IC0zLjEzOTEsLTEuNTU0NDEgLTUuMTY5OSwtMS42MTcxOCB2IC0wLjA1MDggYyAxLjk1NjksLTAuMjgwNjIgMy4yNjUsLTAuOTAyMDY5OSA0LjE5OTIsLTEuNzQwMjM5OSBhIDQuNzUyMDkzMSw0Ljc1MjA5MzEgMCAwIDAgMS41NTI3LC0zLjU3ODEyIDQuMzMxMTYxOCw0LjMzMTE2MTggMCAwIDAgLTEuOTg2MywtMy42MzY3MiBjIC0xLjY4LC0xLjEwNzcxOTk4IC0zLjU1MDUsLTEuMzY5MTM5OTggLTYuNDEyMSwtMS4zNjkxMzk5OCB6IG0gLTEyLjk5ODEsMC40ODYzMyBhIDQuODg1MDE4OCw0Ljg4NTAxODggMCAwIDAgLTMuMTIzLDEuMjEwOTI5OTggYyAtMS4wMDgsMS4wNjM0MSAtMS40NzY2LDIuNDg1MTUgLTEuNDc2Niw0LjM4NjcyIHYgMS45NjA5NCBoIC0yLjMwNDcgdiAwLjk5NDE0IGggMi4zMDQ3IFYgMTkuNjAxMjkzIGMgMCwxLjkwMTU3IC0wLjE1NTUsMi4xMTkxNCAtMi4zMzQsMi4xMTkxNCB2IDAuNzc1MzkgaCA2Ljk0MTQgdiAtMC43NzUzOSBjIC0yLjMzNzIsMCAtMi40NTg5LC0wLjE4ODMgLTIuNDU4OSwtMi4wNTY2NCBWIDkuNDk5NzIzMSBoIDMuOTI5NiB2IC0wLjk5NDE0IGggLTMuOTQ3MiB2IC0xLjg0NTcgYyAwLC0yLjIxNTQzIDAuMzcxNiwtMy4zMjIwNyAwLjk4ODMsLTQuMDYwNTUgYSAyLjAxNjAzOTUsMi4wMTYwMzk1IDAgMCAxIDEuNTU4NiwtMC42ODc1IGMgMC45NzExLDAgMS4zNjc1LDAuNjUyODUgMS43MTA5LDEuMzM1OTQgMC4zNDM0LDAuNjgzMDkgMC42MjY4LDEuMzQxOCAxLjM2NTIsMS4zNDE4IDAuNTYxMywwIDAuODc1LC0wLjM0NDc0IDAuODc1LC0wLjk2ODc1IDAsLTAuNTU3NTUgLTAuNDM1LC0xLjMzNjk2IC0xLjMzNTksLTEuOTI3NzQgQSA0Ljg4NTAxODgsNC44ODUwMTg4IDAgMCAwIDc5LjUyNTQsMC45NTA5MDMxMiBaIG0gNjYuNDIzOSwwIGEgOC45Nzk4NjgzLDguOTc5ODY4MyAwIDAgMSAtMy43MzA1LDEuMjc3MzM5OTggdiAwLjY4MzU5IGMgMS42NjE2LDAgMS44NDc2LDAuMjEzOTYgMS44NDc2LDIuMDE5NTMgViAxOS42NjE4MzMgYyAwLDEuODA1NTggLTAuMDQ2LDIuMDU2NjQgLTEuODQ3NiwyLjA1NjY0IHYgMC43NzUzOSBoIDUuNzg3MSB2IC0wLjc3NTM5IGMgLTEuNzA5NiwwIC0xLjc3MzQsLTAuMjUxMDYgLTEuNzczNCwtMi4wNTY2NCB2IC0zLjI5MTAxIGwgMS43NDQxLC0xLjcwODk5IDUuMDY0NSw3LjgzMzk5IGggMy41NDQ5IHYgLTAuNzc1MzkgYyAtMC45MzQyLDAuMDI5NSAtMS42MTIzLC0wLjA5NDMgLTIuMzAyOCwtMS4xODM2IGwgLTQuNzU1OCwtNy4yMTQ4NCAzLjI2MzcsLTMuMTA1NDcgYSAyLjc2NTU5MjcsMi43NjU1OTI3IDAgMCAxIDIuMTExMywtMC45MzU1NDk5IHYgLTAuNzc1MzkgaCAtNC42MTUzIHYgMC43NzUzOSBjIDEuNDk1NSwwIDEuMjczOCwwLjQ2Njc5IDAuNDM1NiwxLjI0MjE4OTkgbCAtNC40Mjk3LDQuMzI2MTcgaCAtMC4wNjYgViAxLjEzNjQ0MzEgWiBtIC00Ny42NywwLjY2NjAwOTk4IGggMi45NTUxIGMgMi4xODIyLDAgMy41NzY4LDAuNDk0ODMgNC40Mjk3LDEuMjE0ODQgYSAzLjk1ODIzMTQsMy45NTgyMzE0IDAgMCAxIDEuMjE4NywyLjgyODEzIDQuMDgzNzcyMyw0LjA4Mzc3MjMgMCAwIDEgLTEuNDM1NSwzLjMyMjI3IGMgLTEuMTA3NywwLjkzNDE3IC0yLjg2MjUsMS4zMzc4ODk5IC01LjAwNzgsMS4zMzc4ODk5IGggLTMuMTA3NCBsIDAuMDEsLTcuNTk1NzA5OSBjIDAsLTAuODQxODYgMC4xMjE1LC0xLjEwNzQyIDAuOTM3NSwtMS4xMDc0MiB6IG0gLTEyLjIyMDcsMi45NzI2NiBjIC0wLjM5NTEsMy4yNjAzNyAtMS43MzY0LDQuMDEyNjQgLTMuNjkzMyw0LjE5NzI2IGwgLTAuMDEsMC43MTY4IGggMi4zMjgxIFYgMTkuNjYxODMzIGMgMCwyLjQ0MDY3IDEuNDYyOSwzLjE3Nzc0IDMuMDQ2OSwzLjE3Nzc0IGEgNC4zNzU0NzA0LDQuMzc1NDcwNCAwIDAgMCAzLjA1MDgsLTEuMTA3NDMgbCAtMC40OTYxLC0wLjY4OTQ1IGEgMy4wNzIwNjAyLDMuMDcyMDYwMiAwIDAgMSAtMS45Mjk3LDAuNzE4NzUgYyAtMS4wODkyLDAgLTEuNTI1NCwtMC43Mzc4OSAtMS41MjU0LC0yLjIxNDg0IFYgOS40OTk3MjMxIGggMy4yOTY5IHYgLTAuOTk0MTQgaCAtMy4yOTY5IHYgLTMuOTE2MDEgeiBtIDQ4LjgyODIsMy41NzAzMSBjIC0xLjcxNywwIC0zLjI5ODUsMC45OTk5NSAtNC41MzkxLDIuNTgzOTc5OSBoIC0wLjA2NiBsIC0wLjEyNSwtMi4zOTY0Nzk5IC0wLjMxMDYsLTAuMTgzNTkgYyAtMS4wMjI3LDAuNzQ5NTUgLTIuMDgxLDEuMDU5MjggLTMuNDQ3MiwxLjI3MzQzIHYgMC42ODU1NDk5IGMgMS42NDY4LC0wLjAyOTUgMS44MDA4LDAuMTg4MzUgMS44MDA4LDEuOTkwMjMgdiA3LjU1NDY5IGMgMCwxLjg2ODM1IC0wLjEyNDUsMi4wNTY2NCAtMS44MDA4LDIuMDU2NjQgdiAwLjc3NTM5IGggNS40Mzc1IHYgLTAuNzc1MzkgYyAtMS40NTExLDAgLTEuNDc2NiwtMC4xODgyOSAtMS40NzY2LC0yLjA1NjY0IHYgLTcuNDkyMTkgYyAxLjI0NDQsLTEuNzA5NTcgMi42NDA0LC0yLjg5MDYxOTkgMy45NTEyLC0yLjg5MDYxOTkgYSAyLjM4NTI3NzUsMi4zODUyNzc1IDAgMCAxIDEuNzk4OCwwLjYyMTA5IGMgMC41ODM0LDAuNjE2NjI5OSAwLjczODMsMS42MjA5Mjk5IDAuNzM4MywyLjgzMjAyOTkgdiA2LjkzMzYgYyAwLDEuODY4MzQgLTAuMDkyLDIuMDU2NjQgLTEuNTg3OSwyLjA1NjY0IHYgMC43NzUzOSBoIDUuMjY1NiB2IC0wLjc3NTM5IGMgLTEuMzk1NywwIC0xLjUyNTQsLTAuMjUxMzQgLTEuNTI1NCwtMS45OTQxNCBsIC0wLjAyMywtNy4xMjUgYyAwLC0xLjY0NjggLTAuNDI0MywtMi43OTE5Nzk5IC0xLjEwNzQsLTMuNDQ5MjE5OSAtMC42ODMxLC0wLjY1NzI0IC0xLjY0OTUsLTEgLTIuOTgyNCwtMSB6IG0gLTE2LjQ2NDksMC4wMDQgYSA2Ljc2NDQ0MDMsNi43NjQ0NDAzIDAgMCAwIC0zLjU0ODgsMC44NzEwOSBjIC0wLjk5NywwLjU4NzA5IC0xLjYxNzIsMS40MzE2NTk5IC0xLjYxNzIsMi4xNzM4Mjk5IGEgMC44MzQ0Nzc4OSwwLjgzNDQ3Nzg5IDAgMCAwIDAuODY5MSwwLjkwMDM5IDEuMDExNzEyMSwxLjAxMTcxMjEgMCAwIDAgMS4wODQsLTAuNzM4MjggMy41OTI2ODU4LDMuNTkyNjg1OCAwIDAgMSAwLjk3MjcsLTEuNTIxNDc5OSAzLjIwMTI5MzUsMy4yMDEyOTM1IDAgMCAxIDIuMTExMywtMC43MDcwMyBjIDEuMDI2NSwwIDEuNzczLDAuMzAxOTggMi4yMzgzLDAuOTI5Njc5OSAwLjQwMjUsMC41MjgwMSAwLjQ5OCwxLjQ3NTk3IDAuNDk4LDIuMTczODMgdiAxLjM0MTggbCAtMS44NDU3LDAuNDM1NTQgYSAxMy41NzY4ODEsMTMuNTc2ODgxIDAgMCAwIC00LjYwMTUsMS43NjE3MiBjIC0xLjM2OTksMC45MDA5NCAtMS45Mjc4LDIuMDIyMjIgLTEuOTI3OCwzLjQ1MTE4IGEgMy4yODI1MjU5LDMuMjgyNTI1OSAwIDAgMCAxLjI0MDMsMi42NzM4MiA0LjU2Mzc4MTcsNC41NjM3ODE3IDAgMCAwIDIuODYxMywwLjkzNzUgNS44MzM5NjA1LDUuODMzOTYwNSAwIDAgMCA0LjM2MTMsLTEuNzIwNyBoIDAuMTExNCBjIDAuMjc2OSwxLjAzMDE3IDAuOTM0MSwxLjU4Nzg5IDIuMDIzNCwxLjU4Nzg5IGEgNC4xNjEzMTIzLDQuMTYxMzEyMyAwIDAgMCAxLjg5ODQsLTAuNDM1NTUgbCAtMC4xODU1LC0wLjcxMjg5IGEgMS41NDcxMDcyLDEuNTQ3MTA3MiAwIDAgMSAtMC44NDE4LDAuMjE4NzUgYyAtMC42MjAzLDAgLTAuOTI5NywtMC42MjIwNyAtMC45Mjk3LC0yLjAyMTQ4IGwgLTAuMDE2LC03LjI3NzM0IGMgMCwtMS4zNjk4OCAtMC4yMjI0LC0yLjIxNTgyIC0xLjAyNzMsLTMuMTA5Mzc5OSAtMC44MDUsLTAuODkzNTYgLTEuODY3NiwtMS4yMTI4OSAtMy43Mjg2LC0xLjIxMjg5IHogbSAtNTQuMjc3MywwLjAwMiBjIC0xLjk5MzksMCAtMy40MjM3LDAuNTU5MTYgLTQuNjM0OCwxLjY4MTY0IC0xLjI0OCwxLjIxMTA5OTkgLTEuOTI3NywzLjE1Njk4OTkgLTEuOTI3Nyw1LjU5NzY1OTkgMCwyLjgyODM2IDAuNzM4NSw0LjY5MTcyIDEuOTU3LDUuODQzNzUgMS4yNDgsMS4xMDc3MSAyLjc0MDgsMS41NTg1OSA0LjYwNTUsMS41NTg1OSAxLjk1NjksMCAzLjQ4NTksLTAuNTAyMyA0LjcyNjUsLTEuNjIxMDkgMS4xODE2LC0xLjE1MjAzIDEuODk2NSwtMi45ODI0MyAxLjg5NjUsLTUuNzgxMjUgMCwtMi40NTkxMyAtMC42NzgsLTQuMzUzNTcgLTEuODk2NSwtNS41NjgzNTk5IC0xLjIxNDgsLTEuMTUyMDMgLTIuNjQ0LC0xLjcxMDk0IC00LjcyNjUsLTEuNzEwOTQgeiBtIC0wLjAzNSwwLjk2NDg0IGEgNC4yMTY2OTgsNC4yMTY2OTggMCAwIDEgMy4wODAxLDEuMzAyNzM5OSBjIDAuODM4MiwxLjEwNzcxIDEuMjc5MywyLjY0NDY2IDEuMjc5Myw1LjA0MTAxIDAsMi41MTgyMSAtMC41Mjk1LDQuMTA0NDEgLTEuMzA4Niw1LjA5NzY2IGEgNC4xMjgwODA5LDQuMTI4MDgwOSAwIDAgMSAtNi4wMjkzLDAgYyAtMC43ODI4LC0wLjk5MzI1IC0xLjMxNDUsLTIuNTc5NDUgLTEuMzE0NSwtNS4wOTc2NiAwLC0yLjM5NjM1IDAuNDM5MiwtMy45NDgwNyAxLjI3NzQsLTUuMDQxMDEgQSA0LjIxNjY5OCw0LjIxNjY5OCAwIDAgMSA2NC4xMDk2LDkuMTMwNzIzMSBaIE0gOTcuMzQyLDExLjUyNzIxMyBoIDMuODYzMyBjIDIuNTQ0MSwwIDQuMjU2NywwLjQzNTI2IDUuMzQ5NiwxLjI3MzQ0IGEgNC4xOTQ1NDM3LDQuMTk0NTQzNyAwIDAgMSAxLjcwOSwzLjQxOTkyIGMgMCwxLjYyMDk1IC0wLjQ2OTIsMi43Njc3OCAtMS4yMTg3LDMuNTQ2ODcgLTEuMDU2MSwxLjA4NTU2IC0yLjQ3OTcsMS41NTQ2OSAtNC42OTE0LDEuNTU0NjkgaCAtMy44NjMzIGMgLTAuOTYzNywwIC0xLjE1MjQsLTAuMjIwMjQgLTEuMTUyNCwtMS41MjczNCB6IG0gMjMuNjg3NSwzLjAyMzQ0IHYgNS40OTQxNCBjIC0wLjc3OTEsMC43NzU0IC0xLjg0NzIsMS42MTMyOCAtMy4zNTc0LDEuNjEzMjggYSAyLjg2MTU5NDUsMi44NjE1OTQ1IDAgMCAxIC0yLjA1NjYsLTAuNzM4MjggMi42Njk1OTA4LDIuNjY5NTkwOCAwIDAgMSAtMC42ODE3LC0xLjk1NzA0IGMgMCwtMS40Mjg5NSAwLjg3MSwtMi4yMzcwNyAyLjA4MjEsLTIuODkwNjIgMS4xNTIsLTAuNzEyNjMgMi42NzcsLTEuMTUyMjUgNC4wMTM2LC0xLjUyMTQ4IHoiIHN0eWxlPSJzdHJva2Utd2lkdGg6MC4zNjkyMzgwMiIgLz4gPHBhdGggaWQ9InBhdGgyMTg0IiBkPSJNIDAsMC4wMTc0NjMxMiBIIDMxLjA5MzYgViA3LjY1NzAwMzEgSCAwIFogTSAwLDE1LjI5NjUzMyBoIDMxLjA5MzYgdiA3LjY0MzIzIEggMCBaIiBzdHlsZT0iZmlsbDojYjdiYmJlO3N0cm9rZS13aWR0aDowLjM2OTIzODAyIiAvPiA8cGF0aCBpZD0icGF0aDIxODYiIGQ9Im0gMTMwLjQ4NTEsMjUuODEyNDMzIGMgLTIuNDE0OSwwIC00LjA5ODYsMS44MjAzNSAtNC4wOTg2LDQuNDMwODYgMCwyLjczMjM2IDEuNjA2Miw0LjQ5NzMyIDQuMDg3NSw0LjQ5NzMyIGEgNi42NDYyODQyLDYuNjQ2Mjg0MiAwIDAgMCAyLjM0NDYsLTAuMzY5MjQgdiAtNC40NjA0IGggLTIuNjc2OSB2IDAuOTI2NzkgaCAxLjY1NDIgdiAyLjczNjA1IGggLTAuMDM3IGwgLTAuMTMzLDAuMDMzMiBhIDQuMDE3MzA5NSw0LjAxNzMwOTUgMCAwIDEgLTEuMTM3MiwwLjExODE2IGMgLTEuNzQyOCwwIC0zLjAwNTYsLTEuNDU0OCAtMy4wMDU2LC0zLjQ1OTc2IDAsLTIuMDA0OTYgMS4yNTkxLC0zLjQ1OTc2IDMuMDY0NywtMy40NTk3NiBhIDMuNDYzNDUyNSwzLjQ2MzQ1MjUgMCAwIDEgMi4xMTU3LDAuNTU3NTUgbCAwLjA4MSwtMS4xMzcyNSBhIDUuMjkxMTgwNyw1LjI5MTE4MDcgMCAwIDAgLTIuMjU5OCwtMC40MTM1NSB6IG0gNC4yMzg4LDMuMjY3NzYgaCAwLjk0ODkgdiAwLjg1Mjk0IGggMC4wMjIgYSAxLjY3NjM0MDYsMS42NzYzNDA2IDAgMCAxIDEuNDM2NCwtMC45ODIxOCAyLjg0MzEzMjcsMi44NDMxMzI3IDAgMCAxIDAuNjY4MywwLjA3NzUgdiAwLjkwNDY0IGEgMS40NzY5NTIsMS40NzY5NTIgMCAwIDAgLTAuNTYxMiwtMC4wOTYgYyAtMC45MDQ3LDAgLTEuNDk5MSwwLjg2NDAxIC0xLjQ5OTEsMi4yNDQ5NyB2IDIuNTAzNDMgaCAtMS4wMTU1IHogbSA2LjM1MDksLTAuMTI5MjQgYyAxLjY3MjYsMCAyLjc5NTEsMS4yMDc0MSAyLjc5NTEsMi44ODAwNiBhIDIuODAyNTE2NSwyLjgwMjUxNjUgMCAxIDEgLTUuNjAxMywwIGMgMCwtMS42NzI2NSAxLjEyMjUsLTIuODgwMDYgMi44MDYyLC0yLjg4MDA2IHogbSAwLDQuOTQwNDEgYyAxLjE4NTMsMCAxLjcxNywtMS4wNzgxOCAxLjcxNywtMi4wNjAzNSAwLC0xLjA0ODYzIC0wLjYzNTEsLTIuMDYwMzUgLTEuNzE3LC0yLjA2MDM1IC0xLjA4MTksMCAtMS43MjgsMS4wMTU0MSAtMS43MjgsMi4wNjAzNSAwLDAuOTgyMTcgMC41MjgsMi4wNjQwNCAxLjcyOCwyLjA2NDA0IHogbSA4Ljk1NCwwLjY5MDQ3IGggLTAuOTgyMSB2IC0wLjg3NTA5IGggLTAuMDIyIGEgMS45NzkxMTU3LDEuOTc5MTE1NyAwIDAgMSAtMS44MDE5LDEuMDA0MzMgYyAtMS40MjUzLDAgLTIuMDYwNCwtMC44ODYxNyAtMi4wNjA0LC0yLjM2MzEzIHYgLTMuMjcxNDQgaCAxLjAxNTQgdiAyLjg1MDUxIGMgMCwxLjI4NDk1IDAuMjgwNywxLjkwODk2IDEuMTY2OCwxLjk2NDM1IDEuMTU1NywwIDEuNjcyNywtMC45MjY3OSAxLjY3MjcsLTIuMjY3MTIgdiAtMi41NDc3NCBoIDEuMDExNyB6IG0gMS43MzU0LC01LjUwMTY0IGggMC45NzExIHYgMC43NzU0IGggMC4wMjIgYSAyLjIxNTQyODEsMi4yMTU0MjgxIDAgMCAxIDEuODY0NywtMC45MDQ2NCBjIDEuNTk4OCwwIDIuMzc0MiwxLjMwNzExIDIuMzc0MiwyLjc4NDA2IDAsMS40NzY5NSAtMC43MDE2LDIuOTc5NzUgLTIuMzYzMSwyLjk3OTc1IC0wLjk3MTEsMCAtMS41MjEzLC0wLjM2OTI0IC0xLjg0NjIsLTAuODg2MTcgaCAtMC4wMjIgdiAzLjAyMDM3IGggLTEuMDAwNyB6IG0gMi42NDM4LDAuNjkwNDcgYyAtMS4xMDc3LDAgLTEuNjI4NCwxLjA0NDk1IC0xLjYyODQsMi4wNzE0MyAwLDAuOTE1NzEgMC40NzY0LDIuMDQ5MjcgMS42MTczLDIuMDQ5MjcgMS4xNDEsMCAxLjU0MzQsLTEuMjE4NDkgMS41MjEzLC0yLjA4MjUgMC4wMTksLTAuOTg5NTYgLTAuNDA5OSwtMi4wMzgyIC0xLjUxMDIsLTIuMDM4MiB6IiBzdHlsZT0ic3Ryb2tlLXdpZHRoOjAuMzY5MjM4MDIiIC8+IDwvc3ZnPg==" alt="SoftBank Group"><span class="role">Founder / Chairman &amp; CEO 1981–</span></div>
+  </div>
+  <h1>孫正義（Masayoshi Son）</h1>
+  <div class="hero-sub">佐賀県鳥栖市の在日韓国人家庭に生まれ、差別といじめに苦しんだ少年が、『竜馬がゆく』を読んで「脱藩」を決め、16歳で高校を辞めて単身アメリカへ渡った。19歳で書いた<strong>「人生50年計画」</strong>どおりに20代で名乗りを上げ、2000年には数日だけ世界一の富豪になり、直後のITバブル崩壊で株価の9割以上を失った。それでも賭けをやめず、アリババ、ボーダフォン日本法人、Arm、そしてOpenAIへと<strong>「次の時代の中心」に全財産を張り続けてきた</strong>。偉大さの構造は、<strong>外れ者として育った「持たざる者」の渇き</strong>と、<strong>30年・300年単位で物事を見る時間軸</strong>と、<strong>負けても次の波に全額を張れる賭けの胆力</strong>の掛け算だ。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">$2,000万</div><div class="lbl">アリババへの初回出資（約6分で即決）</div></div>
+    <div class="kpi"><div class="val">−93%</div><div class="lbl">ITバブル崩壊での株価下落（2000年末）</div></div>
+    <div class="kpi"><div class="val">$646億</div><div class="lbl">OpenAIへの累計投資（2026年2月）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜学生時代</a></li>
+    <li><a href="#s4">原体験エピソード</a></li>
+    <li><a href="#s5">ITバブル崩壊とYahoo!BBの賭けを分解する</a></li>
+    <li><a href="#s6">キャリア・業績の軌跡</a></li>
+    <li><a href="#s7">偉大さの構造分析</a></li>
+    <li><a href="#s8">思想・仕事術</a></li>
+    <li><a href="#s9">光と影：批判と矛盾</a></li>
+    <li><a href="#s10">雑学・意外な側面</a></li>
+    <li><a href="#s11">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>TL;DR と基本情報：「次の時代の中心」に、何度でも全額を張る男</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>孫正義の偉大さは、個々の事業の上手さではなく<strong>構造</strong>から来ている。①在日韓国人として差別を受けた少年時代に生まれた、<b>「ここではないどこか」へ飛び出す渇き</b>。②19歳で「人生50年計画」を書き、創業初日に「30年後を見よ」と叫んだ<b>極端に長い時間軸</b>。③パソコンソフト流通→出版・展示会→インターネット→ブロードバンド→携帯電話→半導体（Arm）→AI（OpenAI）と、<b>技術の波が来るたびに会社ごと乗り換える賭けの胆力</b>。この3つが噛み合い、福岡の雑居ビルで始めた会社を、2026年には時価総額でトヨタを一時上回る投資会社にした。ただし同じエンジンは、ITバブル崩壊、WeWork、巨額の借金という<b>大きな転落</b>も何度も生んでいる。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1957年8月11日（佐賀県鳥栖市）。4人兄弟の次男</div></div>
+    <div class="kv-item"><div class="k">ルーツ</div><div class="v">在日韓国人3世。祖父・孫鍾慶は韓国・大邱から渡ってきた炭鉱労働者。少年時代は「安本正義」という日本名で暮らした。のちに「孫」の姓のまま日本国籍を取得</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">久留米大学附設高校（1973年入学、1974年に中退）→ 渡米し語学学校・高校卒業検定 → ホーリー・ネームズ・カレッジ（1975）→ UCバークレー経済学部に編入（1977）、1980年卒業</div></div>
+    <div class="kv-item"><div class="k">主な肩書き</div><div class="v">ソフトバンクグループ創業者・代表取締役 会長兼社長執行役員（1981〜）／Stargate LLC会長（2025〜）／自然エネルギー財団会長（2011〜）</div></div>
+    <div class="kv-item"><div class="k">家族</div><div class="v">妻・正美（バークレー時代に出会い1979年に結婚）、娘2人。末弟はガンホー・オンライン・エンターテイメント創業者の孫泰蔵</div></div>
+    <div class="kv-item"><div class="k">2026年の動き</div><div class="v">2月、OpenAIへ追加300億ドルの出資が確定し累計約646億ドル（持分は推計で約13%）。5月、2026年3月期の純利益が過去最高の約5兆円。6月の株主総会で「AIモデル・半導体・AIインフラ・ロボティクス」を<b>「オセロの四隅」</b>と呼び、ASI（人工超知能）で世界一を目指すと宣言</div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1957</td><td>佐賀県鳥栖市で、在日韓国人の家庭に生まれる。家族は「安本」の日本名を名乗る</td><td>—</td></tr>
+        <tr><td>小〜中学</td><td>1960s</td><td>出自を理由にいじめと差別を受け、自ら命を絶つことまで考えた時期がある。小学生の夢は画家（ゴッホが好き）</td><td>★★</td></tr>
+        <tr><td>15〜16歳</td><td>1973</td><td>久留米大学附設高校に入学。家庭教師に勧められた司馬遼太郎『竜馬がゆく』に心酔。日本マクドナルドの藤田田に会いに行き、「これからはコンピューターだ」と助言される。夏に短期留学でアメリカを見る</td><td>★★★</td></tr>
+        <tr><td>16歳</td><td>1974</td><td>2月、高校を中退して単身渡米。語学学校を経て、高校卒業検定に合格する</td><td>★★★</td></tr>
+        <tr><td>17〜19歳</td><td>1975–77</td><td>雑誌に載ったマイクロチップの写真に衝撃を受ける。ホーリー・ネームズ・カレッジを経てUCバークレーに編入。「1日1つ発明する」と決め、19歳で「人生50年計画」を立てる</td><td>★★★</td></tr>
+        <tr><td>21〜22歳</td><td>1978–79</td><td>音声付き電子翻訳機の試作機をシャープに売り込み、約1億円を得る。日本からインベーダーゲーム機を輸入して稼ぎ、米国でUnison Worldを設立。正美と結婚</td><td>★★</td></tr>
+        <tr><td>22〜24歳</td><td>1980–81</td><td>バークレー卒業、帰国。福岡・雑餉隈の雑居ビルで準備を始め、みかん箱の上で「30年後の我が社を見よ」と演説。1981年9月、東京で日本ソフトバンクを設立（パソコンソフトの卸）</td><td>★★★</td></tr>
+        <tr><td>25〜28歳</td><td>1983–86</td><td>慢性肝炎で「余命5年かもしれない」と告げられ、社長を退いて入退院を繰り返す。1986年に新しい治療法で回復し、社長に復帰</td><td>★★★</td></tr>
+        <tr><td>36〜39歳</td><td>1994–96</td><td>株式を店頭公開。米国の展示会・出版事業を買収し、米Yahoo!に出資。1996年、ヤフー株式会社（Yahoo! JAPAN）を設立</td><td>★★</td></tr>
+        <tr><td>42〜43歳</td><td>1999–2000</td><td>アリババのジャック・マーと会い、約6分で2,000万ドルの出資を決める。2000年2月、数日間だけ世界一の富豪に。直後のITバブル崩壊で株価は年末までに約93%下落</td><td>★★★</td></tr>
+        <tr><td>44歳</td><td>2001</td><td>ADSLの「Yahoo! BB」を開始。街頭でモデムを無料で配る「パラソル部隊」で、NTTの独占市場に殴り込む</td><td>★★★</td></tr>
+        <tr><td>46〜48歳</td><td>2004–06</td><td>日本テレコムを買収、福岡ダイエーホークスを取得。2006年、ボーダフォン日本法人を約1兆7,500億円で買収（当時の国内最大のLBO）</td><td>★★★</td></tr>
+        <tr><td>50歳</td><td>2008</td><td>iPhoneを日本で独占販売し、携帯電話事業を立て直す</td><td>★★</td></tr>
+        <tr><td>53歳</td><td>2011</td><td>東日本大震災。個人で100億円の寄付と、引退までの役員報酬の全額寄付を表明。自然エネルギー財団を設立</td><td>★</td></tr>
+        <tr><td>55〜59歳</td><td>2013–16</td><td>米スプリントを子会社化。2014年、アリババが米国上場し、持ち株の価値が数百億ドル規模に。2016年、英Armを約240億ポンド（約3.3兆円）で買収</td><td>★★</td></tr>
+        <tr><td>59〜62歳</td><td>2017–20</td><td>10兆円規模の「ビジョン・ファンド」を立ち上げる。2019年、WeWorkの上場失敗で「投資判断はぐちゃぐちゃだった」と謝罪。2020年5月、9,616億円の最終赤字（当時の創業以来最大）</td><td>★★★</td></tr>
+        <tr><td>65〜66歳</td><td>2022–23</td><td>ArmのNVIDIAへの売却が破談（2022年2月）。8月「恥ずかしい」と赤字を詫び、守りに入る。2023年9月、Armが米ナスダックに上場</td><td>★★</td></tr>
+        <tr><td>67〜68歳</td><td>2025</td><td>1月、ホワイトハウスでトランプ大統領・アルトマンらと5,000億ドルのAIインフラ計画「Stargate」を発表し、会長に就任。11月、NVIDIA株を全て売却してOpenAI出資の資金に充てる。12月、OpenAIへの410億ドルの出資を完了</td><td>★★★</td></tr>
+        <tr><td>68〜69歳</td><td>2026</td><td>2月、追加出資でOpenAIへの累計が約646億ドルに。5月、通期純利益が過去最高の約5兆円。6月、時価総額で一時トヨタを抜き、個人資産は1,000億ドル超に（Forbes）。株主総会で「オセロの四隅」戦略を語る</td><td>★★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜学生時代：差別された少年が、竜馬を読んで「脱藩」する</h2>
+  <p>孫の祖父は、日本の植民地時代に韓国・大邱から海を渡り、九州の炭鉱で働いた。父・三憲は豚や鶏を飼い、のちに商売を広げて家計を立て直した実業家だ。一家は「安本」という日本名を名乗り、韓国のルーツを表に出さずに暮らしていた。それでも少年・正義は出自を理由にいじめと差別を受け、一時は自殺まで考えたと語られている。<strong>「自分はこの国で、どこに属しているのか」</strong>という問いが、幼いころから彼の中にあった。</p>
+  <p>勉強はよくでき、福岡の名門・久留米大学附設高校に進む。ここで家庭教師に勧められて読んだのが、司馬遼太郎『竜馬がゆく』だった。土佐藩という狭い枠を飛び出し（脱藩）、日本全体を動かした坂本龍馬の生き方に、彼は自分を重ねた。のちに「活字で最後まで読んだ本は『竜馬がゆく』くらい」と言われるほど、この一冊が人生の設計図になった。</p>
+  <p>同じころ、日本マクドナルド創業者・藤田田の著書に感動し、会ってほしいと何度も秘書に電話をかけ、断られると東京まで飛んで社長室を訪ねた。根負けした藤田は短い面会に応じ、「過去の産業ではなく未来の産業を見ろ。これからはコンピューターだ」「アメリカで学べ」と助言したとされる。1974年2月、16歳の孫は家族の反対を押し切って高校を中退し、単身アメリカへ渡った。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>パラメータ</th><th>どこで育ったか</th><th>後にどう効いたか</th></tr></thead>
+      <tbody>
+        <tr><td><b>外れ者の渇き</b></td><td>在日韓国人としての差別、日本名での生活</td><td>日本の「普通のエリートコース」に乗らず、常に外から市場をひっくり返す側に立つ</td></tr>
+        <tr><td><b>物語で生きる力</b></td><td>『竜馬がゆく』への心酔、「脱藩」への憧れ</td><td>自分の事業を「情報革命」「300年続く会社」という大きな物語で語り、人と資金を集める</td></tr>
+        <tr><td><b>会いに行く行動力</b></td><td>藤田田への突撃訪問</td><td>シャープの佐々木正、米Yahoo!のジェリー・ヤン、ジャック・マー、ジョブズ、アルトマンと、キーマンに直接会って口説く</td></tr>
+        <tr><td><b>ルールを交渉で変える力</b></td><td>米国の卒業検定で、辞書の持ち込みと時間延長を当局と交渉して認めさせたとされる</td><td>NTTや総務省と正面からぶつかり、通信の規制を変えさせる</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>アメリカでは、語学学校から飛び級のように高校卒業検定に合格し、ホーリー・ネームズ・カレッジを経て1977年にUCバークレー経済学部へ編入した。ここで、彼の人生を決める2つ目の出会いが起きる。</p>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは6つ</h2>
+
+  <div class="episode">
+    <h3>🔑 『竜馬がゆく』と、16歳の「脱藩」（15〜16歳 / 1973〜74年）</h3>
+    <p><span class="tag good">✓ 複数の伝記・報道で確認</span></p>
+    <p>高校1年で『竜馬がゆく』を読み、龍馬が藩を抜けて日本全体のために動いたことに強く惹かれた。夏休みの短期留学でカリフォルニアを見た彼は、「日本の高校にいても狭い世界しか見えない」と考え、入学からわずか1年足らずで名門校を中退する。家族は反対したが、意志は変わらなかった。</p>
+    <p>→ <b>どう繋がったか：</b>「今いる場所の常識より、もっと大きな舞台を選ぶ」という型がここで決まった。日本の通信業界の外から殴り込んだYahoo! BB、日本企業として前例のない規模の海外買収、10兆円ファンド。孫の大きな決断は、ほぼすべてが「脱藩」の繰り返しだ。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 マイクロチップの写真に、体が震える（17〜18歳 / 1975年ごろ）</h3>
+    <p><span class="tag warn">△ 雑誌名・年は資料によって異なる</span></p>
+    <p>アメリカの雑誌で、指先に乗るほど小さなマイクロコンピューターのチップの拡大写真を見た孫は、強い衝撃を受けた。人間の脳を超えるかもしれない機械が、こんなに小さな部品から生まれる。彼はその切り抜きを持ち歩き、「これが人類の未来を変える」と確信したと繰り返し語っている。</p>
+    <p>→ <b>どう繋がったか：</b>パソコンソフト、インターネット、携帯電話、Arm、そしてAIへ。孫の投資先は時代ごとに変わったが、<b>「コンピューターの頭脳がいずれ人間を超える」という一本の信念</b>はこの瞬間から変わっていない。2016年のArm買収と、2020年代のASI（人工超知能）構想は、このチップの写真の延長線上にある。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 「1日1発明」と、19歳の人生50年計画（19歳 / 1977年前後）</h3>
+    <p><span class="tag good">✓ 複数報道で確認</span>　<span class="tag warn">△ 人生50年計画は本人談で出典は伝記</span></p>
+    <p>バークレーで孫は「毎日1つ発明する」と自分に課し、1年で250件以上の発明アイデアをノートに書いた。同じころ立てたのが「人生50年計画」だ。<b>20代で名乗りを上げ、30代で軍資金を最低1,000億円貯め、40代でひと勝負し、50代で事業を完成させ、60代で次の経営者に引き継ぐ</b>。</p>
+    <p>→ <b>どう繋がったか：</b>この計画は驚くほど現実に重なった。24歳で創業、40代でボーダフォン日本法人の買収という「ひと勝負」、50代で携帯電話事業が軌道に乗る。ただし最後の「60代で引き継ぐ」だけは実現していない。後継者と目したニケシュ・アローラは2016年に去り、孫は69歳の今もトップに立っている。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 翻訳機を売り込み、「ロケット・ササキ」に出会う（21歳 / 1978〜79年）</h3>
+    <p><span class="tag good">✓ Web確認済</span>　<span class="tag warn">△ 金額は「約1億円」「170万ドル」など資料で幅</span></p>
+    <p>発明ノートの中から形にしたのが、音声で読み上げる電子翻訳機だった。孫は大学の教授たちの力を借りて試作機を作り、日本のメーカーに売り込んで回った。耳を貸したのが、シャープで電卓開発を率いた佐々木正（のちに「ロケット・ササキ」と呼ばれる）だ。孫はおよそ1億円を手にし、これを元手に米国でソフト会社Unison Worldを設立した。日本からインベーダーゲームの中古機を輸入して大学周辺の店に置く商売でも稼いだ。</p>
+    <p>→ <b>どう繋がったか：</b>「若造のアイデアに、大人が本気でお金を出してくれる」という最初の成功体験。孫は生涯、佐々木を「大恩人」と呼び続けた。そして今度は自分が、ジャック・マーや無名の起業家たちに数分で大金を出す側に回る。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 みかん箱の上の演説と、2週間で辞めたアルバイト（23〜24歳 / 1981年）</h3>
+    <p><span class="tag good">✓ 本人の講演・複数記事で確認</span>　<span class="tag warn">△ 細部は本人の回想</span></p>
+    <p>帰国した孫は、福岡・雑餉隈の雑居ビルの2階で事業の準備を始め、アルバイト2人を雇った。最初の朝礼で、みかん箱の上に立って1時間ぶち上げた。「30年後の我が社を見よ。豆腐屋が豆腐を1丁、2丁と数えるように、売上を1兆、2兆と数える会社にする」。呆れたアルバイトは2週間もしないうちに2人とも辞めた。1981年9月、「商売をするなら東京だ」と、東京で日本ソフトバンクを設立する。</p>
+    <p>→ <b>どう繋がったか：</b>誰にも信じてもらえない大ボラを、30年かけて本当にした。ソフトバンクの売上はのちに10兆円に迫る規模になった。<b>周囲に笑われても目標を下げない</b>という孫のスタイルは、この朝礼から始まっている。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 余命5年かもしれない、と告げられる（25〜28歳 / 1983〜86年）</h3>
+    <p><span class="tag good">✓ 本人の連載（PRESIDENT）で確認</span></p>
+    <p>創業から2年、会社が伸び始めた1983年、孫は慢性肝炎と診断された。肝硬変の一歩手前で、医師からは「5年はもつかもしれないが……」と言われた。社長を退いて会長になり、病院から会社に指示を出しながら3年間の入退院を繰り返した。1986年、新しい治療法を見つけて回復し、社長に完全復帰する。その直後、社内から離反者が出て競合会社を作るという裏切りも経験した。</p>
+    <p>→ <b>どう繋がったか：</b>20代で「時間には限りがある」と身をもって知ったことが、孫の異様な急ぎ方の根にある。<b>「残り時間で何を成し遂げるか」から逆算して、今すぐ一番大きな賭けに出る</b>。60代後半になってもASIに全てを張る焦りは、この病床の3年に重なって見える。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Deep Dive</div>
+  <h2>ITバブル崩壊とYahoo!BBの賭けを分解する：資産の9割を失った直後に、もう一度全額を張った</h2>
+  <p>孫の人生でもっとも示唆が深いのは、成功の瞬間ではなく<b>2000〜2001年の転落と、そこからの逆張り</b>だ。たいていの経営者はここで守りに入る。孫は逆に、会社を潰しかねない規模の新しい賭けに出た。</p>
+
+  <h3>数日だけの世界一、そして転落</h3>
+  <p>1990年代後半、孫は米Yahoo!をはじめ数百社のネット企業に出資し、ソフトバンクは「インターネット財閥」と呼ばれた。2000年2月、株価の高騰で孫の個人資産は数日間だけビル・ゲイツを上回り、世界一の富豪になったとされる。ところが3月からITバブルが崩壊する。ソフトバンク株は2か月で約75%、2000年末までに約93%下落し、孫の個人資産は約700億ドル規模で目減りした。人類史上でも最大級の個人資産の喪失の1つと言われる。</p>
+
+  <h3>その中で打った2つの手</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>手</th><th>中身</th><th>結果</th></tr></thead>
+      <tbody>
+        <tr><td><b>アリババへの2,000万ドル</b></td><td>米Yahoo!の創業者ジェリー・ヤンの紹介で、無名だったジャック・マーと会う。紙切れのメモで構想を語るマーの話を数分聞いただけで、約2,000万ドルの出資を決めた（時期は1999年とも2000年とも）</td><td>2014年のアリババ上場で、持ち株の価値は数百億ドル（500億〜750億ドル規模）に。史上最も成功したベンチャー投資の1つ</td></tr>
+        <tr><td><b>Yahoo! BBで通信に殴り込み</b></td><td>2001年9月、NTTが独占する電話回線を使ったADSL（高速インターネット）を、当時の相場を大きく下回る価格で開始。駅前や街頭で赤い紙袋に入れたモデムを無料で配る「パラソル部隊」を展開。資金は米Yahoo!株やヤフー株の売却で捻出した</td><td>数年にわたって巨額の赤字を出すが、日本のブロードバンド料金を一気に下げ、数百万人の顧客基盤を得る。これが日本テレコム、ボーダフォン日本法人の買収につながる</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>なぜ守りに入らなかったのか</h3>
+  <p>孫にとって、株価の暴落は「インターネットという波が間違っていた」ことを意味しなかった。間違っていたのは<b>値付けであって、方向ではない</b>。むしろ彼は、日本のネットが遅くて高いのは、NTTが回線を握っているせいだと考えた。ネット企業にいくら投資しても、日本の利用者が増えなければ意味がない。だから自分で「道路」を敷く、という発想だった。</p>
+  <p>この判断の裏には、19歳の人生50年計画がある。<b>「40代でひと勝負」</b>。2001年、孫は44歳だった。計画の時間軸で見れば、株価が9割下がった今こそ、勝負の時期だった。</p>
+
+  <h3>この転落と賭けが残したもの</h3>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">1</div><div><div class="ind-title">「持たない投資家」から「持つ事業家」へ</div><div class="ind-desc">ネット企業への投資だけでは、バブルが弾けると何も残らない。Yahoo! BBで自前の顧客と回線を持ったことで、ソフトバンクは毎月お金が入る通信会社になった。この安定収入が、のちのArmやビジョン・ファンドの巨額投資を支える担保になる。</div></div></div>
+    <div class="ind-item"><div class="ind-num">2</div><div><div class="ind-title">「どん底で張ったもの」が一番大きく育つ</div><div class="ind-desc">アリババへの出資も、Yahoo! BBも、市場全体が悲観一色のときの賭けだった。同じ型は2025年、AIバブル論が出る中でNVIDIA株を全て売ってOpenAIに張る判断にも見える。</div></div></div>
+    <div class="ind-item"><div class="ind-num">3</div><div><div class="ind-title">借金で時間を買う経営</div><div class="ind-desc">Yahoo! BBの赤字、ボーダフォン日本法人の買収（LBO）、Armの買収、OpenAIへの出資。孫は一貫して、手元のお金ではなく借金と保有株を担保にして、波に「先回り」してきた。成功すれば飛躍、外れれば会社が傾く。このリスクの取り方そのものが、孫の経営の本質だ。</div></div></div>
+  </div>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Career</div>
+  <h2>キャリア・業績の軌跡：ソフトの卸から、AIの総合商社へ</h2>
+
+  <h3>第1期（1981〜1993）：パソコンソフトの「流通」を押さえる</h3>
+  <p>日本ソフトバンクの最初の事業は、パソコンソフトの卸売りだった。ソフトを作る会社と売る店をつなぐ「流通」を押さえ、パソコン雑誌の出版も手がけた。病気による3年の離脱を挟みながらも、1990年に社名を「ソフトバンク」に変え、1994年に株式を店頭公開する。<b>自分でソフトを作るより、ソフトが流れる「道」を押さえる</b>という発想は、のちのArm（半導体の設計図を貸す会社）にもつながる。</p>
+
+  <h3>第2期（1994〜2000）：インターネットに全てを張る</h3>
+  <p>上場で得た資金で、米国の大型展示会COMDEXや出版社Ziff-Davisを買収し、その人脈から創業間もない米Yahoo!に出資した。1996年には合弁でヤフー株式会社（Yahoo! JAPAN）を設立。日本で「インターネット」と言えばヤフーという時代を作った。並行して数百社のネット企業に出資し、2000年には世界一の富豪になる。そして崩壊（5章）。</p>
+
+  <h3>第3期（2001〜2007）：通信会社になる</h3>
+  <p>Yahoo! BBでADSLに参入し（2001年）、固定電話の日本テレコムを買収（2004年）、プロ野球の福岡ダイエーホークスを取得してソフトバンクホークスに（2004年に取得を発表）。2006年、ボーダフォン日本法人を約1兆7,500億円で買収した。買収先の資産や将来の収益を担保に借金をするLBO（レバレッジド・バイアウト）で、当時の日本企業による買収として過去最大の規模だった。孫は「自前で携帯事業を始めるより、買った方が早い」と語った。</p>
+
+  <h3>第4期（2008〜2015）：iPhoneと海外</h3>
+  <p>2008年、iPhoneを日本で独占販売し、3位だった携帯事業を一気に立て直す。2011年の東日本大震災後は、原発に頼らない電力を訴えて自然エネルギー財団を作り、メガソーラー事業に乗り出した。2013年には米国の携帯3位級スプリントの株式の約7割を取得して子会社化し、世界の通信大手を目指した。2014年、アリババの米国上場で、15年前の2,000万ドルが数百億ドルになった。</p>
+
+  <h3>第5期（2016〜2022）：Armとビジョン・ファンド</h3>
+  <p>2016年、英国の半導体設計会社Armを約3.3兆円で買収。スマホのほぼ全てに使われるチップの「設計図」を握った。2017年には、サウジアラビアの政府系ファンドなどから資金を集めた10兆円規模の「ビジョン・ファンド」を立ち上げ、世界中のユニコーン（評価額10億ドル超の未上場企業）に巨額を投じた。しかしWeWorkの上場失敗（2019年）、コロナ禍で、2020年3月期に9,616億円の最終赤字。2020年にはArmをNVIDIAに売る契約を結ぶが、各国の規制当局の反対で2022年に破談になった。</p>
+
+  <h3>第6期（2023〜）：AIへの「全部乗せ」</h3>
+  <p>2023年9月、Armが米ナスダックに上場し、AIブームで株価が上昇する。2025年1月、トランプ大統領、OpenAIのアルトマン、オラクルのエリソンとホワイトハウスで、米国に5,000億ドルのAIデータセンターを作る「Stargate」を発表し、自ら会長に就いた。2025年11月にはNVIDIA株を全て（約58億ドル）売り、OpenAI出資の資金にした。さらに米半導体のAmpere（約65億ドル）、ABBのロボティクス事業（約54億ドル）の買収も決めた。2026年2月、OpenAIへの累計投資は約646億ドルに達し、5月には通期で過去最高の約5兆円の純利益を出した。6月の株主総会では、AIモデル・半導体・AIインフラ・ロボティクスを「オセロの四隅」と呼び、そのすべてを押さえて<b>ASI（人工超知能）のNo.1プラットフォーマー</b>になると宣言している。</p>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜ孫正義だけが、何度も波に乗り直せたのか</h2>
+  <p>一度だけ時代の波に乗った起業家は多い。だが、パソコン、インターネット、ブロードバンド、スマホ、半導体、AIと、<b>40年以上にわたって波が来るたびに会社ごと乗り換えた</b>経営者は世界でもほとんどいない。その理由は次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 外れ者の渇き</b></td><td>日本の主流に最初から入れなかったからこそ、主流の外から市場をひっくり返すことを恐れない</td><td>在日韓国人としての差別、高校中退と単身渡米、NTTへの殴り込み</td></tr>
+        <tr><td><b>② 超長期の時間軸</b></td><td>10年、30年、300年の単位で未来を描き、そこから逆算して今の賭けを決める</td><td>人生50年計画、「30年後を見よ」の朝礼、「300年成長し続ける会社」というビジョン</td></tr>
+        <tr><td><b>③ 一本の技術信念</b></td><td>「コンピューターの頭脳はいずれ人間を超える」という信念を、40年以上持ち続けている</td><td>マイクロチップの写真、Arm買収、ASI構想、OpenAIへの集中投資</td></tr>
+        <tr><td><b>④ 賭けの胆力と資金調達力</b></td><td>どん底でも全額を張り、足りなければ借金と保有株を担保に資金を作る</td><td>ITバブル崩壊直後のYahoo! BB、ボーダフォンのLBO、NVIDIA株を売ってOpenAIへ</td></tr>
+        <tr><td><b>⑤ キーマンを口説く力</b></td><td>相手が無名のうちに会いに行き、直感で即決する。そして相手の夢を自分の物語に組み込む</td><td>藤田田、佐々木正、ジェリー・ヤン、ジャック・マー、ジョブズ（iPhone）、アルトマン</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>③が「どこへ向かうか」を決め、②が「どれくらい先を見て張るか」を決め、⑤が「誰と組むか」を見つけ、④が「足りない資金と勇気」を埋め、①が「笑われても、負けてもやめない」理由を与えた。とくに<b>②と④の組み合わせ</b>が決定的だった。超長期で見ているから、株価が9割下がっても「方向は合っている」と言い切れる。そして言い切れるから、どん底で張れる。<br><br><strong>ただし、同じ構造が裏返る。</strong>④の「直感で即決する」力は、WeWorkのような案件で十分な調査なしに巨額を投じる失敗も生んだ。②の長い時間軸は、目の前の利益や統治の甘さを軽く見る口実にもなる。そして「60代で後継者に引き継ぐ」という計画だけが、孫自身の強すぎる構造のせいで実現していない。<b>彼を偉大にした構造は、彼の会社の最大のリスクでもある。</b></div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Philosophy</div>
+  <h2>思想・仕事術：「情報革命で人々を幸せに」と、30年先から逆算する経営</h2>
+  <p>孫の思想は、ソフトバンクグループの経営理念<b>「情報革命で人々を幸せに」</b>に集約される。どの時代のどの事業も、彼にとってはこの一つの理念の「次の章」だ。そのうえで、彼の考え方を特徴づける言葉と道具を並べると、頭の中が見えてくる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>考え方</th><th>中身</th><th>光と影</th></tr></thead>
+      <tbody>
+        <tr><td><b>人生50年計画</b></td><td>20代で名乗り、30代で軍資金、40代で勝負、50代で完成、60代で引き継ぐ。人生を10年単位の章に分けて、今やるべきことを決める</td><td>大きな決断の時期を逃さない ／ 最後の「引き継ぎ」が実現していない</td></tr>
+        <tr><td><b>300年成長する会社</b></td><td>2010年の「新30年ビジョン」で、300年続く企業グループを目指すと宣言</td><td>短期の株価に振り回されない ／ 説明が壮大すぎて検証しにくい</td></tr>
+        <tr><td><b>タイムマシン経営</b></td><td>米国など先に進んだ市場で成功したモデルを、遅れて来る日本などに持ち込む</td><td>Yahoo! JAPANの成功 ／ 他人のモデルに頼る</td></tr>
+        <tr><td><b>群戦略</b></td><td>一つの会社に全てを持たせず、技術ごとのトップ企業に少しずつ出資してゆるやかな「群れ」を作る</td><td>波が変わっても群れのどこかが勝つ ／ 統治が届かない</td></tr>
+        <tr><td><b>オセロの四隅</b></td><td>2026年の株主総会での比喩。AIモデル・半導体・AIインフラ・ロボティクスという「角」を取れば、盤面全体がひっくり返る</td><td>AIの全レイヤーを押さえる構想 ／ OpenAI1社への依存が大きい</td></tr>
+        <tr><td><b>即断と直感</b></td><td>アリババは数分、Yahoo!も短い面会で出資を決めた。相手の目と情熱を見る</td><td>アリババ ／ WeWork</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>言葉に表れる孫正義</h3>
+  <div class="quote">「髪の毛が後退しているのではない。私が前進しているのである」<cite>— 自身の薄毛をからかったTwitter利用者への返信。中傷すら前向きな物語に変える、孫らしさが詰まった一言</cite></div>
+  <div class="quote">「30年後の我が社を見よ。売上を豆腐のように1兆、2兆と数える会社にする」<cite>— 創業初日の朝礼で、みかん箱の上に立って（本人の回想）</cite></div>
+  <div class="quote">「私自身の投資判断は、いろいろな意味でぐちゃぐちゃだった。大いに反省している」<cite>— 2019年11月、WeWorkの損失を受けた決算会見で</cite></div>
+  <div class="quote">「AIをバブルと呼ぶのは、AIに対する侮辱だ。AIはまだ序章にすぎない」<cite>— 2026年6月の株主総会での趣旨（報道による要約）</cite></div>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Light &amp; Shadow</div>
+  <h2>光と影：批判と内部矛盾</h2>
+
+  <h3>WeWorkと「直感投資」の限界</h3>
+  <p>ビジョン・ファンドはシェアオフィスのWeWorkに巨額を投じ、創業者アダム・ニューマンの壮大な構想に乗った。2019年、WeWorkの上場計画は統治の問題と赤字で崩れ、ソフトバンクは救済に追い込まれた。孫は会見で「ニューマンの悪い面に目をつぶっていた」と認め、自らの判断を「ぐちゃぐちゃだった」と謝罪した。WeWorkは2023年に米国で破産を申請している。同じころ、ホテルのOYO、建設テックのKaterra、金融のGreensillなど、ビジョン・ファンドの出資先で失敗が相次いだ。</p>
+
+  <h3>借金の山と、創業者の個人負債</h3>
+  <p>孫の経営は、借金と保有株を担保にした資金調達に支えられている。2026年時点でもソフトバンクグループの格付けは投資適格の一歩手前（BB+）にとどまる。孫個人も、自社株を担保にした借り入れや、会社への数千億円規模の負債を抱えていると報じられてきた。OpenAIへの出資でも、大型のつなぎ融資を組んでいる。<b>うまくいけば史上最大級の勝利、外れれば会社の存続に関わる</b>という構図は、2000年から何も変わっていない。</p>
+
+  <h3>OpenAIへの一極集中</h3>
+  <p>2026年5月の過去最高益は、主にOpenAIの評価額の上昇によるものだった。言い換えれば、ソフトバンクの利益はOpenAI1社の値付けに大きく左右される。NVIDIA株を全て手放してまでOpenAIに張った判断は、「AIの勝者を見抜いた」とも「卵を1つのかごに盛りすぎた」とも評価が割れている。</p>
+
+  <h3>「60代で引き継ぐ」という約束</h3>
+  <p>人生50年計画の最終章は「60代で後継者に事業を引き継ぐ」だった。2014年にはグーグル出身のニケシュ・アローラを後継者候補として招き、巨額の報酬を払ったが、2016年に孫自身が「もう少し社長を続けたい」と引き止める形で退任させた。69歳を迎えた2026年も、孫は会長兼社長として最大の賭けの陣頭に立つ。<b>計画通りに生きてきた男が、唯一破っている約束</b>がこれだ。</p>
+
+  <h3>内部矛盾：「群戦略」と「孫正義一人」</h3>
+  <p>孫は「一人の天才に頼らない群れ」を掲げる。しかし実際には、ソフトバンクの大きな決断はほぼすべて孫一人の直感と物語で動いている。投資家がソフトバンク株を買う理由も、多くは「孫正義が何に張るか」だ。群れを作る思想と、群れの中心にいる一人の強すぎる存在。この矛盾こそが、ソフトバンクの強さであり、最大の弱点でもある。</p>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">子ども時代</div><div class="info-card-title">夢は画家だった</div><div class="info-card-text">小学生のころの夢は画家で、ゴッホが好きだった。未来の絵を大きく描いて人を巻き込む、のちの語り口の原点とも言える。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">試験</div><div class="info-card-title">卒業検定で「辞書を持ち込ませて」と交渉</div><div class="info-card-text">米国の高校卒業検定で、英語がまだ十分でないことを理由に辞書の持ち込みと時間延長を求めて交渉し、認めさせたうえで合格したとされる。<span class="tag warn">△ 本人談</span></div></div>
+    <div class="info-card"><div class="info-card-eyebrow">世界一</div><div class="info-card-title">世界一の富豪だったのは数日だけ</div><div class="info-card-text">2000年2月、ITバブルの頂点で数日間だけビル・ゲイツを抜いて世界一の富豪になったとされる。ニュースが広まる前に株価は崩れ始めていた。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ゲーム</div><div class="info-card-title">インベーダーゲームで学費を稼ぐ</div><div class="info-card-text">学生時代、日本で流行が終わりかけたインベーダーゲームの中古機を輸入し、米国の店に置いて稼いだ。これも「タイムマシン経営」の原型だ。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">特許</div><div class="info-card-title">ゴルフ好きが高じて特許</div><div class="info-card-text">大のゴルフ好きで、スクリーンゴルフの空気の流れに関する特許を自ら出願し、自宅に設備を置いているとされる。東京の自宅には練習場もある。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">兄弟</div><div class="info-card-title">末弟はガンホーの創業者</div><div class="info-card-text">末弟の孫泰蔵は、スマホゲーム『パズル＆ドラゴンズ』で知られるガンホー・オンライン・エンターテイメントの創業者で、投資家としても活動している。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">名前</div><div class="info-card-title">「安本」から「孫」へ</div><div class="info-card-text">米国から帰国後、事業を始めるにあたって日本名「安本」ではなく韓国の姓「孫」を名乗ると決めた。出自を知られることを恐れた親族からは反対もあった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">寄付</div><div class="info-card-title">震災で100億円と報酬全額</div><div class="info-card-text">2011年の東日本大震災で、個人として100億円の寄付を表明し、同年7月に全額を寄付し終えた。さらに引退までのソフトバンクの役員報酬の全額を寄付すると宣言した。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">恩人</div><div class="info-card-title">「ロケット・ササキ」を生涯の恩人に</div><div class="info-card-text">翻訳機を買ってくれたシャープの佐々木正を「大恩人」と呼び続け、感謝の会を開くほど慕った。佐々木は2018年に102歳で亡くなった。</div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：長い時間軸で方向を決め、どん底でこそ張れ</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 人生を10年単位の章で書いてみる。</strong>孫が19歳で書いた人生50年計画は、40年以上たった今も驚くほど現実と重なっている。大きな計画は、細かく当たるからではなく、<b>迷ったときに「今はどの章か」を思い出させてくれる</b>から役に立つ。<b>今の自分の年齢から10年ごとに、各章の「やること」を一行ずつ書き出す</b>。</p>
+    <p><strong>② 値段が間違っているのか、方向が間違っているのかを分ける。</strong>ITバブル崩壊のとき、孫は「ネットの値付けは間違っていたが、方向は合っている」と判断して、Yahoo! BBに張った。失敗したときは、<b>前提の何が崩れたのかを「値段・時期」と「方向」に分けて書き、方向が生きているなら撤退しない</b>。</p>
+    <p><strong>③ 会いたい人には、自分から会いに行く。</strong>藤田田への突撃訪問、シャープへの翻訳機の売り込み、ジャック・マーとの数分の面会。孫の人生の転機は、ほぼすべて「自分から会いに行った」ところから始まっている。<b>今月中に、会いたいが会えていない人を1人選び、会う理由を一行で書いて連絡する</b>。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/Masayoshi_Son">Wikipedia — Masayoshi Son</a></li>
+    <li><a href="https://ja.wikipedia.org/wiki/%E5%AD%AB%E6%AD%A3%E7%BE%A9">Wikipedia — 孫正義</a></li>
+    <li><a href="https://www.britannica.com/money/Son-Masayoshi">Britannica — Son Masayoshi</a></li>
+    <li><a href="https://studyinternational.com/news/masayoshi-son-uc-berkeley">Study International — The UC Berkeley connection</a></li>
+    <li><a href="https://www.tokyoweekender.com/art_and_culture/japanese-culture/den-fujita-japans-mcdonalds-man-spotlight/">Tokyo Weekender — Den Fujita, Japan's McDonald's man</a></li>
+    <li><a href="https://president.jp/articles/-/12395">PRESIDENT Online — 孫正義 慢性肝炎の診断</a></li>
+    <li><a href="https://president.jp/articles/-/12517">PRESIDENT Online — 3年の入退院と1986年の復帰</a></li>
+    <li><a href="https://toyokeizai.net/articles/-/222035">東洋経済オンライン — 孫正義と『竜馬がゆく』</a></li>
+    <li><a href="https://toyokeizai.net/articles/-/13565">東洋経済オンライン — 「髪の毛が後退しているのではない」</a></li>
+    <li><a href="https://data-max.co.jp/article/75558">データ・マックス — 「青雲の志」を抱き続ける不屈の投資家の半生</a></li>
+    <li><a href="https://diamond.jp/articles/-/310307">ダイヤモンド・オンライン — 1日1発明と翻訳機</a></li>
+    <li><a href="https://president.jp/articles/-/18393">PRESIDENT Online — 佐々木正と孫正義</a></li>
+    <li><a href="https://www.softbank.jp/corp/philosophy/">ソフトバンク — 経営理念「情報革命で人々を幸せに」</a></li>
+    <li><a href="https://marketrealist.com/who-is-masayoshi-son-the-founder-and-ceo-of-soft-bank">Market Realist — Who is Masayoshi Son（2000年の株価下落）</a></li>
+    <li><a href="https://airmail.news/books/2025/1/the-prodigious-son">Air Mail — Lionel Barber "Gambling Man" 書評</a></li>
+    <li><a href="https://www.penguin.co.uk/books/451627/gambling-man-by-barber-lionel/9781802060584">Penguin — Gambling Man (Lionel Barber, 2024)</a></li>
+    <li><a href="https://www.cnbc.com/2014/08/27/mega-ipo-to-rekindle-the-bromance-behind-alibabas-rise.html">CNBC — The bromance behind Alibaba's rise (2014)</a></li>
+    <li><a href="https://technode.com/2015/01/23/alibabas-biggest-stockholder-invested-company-1999/">TechNode — Alibaba's biggest stockholder</a></li>
+    <li><a href="https://japantimes.co.jp/news/2001/06/20/business/yahoos-adsl-gambit-set-for-august">Japan Times — Yahoo's ADSL gambit (2001)</a></li>
+    <li><a href="https://spectrum.ieee.org/japan-cranks-up-download-speeds">IEEE Spectrum — Japan cranks up download speeds</a></li>
+    <li><a href="https://www.softbank.jp/en/sbnews/entry/20240424_01">SoftBank News — パラソル部隊とYahoo! BB</a></li>
+    <li><a href="https://www.itmedia.co.jp/mobile/spv/0603/17/news075.html">ITmedia — ソフトバンク、ボーダフォン日本法人を買収（2006）</a></li>
+    <li><a href="https://the-shashi.com/tse/9434/decisions/vodafone-acquisition-2006/">the-shashi — ボーダフォン日本法人買収 約1兆7,500億円のLBO</a></li>
+    <li><a href="https://foxbusiness.com/markets/softbank-founder-calls-his-judgment-really-bad-after-4-7-billion-wework-loss">Fox Business / AP — Son calls his judgment "really bad" (2019)</a></li>
+    <li><a href="https://therealdeal.com/2019/11/06/softbanks-masa-son-i-ignored-weworks-problems-made-bad-investments-in-us-tech-firms-and-im-really-sorry">The Real Deal — Son: I ignored WeWork's problems</a></li>
+    <li><a href="https://www.mobileworldlive.com/softbank/softbank-suffers-record-loss-on-vision-fund-woes/">Mobile World Live — SoftBank suffers record loss (2020)</a></li>
+    <li><a href="https://www.bloomberg.com/news/articles/2020-05-18/softbank-vision-fund-books-17-7-billion-loss-on-wework-uber">Bloomberg — Vision Fund books $17.7B loss (2020)</a></li>
+    <li><a href="https://siliconangle.com/2025/11/11/softbank-offloads-5-8b-stake-nvidia-free-cash-openai-investment/">SiliconANGLE — SoftBank offloads $5.8B Nvidia stake (2025)</a></li>
+    <li><a href="https://malaymail.com/news/money/2025/12/31/japans-softbank-completes-us41-billion-openai-investment-now-holds-11pc-stake/203806">Malay Mail — SoftBank completes $41B OpenAI investment (2025)</a></li>
+    <li><a href="https://cryptobriefing.com/softbank-12b-loan-openai-investment/">Crypto Briefing — SoftBank's OpenAI commitment and loans (2026)</a></li>
+    <li><a href="https://www.hpcwire.com/aiwire/2026/01/12/softbank-and-openai-invest-1b-in-sb-energy-to-support-stargate-ai-data-center-buildout/">AIwire — SoftBank and OpenAI invest in SB Energy for Stargate (2026)</a></li>
+    <li><a href="https://www.bloomberg.com/news/articles/2026-05-13/softbank-logs-surprise-profit-jump-in-boon-for-son-s-ai-bets">Bloomberg — SoftBank posts surprise profit on OpenAI gains (2026)</a></li>
+    <li><a href="https://asia.nikkei.com/business/softbank/softbank-s-annual-profit-quadruples-as-it-doubles-down-on-openai-bet">Nikkei Asia — Annual profit quadruples (2026)</a></li>
+    <li><a href="https://www.sbbit.jp/article/cont1/185888">ビジネス+IT — 第46回定時株主総会（2026）</a></li>
+    <li><a href="https://group.softbank/en/ir">SoftBank Group — Investor Relations</a></li>
+  </ul>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>

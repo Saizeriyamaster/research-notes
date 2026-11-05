@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donald Trump</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-logos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero-logo { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 10px; padding: 8px 14px; }
+.hero-logo img { height: 26px; width: auto; display: block; }
+.hero-logo .role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; border-left: 1px solid var(--border); padding-left: 10px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-06</span>
+  </div>
+  <h1>Donald Trump（ドナルド・トランプ）</h1>
+  <div class="hero-sub">クイーンズの不動産業者の次男坊は、13歳で陸軍式の寄宿学校に送られ、父から<strong>「キラーであれ、王であれ」</strong>と教え込まれた。父の資金で摩天楼を建て、1990年代に6度の事業破綻を出しながら、テレビ番組『アプレンティス』で「成功した大富豪」の物語を全米に売り直した。2016年に政治経験ゼロで大統領になり、2020年に敗れ、4つの刑事事件で起訴され、銃弾をかすめられ、2024年に<strong>132年ぶりの「返り咲き」</strong>を果たした。偉大さ（あるいは影響力の大きさ）の構造は、<strong>注目を資源に変える興行師の勘</strong>と<strong>決して負けを認めない物語の書き換え力</strong>と<strong>置き去りにされた有権者と直結する言葉</strong>の掛け算だ。そして同じ構造が、米国社会の深い分断とも表裏一体になっている。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">$4.13億</div><div class="lbl">父の不動産帝国から受け取った資金（NYT推計・現在価値）</div></div>
+    <div class="kpi"><div class="val">2人目</div><div class="lbl">非連続で2期目に就いた大統領（クリーブランド以来132年ぶり）</div></div>
+    <div class="kpi"><div class="val">312</div><div class="lbl">2024年選挙の獲得選挙人（一般得票でも勝利）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜学生時代</a></li>
+    <li><a href="#s4">原体験エピソード</a></li>
+    <li><a href="#s5">2020年の敗北から2024年の返り咲きを分解する</a></li>
+    <li><a href="#s6">キャリア・業績の軌跡</a></li>
+    <li><a href="#s7">偉大さの構造分析</a></li>
+    <li><a href="#s8">思想・仕事術</a></li>
+    <li><a href="#s9">光と影：批判と矛盾</a></li>
+    <li><a href="#s10">雑学・意外な側面</a></li>
+    <li><a href="#s11">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>TL;DR と基本情報：「注目」を通貨にして、不動産からテレビ、政治へと乗り換えた</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>トランプの影響力は、政策の独創性ではなく<strong>構造</strong>から来ている。①父フレッドから受け継いだ資金・人脈と、「勝つか負けるか」の価値観。②師ロイ・コーンから学んだ<b>「絶対に謝らない、攻撃されたら倍返し、負けても勝ったと言い張る」</b>という戦い方。③1980年代のタブロイド紙から『アプレンティス』、Twitter、Truth Socialまで、<b>メディアの注目を自分の資産に変え続ける興行師の勘</b>。④製造業の衰退や移民の増加で「置き去りにされた」と感じる有権者の不満を、短く強い言葉で代弁する<b>直結力</b>。この4つが、既存政党とマスメディアへの不信が高まった<b>時代の波</b>と噛み合い、政治経験ゼロの不動産王を2度の大統領にした。ただし同じエンジンは、選挙結果の否定、議会襲撃、司法や同盟国との衝突を生み、評価は今も真っ二つに割れている。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1946年6月14日（米ニューヨーク市クイーンズ区ジャマイカ地区）</div></div>
+    <div class="kv-item"><div class="k">家族</div><div class="v">父フレッド（ドイツ系移民の子、クイーンズ・ブルックリンの住宅開発業者）、母メアリー・アン（スコットランド・ルイス島出身の移民）。5人きょうだいの4番目・次男。兄フレッド・ジュニア（1981年、アルコール依存症の合併症で42歳で死去）、姉メリアン（のちの連邦判事）</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">キュー・フォレスト校 → ニューヨーク・ミリタリー・アカデミー（1964年卒）→ フォーダム大学（2年）→ ペンシルベニア大学ウォートン校（1968年、経済学士）</div></div>
+    <div class="kv-item"><div class="k">主な肩書き</div><div class="v">トランプ・オーガニゼーション社長（1971〜2017）／NBC『アプレンティス』司会（2004〜15）／第45代米国大統領（2017〜21）／第47代米国大統領（2025〜）</div></div>
+    <div class="kv-item"><div class="k">結婚</div><div class="v">イヴァナ（1977〜90）、マーラ・メープルズ（1993〜99）、メラニア（2005〜）。子は5人（ドナルド・ジュニア、イヴァンカ、エリック、ティファニー、バロン）</div></div>
+    <div class="kv-item"><div class="k">2026年の動き</div><div class="v">1月、米軍がベネズエラのマドゥロ大統領を拘束。2月20日、最高裁がIEEPA（国際緊急経済権限法）に基づく関税を6対3で違法と判断。2月28日、米国とイスラエルがイランを攻撃し、最高指導者ハメネイ師が死亡。<b>11月3日の中間選挙で与党・共和党が大敗</b>し、民主党が下院を奪還（上院も多数派見込みと報道）。トランプは敗因を「主にイラン戦争」とし「もう一度でもやる」と語った</div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、人生の方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1946</td><td>クイーンズに生まれる。父フレッドは戦後の住宅ブームで中間層向けアパートを建てて財を成した開発業者</td><td>—</td></tr>
+        <tr><td>13歳</td><td>1959</td><td>素行の悪さ（教師を殴ったと本人が語る、マンハッタンへの無断外出など）を理由に、父がニューヨーク・ミリタリー・アカデミーへ送る</td><td>★★★</td></tr>
+        <tr><td>18〜22歳</td><td>1964–68</td><td>フォーダム大学を経てウォートン校へ編入、経済学士。在学中に学生向け徴兵猶予を4回、1968年に「かかとの骨棘」で医療猶予を受ける</td><td>★</td></tr>
+        <tr><td>25歳</td><td>1971</td><td>父の会社の社長に就き、社名を「トランプ・オーガニゼーション」に。拠点をクイーンズからマンハッタンへ移す</td><td>★★</td></tr>
+        <tr><td>27〜29歳</td><td>1973–75</td><td>司法省が黒人への入居差別でトランプ親子を提訴。赤狩りで知られる弁護士ロイ・コーンを雇い、1億ドルの逆提訴で応戦。1975年、非を認めない形の同意判決で和解</td><td>★★★</td></tr>
+        <tr><td>34歳</td><td>1980</td><td>老朽化したコモドア・ホテルをグランド・ハイアットとして再生。40年間の固定資産税減免を引き出す</td><td>★★</td></tr>
+        <tr><td>35歳</td><td>1981</td><td>兄フレッド・ジュニアがアルコール依存症の合併症で死去。以後、生涯酒もたばこも口にしない</td><td>★★</td></tr>
+        <tr><td>37歳</td><td>1983</td><td>五番街に58階建ての「トランプ・タワー」完成。自らの名前をブランドにする手法の原点</td><td>★★</td></tr>
+        <tr><td>41歳</td><td>1987</td><td>『トランプ自伝（The Art of the Deal）』出版、ベストセラーに（ゴーストライターはトニー・シュワルツ）</td><td>★★</td></tr>
+        <tr><td>44〜45歳</td><td>1990–91</td><td>アトランティックシティのカジノ「タージ・マハル」開業直後に資金繰りが破綻、1991年に破産申請。以後2009年までに関連事業で計6回の破産申請（本人の個人破産はなし）</td><td>★★★</td></tr>
+        <tr><td>57歳</td><td>2004</td><td>NBCのリアリティ番組『アプレンティス』開始。決めぜりふ「You're fired（お前はクビだ）」で全国区のスターに</td><td>★★★</td></tr>
+        <tr><td>64歳</td><td>2011</td><td>オバマ大統領の出生地を疑う「バーサー」論を広める。4月、ホワイトハウス記者晩餐会でオバマに公然と笑いものにされる</td><td>★★</td></tr>
+        <tr><td>69歳</td><td>2015</td><td>6月16日、トランプ・タワーのエスカレーターを降りて出馬表明。「アメリカを再び偉大に（MAGA）」</td><td>★★★</td></tr>
+        <tr><td>70歳</td><td>2016</td><td>共和党予備選で16人を破り、本選でクリントンに勝利（選挙人304。一般得票では約290万票差で敗北）</td><td>★★★</td></tr>
+        <tr><td>70〜74歳</td><td>2017–21</td><td>第45代大統領。大型減税、最高裁判事3人の指名、対中関税、米朝首脳会談、アブラハム合意、コロナ禍。2019年と2021年の2度弾劾訴追（いずれも上院で無罪）</td><td>★★</td></tr>
+        <tr><td>74歳</td><td>2020–21</td><td>バイデンに敗北（選挙人232対306）。不正選挙を主張し、2021年1月6日に支持者が連邦議会議事堂を襲撃</td><td>★★★</td></tr>
+        <tr><td>76〜77歳</td><td>2022–23</td><td>2022年11月に再出馬を表明。2023年、4つの刑事事件で計91件の罪で起訴。ジョージア州で撮られた逮捕写真（マグショット）を資金集めに使う</td><td>★★</td></tr>
+        <tr><td>77〜78歳</td><td>2024</td><td>5月30日、口止め料をめぐる業務記録改ざんの34件すべてで有罪評決（元大統領として史上初）。7月13日、ペンシルベニア州バトラーの集会で銃撃され右耳を負傷、拳を突き上げ「ファイト」。11月5日、ハリスに勝利</td><td>★★★</td></tr>
+        <tr><td>78〜79歳</td><td>2025</td><td>1月20日、史上最高齢の78歳で第47代大統領に就任。4月2日「解放の日」関税。6月、イランの核施設を空爆。7月4日、大型減税法「One Big Beautiful Bill」成立。10〜11月、史上最長43日間の政府閉鎖</td><td>★★</td></tr>
+        <tr><td>79〜80歳</td><td>2026</td><td>1月、ベネズエラのマドゥロを拘束。2月、最高裁がIEEPA関税を違法と判断。2月末、イランと開戦しハメネイ師が死亡。11月、中間選挙で共和党が大敗</td><td>★★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Years</div>
+  <h2>幼少期〜学生時代：「キラーであれ」と教える父と、軍隊式の寄宿学校</h2>
+  <p>祖父フリードリヒは、ドイツ南西部の村カルシュタットから16歳で米国に渡り、カナダのクロンダイク・ゴールドラッシュで金鉱夫向けの食堂兼宿を営んで資金を作った人物だ。父フレッドは祖父の早世（1918年、スペイン風邪）の後、10代で母と組んで住宅建設を始め、戦後は連邦住宅局（FHA）の融資制度を使ってクイーンズとブルックリンに数万戸の中間層向け住宅を建てた。<strong>政府の制度を最大限に使い倒す</strong>のが一家の流儀だった。</p>
+  <p>フレッドは子どもたちに「キラーであれ」「お前は王だ」と教え込んだと、伝記作家や姪のメアリー・トランプが伝えている。長男フレッド・ジュニアは優しく、父の期待に応えられず家業を離れてパイロットになった。父はそれを「弱さ」と見なした。弟ドナルドはその姿を見て、<strong>父に認められるのは「強い者」「勝つ者」だけだ</strong>と学んだ、と多くの伝記が分析している。</p>
+  <p>ドナルド少年は活発で手に負えない子どもだった。本人は後に「2年生のときに音楽の先生を殴った」と自著に書いている。13歳のとき、父は彼をハドソン川沿いのニューヨーク・ミリタリー・アカデミーに送った。そこで彼は教官の厳しいしつけの下で頭角を現し、野球チームの主将や士官候補生の隊長を務めた。後年、本人は「軍の中にいるより多くの軍事訓練を受けた」と語っている。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>パラメータ</th><th>どこで育ったか</th><th>後にどう効いたか</th></tr></thead>
+      <tbody>
+        <tr><td><b>勝ち負けの世界観</b></td><td>「キラーであれ」という父、兄の挫折</td><td>あらゆる関係を「勝者と敗者」で捉える。選挙の敗北を認めない</td></tr>
+        <tr><td><b>序列と規律への適応</b></td><td>ミリタリー・アカデミーでの5年間</td><td>強い者への敬意と、命令系統で動く組織運営。「強い指導者」への好感</td></tr>
+        <tr><td><b>制度を使い倒す力</b></td><td>FHA融資を活用した父の事業、税制優遇の交渉</td><td>税の減免、破産法、メディア、そして大統領権限を限界まで使う</td></tr>
+        <tr><td><b>名前を売る感覚</b></td><td>父の建物に一族の名前が冠されていく風景</td><td>建物・ステーキ・大学・ネクタイ・暗号資産まで「TRUMP」の名を貸す事業へ</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>1964年にフォーダム大学に進み、2年後にペンシルベニア大学ウォートン校へ編入して1968年に経済学士を取った。在学中から週末は父の現場を回っていた。ベトナム戦争の徴兵は、学生猶予4回と医療猶予（かかとの骨棘）で免れている。卒業後すぐに父の会社に入り、ここから先が本当の「学校」になった。</p>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Formative Moments</div>
+  <h2>原体験エピソード：影響力のトリガーは6つ</h2>
+
+  <div class="episode">
+    <h3>🔑 兄フレッド・ジュニアの転落と死（35歳 / 1981年）</h3>
+    <p><span class="tag good">✓ 本人インタビュー・複数報道で確認</span></p>
+    <p>8歳上の兄フレッド・ジュニアは、父の跡継ぎとして期待されたが、厳しい父のやり方になじめず、航空会社TWAのパイロットになった。父と弟ドナルドはそれを冷ややかに見ていたとされる。兄はやがてアルコール依存症になり、1981年、42歳で亡くなった。トランプは後に「兄の姿を見て酒を飲まないと決めた」「兄にプレッシャーをかけたことを後悔している」と語っている。</p>
+    <p>→ <b>どう繋がったか：</b>酒もたばこもやらない、という徹底した自己管理の起点になった。同時に「優しい者は負ける」「父に勝つ者として認められなければならない」という信念を強めたと、姪のメアリー・トランプら多くの論者が分析している。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 師ロイ・コーンとの出会い（27歳 / 1973年）</h3>
+    <p><span class="tag good">✓ 裁判記録・NPR等で確認</span></p>
+    <p>1973年10月、司法省は「黒人の入居希望者を断っている」としてトランプ親子の会社を提訴した。若きドナルドが頼ったのは、1950年代の赤狩りでマッカーシー上院議員の右腕だった弁護士ロイ・コーンだった。コーンは非を認めるどころか、政府を名誉毀損で1億ドル訴え返した（逆提訴は却下）。1975年、会社は差別を認めない形の同意判決で和解した。トランプはこれを「勝った」と宣伝した。</p>
+    <p>→ <b>どう繋がったか：</b>コーンの流儀は<b>「絶対に謝るな」「攻撃されたら何倍にもして返せ」「負けても勝ったと言え」</b>だったと、複数の伝記が伝えている。トランプはその後半世紀、訴訟、選挙、弾劾、刑事裁判のすべてでこの型を繰り返すことになる。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 マンハッタンへの「越境」とトランプ・タワー（34〜37歳 / 1980〜83年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>父の事業はクイーンズとブルックリンの中間層向け住宅だった。息子は川を渡り、財政危機で荒れていたマンハッタンに賭けた。倒産寸前の鉄道会社から古いコモドア・ホテルを買い、市から40年間の税減免を引き出してグランド・ハイアットに建て替えた。続いて五番街にガラス張りの「トランプ・タワー」を建てる。建物の正面には金色の大きな文字で自分の名前を掲げた。</p>
+    <p>→ <b>どう繋がったか：</b>不動産そのものより「TRUMP」という名前に価値がある、という発見だった。この後、彼の事業は<b>自分の名前を貸してライセンス料を取る</b>方向へ進み、最後は政治そのものがその名前の上に建つことになる。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 カジノ帝国の崩壊と「マイナス9億ドルの男」（44〜45歳 / 1990〜91年）</h3>
+    <p><span class="tag good">✓ Web確認済</span>　<span class="tag warn">△ 個人保証債務の額は報道に幅</span></p>
+    <p>1980年代後半、トランプは借金で拡大を続けた。プラザ・ホテル、航空会社（トランプ・シャトル）、豪華ヨット、そしてアトランティックシティの巨大カジノ「タージ・マハル」。1990年の不況で全てが逆回転した。タージ・マハルは開業翌年の1991年に破産申請し、銀行団への個人保証は約9億ドルに達したと報じられた。本人は後に、五番街で物乞いを見て「あの男は私より9億ドル金持ちだ」と思ったと語っている。</p>
+    <p>→ <b>どう繋がったか：</b>銀行は彼を潰すより、「トランプ」の名前を生かした方が回収できると判断した。<b>名前の価値が借金より大きい</b>という逆説を、彼はここで体で知った。そして失敗を語らず、成功だけを語り直す技術も、この時期に磨かれた。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 『アプレンティス』で「成功した大富豪」を演じる（57歳 / 2004年）</h3>
+    <p><span class="tag good">✓ NYT調査報道ほかで確認</span></p>
+    <p>1990年代の破綻から立ち直りきれていなかったトランプに、リアリティ番組の名プロデューサー、マーク・バーネットが声をかけた。NBCの『アプレンティス』は、若い参加者がトランプの「見習い」の座を争い、毎週1人が「You're fired」と告げられる番組だ。初回シーズンの最終回は約2,800万人が視聴した。ニューヨーク・タイムズは2020年、トランプが番組とその関連のライセンス事業で約4億2,700万ドルを得たと報じている。</p>
+    <p>→ <b>どう繋がったか：</b>番組は、会議室で即断即決する「成功した大富豪」というキャラクターを、毎週何千万人の家庭に届けた。後の支持者の多くは、ニュースより先に<b>テレビの中のトランプ</b>を知っていた。政治家になる前に、彼はすでに国民的な「役」を持っていた。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 バトラーの銃声と、突き上げた拳（78歳 / 2024年7月13日）</h3>
+    <p><span class="tag good">✓ 複数報道で確認</span></p>
+    <p>ペンシルベニア州バトラーの野外集会で、演説開始から数分後、20歳の男が近くの建物の屋根から発砲した。弾はトランプの右耳をかすめ、聴衆の1人が死亡した。シークレットサービスに囲まれて立ち上がったトランプは、顔に血を流したまま拳を突き上げ、「ファイト、ファイト、ファイト」と叫んだ。この写真は2024年選挙を象徴する一枚になった。2日後、彼は副大統領候補にJ・D・ヴァンスを指名した。</p>
+    <p>→ <b>どう繋がったか：</b>本人は後に「神に救われた」と語り、支持者の間で彼の物語は「迫害に耐える闘士」から「選ばれた者」へと格上げされた。<b>危機の瞬間を、そのまま象徴的な映像に変える</b>という、彼の興行師としての本能が最もはっきり表れた場面だった。</p>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Deep Dive</div>
+  <h2>2020年の敗北から2024年の返り咲きを分解する：「負け」を「迫害」に書き換えた4年間</h2>
+  <p>普通の政治家なら、2021年1月の時点で政治生命は終わっていた。選挙に負け、議会襲撃を招いたとして2度目の弾劾訴追を受け、主要SNSから追放され、共和党の重鎮からも距離を置かれた。そこから4年で、彼はホワイトハウスに戻った。米国史上、非連続で2期を務めたのは1892年のグロバー・クリーブランド以来2人目だ。何が起きたのかを順に並べる。</p>
+
+  <h3>4年間で起きたこと</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>時期</th><th>出来事</th><th>物語の変化</th></tr></thead>
+      <tbody>
+        <tr><td>2020年11月</td><td>バイデンに敗北。トランプは「選挙は盗まれた」と主張し、60件以上の訴訟を起こすがほぼ全て敗訴</td><td>敗北を認めない</td></tr>
+        <tr><td>2021年1月6日</td><td>支持者が連邦議会議事堂に乱入し、選挙結果の確定手続きが一時中断。1週間後に下院が2度目の弾劾訴追（上院で無罪）。Twitter・Facebookがアカウントを停止</td><td>最大の危機</td></tr>
+        <tr><td>2021〜22年</td><td>フロリダのマー・ア・ラゴを拠点に、中間選挙の予備選で自分を支持する候補を次々に推薦。2022年2月、自前のSNS「Truth Social」を開始</td><td>党の支配を取り戻す</td></tr>
+        <tr><td>2022年11月</td><td>中間選挙で推薦候補が苦戦し「赤い波」は不発。それでも1週間後に再出馬を表明</td><td>退かない</td></tr>
+        <tr><td>2023年</td><td>NY州（口止め料）、連邦（機密文書）、連邦（選挙妨害）、ジョージア州（選挙妨害）の4事件で起訴。8月、ジョージア州でマグショットを撮影</td><td><b>「起訴されるたびに支持率と献金が上がる」</b></td></tr>
+        <tr><td>2024年1〜3月</td><td>共和党予備選でデサンティス、ヘイリーらを圧倒</td><td>党内の対抗馬が消える</td></tr>
+        <tr><td>2024年5〜7月</td><td>5月30日、34件で有罪評決。6月27日、討論会でバイデンが精彩を欠く。7月1日、最高裁が大統領の公務に広い免責を認める判決。7月13日、バトラーで銃撃される。7月21日、バイデンが撤退しハリスに交代</td><td>「迫害される闘士」の完成</td></tr>
+        <tr><td>2024年11月5日</td><td>激戦7州をすべて制し、選挙人312対226で勝利。共和党候補として20年ぶりに一般得票でも上回る</td><td>返り咲き</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>なぜ「返り咲き」まで行ったのか</h3>
+  <p>理由は1つではない。<b>外部要因</b>としては、2022年前後のインフレ（物価上昇率は一時9%台）、南部国境の不法越境の急増、バイデンの高齢問題が、現職側への不満を強めた。<b>トランプ側の要因</b>としては、起訴や有罪評決を「エリートによる迫害」という物語に組み込み、支持者の結束と献金を逆に強めたことが大きい。マグショットはTシャツになり、「私は皆さんのために起訴されている」という言葉が集会の定番になった。さらにポッドキャストやネット配信に積極的に出演し、政治に関心の薄かった若い男性層にも浸透した。</p>
+  <p>ここで働いたのは、ロイ・コーン譲りの<b>「負けを認めず、攻撃を物語の燃料にする」</b>型だ。1990年代の破綻を『アプレンティス』で上書きしたように、2020年の敗北と2021年の議会襲撃を、支持者の目には「盗まれた選挙」と「政治的迫害」の物語に書き換えた。反対派から見ればそれは事実の歪曲であり、支持者から見れば体制への抵抗だった。<b>この2つの見方が並行して存在し続けること自体が</b>、トランプ時代の米国の姿でもある。</p>
+
+  <h3>2期目：抑制が外れた大統領権限</h3>
+  <p>1期目の閣僚には、軍人や財界人など「大人の監督役」が多かった。2期目のトランプは、忠誠を重視した人事で政権を固め、大統領令を次々に出した。連邦政府の大幅な人員削減（イーロン・マスクの「政府効率化省（DOGE）」）、大規模な不法移民の取り締まり、ほぼ全ての貿易相手国への関税。外交では、2025年6月のイラン核施設空爆、2026年1月のベネズエラでのマドゥロ拘束、2月末のイランとの開戦へと、軍事力の行使に踏み込んだ。一方で、2026年2月には最高裁がIEEPAを根拠にした関税を違法と判断し、11月の中間選挙では共和党が大敗した。権限を最大まで使う手法は、司法と有権者という<b>2つの歯止め</b>に同時にぶつかっている。</p>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Career</div>
+  <h2>キャリア・業績の軌跡：不動産、テレビ、政治へと「名前」を乗り換え続けた</h2>
+
+  <h3>第1期（1968〜1989）：父の帝国からマンハッタンの名士へ</h3>
+  <p>父の会社で家賃の取り立てから始め、1971年に社長になる。グランド・ハイアット（1980）、トランプ・タワー（1983）で成功し、タブロイド紙の常連になった。自分の広報担当を装って記者に電話をかける（「ジョン・バロン」という偽名を使った）こともあった。1987年の『トランプ自伝』は「取引の芸術」を説き、彼を「成功の象徴」にした。1988年にはプラザ・ホテルを約4億ドルで買う。父からの資金援助は、本人が言う「100万ドルの小さな融資」をはるかに超えていたことが、2018年のニューヨーク・タイムズの調査報道で明らかになった（現在価値で総額4億1,300万ドル。同紙は税逃れの手法も指摘、トランプ側は否定）。</p>
+
+  <h3>第2期（1990〜2003）：破綻と再建</h3>
+  <p>借金頼みの拡大は1990年の不況で崩れた。カジノ、プラザ・ホテル、航空会社を次々に手放し、関連事業の破産申請は2009年までに計6回に上った。それでも本人は個人破産を避け、1995年にはカジノ会社を上場させて投資家の資金を集めた。1990年代後半からは、建物を自分で持つより<b>「TRUMP」の名前を他社の建物に貸す</b>ライセンス事業へ軸を移す。1999〜2000年には改革党からの大統領選出馬も模索した。</p>
+
+  <h3>第3期（2004〜2014）：テレビスター</h3>
+  <p>『アプレンティス』とその有名人版で14シーズン司会を務め、「You're fired」は流行語になった。ステーキ、ウォッカ、ネクタイ、そして「トランプ大学」（後に詐欺的だとして訴えられ、2016年に2,500万ドルで和解）まで、名前を冠した商品が増えた。2011年にはオバマの出生地を疑うバーサー論を広め、政治の世界で存在感を持ち始めた。</p>
+
+  <h3>第4期（2015〜2021）：第45代大統領</h3>
+  <p>2015年の出馬表明で、メキシコからの移民を「強姦犯」と呼ぶなど既存政治家ならありえない発言を連発し、そのたびに報道を独占した。予備選で16人を破り、本選では中西部の「ラストベルト（さびついた工業地帯）」を押さえてクリントンに勝った。在任中は、法人税を35%から21%に下げた大型減税、ゴーサッチ・カバノー・バレットの3人の最高裁判事指名（後の人工妊娠中絶の憲法上の権利否定につながる）、中国への制裁関税、北朝鮮の金正恩との3度の会談、イスラエルとアラブ諸国の国交正常化（アブラハム合意）、ワクチン開発を急がせた「ワープ・スピード作戦」などを進めた。一方で、ウクライナへの圧力をめぐる弾劾（2019）、議会襲撃の扇動をめぐる弾劾（2021）と、2度弾劾訴追された唯一の大統領になった。</p>
+
+  <h3>第5期（2021〜2024）：追放と復活</h3>
+  <p>5章で見たとおり、議会襲撃後の孤立から、起訴・有罪評決・銃撃を経て返り咲いた。この間、ニューヨーク州の民事詐欺訴訟では資産を過大に申告したとして2024年に巨額の支払いを命じられ（2025年に控訴審が支払い命令を取り消し、違法行為の認定は維持）、作家E・ジーン・キャロルへの性的暴行・名誉毀損でも賠償を命じられている。</p>
+
+  <h3>第6期（2025〜）：第47代大統領</h3>
+  <p>就任初日から大量の大統領令を出し、2025年4月2日を「解放の日」として世界中の国に「相互関税」を課した。株価の急落を受けて一部を90日間停止し、各国と個別の取引を進めた。7月4日には減税の恒久化やチップ非課税を盛り込んだ「One Big Beautiful Bill」を成立させた。10月から11月には予算をめぐって史上最長43日間の政府閉鎖が起きた。2026年にはベネズエラとイランへの軍事行動に踏み切ったが、関税の法的根拠は最高裁に否定され、11月の中間選挙で議会の多数派を失った。残り2年あまりの任期は、民主党が握る議会との対立の中で進むことになる。</p>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜトランプだけが？</h2>
+  <p>ここでいう「偉大さ」は、善悪の評価ではなく<b>歴史を動かした影響力の大きさ</b>を指す。2016年、「既存政治への怒り」を代弁しようとした候補は他にもいた。共和党予備選だけで17人が立った。それでもトランプだけが党を乗っ取り、10年にわたって米国政治の中心に居座った理由は、次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 注目を資源に変える興行師の勘</b></td><td>良い報道も悪い報道も「露出」として数え、常に話題の中心に立つ。メディアの論理を誰よりも理解している</td><td>偽名での自作自演の広報、『アプレンティス』、出馬表明後の「放言」による報道独占、マグショットの商品化</td></tr>
+        <tr><td><b>② 負けを認めない物語の書き換え力</b></td><td>失敗を絶対に認めず、攻撃されれば倍返しし、敗北を「勝利」や「迫害」の物語に作り替える</td><td>1975年の和解を「勝利」と宣伝、1990年代の破綻からの再起、2020年選挙の否定、起訴を集会の燃料に</td></tr>
+        <tr><td><b>③ 置き去りにされた層への直結</b></td><td>製造業の衰退・移民・グローバル化で取り残されたと感じる人々の言葉を、短く強いフレーズで代弁する</td><td>「MAGA」「壁を作れ」「America First」、ラストベルトでの勝利、労働者層・非大卒層での高い支持</td></tr>
+        <tr><td><b>④ 制度の限界まで使う交渉術</b></td><td>税制、破産法、裁判、大統領令など、ルールの許す範囲（ときにその外側）まで使い、相手に先に引かせる</td><td>40年の税減免、6回の破産申請、関税を交渉の武器にする手法、IEEPAの拡大解釈</td></tr>
+        <tr><td><b>⑤ 時代の波に乗った</b></td><td>エリートとマスメディアへの不信、SNSによる「直接配信」の時代、党派対立の激化</td><td>2008年の金融危機後の怒り、Twitterの8,800万フォロワー、ティーパーティー運動の素地</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>⑤が「舞台」を用意し、③が「観客」を見つけ、①が「その観客の視線を常に自分に集め」、②が「どれだけ叩かれても退場させず」、④が「得た権力を最大限に使わせた」。とくに<b>①と②の組み合わせ</b>が決定的だった。スキャンダルを抱えた政治家の多くは、謝罪するか退場する。トランプはどちらもせず、批判そのものを「エリートに嫌われている証拠」として支持者との絆に変えた。<br><br><strong>ただし、同じ構造が裏返る。</strong>②の「負けを認めない」性質は、平和的な政権移行という民主主義の土台を揺るがし、議会襲撃を招いた。④の「制度を限界まで使う」手法は、最高裁による関税の否定のように、制度側からの強い反発を受けている。①の「常に注目の中心に立つ」力は、政治の議題をすべて彼への賛否に引き寄せ、国の分断を深めた。<b>彼を大統領にした構造と、彼への強い反発を生んだ構造は、同じものだった。</b></div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Philosophy</div>
+  <h2>思想・仕事術：「大きく考えろ、そして必ず反撃しろ」</h2>
+  <p>トランプは体系的な政治思想を語るタイプではない。しかし1987年の『トランプ自伝』から2期目の政策まで、驚くほど一貫している考え方がいくつかある。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>考え方</th><th>中身</th><th>光と影</th></tr></thead>
+      <tbody>
+        <tr><td><b>Think Big</b><br>（大きく考えろ）</td><td>「どうせ考えるなら、大きく考えた方がいい」（『トランプ自伝』）。最初に極端な要求を出し、そこから交渉する</td><td>交渉相手を自分の土俵に引き込む ／ 市場や同盟国の混乱</td></tr>
+        <tr><td><b>Leverage</b><br>（てこ）</td><td>「交渉で最悪なのは、何がなんでも取引したいと見られることだ」。相手が欲しいものを握り、それを武器にする</td><td>関税を交渉材料に各国から譲歩を引き出す ／ 同盟国の信頼の低下</td></tr>
+        <tr><td><b>Fight Back</b><br>（必ず反撃しろ）</td><td>攻撃されたら、何倍にもして返す。謝罪は弱さの表れ</td><td>支持者に「戦ってくれる人」と映る ／ 対立の連鎖と分断</td></tr>
+        <tr><td><b>Truthful Hyperbole</b><br>（真実味のある誇張）</td><td>自伝で使った言葉。「人は大きなもの、すごいものを信じたがる」。誇張は無害な宣伝だという考え</td><td>ブランドの価値を高める ／ 事実との乖離、ファクトチェックの対象に</td></tr>
+        <tr><td><b>America First</b><br>（米国第一）</td><td>同盟も貿易も「米国が得をしているか」で判断する取引主義。関税は「辞書で一番美しい言葉」</td><td>製造業の国内回帰を訴える ／ 物価上昇、国際秩序の動揺</td></tr>
+        <tr><td><b>忠誠</b></td><td>「忠誠を何より重んじる」。自分に忠実な人を重用し、離反した人は激しく攻撃する</td><td>素早い意思決定 ／ 異論が上がりにくい政権</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>仕事術</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>常に「その場」で決める</b></td><td>『アプレンティス』の会議室のように、直感で即断する。資料より人の話と自分の勘を重視するとされる</td></tr>
+        <tr><td><b>一言で覚えられる言葉</b></td><td>対立候補に「Crooked Hillary（ずるいヒラリー）」「Sleepy Joe（眠そうなジョー）」とあだ名をつけ、政策を「壁」「関税」など1単語に縮める</td></tr>
+        <tr><td><b>自分で直接配信する</b></td><td>記者会見より先にSNSで発信し、メディアを「後追い」させる。Twitterから追放された後はTruth Socialを自前で作った</td></tr>
+        <tr><td><b>集会で反応を見る</b></td><td>大規模集会で言葉を試し、聴衆が沸いたフレーズを残していく。「壁」の公約も集会で反応が良かったことから定着したと側近が証言している</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Light &amp; Shadow</div>
+  <h2>光と影：支持者が見る「実行力」と、批判者が見る「民主主義への脅威」</h2>
+  <p>トランプほど評価が割れる人物は少ない。ここでは、支持する側と批判する側がそれぞれ何を根拠にしているかを分けて並べる。</p>
+
+  <h3>支持する側が挙げる「光」</h3>
+  <p>既存の政治家が口にしなかった、グローバル化や移民の増加で取り残された人々の不満を正面から取り上げたこと。1期目の減税と規制緩和の後、コロナ前までは失業率が約50年ぶりの低水準（3.5%）になったこと。アブラハム合意でイスラエルとアラブ諸国の国交正常化を進めたこと。中国への強硬姿勢が、その後バイデン政権にも引き継がれる超党派の路線になったこと。NATO加盟国に防衛費の増額を迫り、実際に多くの国が引き上げたこと。支持者にとって彼は「言ったことを実行する人」だ。</p>
+
+  <h3>批判する側が挙げる「影」</h3>
+  <p><b>民主主義の規範：</b>2020年の選挙結果を認めず、議会襲撃に至ったこと。連邦議会の調査委員会は、彼が結果を覆す試みの中心にいたと結論づけた（トランプ側は否定。連邦の選挙妨害事件は2024年の当選後に取り下げられた）。<b>法の支配：</b>口止め料をめぐる業務記録改ざんで有罪となった初の元大統領であり、民事でも資産の過大申告や性的暴行・名誉毀損で責任を認定されている（いずれも本人は否定・控訴）。<b>事実との関係：</b>ワシントン・ポストのファクトチェック欄は、1期目の4年間で3万件を超える虚偽または誤解を招く主張を数えた。<b>経済：</b>関税は多くの経済学者から、国内の物価を押し上げる「国民への税」だと批判され、IEEPA関税は最高裁に違法と判断された。</p>
+
+  <h3>利益相反</h3>
+  <p>大統領在任中も一族の事業は続き、2期目には暗号資産（ミームコイン「$TRUMP」など）や海外の不動産案件をめぐって、公職と私的利益の境目があいまいだという批判が強まった。トランプ側は事業は息子たちが運営していると説明している。</p>
+
+  <h3>内部矛盾：「エリートと戦う億万長者」</h3>
+  <p>ニューヨークの富裕層に生まれ、父の資金で事業を始めた億万長者が、「エリートに見捨てられた労働者の代弁者」として支持を集める。この矛盾は、彼が「上流社会から見下されてきた成り上がり」として自分を語ることで成り立っている。実際、マンハッタンの旧来の名家や社交界は、クイーンズ出身の派手な彼を長く受け入れなかった。<b>外から見れば特権階級、本人と支持者から見れば「アウトサイダー」</b>という二重性が、彼の政治の核にある。</p>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面：酒を飲まない、ダイエットコークとファストフードの人</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">禁酒</div><div class="info-card-title">生涯一滴も飲まない</div><div class="info-card-text">兄の死をきっかけに、酒もたばこも一切やらない。外国首脳との乾杯でもグラスの中身はダイエットコークのことがあると報じられた。執務室の机にはダイエットコークを呼ぶボタンがある。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">映画</div><div class="info-card-title">『ホーム・アローン2』にカメオ出演</div><div class="info-card-text">1992年の同作で、自らが所有していたプラザ・ホテルのロビーに登場し、主人公の少年に道を教える。撮影許可の条件として出演を求めた、と監督が後に語っている。<span class="tag warn">△ 経緯は関係者の証言</span></div></div>
+    <div class="info-card"><div class="info-card-eyebrow">プロレス</div><div class="info-card-title">WWE殿堂入り</div><div class="info-card-text">2007年のレッスルマニアで「億万長者対決」に参加し、勝った後にWWE会長ヴィンス・マクマホンの頭をリング上で丸刈りにした。2013年にWWE殿堂入りしている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">偽名</div><div class="info-card-title">「ジョン・バロン」と名乗る広報担当</div><div class="info-card-text">1980〜90年代、自分の広報担当を装って記者に電話し、自分の噂話を売り込んでいたことが録音で残っている。のちに末っ子の名前は「バロン」になった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ルーツ</div><div class="info-card-title">母はスコットランドの島の出身</div><div class="info-card-text">母メアリー・アンはスコットランドのルイス島出身で、ゲール語を話して育った。トランプがスコットランドにゴルフ場を持つのはこの縁もある。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">祖父</div><div class="info-card-title">ゴールドラッシュで宿を経営</div><div class="info-card-text">ドイツから移民した祖父フリードリヒは、カナダ・ユーコンのゴールドラッシュで金鉱夫向けの食堂兼宿を経営して最初の資金を作った。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">食</div><div class="info-card-title">ファストフード好き</div><div class="info-card-text">マクドナルドやケンタッキーを好み、2019年にはホワイトハウスに招いた大学アメフトの優勝チームにハンバーガーを山積みにしてふるまった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ハリウッド</div><div class="info-card-title">ウォーク・オブ・フェームに星</div><div class="info-card-text">『アプレンティス』の功績で、2007年にハリウッドの殿堂に星が置かれた。星は政治的な抗議で何度も壊されている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">記録</div><div class="info-card-title">「初めて」と「最高齢」</div><div class="info-card-text">軍歴も公職経験もない初の大統領（1期目）。2度弾劾訴追された唯一の大統領。有罪評決を受けた初の元大統領。そして78歳での就任は史上最高齢だ。</div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：注目と物語は武器になる、だからこそ使い方を自分で決めておけ</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 注目は、それ自体が資産になる。</strong>トランプは不動産でもテレビでも政治でも、「人に見られていること」を事業の土台にした。良くも悪くも、注目を集められる人に資金も人も集まる。<b>自分の仕事で「誰に」「何を」覚えてもらいたいかを一行で書き、それが伝わる言葉を1つ決める</b>。</p>
+    <p><strong>② 失敗の後の「語り直し」が、次の機会を決める。</strong>6回の破産申請の後に『アプレンティス』で復活し、選挙に負けた後に返り咲いた。失敗した事実は変えられないが、そこから何を学び次に何をするかの物語は自分で作れる。<b>直近の失敗を1つ選び、「そこから得たもの」と「次にやること」を書き出す</b>。ただし事実を曲げた語り直しは、いずれ信頼を失わせる。</p>
+    <p><strong>③ 強みが暴走したときの歯止めを、先に決めておく。</strong>「負けを認めない」強さは再起の原動力だったが、民主主義の手続きとぶつかったとき、最も深刻な批判を生んだ。<b>自分の一番の強みを1つ挙げ、それが行き過ぎたときに止めてくれる人やルールを1つ決めておく</b>。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/Early_life_and_education_of_Donald_Trump">Wikipedia — Early life and education of Donald Trump</a></li>
+    <li><a href="https://www.pbs.org/newshour/show/donald-trumps-early-years-troubled-teen-military-academy-business-school">PBS NewsHour — Trump's early years: troubled teen, military academy, business school</a></li>
+    <li><a href="https://www.pbs.org/newshour/show/donald-trump-rose-real-estate-scion-tv-boss">PBS NewsHour — How Donald Trump rose from real estate scion to TV boss</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Fred_Trump_Jr.">Wikipedia — Fred Trump Jr.</a></li>
+    <li><a href="https://m.washingtontimes.com/news/2017/oct/26/donald-trump-recalls-death-brother-alcoholism/">Washington Times — Trump recalls death of brother from alcoholism (2017)</a></li>
+    <li><a href="https://www.businessinsider.nl/trump-admits-regret-over-treatment-late-brother-fred-trump-jr-2019-8">Business Insider — Trump admits regret over treatment of late brother</a></li>
+    <li><a href="https://www.npr.org/2016/09/29/495955920/donald-trump-plagued-by-decades-old-housing-discrimination-case.">NPR — Trump plagued by decades-old housing discrimination case</a></li>
+    <li><a href="https://clearinghouse.net/case/15342/">Civil Rights Litigation Clearinghouse — United States v. Fred C. Trump (1973)</a></li>
+    <li><a href="https://en.wikipedia.com/wiki/Business_career_of_Donald_Trump">Wikipedia — Business career of Donald Trump</a></li>
+    <li><a href="https://www.fox5atlanta.com/news/a-look-at-key-events-in-donald-trumps-business-career">AP / Fox 5 — Key events in Donald Trump's business career</a></li>
+    <li><a href="https://www.businessinsider.in/international/news/the-story-of-trumps-business-career-giant-windfalls-that-he-blows-on-bad-investments/articleshow/78387220.cms">Business Insider — The story of Trump's business career</a></li>
+    <li><a href="https://qz.com/1909776/how-the-apprentice-saved-trump-from-financial-ruin">Quartz — How The Apprentice saved Trump from financial ruin</a></li>
+    <li><a href="https://www.newstatesman.com/politics/2016/11/moment-donald-trump-decided-run-president">New Statesman — The moment Donald Trump decided to run for president</a></li>
+    <li><a href="https://www.newsweek.com/obama-trump-white-house-correspondents-dinner-2011-roast-bin-laden-raid-2063833">Newsweek — Obama's 2011 roast of Trump</a></li>
+    <li><a href="https://www.washingtontimes.com/news/2026/apr/30/lara-trump-disputes-2011-white-house-correspondents-dinner-spurred/">Washington Times — Lara Trump disputes 2011 dinner narrative (2026)</a></li>
+    <li><a href="https://abc13.com/post/how-assassination-attempt-donald-trump-unfolded/15058052/">ABC13 — How the assassination attempt on Trump unfolded</a></li>
+    <li><a href="https://fortune.com/2024/07/13/donald-trump-gunshots-butler-pennsylvania-campaign-rally-secret-service-agents">Fortune — Gunshots at Butler rally (2024)</a></li>
+    <li><a href="https://www.cbsnews.com/amp/news/trump-appeal-conviction-new-york-hush-money-case">CBS News — Trump appeals hush money conviction</a></li>
+    <li><a href="https://www.deseret.com/u-s-world/2025/10/28/trump-formally-appeals-felony-conviction-in-hush-money-case">Deseret News — Trump formally appeals felony conviction (2025)</a></li>
+    <li><a href="https://www.270towin.com/2024_Election/">270toWin — 2024 Presidential Election</a></li>
+    <li><a href="https://cfr.org/article/2024-election-numbers">CFR — The 2024 election by the numbers</a></li>
+    <li><a href="https://www.fox13news.com/news/election-results-popular-vote-kamala-harris-donald-trump">Fox 13 — Trump's popular vote win is GOP's first in 20 years</a></li>
+    <li><a href="https://www.azfamily.com/2026/04/02/liberation-day-tariffs-mark-one-year/?outputType=amp">AZFamily — Liberation Day tariffs mark one year (2026)</a></li>
+    <li><a href="https://invezz.com/uk/news/2026/04/04/one-year-on-did-trumps-liberation-day-tariffs-make-america-wealthier/">Invezz — One year on, did Liberation Day tariffs make America wealthier?</a></li>
+    <li><a href="https://taxfoundation.org/blog/supreme-court-trump-tariffs-ruling/">Tax Foundation — Supreme Court Trump tariffs ruling (2026)</a></li>
+    <li><a href="https://fortune.com/2026/02/20/supreme-court-slaps-down-175-billion-worth-of-trump-tariffs-as-unconstitutional/">Fortune — Supreme Court strikes down IEEPA tariffs (2026)</a></li>
+    <li><a href="https://www.dlapiper.com/insights/publications/2026/02/us-supreme-court-holds-ieepa-does-not-authorize-tariffs">DLA Piper — US Supreme Court holds IEEPA does not authorize tariffs</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Timeline_of_the_second_Trump_presidency_(2026_Q1)">Wikipedia — Timeline of the second Trump presidency (2026 Q1)</a></li>
+    <li><a href="https://www.aljazeera.com/news/2026/3/3/analysis-trumps-foreign-policy-message-in-a-nutshell-we-can-reach-you">Al Jazeera — Trump's foreign policy message: "We can reach you" (2026)</a></li>
+    <li><a href="https://iol.co.za/news/world/2026-03-01-middle-east-at-war-ayatollah-ali-khamenei-killed-in-us-and-israeli-strikes-on-iran/">IOL — Khamenei killed in US and Israeli strikes on Iran (2026)</a></li>
+    <li><a href="https://en.annahar.com/en/317959/iran-war-key-events-from-khameneis-assassination-to-todays-clashes-with-israel">Annahar — Iran war timeline, Feb–June 2026</a></li>
+    <li><a href="https://www.cbsnews.com/live-updates/house-election-results-2026/">CBS News — 2026 House midterm election results</a></li>
+    <li><a href="https://www.cnbc.com/2026/11/04/2026-midterm-election-results-live-updates.html">CNBC — 2026 midterm election results: House, Senate</a></li>
+  </ul>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>
