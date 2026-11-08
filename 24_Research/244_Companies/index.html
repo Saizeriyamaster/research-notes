@@ -3,46 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>244 Companies — Koshikawa Research Notes</title>
+<title>companies — 54111</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#ffffff; --surface:#f5f5f3; --surface2:#ebeae6; --ink:#111111;
-  --text:#111111; --mid:#555555; --muted:#949494; --dim:#cccccc; --border:#e2e1da;
-  --good:#2f7a4f; --bad:#b3382c; --warn:#a67c2e; --accent:#2b4a6f;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.75;}
-h1,h2,h3,.section-label,.hero-eyebrow,.stat-label,.tl-year,.block-label,.eyebrow{font-family:'Poppins','Noto Sans JP',sans-serif;}
-.hero{background:var(--ink);padding:56px 40px 40px;}
-.hero-inner{max-width:860px;margin:0 auto;}
-.hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:12px;font-weight:600;}
-.hero h1{font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.15;color:#fff;margin-bottom:10px;}
-.hero-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;}
-.hero-crumb{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:14px;}
-.hero-crumb a{color:rgba(255,255,255,.65);text-decoration:none;}
-.hero-crumb a:hover{color:#fff;}
-.wrap{max-width:860px;margin:0 auto;padding:40px 40px 90px;}
-@media (max-width:640px){.hero{padding:36px 20px 28px;} .wrap{padding:28px 20px 64px;}}
-.block{margin-top:40px;}
-.block:first-child{margin-top:0;}
-.block-label{font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.index-folder-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:8px 0;}
-.index-folder-list a{display:block;border:1px solid var(--border);border-radius:10px;padding:18px 20px;text-decoration:none;color:var(--text);background:var(--surface);}
-.index-folder-list a:hover{border-color:var(--ink);}
-.index-folder-list .index-folder-title{font-size:13.5px;font-weight:700;margin-bottom:4px;}
-.index-folder-list .index-folder-count{font-size:11.5px;color:var(--muted);}
-.index-list{list-style:none;border-top:1px solid var(--border);}
-.index-list li{border-bottom:1px solid var(--border);}
-.index-list a{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 4px;text-decoration:none;color:var(--text);}
-.index-list a:hover .index-title{color:var(--accent);}
-.index-title{font-size:14px;font-weight:700;letter-spacing:-.01em;}
-.index-date{font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap;}
-.empty-note{font-size:13px;color:var(--muted);padding:16px 0;}
-.back-link{display:inline-block;margin-top:36px;font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;}
-.back-link:hover{color:var(--mid);}
-.page-footer{border-top:1px solid var(--border);padding-top:20px;margin-top:36px;font-size:11.5px;color:var(--muted);line-height:1.8;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--surface:#f5f5f5;--hover:#ededed;--border:#e0e0e0;--text:#111;--mid:#444;--muted:#888;--dim:#ccc}
+body{background:var(--bg);color:var(--text);font-family:'Poppins','Noto Sans JP',sans-serif;min-height:100vh;padding-bottom:68px}
+.page-header{background:#111;color:#fff;padding:36px 48px 32px}
+.breadcrumb{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-bottom:10px}
+.breadcrumb a{color:rgba(255,255,255,.45);text-decoration:none}
+.breadcrumb a:hover{color:rgba(255,255,255,.8)}
+.page-header h1{font-size:1.4rem;font-weight:700;letter-spacing:-.02em}
+.main{max-width:1100px;padding:0 48px 80px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid #111;margin:40px 0 36px;overflow-x:auto}
+.tab{appearance:none;background:none;border:none;font-family:'Poppins','Noto Sans JP',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 22px;cursor:pointer;position:relative;bottom:-2px;border-bottom:2px solid transparent;transition:color .12s,border-color .12s;white-space:nowrap}
+.tab:hover{color:var(--mid)}
+.tab.active{color:#111;border-bottom-color:#111}
+.tab .t-count{font-size:9px;font-weight:500;color:var(--dim);margin-left:6px;letter-spacing:.04em}
+.panel{display:none}
+.panel.active{display:block}
+.cat-block{margin-bottom:52px}
+.cat-header{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #111}
+.cat-title{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#111}
+.cat-title a{color:inherit;text-decoration:none}
+.cat-title a:hover{text-decoration:underline}
+.cat-count{font-size:9px;font-weight:500;color:var(--dim);letter-spacing:.06em;margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;padding:20px 18px 16px;background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);min-height:118px;transition:background .12s,border-color .12s,box-shadow .12s;position:relative}
+.tile:hover{background:var(--hover);border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tile:hover .tile-arrow{opacity:1}
+.tile-top{flex:1;margin-bottom:14px}
+.tile-name{font-size:13.5px;font-weight:700;letter-spacing:-.02em;line-height:1.25;margin-bottom:7px}
+.tile-meta{font-size:9px;color:var(--dim);letter-spacing:.04em;margin-bottom:6px}
+.tile-meta .m-year{font-weight:600;color:var(--muted)}
+.tile-desc{font-size:10px;font-weight:400;color:var(--muted);line-height:1.55}
+.tile-bottom{display:flex;align-items:center;justify-content:space-between}
+.tile-tags{display:flex;flex-wrap:wrap;gap:4px}
+.tile-tag{font-size:8px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);border:1px solid var(--dim);padding:2px 5px}
+.tile-arrow{font-size:11px;color:var(--dim);opacity:0;transition:opacity .12s;flex-shrink:0;margin-left:8px}
+.table-tools{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.table-search{flex:1;max-width:320px;font-family:'Poppins','Noto Sans JP',sans-serif;font-size:12px;padding:8px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none}
+.table-search:focus{border-color:#111}
+.table-hint{font-size:10px;color:var(--dim);letter-spacing:.04em}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border)}
+table.co{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+table.co col.c-w-name{width:36%}
+table.co col.c-w-kind{width:22%}
+table.co col.c-w-dir{width:20%}
+table.co col.c-w-date{width:14%}
+table.co col.c-w-read{width:8%}
+table.co th.th-read{text-align:center}
+table.co td.c-read{text-align:center;vertical-align:middle}
+.readck{width:15px;height:15px;cursor:pointer;accent-color:#111;margin:0}
+table.co tbody tr.is-read{opacity:.4}
+table.co tbody tr.is-read:hover{opacity:.8}
+table.co tbody tr.is-read td.c-name a{text-decoration:line-through;text-decoration-color:var(--dim)}
+table.co thead th{background:#111;color:#fff;font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:11px 14px;cursor:pointer;user-select:none;white-space:nowrap}
+table.co thead th:hover{background:#2a2a2a}
+table.co thead th .arr{color:rgba(255,255,255,.35);font-size:8px;margin-left:5px}
+table.co thead th.sorted .arr{color:#fff}
+table.co tbody td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--mid);word-break:break-word;overflow-wrap:anywhere}
+table.co tbody tr:hover{background:var(--surface)}
+table.co tbody tr:nth-child(even){background:#fafafa}
+table.co tbody tr:nth-child(even):hover{background:var(--surface)}
+table.co td.c-name a{color:#111;font-weight:700;text-decoration:none;font-size:12.5px;letter-spacing:-.01em}
+table.co td.c-name a:hover{text-decoration:underline}
+table.co td.c-name .c-desc{display:block;font-size:10.5px;color:var(--muted);font-weight:400;margin-top:3px}
+table.co td.c-kind{font-size:11px}
+table.co td.c-date{font-weight:600;color:var(--text);white-space:nowrap}
+table.co .tier{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:1px 5px;border:1px solid var(--dim);color:var(--muted);white-space:nowrap}
+@media (max-width:720px){table.co{table-layout:auto;min-width:640px}}
+@media (max-width:600px){.page-header{padding:28px 24px 24px}.main{padding:0 24px 60px}.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.tabs{margin:28px 0}.tab{padding:10px 14px}}
+
+.stats-footer{position:fixed;bottom:0;left:0;right:0;height:62px;background:#111;border-top:1px solid #222;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-family:'Poppins',sans-serif;z-index:9997}
+.footer-stats{display:flex;align-items:center;font-size:10px;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:.06em}
+.footer-stats .stat{white-space:nowrap}
+.footer-stats .sep{margin:0 9px;color:rgba(255,255,255,.15)}
+.footer-home{color:rgba(255,255,255,.4);text-decoration:none;font-size:11px;font-weight:500;letter-spacing:.06em}
+.footer-home:hover{color:rgba(255,255,255,.9)}
 </style>
 <!-- snav:head:start -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -68,6 +107,12 @@ body{padding-top:56px!important}
 .snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
 .snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
 .snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
 @media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
 </style>
 <!-- snav:head:end -->
@@ -99,6 +144,7 @@ body{padding-top:56px!important}
   <div class="snav-sec">
     <div class="snav-sec-label">Travel</div>
     <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
   </div>
   <div class="snav-sec">
     <div class="snav-sec-label">Research</div>
@@ -106,6 +152,8 @@ body{padding-top:56px!important}
     <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
     <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
     <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
     <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
     <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
     <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
@@ -119,17 +167,620 @@ body{padding-top:56px!important}
 </nav>
 <script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
 <!-- snav:panel:end -->
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-crumb"><a href="../../index.html">root</a> / <a href="../index.html">24_Research</a> / 244_Companies</div>
-    <div class="hero-eyebrow">24_Research</div>
-    <h1>244 Companies</h1>
+<header class="page-header">
+  <div class="breadcrumb"><a href="/research-notes/index.html">54111</a> / <a href="/research-notes/24_Research/index.html">research</a></div>
+  <h1>companies</h1>
+</header>
+
+<main class="main">
+
+  <div class="tabs">
+    <button class="tab active" data-tab="all" onclick="switchTab('all')">All<span class="t-count">43</span></button>
+    <button class="tab" data-tab="Startups" onclick="switchTab('Startups')">startups<span class="t-count">21</span></button>
+    <button class="tab" data-tab="大企業" onclick="switchTab('大企業')">大企業<span class="t-count">19</span></button>
+    <button class="tab" data-tab="other" onclick="switchTab('other')">Other<span class="t-count">3</span></button>
   </div>
-</div>
-<div class="wrap">
-  <div class="block"><div class="block-label">Folders</div><div class="index-folder-list"><a href="Startups/index.html"><div class="index-folder-title">Startups</div><div class="index-folder-count">20件</div></a><a href="大企業/index.html"><div class="index-folder-title">大企業</div><div class="index-folder-count">14件</div></a></div></div><div class="block"><div class="block-label">Files</div><ul class="index-list"><li><a href="2026-04-19_メガバンク3社比較.md"><span class="index-title">メガバンク3社比較</span><span class="index-date">2026-04-19</span></a></li><li><a href="2026-06-01_HRT_intern_mafia.md"><span class="index-title">HRT intern mafia</span><span class="index-date">2026-06-01</span></a></li><li><a href="2026-06-24_ダイヤモンド半導体エコシステム_Orbray_大熊DD_EDP.md"><span class="index-title">ダイヤモンド半導体エコシステム Orbray 大熊DD EDP</span><span class="index-date">2026-06-24</span></a></li></ul></div>
-  <a class="back-link" href="../index.html">&larr; 上の階層へ戻る</a>
-  <div class="page-footer">Koshikawa Research Notes &mdash; personal knowledge base, published via GitHub Pages.</div>
-</div>
+
+  <!-- ===================== ALL (sortable list) ===================== -->
+  <section class="panel active" id="panel-all">
+    <div class="table-tools">
+      <input type="text" class="table-search" id="tblSearch" placeholder="検索（タイトル・種別・フォルダ…）" oninput="filterTable()">
+      <span class="table-hint">列見出しをクリックで並び替え・✓は読了記録（この端末に保存）</span>
+      <span class="table-hint" id="readCounter" style="margin-left:auto;font-weight:600;color:var(--muted)"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="co" id="coTable">
+        <colgroup><col class="c-w-name"><col class="c-w-kind"><col class="c-w-dir"><col class="c-w-date"><col class="c-w-read"></colgroup>
+        <thead>
+          <tr>
+            <th data-type="str" onclick="sortTable(0,this)">Title<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(1,this)">Type<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(2,this)">Folder<span class="arr">↕</span></th>
+            <th data-type="str" onclick="sortTable(3,this)">Date<span class="arr">↓</span></th>
+            <th class="th-read" data-type="num" onclick="sortTable(4,this)" title="読んだらチェック（未読を上に並べ替え可）">✓<span class="arr">↕</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-10-07_Mecka_SeriesB.html">Mecka、$60M Series B</a><span class=c-desc>人がセンサーとiPhoneを身につけて日常作業をこなす様子を記録し、ロボットの学習データに変える会社。テレオペ（遠隔操作）に頼らない「人間のデモ…</span></td>
+            <td class="c-kind">Sequoiaリード</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-10-07">2026-10-07</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-07-08_テラドローン.md">テラドローン（Terra Drone）— スタートアップ解剖</a><span class=c-desc>「測量・点検・運航管理」という三層構造のドローンプラットフォームで産業現場をデジタル化し、上場後は防衛市場にも本格参入することで、商用×防衛の二…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-07-08">2026-07-08</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-06-28_AI_inside_企業調査.md">AI inside 株式会社（4488）企業調査レポート</a><span class=c-desc>決算情報を見ると50億円近く</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-06-28">2026-06-28</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-26_NOT-A-HOTEL.md">NOT A HOTEL</a><span class=c-desc>「使わない別荘はもったいない」という逆転発想で、世界的建築家の邸宅を&quot;1日単位&quot;の分数所有として販売。オーナーは利用しない日をNOT A HOT…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-26">2026-06-26</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-06-26_Samsung沿革.md">サムスン（Samsung）沿革</a><span class=c-desc>1938年3月1日、李秉喆（イ・ビョンチョル、Lee Byung-chul）は朝鮮総督府統治下の大邱（テグ）で「三星商会（サムスン商会）」を設立…</span></td>
+            <td class="c-kind">半導体帝国の全史</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-06-26">2026-06-26</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-06-26_TSMC沿革.md">TSMC 沿革</a><span class=c-desc>1986年9月2日、米国と日本は「日米半導体協定（U.S.–Japan Semiconductor Agreement）」に署名した。背景は19…</span></td>
+            <td class="c-kind">半導体覇権の全史</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-06-26">2026-06-26</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-25_Rapidus.md">Rapidus（ラピダス）</a><span class=c-desc>日本の半導体シェアが1980年代の50%から激減した反省から、2022年に日本政府と国内大手8社が共同で設立。IBMから2nm技術をライセンスし…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-25">2026-06-25</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-25_Stark.md">Stark Defence</a><span class=c-desc>ウクライナの戦場から学んだ「AIドローンが兵士の命を救う」という命題を、欧州防衛の政治的空白と€800Bの再軍備予算に刺さるナラティブに変換する…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-25">2026-06-25</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-25_松尾研発スタートアップ全社調査.md">松尾研発スタートアップ 全社調査レポート</a></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-25">2026-06-25</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-24_ダイヤモンド半導体エコシステム_Orbray_大熊DD_EDP.md">ダイヤモンド半導体エコシステム</a><span class=c-desc>&gt; 「究極の半導体素材」ダイヤモンドを巡り、Orbray（材料製造）・大熊ダイヤモンドデバイス（量産工場）・EDP（種結晶・基板） の3社が補完…</span></td>
+            <td class="c-kind">Orbray / 大熊ダイヤモンドデバイス / EDP</td>
+            <td><span class="tier">companies</span></td>
+            <td class="c-date" data-sort="2026-06-24">2026-06-24</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-23_Halter.md">Halter</a><span class=c-desc>牧場のOSを作るスタートアップ。物理フェンスをAIカラー一本で消し去り、農家の時間を週40時間解放する「Cowgorithm」が農業のパラダイム…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-23">2026-06-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-23_Shinkei_Systems.md">Shinkei Systems</a><span class=c-desc>「魚の活け締めをロボットで民主化する」スタートアップ。日本の伝統技術・活け締め（ikejime）をAIロボット「Poseidon」で自動化し、漁…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-23">2026-06-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-23_ストックマーク.md">ストックマーク株式会社</a><span class=c-desc>東大発・2016年創業のエンタープライズ向けAI SaaS。CEO林達が「次世代のマイクロソフト」を目指し、自社LLMを軸にAnews（情報収集…</span></td>
+            <td class="c-kind">詳細リサーチ</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-23">2026-06-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-06-23_ポラリス・キャピタル・グループ.md">ポラリス・キャピタル・グループ</a><span class=c-desc>「日本型バイアウトの独立系旗手」。みずほ系金融機関の出資で2004年に産声を上げ、オーナー事業承継・大企業カーブアウト・MBOの3本柱で約48件…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-06-23">2026-06-23</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-22_ANDURIL.md">Anduril Industries</a><span class=c-desc>「シリコンバレーの開発速度で、米軍の装備を作り直す」という逆張りで防衛産業のロジックを丸ごとひっくり返したスタートアップ。AI戦場管理OS「La…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-22">2026-06-22</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-22_Solafune.md">Solafune</a><span class=c-desc>「衛星画像を世界中のエンジニアにコンペで解かせ、そのアルゴリズムを政府に売る」という構造で、データ収集コストを下げながら安全保障市場に食い込んだ…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-22">2026-06-22</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-22_newmo.md">newmo</a><span class=c-desc>「規制が壁なら、タクシー会社ごと買収して壁を消す」という逆転発想で、創業18ヶ月・累計199億円を調達した日本版モビリティ革命の旗手。元GREE…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-22">2026-06-22</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-19_ElevationSpace.md">ElevationSpace</a><span class=c-desc>「宇宙に持っていき、地球に持ち帰る」という唯一無二の回収技術で、ISS後時代の宇宙実験インフラを民主化するスタートアップ。東北大学の衛星技術と国…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-19">2026-06-19</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-19_FigureAI.md">Figure AI</a><span class=c-desc>「AIに身体を与える」という一文で最先端の投資家を集め、ヒューマノイドロボットを最初に工場に商業展開した唯一のスタートアップ。BMW工場での実稼…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-19">2026-06-19</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-19_ICEYE.md">ICEYE</a><span class=c-desc>「$2Mの小型SAR衛星を週1機ペースで量産し、40機超のコンステレーションで地球上どこでも天候・昼夜に関わらず1時間以内に再撮影できる」という…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-19">2026-06-19</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-19_IonQ.md">IonQ</a><span class=c-desc>30年の学術研究から生まれたイオントラップ型量子コンピュータで、上場量子企業で唯一GAAP売上1億ドルを突破したスタートアップ。AWSやAzur…</span></td>
+            <td class="c-kind">スタートアップ解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-19">2026-06-19</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-06-19_Palantir.md">Palantir Technologies</a><span class=c-desc>「政府・軍の機密データを20年かけて独占し、そのOntology（意味層）の上にAIを走らせることで、民主主義陣営のAI OSになろうとしている…</span></td>
+            <td class="c-kind">解剖レポート</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-06-19">2026-06-19</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-18_JISDA.md">JISDA</a><span class=c-desc>「7万円で作り、撃って、使い捨てる」── ウクライナ前線で3年間過ごした創業者が辿り着いた、防衛ドローンの逆張り思想。高コスト・少数精鋭型の日本…</span></td>
+            <td class="c-kind">CoAnal 企業解剖 + バリュエーションナラティブ分析</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-18">2026-06-18</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-18_KyotoFusioneering.md">京都フュージョニアリング</a><span class=c-desc>「核融合の金脈を掘る会社ではなく、スコップとツルハシを作る会社」── 核融合炉本体ではなく、炉を稼働させるための周辺機器・燃料サイクル・プラズマ…</span></td>
+            <td class="c-kind">CoAnal 企業解剖 + バリュエーションナラティブ分析</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-18">2026-06-18</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-18_Solafune.md">Solafune</a><span class=c-desc>衛星データ×AIで「地球を知覚する」インフラを作っている会社。コンペ型プラットフォームで世界中のエンジニアからアルゴリズムを集め、それをAPIと…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-18">2026-06-18</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-18_Traysar.md">Traysar</a><span class=c-desc>「地球の地殻を第5の戦場にする」── 宇宙・空・海・陸・サイバーに続く、誰も手をつけなかった地下ドメインに特化した世界初の防衛テックスタートアッ…</span></td>
+            <td class="c-kind">CoAnal 企業解剖 + バリュエーションナラティブ分析</td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-18">2026-06-18</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="Startups/2026-06-18_京都フュージョニアリング.md">京都フュージョニアリング（Kyoto Fusioneering）— CoAnal 企業解剖</a><span class=c-desc>「核融合炉の&quot;周辺機器・プラント技術&quot;サプライヤー」として、どの核融合方式が主流になっても必要不可欠なインフラを供給するポジションを確立しつつあ…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">startups</span></td>
+            <td class="c-date" data-sort="2026-06-18">2026-06-18</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-06-18_ispace.md">ispace</a><span class=c-desc>「月面輸送サービス」という前人未踏の市場を独自に開拓し、着陸船・ローバーの開発を軸にペイロード輸送フィーで稼ぐ宇宙インフラ企業。ミッション1・2…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-06-18">2026-06-18</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-06-17_ベインキャピタル.md">ベインキャピタル (Bain Capital)</a><span class=c-desc>&gt; コンサルティングファーム出身のDNAを武器に、「オペレーション改善でリターンを生む」PE業界の異端児。AUM $225Bの総合オルタナ運用会…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-06-17">2026-06-17</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-06-01_HRT_intern_mafia.md">HRT 2015インターン・マフィア</a><span class=c-desc>クオンツHFT最高峰のHRTに、2015年前後に集まった数学・CS天才集団が、その後 合計時価総額20兆円超 のスタートアップを創業。「次のPa…</span></td>
+            <td class="c-kind">次世代テック帝国の同窓生たち</td>
+            <td><span class="tier">companies</span></td>
+            <td class="c-date" data-sort="2026-06-01">2026-06-01</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-04-22_ネットイヤーグループ.md">ネットイヤーグループ株式会社</a><span class=c-desc>&gt; 「大企業のデジタルマーケティングをUXから受託する、NTTデータ傘下の専門プロフェッショナルファーム」。戦略コンサルからWeb制作・SEO運…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-04-22">2026-04-22</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="2026-04-19_メガバンク3社比較.md">メガバンク3社 徹底解剖</a><span class=c-desc>Olive（SMFG） ████████████████████ 圧倒的先行 えむっと（MUFG） ██████░░░░░░░░░░░░ 202…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">companies</span></td>
+            <td class="c-date" data-sort="2026-04-19">2026-04-19</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-04-12_高砂熱学工業.md">高砂熱学工業</a><span class=c-desc>「精密な空気」を売る設備工事の絶対王者。半導体工場・データセンターという時代の最大公約数需要を背景に、売上よりはるかに速い速度で利益が爆増中。1…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-04-12">2026-04-12</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/2026-04-11_高砂熱学工業.md">高砂熱学工業</a><span class=c-desc>「空気を制する者がインフラを制する」——高砂熱学工業は100年超の歴史を持つ空調設備工事の絶対王者。半導体工場・データセンターという時代の必然需…</span></td>
+            <td class="c-kind">CoAnal 企業解剖</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="2026-04-11">2026-04-11</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/三菱商事/ビジネス/2025-10_小島信明_地球環境ビジネス講演録.html">地球環境をビジネスとするまで</a><span class=c-desc>三菱商事で地球環境ビジネスを立ち上げ、内外110件のプロジェクト・年間1000億円規模の投資を指揮した小島信明氏（Wanderlust顧問）の講…</span></td>
+            <td class="c-kind">小島信明（元三菱商事常務執行役員）</td>
+            <td><span class="tier">大企業 / 三菱商事 / ビジネス</span></td>
+            <td class="c-date" data-sort="2025-10">2025-10</td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/260623_AI_inside_deep_research.html">AI inside 株式会社Deep Research Report</a><span class=c-desc>AI-OCR国内シェア1位、DX Suiteを武器に上場した高成長スタートアップ。NTT解約ショックで売上38%蒸発という前例なき危機を経験し、…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/ANA_Holdings_企業分析レポート.md">【ANAホールディングス】企業分析レポート</a><span class=c-desc>※セグメント間消去後の連結売上高は2,261,800,000,000円</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/TDK_Corporation.md">TDK Corporation</a><span class=c-desc>創業者・齋藤憲三がフェライト（酸化鉄磁性材料） の工業化を目指して設立。もとはテープ・磁気記録材料メーカーだったが、2000年代以降は電子部品・…</span></td>
+            <td class="c-kind">企業リサーチ</td>
+            <td><span class="tier">大企業</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/三菱商事/その他/links.md">その他（社内メモ・転送メッセージ）</a><span class=c-desc>出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業 / 三菱商事 / その他</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/三菱商事/ビジネス/links.md">ビジネス・事業関連リンク</a><span class=c-desc>出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業 / 三菱商事 / ビジネス</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/三菱商事/歴史/links.md">歴史関連リンク</a><span class=c-desc>出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業 / 三菱商事 / 歴史</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/三菱商事/経営陣/links.md">経営陣・組織関連リンク</a><span class=c-desc>出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業 / 三菱商事 / 経営陣</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+          <tr>
+            <td class="c-name"><a href="大企業/三菱商事/財務/links.md">財務・IR関連リンク</a><span class=c-desc>出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</span></td>
+            <td class="c-kind"></td>
+            <td><span class="tier">大企業 / 三菱商事 / 財務</span></td>
+            <td class="c-date" data-sort="0000"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-Startups">
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="Startups/index.html">startups</a></span>
+      <span class="cat-count">21 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="Startups/2026-10-07_Mecka_SeriesB.html">
+        <div class="tile-top"><div class="tile-name">Mecka、$60M Series B</div><div class="tile-meta"><span class="m-year">2026-10-07</span> · Sequoiaリード</div><div class="tile-desc">人がセンサーとiPhoneを身につけて日常作業をこなす様子を記録し、ロボットの学習データに変える会社。テレオペ（遠隔操作）に頼らない「人間のデモ…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-07-08_テラドローン.md">
+        <div class="tile-top"><div class="tile-name">テラドローン（Terra Drone）— スタートアップ解剖</div><div class="tile-meta"><span class="m-year">2026-07-08</span></div><div class="tile-desc">「測量・点検・運航管理」という三層構造のドローンプラットフォームで産業現場をデジタル化し、上場後は防衛市場にも本格参入することで、商用×防衛の二…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-26_NOT-A-HOTEL.md">
+        <div class="tile-top"><div class="tile-name">NOT A HOTEL</div><div class="tile-meta"><span class="m-year">2026-06-26</span> · CoAnal 企業解剖</div><div class="tile-desc">「使わない別荘はもったいない」という逆転発想で、世界的建築家の邸宅を&quot;1日単位&quot;の分数所有として販売。オーナーは利用しない日をNOT A HOT…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-25_Rapidus.md">
+        <div class="tile-top"><div class="tile-name">Rapidus（ラピダス）</div><div class="tile-meta"><span class="m-year">2026-06-25</span></div><div class="tile-desc">日本の半導体シェアが1980年代の50%から激減した反省から、2022年に日本政府と国内大手8社が共同で設立。IBMから2nm技術をライセンスし…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-25_Stark.md">
+        <div class="tile-top"><div class="tile-name">Stark Defence</div><div class="tile-meta"><span class="m-year">2026-06-25</span> · スタートアップ解剖</div><div class="tile-desc">ウクライナの戦場から学んだ「AIドローンが兵士の命を救う」という命題を、欧州防衛の政治的空白と€800Bの再軍備予算に刺さるナラティブに変換する…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-25_松尾研発スタートアップ全社調査.md">
+        <div class="tile-top"><div class="tile-name">松尾研発スタートアップ 全社調査レポート</div><div class="tile-meta"><span class="m-year">2026-06-25</span></div><div class="tile-desc"></div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-23_Halter.md">
+        <div class="tile-top"><div class="tile-name">Halter</div><div class="tile-meta"><span class="m-year">2026-06-23</span> · スタートアップ解剖</div><div class="tile-desc">牧場のOSを作るスタートアップ。物理フェンスをAIカラー一本で消し去り、農家の時間を週40時間解放する「Cowgorithm」が農業のパラダイム…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-23_Shinkei_Systems.md">
+        <div class="tile-top"><div class="tile-name">Shinkei Systems</div><div class="tile-meta"><span class="m-year">2026-06-23</span> · スタートアップ解剖</div><div class="tile-desc">「魚の活け締めをロボットで民主化する」スタートアップ。日本の伝統技術・活け締め（ikejime）をAIロボット「Poseidon」で自動化し、漁…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-23_ストックマーク.md">
+        <div class="tile-top"><div class="tile-name">ストックマーク株式会社</div><div class="tile-meta"><span class="m-year">2026-06-23</span> · 詳細リサーチ</div><div class="tile-desc">東大発・2016年創業のエンタープライズ向けAI SaaS。CEO林達が「次世代のマイクロソフト」を目指し、自社LLMを軸にAnews（情報収集…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-22_ANDURIL.md">
+        <div class="tile-top"><div class="tile-name">Anduril Industries</div><div class="tile-meta"><span class="m-year">2026-06-22</span> · スタートアップ解剖</div><div class="tile-desc">「シリコンバレーの開発速度で、米軍の装備を作り直す」という逆張りで防衛産業のロジックを丸ごとひっくり返したスタートアップ。AI戦場管理OS「La…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-22_Solafune.md">
+        <div class="tile-top"><div class="tile-name">Solafune</div><div class="tile-meta"><span class="m-year">2026-06-22</span> · スタートアップ解剖</div><div class="tile-desc">「衛星画像を世界中のエンジニアにコンペで解かせ、そのアルゴリズムを政府に売る」という構造で、データ収集コストを下げながら安全保障市場に食い込んだ…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-22_newmo.md">
+        <div class="tile-top"><div class="tile-name">newmo</div><div class="tile-meta"><span class="m-year">2026-06-22</span> · スタートアップ解剖</div><div class="tile-desc">「規制が壁なら、タクシー会社ごと買収して壁を消す」という逆転発想で、創業18ヶ月・累計199億円を調達した日本版モビリティ革命の旗手。元GREE…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-19_ElevationSpace.md">
+        <div class="tile-top"><div class="tile-name">ElevationSpace</div><div class="tile-meta"><span class="m-year">2026-06-19</span> · スタートアップ解剖</div><div class="tile-desc">「宇宙に持っていき、地球に持ち帰る」という唯一無二の回収技術で、ISS後時代の宇宙実験インフラを民主化するスタートアップ。東北大学の衛星技術と国…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-19_FigureAI.md">
+        <div class="tile-top"><div class="tile-name">Figure AI</div><div class="tile-meta"><span class="m-year">2026-06-19</span> · スタートアップ解剖</div><div class="tile-desc">「AIに身体を与える」という一文で最先端の投資家を集め、ヒューマノイドロボットを最初に工場に商業展開した唯一のスタートアップ。BMW工場での実稼…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-19_ICEYE.md">
+        <div class="tile-top"><div class="tile-name">ICEYE</div><div class="tile-meta"><span class="m-year">2026-06-19</span> · スタートアップ解剖</div><div class="tile-desc">「$2Mの小型SAR衛星を週1機ペースで量産し、40機超のコンステレーションで地球上どこでも天候・昼夜に関わらず1時間以内に再撮影できる」という…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-19_IonQ.md">
+        <div class="tile-top"><div class="tile-name">IonQ</div><div class="tile-meta"><span class="m-year">2026-06-19</span> · スタートアップ解剖</div><div class="tile-desc">30年の学術研究から生まれたイオントラップ型量子コンピュータで、上場量子企業で唯一GAAP売上1億ドルを突破したスタートアップ。AWSやAzur…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-18_JISDA.md">
+        <div class="tile-top"><div class="tile-name">JISDA</div><div class="tile-meta"><span class="m-year">2026-06-18</span> · CoAnal 企業解剖 + バリュエーションナラティブ分析</div><div class="tile-desc">「7万円で作り、撃って、使い捨てる」── ウクライナ前線で3年間過ごした創業者が辿り着いた、防衛ドローンの逆張り思想。高コスト・少数精鋭型の日本…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-18_KyotoFusioneering.md">
+        <div class="tile-top"><div class="tile-name">京都フュージョニアリング</div><div class="tile-meta"><span class="m-year">2026-06-18</span> · CoAnal 企業解剖 + バリュエーションナラティブ分析</div><div class="tile-desc">「核融合の金脈を掘る会社ではなく、スコップとツルハシを作る会社」── 核融合炉本体ではなく、炉を稼働させるための周辺機器・燃料サイクル・プラズマ…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-18_Solafune.md">
+        <div class="tile-top"><div class="tile-name">Solafune</div><div class="tile-meta"><span class="m-year">2026-06-18</span> · CoAnal 企業解剖</div><div class="tile-desc">衛星データ×AIで「地球を知覚する」インフラを作っている会社。コンペ型プラットフォームで世界中のエンジニアからアルゴリズムを集め、それをAPIと…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-18_Traysar.md">
+        <div class="tile-top"><div class="tile-name">Traysar</div><div class="tile-meta"><span class="m-year">2026-06-18</span> · CoAnal 企業解剖 + バリュエーションナラティブ分析</div><div class="tile-desc">「地球の地殻を第5の戦場にする」── 宇宙・空・海・陸・サイバーに続く、誰も手をつけなかった地下ドメインに特化した世界初の防衛テックスタートアッ…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="Startups/2026-06-18_京都フュージョニアリング.md">
+        <div class="tile-top"><div class="tile-name">京都フュージョニアリング（Kyoto Fusioneering）— CoAnal 企業解剖</div><div class="tile-meta"><span class="m-year">2026-06-18</span></div><div class="tile-desc">「核融合炉の&quot;周辺機器・プラント技術&quot;サプライヤー」として、どの核融合方式が主流になっても必要不可欠なインフラを供給するポジションを確立しつつあ…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  </section>
+  <section class="panel" id="panel-大企業">
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="大企業/index.html">大企業</a></span>
+      <span class="cat-count">13 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="大企業/2026-06-28_AI_inside_企業調査.md">
+        <div class="tile-top"><div class="tile-name">AI inside 株式会社（4488）企業調査レポート</div><div class="tile-meta"><span class="m-year">2026-06-28</span></div><div class="tile-desc">決算情報を見ると50億円近く</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-06-26_Samsung沿革.md">
+        <div class="tile-top"><div class="tile-name">サムスン（Samsung）沿革</div><div class="tile-meta"><span class="m-year">2026-06-26</span> · 半導体帝国の全史</div><div class="tile-desc">1938年3月1日、李秉喆（イ・ビョンチョル、Lee Byung-chul）は朝鮮総督府統治下の大邱（テグ）で「三星商会（サムスン商会）」を設立…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-06-26_TSMC沿革.md">
+        <div class="tile-top"><div class="tile-name">TSMC 沿革</div><div class="tile-meta"><span class="m-year">2026-06-26</span> · 半導体覇権の全史</div><div class="tile-desc">1986年9月2日、米国と日本は「日米半導体協定（U.S.–Japan Semiconductor Agreement）」に署名した。背景は19…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-06-23_ポラリス・キャピタル・グループ.md">
+        <div class="tile-top"><div class="tile-name">ポラリス・キャピタル・グループ</div><div class="tile-meta"><span class="m-year">2026-06-23</span> · CoAnal 企業解剖</div><div class="tile-desc">「日本型バイアウトの独立系旗手」。みずほ系金融機関の出資で2004年に産声を上げ、オーナー事業承継・大企業カーブアウト・MBOの3本柱で約48件…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-06-19_Palantir.md">
+        <div class="tile-top"><div class="tile-name">Palantir Technologies</div><div class="tile-meta"><span class="m-year">2026-06-19</span> · 解剖レポート</div><div class="tile-desc">「政府・軍の機密データを20年かけて独占し、そのOntology（意味層）の上にAIを走らせることで、民主主義陣営のAI OSになろうとしている…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-06-18_ispace.md">
+        <div class="tile-top"><div class="tile-name">ispace</div><div class="tile-meta"><span class="m-year">2026-06-18</span> · CoAnal 企業解剖</div><div class="tile-desc">「月面輸送サービス」という前人未踏の市場を独自に開拓し、着陸船・ローバーの開発を軸にペイロード輸送フィーで稼ぐ宇宙インフラ企業。ミッション1・2…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-06-17_ベインキャピタル.md">
+        <div class="tile-top"><div class="tile-name">ベインキャピタル (Bain Capital)</div><div class="tile-meta"><span class="m-year">2026-06-17</span> · CoAnal 企業解剖</div><div class="tile-desc">&gt; コンサルティングファーム出身のDNAを武器に、「オペレーション改善でリターンを生む」PE業界の異端児。AUM $225Bの総合オルタナ運用会…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-04-22_ネットイヤーグループ.md">
+        <div class="tile-top"><div class="tile-name">ネットイヤーグループ株式会社</div><div class="tile-meta"><span class="m-year">2026-04-22</span> · CoAnal 企業解剖</div><div class="tile-desc">&gt; 「大企業のデジタルマーケティングをUXから受託する、NTTデータ傘下の専門プロフェッショナルファーム」。戦略コンサルからWeb制作・SEO運…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-04-12_高砂熱学工業.md">
+        <div class="tile-top"><div class="tile-name">高砂熱学工業</div><div class="tile-meta"><span class="m-year">2026-04-12</span> · CoAnal 企業解剖</div><div class="tile-desc">「精密な空気」を売る設備工事の絶対王者。半導体工場・データセンターという時代の最大公約数需要を背景に、売上よりはるかに速い速度で利益が爆増中。1…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/2026-04-11_高砂熱学工業.md">
+        <div class="tile-top"><div class="tile-name">高砂熱学工業</div><div class="tile-meta"><span class="m-year">2026-04-11</span> · CoAnal 企業解剖</div><div class="tile-desc">「空気を制する者がインフラを制する」——高砂熱学工業は100年超の歴史を持つ空調設備工事の絶対王者。半導体工場・データセンターという時代の必然需…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/260623_AI_inside_deep_research.html">
+        <div class="tile-top"><div class="tile-name">AI inside 株式会社Deep Research Report</div><div class="tile-meta"></div><div class="tile-desc">AI-OCR国内シェア1位、DX Suiteを武器に上場した高成長スタートアップ。NTT解約ショックで売上38%蒸発という前例なき危機を経験し、…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/ANA_Holdings_企業分析レポート.md">
+        <div class="tile-top"><div class="tile-name">【ANAホールディングス】企業分析レポート</div><div class="tile-meta"></div><div class="tile-desc">※セグメント間消去後の連結売上高は2,261,800,000,000円</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/TDK_Corporation.md">
+        <div class="tile-top"><div class="tile-name">TDK Corporation</div><div class="tile-meta">企業リサーチ</div><div class="tile-desc">創業者・齋藤憲三がフェライト（酸化鉄磁性材料） の工業化を目指して設立。もとはテープ・磁気記録材料メーカーだったが、2000年代以降は電子部品・…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="大企業/三菱商事/その他/index.html">大企業 / 三菱商事 / その他</a></span>
+      <span class="cat-count">1 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="大企業/三菱商事/その他/links.md">
+        <div class="tile-top"><div class="tile-name">その他（社内メモ・転送メッセージ）</div><div class="tile-meta"></div><div class="tile-desc">出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="大企業/三菱商事/ビジネス/index.html">大企業 / 三菱商事 / ビジネス</a></span>
+      <span class="cat-count">2 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="大企業/三菱商事/ビジネス/2025-10_小島信明_地球環境ビジネス講演録.html">
+        <div class="tile-top"><div class="tile-name">地球環境をビジネスとするまで</div><div class="tile-meta"><span class="m-year">2025-10</span> · 小島信明（元三菱商事常務執行役員）</div><div class="tile-desc">三菱商事で地球環境ビジネスを立ち上げ、内外110件のプロジェクト・年間1000億円規模の投資を指揮した小島信明氏（Wanderlust顧問）の講…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">HTML</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="大企業/三菱商事/ビジネス/links.md">
+        <div class="tile-top"><div class="tile-name">ビジネス・事業関連リンク</div><div class="tile-meta"></div><div class="tile-desc">出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="大企業/三菱商事/歴史/index.html">大企業 / 三菱商事 / 歴史</a></span>
+      <span class="cat-count">1 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="大企業/三菱商事/歴史/links.md">
+        <div class="tile-top"><div class="tile-name">歴史関連リンク</div><div class="tile-meta"></div><div class="tile-desc">出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="大企業/三菱商事/経営陣/index.html">大企業 / 三菱商事 / 経営陣</a></span>
+      <span class="cat-count">1 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="大企業/三菱商事/経営陣/links.md">
+        <div class="tile-top"><div class="tile-name">経営陣・組織関連リンク</div><div class="tile-meta"></div><div class="tile-desc">出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title"><a href="大企業/三菱商事/財務/index.html">大企業 / 三菱商事 / 財務</a></span>
+      <span class="cat-count">1 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="大企業/三菱商事/財務/links.md">
+        <div class="tile-top"><div class="tile-name">財務・IR関連リンク</div><div class="tile-meta"></div><div class="tile-desc">出典: Slackスレッド https://wanderlust8848.slack.com/archives/C07A4NVV465/p178…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  </section>
+  <section class="panel" id="panel-other">
+  <div class="cat-block">
+    <div class="cat-header">
+      <span class="cat-title">companies</span>
+      <span class="cat-count">3 notes</span>
+    </div>
+    <div class="grid">
+      <a class="tile" href="2026-06-24_ダイヤモンド半導体エコシステム_Orbray_大熊DD_EDP.md">
+        <div class="tile-top"><div class="tile-name">ダイヤモンド半導体エコシステム</div><div class="tile-meta"><span class="m-year">2026-06-24</span> · Orbray / 大熊ダイヤモンドデバイス / EDP</div><div class="tile-desc">&gt; 「究極の半導体素材」ダイヤモンドを巡り、Orbray（材料製造）・大熊ダイヤモンドデバイス（量産工場）・EDP（種結晶・基板） の3社が補完…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-06-01_HRT_intern_mafia.md">
+        <div class="tile-top"><div class="tile-name">HRT 2015インターン・マフィア</div><div class="tile-meta"><span class="m-year">2026-06-01</span> · 次世代テック帝国の同窓生たち</div><div class="tile-desc">クオンツHFT最高峰のHRTに、2015年前後に集まった数学・CS天才集団が、その後 合計時価総額20兆円超 のスタートアップを創業。「次のPa…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+      <a class="tile" href="2026-04-19_メガバンク3社比較.md">
+        <div class="tile-top"><div class="tile-name">メガバンク3社 徹底解剖</div><div class="tile-meta"><span class="m-year">2026-04-19</span></div><div class="tile-desc">Olive（SMFG） ████████████████████ 圧倒的先行 えむっと（MUFG） ██████░░░░░░░░░░░░ 202…</div></div>
+        <div class="tile-bottom"><div class="tile-tags"><span class="tile-tag">MD</span></div><span class="tile-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+  </section>
+
+</main>
+<footer class="stats-footer"><div class="footer-stats"><span class="stat">43 notes</span><span class="sep">·</span><span class="stat">2 folders</span><span class="sep">·</span><span class="stat">2026.11</span></div><a class="footer-home" href="/research-notes/index.html">54111</a></footer>
+<script>
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
+  try{ history.replaceState(null,'','#'+name); }catch(e){}
+}
+(function(){ var h=location.hash.slice(1); if(h && document.getElementById('panel-'+h)) switchTab(decodeURIComponent(h)); })();
+
+let sortState = { col: 3, dir: -1 };  // 初期表示は日付の新しい順
+function sortTable(col, th){
+  const tbody = document.getElementById('coTable').tBodies[0];
+  const rows = Array.from(tbody.rows);
+  const type = th.dataset.type;
+  sortState.dir = (sortState.col === col) ? -sortState.dir : 1;
+  sortState.col = col;
+  rows.sort((a,b)=>{
+    if(type==='num'){
+      return (parseFloat(a.cells[col].dataset.sort||'0') - parseFloat(b.cells[col].dataset.sort||'0'))*sortState.dir;
+    }
+    const x = (a.cells[col].dataset.sort||a.cells[col].innerText).trim();
+    const y = (b.cells[col].dataset.sort||b.cells[col].innerText).trim();
+    return x.localeCompare(y,'ja')*sortState.dir;
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+  document.querySelectorAll('#coTable thead th').forEach(h=>{
+    h.classList.toggle('sorted', h===th);
+    h.querySelector('.arr').textContent = h===th ? (sortState.dir>0 ? '↑' : '↓') : '↕';
+  });
+}
+
+function filterTable(){
+  const q = document.getElementById('tblSearch').value.trim().toLowerCase();
+  document.querySelectorAll('#coTable tbody tr').forEach(r=>{
+    r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+/* ---- 読了トラッキング（localStorage・この端末に保存。全一覧ページ共通） ---- */
+(function(){
+  const KEY = 'rn_read_v1';
+  function load(){ try { return new Set(JSON.parse(localStorage.getItem(KEY)||'[]')); } catch(e){ return new Set(); } }
+  function save(set){ try { localStorage.setItem(KEY, JSON.stringify(Array.from(set))); } catch(e){} }
+  const read = load();
+  const rows = Array.from(document.querySelectorAll('#coTable tbody tr:not(.empty)'));
+  rows.forEach(tr=>{
+    const a = tr.querySelector('.c-name a');
+    const key = a ? new URL(a.getAttribute('href'), location.href).pathname : null;
+    const td = document.createElement('td');
+    td.className = 'c-read';
+    const isRead = key && read.has(key);
+    td.dataset.sort = isRead ? '1' : '0';
+    const ck = document.createElement('input');
+    ck.type = 'checkbox'; ck.className = 'readck'; ck.checked = !!isRead;
+    ck.setAttribute('aria-label','読了');
+    if(isRead) tr.classList.add('is-read');
+    ck.addEventListener('click', e=>e.stopPropagation());
+    ck.addEventListener('change', ()=>{
+      if(!key) return;
+      if(ck.checked){ read.add(key); tr.classList.add('is-read'); td.dataset.sort='1'; }
+      else { read.delete(key); tr.classList.remove('is-read'); td.dataset.sort='0'; }
+      save(read); updateCounter();
+    });
+    td.appendChild(ck);
+    tr.appendChild(td);
+  });
+  function updateCounter(){
+    const c = document.querySelectorAll('#coTable tbody tr.is-read').length;
+    const el = document.getElementById('readCounter');
+    if(el) el.textContent = c + ' / ' + rows.length + ' 読了';
+  }
+  updateCounter();
+})();
+</script>
 </body>
 </html>

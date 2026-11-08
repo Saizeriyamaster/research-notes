@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>藤田晋</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-logos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero-logo { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 10px; padding: 8px 14px; }
+.hero-logo img { height: 26px; width: auto; display: block; }
+.hero-logo .role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; border-left: 1px solid var(--border); padding-left: 10px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-08</span>
+  </div>
+  <div class="hero-logos">
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgdmlld0JveD0iMCAwIDM0NCA1OC42NjY2NjgiCiAgIGhlaWdodD0iNTguNjY2NjY4IgogICB3aWR0aD0iMzQ0IgogICB4bWw6c3BhY2U9InByZXNlcnZlIgogICBpZD0ic3ZnMiIKICAgdmVyc2lvbj0iMS4xIj48bWV0YWRhdGEKICAgICBpZD0ibWV0YWRhdGE4Ij48cmRmOlJERj48Y2M6V29yawogICAgICAgICByZGY6YWJvdXQ9IiI+PGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+PGRjOnR5cGUKICAgICAgICAgICByZGY6cmVzb3VyY2U9Imh0dHA6Ly9wdXJsLm9yZy9kYy9kY21pdHlwZS9TdGlsbEltYWdlIiAvPjwvY2M6V29yaz48L3JkZjpSREY+PC9tZXRhZGF0YT48ZGVmcwogICAgIGlkPSJkZWZzNiIgLz48ZwogICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMzMzMzMzMywwLDAsLTEuMzMzMzMzMywwLDU4LjY2NjY2NykiCiAgICAgaWQ9ImcxMCI+PGcKICAgICAgIHRyYW5zZm9ybT0ic2NhbGUoMC4xKSIKICAgICAgIGlkPSJnMTIiPjxwYXRoCiAgICAgICAgIGlkPSJwYXRoMTQiCiAgICAgICAgIHN0eWxlPSJmaWxsOiM4MmJlMjg7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIGQ9Im0gMjYyLjAzMSwyMDMuNzE5IGMgLTEzLjgzMiwxMC40NzIgLTI4LjAxMSw3IC00MC42MjEsLTMuNTkgLTIzLjk4OCwtMjAuMTYgLTQ0Ljg5LC0yNS4yNyAtNjQuMTgsLTIyLjUzOSAtMjYuMDE5LDMuNjcyIC01Ny41ODE2LDI2LjMzMiAtNTcuNTgxNiw3Mi4yMyAwLDQ1Ljk0MiAzMy4wMTE2LDc0Ljg0IDYwLjEyMTYsNzcuMjU4IDE0LjE3OSwxLjUzMSAyOC40MjksLTEuNTE5IDQwLjY5OSwtOC43NSAxMC4zNTEsLTYuMTY4IDE5LjgwMSwtMTMuNzg5IDI4LjA4MiwtMjIuNTY2IDEwLjUwOCwtOS44NTIgMjcuMTQ4LC04Ljg3MSA0MS40NDksMC4xODcgMTguNjcyLDExLjkxIDM0LjczLDM5LjY1MyAzOS4wMiw1OC41MiA0LjIxOCwxOC42NzIgMCwzMC45NzIgLTE3LjgwOSwzOC40NzIgLTguNzExLDMuNDgxIC0xNy4xNTIsNy41NzkgLTI1LjIzMSwxMi4zMDkgLTI1LjI4MSwxNS4xOTEgLTU1LjcxLDM1Ljk0MSAtMTExLjI4OSwzNC4yNjIgQyA2Ny44OTA2LDQzNi44NTIgMCwzNTEuNDIyIDAsMjQ3Ljc1IDAsMTQ0LjA3OCA2Ny44NTE2LDYzLjE3OTcgMTU0LjY5MSw2NC45Njg4IGMgMjUuOTMsMC42MzI4IDUxLjM5OSw2Ljk2MDkgNzQuNjEsMTguNjAxNSAxMyw2LjI4OTEgMjYuNTE5LDExLjQ4MDUgNDAuMzksMTUuNDY4OCAxNS4yNyw0LjY3OTkgMjYuNDgxLDE1LjA2OTkgMjQuNjg4LDM4Ljk0MDkgLTEuNTI3LDIwLjk4MSAtMTcuNTM5LDU0LjQ2MSAtMzIuMzQ4LDY1LjczOSB6IiAvPjxwYXRoCiAgICAgICAgIGlkPSJwYXRoMTYiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMyZDhjM2M7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgICAgIGQ9Im0gNTQ2Ljk4OCwxMDYuNTc4IGMgLTIuOTI5LDEwLjMxMyAtNy40NTcsMjAuMTEzIC0xMy4zOTgsMjkuMDYzIC01LjQ2OSw5LjQxIC0xMC4xOTIsMTkuMTc5IC0xNC4yNSwyOS4zIC0xMy45ODgsMzYuMDA4IC0yNC44NTIsNzMuMjM5IC0zMi40MywxMTEuMTI5IC05LjI1LDQwLjk2OSAtMjAuMzksOTcuMDMyIC0yNC4zNzEsMTE1LjczOSAtNC41NywyMS42NzkgLTE0LjczLDM1LjIwMyAtMjcuNDE4LDQxLjA1IC05LjY5MSwzLjM2IC0xOS45MjIsNC44MTMgLTMwLjE2LDQuMjYyIC05LjI2MiwwLjExNyAtMTcuMzgzLDAuMDc4IC0yNS43ODEsMC4wNzggLTguNDQyLDAgLTE2LjUyLDAgLTI1LjgyMSwtMC4wNzggLTEwLjIzOCwwLjU1MSAtMjAuNDY4LC0wLjkwMiAtMzAuMTYsLTQuMjYyIC0xMi42ODcsLTUuODQ3IC0yMi44NDcsLTE5LjM3MSAtMjcuNDE4LC00MS4wNSAtMC4wODIsLTAuMjcgLTAuMTYsLTAuNjE4IC0wLjE5MSwtMC45MzggMTQuMTQsLTcuNjA5IDE3LjM3OSwtMTkuMzMyIDEzLjUxMiwtMzYuMzU5IC00LjMwMSwtMTguOTEgLTIwLjM1MiwtNDYuNjUzIC0zOS4wMjQsLTU4LjUyNCAtMTQuMjk3LC05LjA5NyAtMzAuOTM3LC0xMC4wMzkgLTQxLjQ0OSwtMC4xOTkgLTguMjc3LDguNzg5IC0xNy43MzEsMTYuNDEgLTI4LjA3OCwyMi41ODIgLTEyLjI3LDcuMjMxIC0yNi41MzEsMTAuMjc3IC00MC43MTEsOC43NSAtMjcuMTEsLTIuNDIyIC02MC4xMDk1LC0zMS4zNTkgLTYwLjEwOTUsLTc3LjI2MiAwLC00NS44OTggMzEuNTU4NSwtNjguNTk3IDU3LjU3MDUsLTcyLjI2OSAxOS4zMDEsLTIuNzMxIDQwLjE2LDIuNDIyIDY0LjE3OSwyMi41ODIgMTIuNjIyLDEwLjU5IDI2LjgwMSwxNC4wNTggNDAuNTksMy41NDcgMTQuODQsLTExLjI1IDMwLjg2LC00NC43NTggMzIuNDE4LC02NS42OTkgMS44MDEsLTIzLjgyOSAtOS40MSwtMzQuMjU4IC0yNC42ODcsLTM4Ljk0MTkgLTEzLjkwMywtMy45ODgzIC0yNy40MjIsLTkuMTM2NyAtNDAuNDIyLC0xNS40Njg3IC0wLjY2OCwtMC4zMjAzIC0xLjMyOCwtMC41ODk5IC0yLC0wLjg5ODUgNS40NzMsLTguNDAyMyAxNi4wNjIsLTEyLjg1MTUgMzAuODU5LC0xMy44NzExIDE2LjQxLC0xLjA4OTggMzIuODkxLC0xLjI4OSA0OS4zNCwtMC41NzgxIDE5LjQxLDAuNDI5NyAzMy4wMTIsOS4xMzY3IDM4LjQ3MywyMi4yMTg4IDIuNTM5LDguMjEwOSA2LjE3OSwxNi4wMTk1IDEwLjgyOCwyMy4yMzg1IDExLjk0OSwxMy4xNzIgMzIuNjUyLDEzLjE3MiA0NC42MDEsMCA0LjY5MiwtNy4yMTkgOC4zMjEsLTE1LjAyNzYgMTAuODYsLTIzLjIzODUgNS41MTIsLTEzLjA4MjEgMTkuMDcsLTIxLjc4OTEgMzguNDgsLTIyLjIxODggMjMuNDQyLC0wLjUxMTcgNDcuMDMyLC0wLjI0MjIgNjMuMTI5LDAuNTc4MSA4LjkwMywtMC40Njg3IDE3LjYxLDIuNSAyNC4zMzIsOC4zMjA0IDcuNjk5LDcuNjk5MiAxMC45ODEsMTguNzg5IDguNzA3LDI5LjQxNzggeiBtIC0xNjcuODQ3LDkyLjUzMSBjIC0zMC43ODIsMCAtMzcuMjYyLDMxLjEwMiAtMjguNzExLDYwLjI0MyA5Ljc2OSwzMy4xNiAyMC4zMDgsMzcuMzc4IDI4LjcxMSwzNy4zNzggOC4zNTksMCAxOC45MSwtNC4yMTggMjguNjY4LC0zNy4zNzggOC41NjIsLTI5LjE0MSAyLjA3LC02MC4yNDMgLTI4LjY2OCwtNjAuMjQzIHoiIC8+PHBhdGgKICAgICAgICAgaWQ9InBhdGgxOCIKICAgICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIKICAgICAgICAgZD0ibSAxMzc1LjQzLDI2Ni41MzkgYyAwLDUwLjg1OSAtMzkuODQsNTguNDAyIC02My41OSw1OC40MDIgLTY2LjAyLDAgLTk2LjEsLTU3Ljc4MSAtOTYuMSwtMTExLjQ1MyAwLC02Ni41MTkgMzAuNzQsLTEwMC4zMDggOTEuMjksLTEwMC4zMDggMjEuNzIsMC4wMzkgNDMuMDUsNS4zNTEgNjIuMjMsMTUuNTM5IGwgLTAuMiw0Mi44MiBjIC0xNS45LC0xMS4wMTkgLTM0LjQ5LC0xNy40MyAtNTMuNzksLTE4LjUxOSAtMjIuODksMCAtNDMuMTYsMTMuMjgxIC00NS4xNSw0NSA1Ni4yOSwyLjk2OCAxMDUuMzEsMTkuODM5IDEwNS4zMSw2OC41MTkgeiBNIDEyNzAuMTIsMjI4LjE4IGMgMS43Miw1MS43ODkgMjMuODMsNjAuMjMgMzguMTIsNjAuMjMgMTIuMzUsMC4yMzggMjIuMTUsLTEwLjM1MSAyMC45OCwtMjIuNjkxIDAuMDQsLTIxLjI1IC0yMi44MSwtMzUuMDM5IC01OS4xLC0zNy41MzkgeiBNIDc2My4wNTEsMTg4LjEwMiA4MDMuNTIsMTU4LjAyIGMgLTIwLjA3OSwtMjguMzIxIC01Mi44OTksLTQ0Ljg0IC04Ny41NzksLTQ0LjE4IC02Mi43NDIsMCAtMTEzLjU2Miw0Ny4zNzkgLTExMy41NjIsMTM2Ljc2MiAwLDg1LjU4OSA1MC44MiwxMzYuNzE4IDExMy41NjIsMTM2LjcxOCAzNC40NSwwLjI3IDY2LjkxMSwtMTYuMzMyIDg2LjgyOSwtNDQuNDkyIEwgNzYyLjUsMzEyLjk0MSBjIC05LjczLDE1Ljc3OCAtMjYuNjQxLDI1LjY2OCAtNDUuMTYsMjYuNDExIC0zMS45ODgsMCAtNTcuOTYxLC0zMy4yMDQgLTU3Ljk2MSwtODguNzUgMCwtNTguMDUxIDI1Ljk3MywtODguNzUgNTcuOTYxLC04OC43NSAxOC42OCwwLjUwNyAzNS44NTksMTAuMzQ3IDQ1LjcxMSwyNi4yNSB6IE0gOTgzLjc4OSwzMTcuMTYgSCA5MjguNTIgViAxOTUuNTIgYyAwLC0yMi41NzkgLTkuOTMsLTMxLjQ0MiAtMjcuMTEsLTMxLjQ0MiAtMTcuMTQ4LDAgLTI2Ljc2MiwxMC4xNTIgLTI2Ljc2MiwzMS40NDIgdiAxMjEuNjc5IGggLTU1LjI2OSB2IC04OC41MDggYyAtMC44MjgsLTE4LjYwMSAwLjQyMiwtMzcuMTkxIDMuNzQyLC01NS41MTEgNS44MjgsLTIxLjc1OCAyMi40NjksLTM2LjI4OSA1My4zNTksLTM5LjczMSAtMjcuMDMxLC0xNy4xMDkgLTQ2LjY3OSwtNDEuMjEwNyAtNDYuNjc5LC03Mi4xMDkyIDAsLTMyLjg5MDYgMjUuNzUsLTUxLjI4OSA2Ni40ODgsLTUxLjI4OSA1NC43NjIsMCA4MC45NDEsMzUuMjc3MyA4NS4yMzEsODcuNjYwMSAyLjQyOSwyOS4yNTgxIDIuMjY5LDUxLjY0MTEgMi4yNjksNjIuNzY5MSBWIDMxNy4yMzggWiBNIDkzMC4wNzgsOTguMzI4MSBjIC0wLjYyOSwtMTguNTg5OCAtMS43NTgsLTUxLjA0NjkgLTI4Ljg2NywtNTEuMDQ2OSAtMTQuMjIzLDAgLTIzLjQwMiwxMC4wMzkxIC0yMy40MDIsMjUuNTQ2OSAwLDI1LjQzMzYgMjAuMjgxLDU2LjA5MzkgNTIuMjY5LDY5LjI5MjkgaCAwLjA4MiBjIDAuMTEsLTUuMjMgMC41NzgsLTI1LjIzIC0wLjA4MiwtNDMuNzkyOSB6IE0gMjM0MC4yMywyNTcuOTQxIHYgLTEzOC4xNiBoIC01NS4wNyB2IDEyMS4yMDcgYyAwLDE0LjE0MSAtMy45OSwzNS4xMjEgLTI3LDM1LjEyMSAtMTguNzUsMCAtMjkuODgsLTE3LjY2IC0yOS44OCwtMzkuNTcgViAxMTkuNzgxIGggLTU1LjUxIGwgMC4xMiwxOTcuNTc4IGggNTAuMTIgdiAtMjkuNjQ4IGMgMTMuNTksMjYuODY3IDM0LjMzLDM3LjIzIDU3LjExLDM3LjIzIDM4LjI4LDAgNjAuMTEsLTIyLjU0MyA2MC4xMSwtNjcgeiBtIC0xMjIyLjA3LDY3IGMgLTE1LjcsMC4wNzEgLTMwLjk3LC00LjkyOSAtNDMuNTksLTE0LjIyMiB2IDcwLjk3MiBIIDEwMTkuMyBWIDEyOC4yODkgYyAyNC42MSwtOS45MTggNTAuOTMsLTE1LjA3IDc3LjUsLTE1LjEwOSA2Mi4zNCwwIDk1LjIzLDM5Ljg0IDk1LjIzLDExNS4xNDggMCw2My4yMTEgLTI1LjUxLDk2LjYxMyAtNzMuODcsOTYuNjEzIHogbSAtMTguMiwtMTc1LjY3MSBjIC04LjgzLC0wLjA3OSAtMTcuNTQsMS45NDkgLTI1LjM5LDYuMDE5IC0wLjQ3LDE5LjUzMSAtMC43NCw4OS41MzEgMCwxMDcuMTggLTAuMDgsMTQuMjIyIDExLjUyLDI1Ljc1IDI1Ljc4LDI1LjU1MSAzNi44NCwwIDM2Ljg0LC00OS45MTggMzYuODQsLTY4Ljc1IDAuMDQsLTM0LjU3MSAtNC40MiwtNzAgLTM3LjE5LC03MCB6IG0gMTMzMC41MSwxNjguMDg5IGggNDkuNDkgViAyNzUuMDkgaCAtNDkuNDkgdiAtNzIuOTMgYyAtMC44MiwtMTEuMDUxIDAuMTksLTIyLjE5MSAzLjAxLC0zMi45MyA0LjIyLC0xMC41ODIgMTUsLTE3LjA3IDI2LjMyLC0xNS44MiA3LDAuNTUxIDEzLjgzLDIuMzc5IDIwLjE2LDUuNDY5IHYgLTM3LjY4OCBjIC0xMi45MywtNS4yMDMgLTI2Ljc2LC03LjkyOSAtNDAuNjYsLTcuOTcyIC0zOS40MiwwIC01NC44OSwxNC4xNzkgLTYwLjcxLDM2LjI5MyAtNC4xLDE1LjYxNyAtMy42Myw0Ny41IC0zLjYzLDc1LjczOCB2IDE1Ni40NDEgaCA1NS41MSB6IG0gLTQ3Ni4zMywtNi45MTggYyAtMjQuMzQsOS40MTggLTUwLjE2LDE0LjI1OCAtNzYuMjUsMTQuMzQgLTYzLjQ4LDAgLTk3LjI3LC00Mi43NjkgLTk3LjI3LC0xMDEuODQgMCwtNTAuNDcyIDMxLjY1LC04Mi4yNjEgNjcuMTEsLTg4LjkwMiAtMjcuNSwtMTcuMTg3IC00Ny41NywtNDEuNTI3MyAtNDcuNTcsLTcyLjczODIgMCwtMzIuODkwNiAyNS43OCwtNTEuMjg5MSA2Ni40OCwtNTEuMjg5MSA1NC43NywwIDgwLjk0LDM1LjI3NzQgODUuMjQsODcuNjYwMiAyLjQyLDI5LjIxOTEgMi4yNiw1MS42MzcxIDIuMjYsNjIuNzI2MSB6IG0gLTExOC43NSwtOTEuMzYzIGMgMCw0NC44ODMgMTguNTIsODEuMjUgNjMuNTIsNjUuMDcgViAxOTUuNTIgYyAwLC0yMi41NCAtOS45MywtMzEuNDExIC0yNy4wNywtMzEuNDExIC0xNy4xNSwwIC0zNi40NSwxMC4wMzkgLTM2LjQ1LDU0Ljk2OSB6IG0gNjUuMTIsLTEyMC43NDk5IGMgLTAuNjcsLTE4LjU4OTggLTEuOCwtNTEuMDQ2OSAtMjguOTEsLTUxLjA0NjkgLTE0LjIyLDAgLTIzLjQsMTAuMDM5MSAtMjMuNCwyNS41NDY5IDAsMjUuNDMzNiAxNy43LDUzLjA0MjkgNTIuMzEsNjkuMjkyOSBoIDAuMDQgYyAwLjExLC01LjIzIDAuNTgsLTI1LjIzIC0wLjA0LC00My43OTI5IHogTSAyMTQxLjE3LDI2Ni41IGMgMCw1MC44NTkgLTM5Ljk2LDU4LjM5OCAtNjMuNjMsNTguMzk4IC02Ni4wMiwwIC05Ni4wNiwtNTcuNzM4IC05Ni4wNiwtMTExLjQxIDAsLTY2LjU1OCAzMC43MSwtMTAwLjMwOCA5MS4yOSwtMTAwLjMwOCAyMS43MiwwLjAzOSA0My4wNSw1LjM1MSA2Mi4xOSwxNS41MTEgbCAtMC4xNiw0Mi44MDkgYyAtMTUuODksLTEwLjk4IC0zNC41MywtMTcuMzkxIC01My44MiwtMTguNTIgLTIyLjg5LDAgLTQzLjI1LDEzLjI4MiAtNDUuMTYsNDUgNTYuMzMsMy4wMDggMTA1LjMxLDE5Ljg3OSAxMDUuMzEsNjguNTU5IHogbSAtMTA1LjM1LC0zOC4zNTkgYyAxLjY4LDUxLjggMjMuODMsNjAuMjY5IDM4LjE2LDYwLjI2OSAxMi4zNSwwLjIzOCAyMi4xNSwtMTAuMzkgMjAuOTgsLTIyLjY5MSAwLC0yMS4yNSAtMjIuODEsLTM1LjAzOSAtNTkuMTQsLTM3LjUzOSB6IG0gLTQwNy44OSwxNTMuNTUgLTgxLjYsLTI2MS45NTMgaCA1My4wNSBsIDE3LjE0LDU0LjkyMiBoIDkxLjI5IGwgMTcuMTEsLTU0LjkyMiBoIDUzLjA1IGwgLTgxLjU2LDI2MS45NTMgeiBtIDEuODcsLTE2NC4xMDEgMzIuMzUsMTAzLjc1IDMyLjI2LC0xMDMuNzUgeiBtIC0xMjYuNiwxMDMuMjM4IGMgOS44NSwwLjcxMSAxOS42MSwtMS43MTkgMjguMDUsLTYuODI4IHYgLTUwIGMgLTkuNjksNS44OTggLTIwLjk0LDguNjI5IC0zMi4yNyw3LjgwOSAtMjEuMDUsLTEuODQgLTM3LjEsLTE5LjY4OCAtMzYuNjgsLTQwLjg2IFYgMTE5LjczOCBoIC01NS4xMSB2IDE5Ny40NjEgaCA0OS42MSB2IC0zMS41OTcgYyA3LjQ2LDE5LjY0OCAyNS40NywzMy4zMiA0Ni40LDM1LjIyNiB6IE0gMjU1OC45MSwxNTQuMTA5IGMgMS4xMywxLjY1MyAxLjcxLDMuNTYzIDEuNzEsNS41NTEgLTAuMDMsMi42MjEgLTEuMTMsNS4xMjEgLTMuMDgsNi44NzkgLTIuNjIsMi4zMDEgLTYuMDIsMy40NzMgLTkuNDksMy4xOTkgaCAtMTUuNzEgdiAtMzYuNDc2IGggNS4zOSB2IDE2LjAwOCBoIDUuODIgbCAxMC43MSwtMTYuMDA4IGggNi40NCBsIC0xMC43NCwxNi4xMjkgYyAzLjUyLDAuMjMgNi43NiwxLjk0OSA4Ljk1LDQuNzE4IHogbSAtMjEuMTgsMTAuOTQyIGggMTAuMzIgYyAxLjc1LDAuMDc4IDMuNTEsLTAuNDMgNC45NiwtMS40NDIgMS4yOSwtMC44OTggMS45OSwtMi4zNDcgMS45MSwtMy45MSAwLjA0LC0xLjQ4IC0wLjYyLC0yLjkyOSAtMS44MywtMy44NzEgLTEuNTcsLTEuMjg5IC0zLjYsLTEuOTA2IC01LjY3LC0xLjc1IGggLTkuNjkgeiBtIDcuNjIsMTYuOTYxIGMgLTI3LjMsMCAtNDEuMDEsLTMzLjA1MSAtMjEuNjgsLTUyLjM1MiAxOS4zLC0xOS4zMzIgNTIuMzUsLTUuNjYgNTIuMzUsMjEuNjQxIDAsMTYuOTYxIC0xMy43MiwzMC42NjggLTMwLjY3LDMwLjcxMSB6IG0gMCwtNTUuODY0IGMgLTIyLjQyLDAuMDQzIC0zMy42MywyNy4xNDEgLTE3Ljc3LDQzIDE1LjksMTUuODY0IDQzLjAxLDQuNjE0IDQyLjk3LC0xNy44NDcgMCwtMTMuOTAzIC0xMS4yOSwtMjUuMTUzIC0yNS4yLC0yNS4xNTMgeiIgLz48L2c+PC9nPjwvc3ZnPg==" alt="CyberAgent"><span class="role">Founder / CEO 1998–2025 / Chairman 2025–</span></div>
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcKICAgd2lkdGg9IjY3NS43MTk0MiIKICAgaGVpZ2h0PSIxNTMuMzU5MDIiCiAgIHZpZXdCb3g9IjAgMCA2NzUuNzE5NDIgMTUzLjM1OTAyIgogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZwogICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5Mi44ODQ1MSwtMTc0LjA4MTMxKSI+PHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwMDAiCiAgICAgICBkPSJtIC0zODEuNDgzMzEsMzI3LjIwMDUyIGMgLTUuMDY4ODksLTAuODQwODIgLTEwLjIwMTY2LC01LjgxMzY2IC0xMS4xMjg5NCwtMTAuNzgyMTggLTAuMzY0ODksLTEuOTU1MTQgLTAuMzYyMTIsLTg5LjMzODMzIDAuMDAzLC05My4yOTU2NiAxLjA2ODM1LC0xMS41ODA2MSA0LjM0ODk1LC0yMC4xMTU1OCAxMC45ODM0MywtMjguNTc1IDEuOTE3ODUsLTIuNDQ1MzkgNi4wOTg4MSwtNi42MzYzOCA4LjU5MTM4LC04LjYxMTk4IDcuMjU0MzksLTUuNzQ5ODIgMTYuMjM5OTUsLTkuNjcxMjEgMjUuODI5MjUsLTExLjI3MjE2IDQuMjYxNzMsLTAuNzExNSAxMi44NDM4LC0wLjY0MjUgMTcuMTUxMDIsMC4xMzc4OSAxMS4yNDcyMywyLjAzNzc5IDIwLjgxNTc1LDYuODU2NDkgMjguNjg2MTMsMTQuNDQ2MyA5LjU2NzIsOS4yMjYxNSAxNC45MTIsMjAuNjE0ODYgMTUuODk3NzUsMzMuODc0OTUgMC4xNzUwNSwyLjM1NDc2IDAuMjc0MDgsMTkuNzUyNTMgMC4yNzE4NSw0Ny43NTcyOSAtMC4wMDMsMzcuMjQ2NTYgLTAuMDYyMiw0NC4zMjk4OCAtMC4zODMwOCw0NS44NDQzMSAtMi4yMTMwMSwxMC40NDM0MyAtMTUuODMyMjcsMTQuMTQ3OTcgLTIzLjU1Niw2LjQwNzQgLTEuNzYwNTQsLTEuNzY0MzcgLTIuNzg3NjQsLTMuNDc4OTIgLTMuNDk2NzMsLTUuODM3MTQgLTAuNDI5ODIsLTEuNDI5NDcgLTAuNDcxNDEsLTIuOTkwNzMgLTAuNDcxNzIsLTE3LjcwNzI4IC0xLjllLTQsLTguODc2NzcgLTAuMDk2NywtMTYuMjg4NDEgLTAuMjE0NCwtMTYuNDcwMzEgLTAuMTY4ODEsLTAuMjYwODMgLTUuNjI2MzUsLTAuMzMwNzMgLTI1LjgyMjgxLC0wLjMzMDczIGggLTI1LjYwODc2IGwgLTAuMTcyNSwyLjgxOTI5IGMgLTAuMDk0OSwxLjU1MDYgLTAuMTcyNSw4Ljg2NzA5IC0wLjE3MjUsMTYuMjU4ODUgMCw4Ljc2MjA1IC0wLjEwMTQ1LDEzLjkyNzU1IC0wLjI5MTQ5LDE0Ljg0MTY1IC0xLjA3MjU1LDUuMTU4OTQgLTUuNjgxMzIsOS40MTE4OCAtMTEuMjgxMjksMTAuNDEwMjcgLTIuMzEzNjMsMC40MTI0OCAtMi43ODQ5NywwLjQyMDczIC00LjgxMzU1LDAuMDg0MiB6IG0gNjguMDkzNDcsLTcyLjA4MjE1IGMgMC4zNjczNiwtMC4zNjczNiAwLjQxNTc4LC0yLjAyNDI0IDAuNDE1NzgsLTE0LjIyODMgMCwtNy45MDkyMyAtMC4xMTcxNSwtMTQuNzcwNzMgLTAuMjc0MTEsLTE2LjA1NDU0IC0xLjc1OTg4LC0xNC4zOTQ1NiAtMTQuMTI0NzgsLTI0LjYwMzE1IC0yOC4xNjg2LC0yMy4yNTYyOSAtMTEuMDI4MTksMS4wNTc2NSAtMTkuODMyMjYsOC42NTk1OCAtMjIuODA1MjUsMTkuNjkxMzYgbCAtMC43MTMwMywyLjY0NTgzIC0wLjA5OTcsMTUuMzc0MzcgYyAtMC4wOTA3LDEzLjk4NzUxIC0wLjA2MDUsMTUuNDEzNTYgMC4zMzQ4MSwxNS44MDg4NSAwLjM5Njg1LDAuMzk2ODUgMi42MTk5MSwwLjQzNDQ5IDI1LjY2NDQsMC40MzQ0OSAyMi41ODM1LDAgMjUuMjczNTIsLTAuMDQzNiAyNS42NDU2OCwtMC40MTU3NyB6IG0gNDQzLjQ2MDU2LDcyLjEwNjQgYyAtNS42MjIyOCwtMC43MzkwOCAtMTAuMDE0NTIsLTQuNTgwMjYgLTExLjcwNTI4LC0xMC4yMzY3MSAtMC40MjI2MSwtMS40MTM4MyAtMC40NjYxMywtNS4yMjQ0IC0wLjU5MzExLC01MS45Mjg5MiAtMC4xMzEwNywtNDguMjEyMzEgLTAuMTU4MzIsLTUwLjQ2MDYzIC0wLjYyNjg2LC01MS43MjYwNCAtMS43NDQzNCwtNC43MTEwNyAtNC42OTEyNSwtOC4wNDA3NCAtOS4wMzUxNywtMTAuMjA4NzIgLTMuNzc3LC0xLjg4NTA0IC03LjczODc2LC0yLjIxNTY5IC0xMS43Njk1MywtMC45ODIzIC01Ljg2NzM2NywxLjc5NTM4IC05Ljg5MDY1Niw1Ljg4Mjc3IC0xMS42NzA4NTIsMTEuODU2OCAtMC41ODMxNTksMS45NTY5OCAtMC41OTI0MTYsMi4yNDk4NSAtMC43OTQzMTUsMjUuMTMxMDkgLTAuMTEyMzU0LDEyLjczMzA4IC0wLjE5OTY2MywzNC45OTc3NiAtMC4xOTQwMjEsNDkuNDc3MDggMC4wMDc1LDE5LjIzNDc3IC0wLjA3NDQ1LDI2Ljc4OTMgLTAuMzA0MjM3LDI4LjA0NTg0IC0wLjY1NTkwNywzLjU4Njc2IC0zLjMwNTkzNyw3LjIxOTY5IC02LjQ5NTMxMyw4LjkwNDQ1IC0yLjM1NTU2MSwxLjI0NDMgLTQuMTM0NjU1LDEuNjc5MyAtNi44NTM2MTgsMS42NzU3NCAtNC4xNTkxMjMsLTAuMDA1IC03LjEwNDE5NCwtMS4xNTMzOSAtOS44MzkzOTgsLTMuODM1MjggLTEuOTgxODk1LC0xLjk0MzI2IC0zLjM3NzM5NCwtNC42MjM1OSAtMy43ODcyLC03LjI3NDA4IC0wLjE2Njg3LC0xLjA3OTI2IC0wLjMxODk5MywtMTkuODIyNjEgLTAuNDA4NDQxLC01MC4zMjQ3OSAtMC4xNTkxMDYsLTU0LjI1NTg0IC0wLjAzNjM1LC01MC45MjU5MiAtMi4wMjY3MzksLTU0Ljk3OTM3IC0zLjQzNTI3MiwtNi45OTYgLTEyLjE2NDM0LC0xMC45NjY0MiAtMTkuMjY4ODk1LC04Ljc2NDQ4IC02LjU3NTQyOSwyLjAzNzk2IC0xMC40OTk0MjksNS45MzIwNCAtMTIuMjU2NzQzLDEyLjE2MzI4IGwgLTAuNTcxMTI1LDIuMDI1MTUgLTAuMTM5MTY2LDUwLjQwMzEzIC0wLjEzOTE2NSw1MC40MDMxMiAtMC42MTQyMTcsMS40NTUyMSBjIC0xLjgwMTQ1NCw0LjI2ODAyIC01LjEwNTY5Miw3LjI2MzI1IC05LjE4NDYxNyw4LjMyNTY3IC0xLjk5NTk4MzYsMC41MTk4OSAtNS42NTg0MzA2LDAuNTE5ODkgLTcuNjU0NDE0OSwwIC01LjI1NTYzMTcsLTEuMzY4OTIgLTkuMjM0NDM4OSwtNS45Nzk5NCAtOS45MTc4Mjg5LC0xMS40OTM3MyAtMC4zNzk2MjQsLTMuMDYyOTIgLTAuMzgzNjI0LC05Ny4xNjgxNyAtMC4wMDQzLC0xMDEuMjEwMDYgMC44NDQxOTUzLC04Ljk5NTQgNC43ODIwMzM2LC0xOC4wMDgwMyAxMC44OTkyNTc1LC0yNC45NDU0MSA2LjQ0NTA3MjMsLTcuMzA5MTkgMTUuMzk1MDQ2MywtMTIuMzc1ODggMjUuNDU2OTA1MywtMTQuNDExNDcgMi41MDYzMDcsLTAuNTA3MDQgMy43NDA1MTIsLTAuNTkwMDkgOC42MTQwMDYsLTAuNTc5NjMgNC44NzM0NjksMC4wMTA1IDYuMDg2NiwwLjA5NzcgOC40NjY2NjYsMC42MDg2IDcuNTgyNTY0LDEuNjI3NzcgMTMuOTU4NjUyLDQuNzA1IDIwLjA5MDU5NSw5LjY5NjEzIGwgMi4wNzU4NSwxLjY4OTY2IDEuODE1MjE1LC0xLjQ1ODA1IGMgMTEuMTE4NTE2LC04LjkzMDgyIDIzLjcwODk0OSwtMTIuMjY3ODQgMzcuNDA3NDAxLC05LjkxNDYzIDE1Ljg5NDUzLDIuNzMwNDkgMjkuNDE1OTIsMTQuMzU3MTEgMzQuNDkwNywyOS42NTc1MSAyLjAzNjMsNi4xMzkzOCAxLjg1NjA0LDAuNjYzMDggMS45NDU4NSw1OS4xMTUyMSAwLjA3MjksNDcuNDc0OTMgMC4wNDA3LDUyLjUwNTA0IC0wLjM0NDg2LDUzLjgzMTQgLTEuOTAxMjMsNi41Mzk5OCAtOC4yODg0NSwxMC42OTkxNSAtMTUuMDYzMDMsOS44MDg2IHogbSA1Ni4yMjM5NSwtMC4wMDUgYyAtMC44MDAzNiwtMC4xMzcyMiAtMi4zNDgxOCwtMC42ODU4NCAtMy40Mzk1OCwtMS4yMTkxNCAtMy4yOTc1OCwtMS42MTEzMyAtNS43MDQ5MiwtNC41MzE3OCAtNy4wNTExNiwtOC41NTQwOSAtMC40NjM2LC0xLjM4NTEzIC0wLjQ5MDk5LC0zLjUxMjk2IC0wLjU2ODc2LC00NC4xODU0MiAtMC4wODI3LC00My4yNjY2NyAwLjAxNTEsLTQ5LjMyMTIyIDAuODkxMDcsLTU1LjE1MzM1IDIuMTA5NjUsLTE0LjA0NTgyIDEwLjU5NTE5LC0yNi45MzI1MyAyMy4xMzMwMSwtMzUuMTMxMzUgMTcuMTY4MzYsLTExLjIyNjg0IDM5LjQ5MTU4LC0xMS44NzY0NSA1Ny4wMTMzNiwtMS42NTkxIDkuMjc1MTcsNS40MDg1NiAxNi43MTUxOCwxMy4zNTM5MSAyMS4yODc4LDIyLjczMzcyIDIuNTI3MzYsNS4xODQzNiA0LjA2ODc5LDEwLjE5NDczIDQuODA5MTUsMTUuNjMxOTYgMC40NDc1OSwzLjI4NzE2IDAuNjYyOTgsOTMuODk5MjggMC4yMjkyNCw5Ni40NDA2MiAtMC44NzA2Myw1LjEwMTE4IC00Ljg0MDEsOS4zODE5NyAtOS45Mjg2NywxMC43MDczNyAtMS45NzYyNiwwLjUxNDc2IC01LjM5MDIsMC41MTk5MyAtNy4zNDM1NywwLjAxMTEgLTQuNTM5NTUsLTEuMTgyNCAtNy43ODU1OSwtNC4xNzQwMyAtOS41MjQ5OCwtOC43Nzg0NyAtMC41NzI5MSwtMS41MTY1OCAtMC41ODUyMywtMS44MzI1NiAtMC43MTUyNCwtMTguMzQ0MiBsIC0wLjEzMjMsLTE2LjgwMTA0IC0yNS42NDgxNCwtMC4wNjc1IGMgLTIwLjM0MzY1LC0wLjA1MzUgLTI1LjY5MTc2LDEwZS00IC0yNS44NTg5NywwLjI2NDU4IC0wLjExNTk1LDAuMTgyNjMgLTAuMjEyNjUsNy40MjEwMiAtMC4yMTQ4NywxNi4wODUzMiAtMC4wMDMsMTMuMjI1NDcgLTAuMDY4NywxNi4wMDYzIC0wLjQwNjY1LDE3LjMzMDIgLTEuMjcxMTcsNC45NzkxIC00Ljk3NjYxLDguODM3NjcgLTkuODY1NjUsMTAuMjczMzUgLTEuODQwMjMsMC41NDAzOCAtNC44NDQxMSwwLjcyNzU5IC02LjY2NTA5LDAuNDE1MzcgeiBtIDY4LjY1OTM3LC04Ny42OTMwMiBjIDAsLTE1LjMwOTQxIC0wLjAxMTQsLTE1LjY1NTM1IC0wLjU5MzkzLC0xNy45NDA2IC0yLjA0MzUxLC04LjAxNzM1IC03LjE3NDY0LC0xNC4zNDc4IC0xNC40MTc1OSwtMTcuNzg3NDYgLTQuNzg4NiwtMi4yNzQwOSAtMTEuMzQ4OSwtMi45NzE4NCAtMTYuNDIyODIsLTEuNzQ2NzIgLTQuOTU1ODIsMS4xOTY2MSAtOS4zNzY2LDMuNjk2MzYgLTEyLjc3MDE2LDcuMjIwOTQgLTMuMzQ3MjIsMy40NzY0NSAtNS4zODE5Myw3LjA4MzggLTYuNjc0ODMsMTEuODMzODQgbCAtMC42OTI3MiwyLjU0NSAtMC4wOTI2LDE1LjQ0NTA5IGMgLTAuMDUwOSw4LjQ5NDggLTAuMDI5NiwxNS42MDkzNyAwLjA0NzUsMTUuODEwMTYgMC4xMTgwMiwwLjMwNzU2IDQuMTk1MTgsMC4zNTQ0NSAyNS44Nzg2MywwLjI5NzYyIGwgMjUuNzM4NTIsLTAuMDY3NSB6IG0gLTQ4NS4yNDU4MSw4NS45NjQ0NyBjIC00LjgxMDYyLC0wLjQzNjQzIC03LjcyNzQ0LC0xLjIyMDIgLTExLjQzMDg3LC0zLjA3MTU2IC04Ljg2MjAyLC00LjQzMDE2IC0xNC4xOTQzNiwtMTEuOTcxNzMgLTE1LjM5NTYyLC0yMS43NzQxNiAtMC4yMDI4NCwtMS42NTUxNyAtMC4yOTE3MiwtMTYuOTQzMiAtMC4yOTE1LC01MC4xMzg1NCAzLjVlLTQsLTUyLjQzNDE3IC0wLjA2NTcsLTUwLjE0NjQ5IDEuNTkwMTUsLTU1LjA4ODggMS4zODY4OCwtNC4xMzk1NyAzLjAxNTEsLTYuODczMTEgNS45MTU4MSwtOS45MzE3NyA0LjEwMzI1LC00LjMyNjY4IDkuNzk1NjQsLTcuNDczMzIgMTUuOTA3ODYsLTguNzkzNTUgMi41NTE5OSwtMC41NTEyMyAzLjIyNzYzLC0wLjU3MTM5IDE5LjA1LC0wLjU2ODQ0IDE1LjYyNjgxLDAuMDAzIDE2LjU0MDU2LDAuMDI5NyAxOS4yODI0NSwwLjU2NDEzIDE4LjA5NDY4LDMuNTI3MiAzMi4zMzA2NywxNy40MzYzMiAzNi4xNTE2MiwzNS4zMjE1NSAwLjg4Njk1LDQuMTUxNjUgMS4wMTg4MywxMS4xODUyNSAwLjI4OTczLDE1LjQ1MjU1IC0wLjk0MTg1LDUuNTEyNTggLTMuMTg5MjMsMTEuMzcwMDggLTYuMTc4MzIsMTYuMTAyOTcgLTAuNTg1NDYsMC45MjcwMSAtMC45NTk0MywxLjc3NzU3IC0wLjgzMTAyLDEuODkwMTIgMC4xMjg0LDAuMTEyNTUgMS4xMzgyNCwwLjg3NTQzIDIuMjQ0MDksMS42OTUzIDIuODk2MzgsMi4xNDczNiA2Ljk5MzI0LDYuNTIzNjggOS4yMDg3NSw5LjgzNjkyIDguOTkxMjEsMTMuNDQ2MDcgMTAuMTE1ODQsMjkuNjU3OTIgMy4wNDY5Miw0My45MjIxNCAtNC40MTAxNiw4Ljg5OTE4IC0xMi4wMTQ0LDE2LjM3MTI5IC0yMS4xNDU0NywyMC43NzgwNyAtNC45ODEzMiwyLjQwNDA1IC04LjIzMzMzLDMuMjQ1ODEgLTE0LjgxNjY3LDMuODM1MTggLTUuNzgyNjksMC41MTc3IC0zNi43OTUyOSwwLjQ5NDMyIC00Mi41OTc5MSwtMC4wMzIxIHogbSAzNC4xMzEyNCwtMjcuMDc3MjQgYyA3LjYzNTUzLC0wLjIxNTY4IDcuNjgzNDMsLTAuMjIwNjIgOS44MjgyOCwtMS4wMTQ2MyA1LjE4MjgxLC0xLjkxODYyIDkuMjc3MzgsLTYuMjkyMTEgMTAuODMyNjMsLTExLjU3MDUyIDAuNjc3NjQsLTIuMjk5ODUgMC42MDg0MiwtNi4zMTE1MSAtMC4xNTA2NiwtOC43MzEyNSAtMS41NDI0OSwtNC45MTcwNCAtNS4yMzgxNSwtOS4wNTAxMyAtOS45NTkyMSwtMTEuMTM4IC0zLjA4NzcxLC0xLjM2NTU0IC00LjQ0ODA5LC0xLjQzOTk0IC0yNC45NzA4MywtMS4zNjU3OCBsIC0xOC45MTc3LDAuMDY4NCB2IDE1LjQ3ODEzIGMgMCwxNC42OTcxOSAwLjAyNTIsMTUuNTE5NyAwLjQ5ODg4LDE2LjMwMjE2IDAuNjkxNzMsMS4xNDI1NyAxLjgzNzg5LDEuNzQ3NDggMy43MTksMS45NjI4IDIuMjc0MTMsMC4yNjAyOSAyMC4wMjUyNywwLjI2NTYyIDI5LjExOTYxLDAuMDA5IHogbSAtOC43MzEyNCwtNjEuMTM0ODQgYyA0LjMzNTQ2LC0wLjI5ODkxIDYuMTYwNjUsLTAuNzE2NzcgOC44MzQ3NCwtMi4wMjI2MSAyLjMzMzcyLC0xLjEzOTY0IDUuNTM1ODEsLTQuMDY5NTYgNi44NzU0NywtNi4yOTEwNiAyLjkyNTQ5LC00Ljg1MTI1IDMuMTk0NzEsLTEwLjc5Mzk5IDAuNzIxMzgsLTE1LjkyMzk2IC0yLjM1MzM0LC00Ljg4MTEgLTUuNzY3NzQsLTcuNjc2NDEgLTExLjE2MzY1LC05LjEzOTUgLTEuOTQxODQsLTAuNTI2NTMgLTIuODkxNzEsLTAuNTc2MzMgLTEzLjE1NjY0LC0wLjY4OTggLTYuMDg1MDMsLTAuMDY3MyAtMTEuNzA0NzIsLTAuMDQyMiAtMTIuNDg4MjEsMC4wNTU3IC0xLjYzMzAzLDAuMjA0MDMgLTIuODk1LDAuOTU1NTYgLTMuNzYwMDMsMi4yMzkxOCBsIC0wLjYwMTYxLDAuODkyNzMgdiAxNS4zOTQ5IGMgMCw4LjQ2NzE5IDAuMDc5NCwxNS40NzQyNyAwLjE3NjM5LDE1LjU3MTI5IDAuMjcyMDcsMC4yNzIwNiAyMC4zODgwMiwwLjIwMDk0IDI0LjU2MjE2LC0wLjA4NjggeiBtIDEwOC4wODIyNzUsODguMzU2ODEgYyAtMTEuOTk0ODE1LC0xLjE2NTI0IC0yMS4yMjY2NDUsLTcuNjc2NzIgLTI1LjM4ODA5NSwtMTcuOTA2OTcgLTEuMDYxMywtMi42MDkwNCAtMS41OTY4OCwtNC45OTQ4MSAtMS44NzQ0OSwtOC4zNTAwOCAtMC4zNTQyNiwtNC4yODE2NiAtMC4zMjc2MywtOTMuMTc4ODYgMC4wMjksLTk2Ljk4NjYxIDAuNDk3NzMsLTUuMzEzNDcgMS44NDkxOCwtOS4yOTM4OSA0LjUwMjEzLC0xMy4yNjAxIDQuMjg0NTQsLTYuNDA1NDYgOS45NTE1NiwtMTAuMTM3NjQgMTguODc4NjQsLTEyLjQzMzA4IDIuMDQ5NDA1LC0wLjUyNjk3IDIuNzc1NDA1LC0wLjU0MDA3IDI5LjkzNjE4MiwtMC41NDAwNyAzMS43OTY0NTcsMCAyOS41MDcwNDEsLTAuMTY0NDIgMzMuMTI5MDI3LDIuMzc5MiAzLjE3OTkyOSwyLjIzMzE4IDUuMTA3MzM2LDUuMzU1OTggNS42NTczMjIsOS4xNjYwNCAwLjkxMjY2MSw2LjMyMjUzIC0yLjg2MTEzOCwxMi4xNDk5NyAtOS42MTcwMjQsMTQuODUwNDYgLTEuMDQ5NTY1LDAuNDE5NTQgLTMuMjcxNzUxLDAuNDY5MDEgLTI2LjU0NTQ1MywwLjU5MDk4IC0yNC45NDczOTEsMC4xMzA3NCAtMjUuNDE2MzMzLDAuMTQyNzEgLTI2LjMxNjY3OCwwLjY3MTY0IC0wLjUwNDE3NCwwLjI5NjE5IC0xLjE1OTAyMSwwLjk1MTAzIC0xLjQ1NTIxMSwxLjQ1NTIxIC0wLjUyNTIsMC44OTQgLTAuNTM4NTMsMS4zMDI4NSAtMC41Mzg1MywxNi41MjcwOSB2IDE1LjYxMDQyIGwgMjIuMDkyNzExLDAuMTQ5OTEgYyAxNi4zMTQwMTIsMC4xMTA3IDIyLjQwMTEyNywwLjIzNTM3IDIzLjI3MTgzNSwwLjQ3NjYzIDUuNDcyMDc4LDEuNTE2MjYgOS41NDY1MjEsNi44OTg0IDkuNTMyNTg3LDEyLjU5MjA3IC0wLjAxNTEsNi4xNzE4MiAtNC4yMzgzNCwxMS43ODIyNiAtMTAuMDk4MDQ2LDEzLjQxNDk1IC0wLjgyNjc5MywwLjIzMDM2IC03LjE3OTIzMywwLjM1OTkyIC0yMi45NzA5NTksMC40Njg0NyBsIC0yMS44MjgxMjgsMC4xNTAwNiBWIDI4MC4wMDggYyAwLDE0LjUwOTc5IDAuMDI3MiwxNS40MDA2IDAuNDk5NDMsMTYuMzUxMjEgMC4zMTc2OCwwLjYzOTUxIDAuODk1NDAzLDEuMjE3MjMgMS41ODc1MDQsMS41ODc1MSBsIDEuMDg4MDcsMC41ODIxMSAyNS4yNjc3MDcsMC4xMzIyOSAyNS4yNjc3MDgsMC4xMzIyOSAxLjc4ODY3NywwLjcxNjc4IGMgMy41NzMxNTYsMS40MzE4OCA1Ljk5OTg2MywzLjY0Njg3IDcuNjIxMDA4LDYuOTU2MTQgMS45MjA4NzgsMy45MjExMiAxLjk1ODQ1Miw3LjgxMzAyIDAuMTEzMTgyLDExLjcyMzI5IC0xLjYzMTA0LDMuNDU2MjkgLTUuMjk2NTIxLDYuMzIxODMgLTkuMjU4Mjg0LDcuMjM3NzggLTEuNTg3MTg3LDAuMzY2OTUgLTUwLjc5ODI2NSwwLjU1NTcxIC01NC4zNzE4NzIsMC4yMDg1NSB6IgogICAgICAgaWQ9InBhdGgxIiAvPjwvZz48L3N2Zz4K" alt="ABEMA"><span class="role">2016 開局</span></div>
+  </div>
+  <h1>藤田晋（ふじた・すすむ）</h1>
+  <div class="hero-sub">麻雀で大学を留年した青年が、24歳でサイバーエージェントを作り、26歳で史上最年少の上場社長になった。だが半年後に株価は8分の1になり、<strong>村上ファンドには「調達した225億円を市場に返せ」と迫られ、GMOの熊谷正寿には「ウチと一緒にやらないか」と買収を持ちかけられた</strong>。宇野康秀と三木谷浩史に救われて生き延び、赤字のブログ、ゲーム、ABEMAと事業の柱を作り替えて、売上8,740億円の会社にした。偉大さの構造は、<strong>麻雀で鍛えた「押し引き」</strong>と<strong>勝負所まで耐える我慢</strong>と<strong>恩を受けた人脈</strong>の掛け算だ。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">225億円</div><div class="lbl">マザーズ上場での調達額（2000年・26歳）</div></div>
+    <div class="kpi"><div class="val">1/8</div><div class="lbl">上場9カ月後の株価（上場時比）</div></div>
+    <div class="kpi"><div class="val">8,740億円</div><div class="lbl">2025年9月期の売上（28期連続の増収）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期〜学生時代</a></li>
+    <li><a href="#s4">麻雀：雀鬼会からMリーグまで</a></li>
+    <li><a href="#s5">2001年の乗っ取り危機：村上ファンドとGMO</a></li>
+    <li><a href="#s6">原体験エピソード</a></li>
+    <li><a href="#s7">キャリア・業績の軌跡</a></li>
+    <li><a href="#s8">偉大さの構造分析</a></li>
+    <li><a href="#s9">思想・経営術</a></li>
+    <li><a href="#s10">雑学・意外な側面</a></li>
+    <li><a href="#s11">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>勝てない局面で降りず、勝てる局面まで耐える</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>藤田晋の偉大さは、ひらめきではなく<strong>勝負の作法</strong>から来ている。①雀荘で月200〜300半荘を打って身につけた、<b>攻める時と降りる時を見極める「押し引き」</b>。②上場直後に株価が8分の1になり、村上ファンドとGMOに会社を取られかけても、敵を作らずに話し合いで切り抜けた<b>我慢</b>。③その時に救ってくれた宇野康秀と三木谷浩史をはじめ、<b>人に助けられ、人を育てる力</b>。この3つがあったから、累積60億円の赤字を出したブログも、10年赤字のABEMAも、降りずに勝負所まで持ちこたえられた。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1973年5月16日（福井県鯖江市）</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">福井県立武生高校 → 青山学院大学経営学部（麻雀で1年留年）</div></div>
+    <div class="kv-item"><div class="k">主な肩書き</div><div class="v">サイバーエージェント創業者。社長（1998〜2025）→ 代表取締役会長（2025年12月〜）。Mリーグ初代チェアマン。FC町田ゼルビア社長</div></div>
+    <div class="kv-item"><div class="k">持株</div><div class="v">16.63％で筆頭株主（2025年12月時点）</div></div>
+    <div class="kv-item"><div class="k">恩人</div><div class="v">宇野康秀（インテリジェンス・USEN。新卒時の社長で創業時の出資者）、三木谷浩史（楽天。2001年のホワイトナイト）、桜井章一（雀鬼会。麻雀の師）</div></div>
+    <div class="kv-item"><div class="k">2026年の動き</div><div class="v">会長として新社長・山内隆裕を支える。所有馬フォーエバーヤングがサウジカップを連覇。2026年9月期の会社予想は売上9,500億円・営業利益770億円</div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1973</td><td>福井県鯖江市に生まれる。父はカネボウの工場勤務</td><td>—</td></tr>
+        <tr><td>10〜11歳</td><td>1983–84</td><td>父に将棋を習い、県大会で優勝。友人の父に麻雀を教わる</td><td>★★</td></tr>
+        <tr><td>18歳</td><td>1991</td><td>ミュージシャンの夢を諦め、起業家を目指して青山学院大学へ</td><td>★★</td></tr>
+        <tr><td>19〜20歳</td><td>1992–93</td><td><b>桜井章一の雀鬼会に約1年半通う。</b>月200〜300半荘、プロも考え、1年留年</td><td>★★★</td></tr>
+        <tr><td>24歳</td><td>1997</td><td>インテリジェンスに入社し新人トップ営業。社長の宇野康秀が起業を後押し</td><td>★★</td></tr>
+        <tr><td>24歳</td><td>1998</td><td><b>サイバーエージェント設立。</b>麻雀を封印する</td><td>★★★</td></tr>
+        <tr><td>26歳</td><td>2000.3</td><td><b>東証マザーズ上場。当時の最年少上場社長、225億円を調達</b></td><td>★★★</td></tr>
+        <tr><td>27歳</td><td>2000末</td><td>ネットバブル崩壊で株価が1/8に。株主総会で罵声を浴びる</td><td>★★</td></tr>
+        <tr><td>28歳</td><td>2001</td><td><b>村上ファンドが「225億円を返せ」、GMOが買収を提案。</b>12月に楽天が資本提携し危機を脱する</td><td>★★★</td></tr>
+        <tr><td>31歳</td><td>2004</td><td><b>ブログ「Ameba」開始。</b>広告代理業からメディアの会社へ舵を切る</td><td>★★★</td></tr>
+        <tr><td>32歳</td><td>2005</td><td>『渋谷ではたらく社長の告白』刊行</td><td>★</td></tr>
+        <tr><td>36歳</td><td>2009</td><td>Ameba黒字化（累積赤字約60億円を経て）</td><td>★★</td></tr>
+        <tr><td>41歳</td><td>2014</td><td><b>麻雀最強戦で優勝、最強位に。</b>プロ雀士が食えていない現実を知る</td><td>★★</td></tr>
+        <tr><td>42歳</td><td>2016</td><td><b>AbemaTV開局</b>（テレビ朝日と共同）</td><td>★★★</td></tr>
+        <tr><td>45歳</td><td>2018</td><td><b>Mリーグ創設、初代チェアマン。</b>FC町田ゼルビアを買収</td><td>★★</td></tr>
+        <tr><td>47歳</td><td>2021</td><td>『ウマ娘』が大ヒットし、営業利益が初の1,000億円超。馬主になる</td><td>★★</td></tr>
+        <tr><td>49歳</td><td>2022</td><td>ABEMAがFIFAワールドカップ全64試合を無料生中継</td><td>★★</td></tr>
+        <tr><td>50歳</td><td>2023</td><td>監督を務める渋谷ABEMASがMリーグ初優勝。楽天の増資に約100億円応じる</td><td>★</td></tr>
+        <tr><td>52歳</td><td>2025</td><td>フォーエバーヤングが日本馬初のBCクラシック制覇。町田が天皇杯優勝。<b>創業以来初の社長交代</b>で会長に</td><td>★★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Life</div>
+  <h2>幼少期〜学生時代：勝負と、夢の捨て方を覚える</h2>
+  <p>メガネの町、福井県鯖江市の社宅で育った。父はカネボウの工場で働くサラリーマンで、ごく普通の家庭だ。10歳で父に将棋を教わって県大会で優勝し、同じ頃に友人の父親から麻雀を教わった。中学ではバンドのボーカルをして生徒会長も務めたが、高校3年で「自分には歌の才能がない」と見切りをつけ、起業家を目指して青山学院大学に進む。</p>
+  <p>上京して最初に向かったのは、町田駅前の雀荘だった。そこから約1年半、桜井章一が主宰する雀鬼会に通い、麻雀が理由で1年留年している（詳しくは次章）。大学後半は広告代理店でアルバイトをし、30代の若い社長たちが試行錯誤する姿を見て、「社長って大したことないじゃん。自分にもできる」と思った。</p>
+  <div class="callout"><strong>この時期に育ったパラメータ：</strong>①将棋と麻雀で身につけた<b>勝負への執着</b>、②バンドもプロ雀士も、見込みがないと分かれば手放す<b>撤退の合理性</b>、③若い社長たちを間近で見て得た<b>「自分にもできる」という距離感</b>。</div>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Mahjong</div>
+  <h2>麻雀：雀鬼会からMリーグまで</h2>
+  <p>藤田晋を語るうえで麻雀は「趣味」ではない。本人は「麻雀は趣味ではなく仕事」「ビジネスで大事なことの非常に多くを麻雀から学んだ」と公言している。人生の3つの局面に分けて見ていく。</p>
+
+  <h3>第1局：雀鬼会で「運」と「捨てる」を学ぶ（19〜20歳）</h3>
+  <p>大学入学直後から約1年半、桜井章一が主宰する雀鬼会の道場「牌の音」に通った。桜井は、裏の麻雀の世界で「20年間無敗」と言われた伝説の雀士で、雀鬼会は賭けを一切しない代わりに、礼儀と打ち方の「美しさ」を厳しく問う集団だ。藤田は月に200〜300半荘（1半荘は約1時間）を打ち、本気でプロを考えた。</p>
+  <p>桜井の教えとしてよく知られるのは、<b>「格好よく勝とうなんて100年早い」</b>（まず格好よく負けることを考えろ）、<b>手放すことの大切さ</b>、<b>人間関係が勝負の運を左右する</b>という考え方だ。藤田が後に語る「運が7割、実力が3割」「降りる判断が一番難しい」は、ここに源がある。<span class="tag warn">△ 雀鬼会で藤田が受けた個別の指導の言葉は一次資料で確認できず</span></p>
+  <p>1998年、起業と同時に麻雀を封印した。「全部の時間を会社に使う」ためだ。</p>
+
+  <h3>第2局：16年ぶりの本気、最強位へ（41歳・2014年）</h3>
+  <p>会社が軌道に乗った2014年、プロとアマが同じ卓で戦う「麻雀最強戦」に出場した。8月の「著名人代表決定戦」を勝ち抜き、12月の決勝で、プロ雀士たちを抑えて優勝。<b>アマチュアで「最強位」</b>になった。<span class="tag warn">△ 決勝卓の他の顔ぶれは資料の表が崩れており要確認</span></p>
+  <div class="episode">
+    <h3>師匠・桜井章一の評価</h3>
+    <p>桜井はこの優勝を寄稿でこう振り返っている。<b>「それは彼が強いからでも、うまいからでもない。運がよかったからだ」</b>。さらに「あの日、藤田君と肌が合う感覚がして『彼が勝ったらおもしろいな』と思ったら、本当にそうなった。私と藤田君との関係が運を引き寄せた」と書いた。突き放すようでいて、「運を引き寄せる関係を作れる人間だ」という最大級の評価でもある。藤田を「かつての教え子」と呼んでいる。</p>
+  </div>
+  <p>最強位として麻雀界の人たちと付き合うなかで、藤田は衝撃を受ける。<b>トッププロの多くが、麻雀だけでは食べていけていなかった</b>。これがMリーグの出発点になる。</p>
+
+  <h3>第3局：Mリーグを作る（45歳・2018年〜）</h3>
+  <p>「自分を育ててくれた麻雀に恩返しがしたい」。2017年に麻雀が国際的な頭脳スポーツ（マインドスポーツ）として認められたことも追い風に、プロ麻雀リーグの構想を練った。賭け事のイメージを消し、野球やサッカーのように<b>企業がチームを持ち、選手に給料を払う</b>仕組みにする。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>項目</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>最初に口説いた相手</b></td><td>テレビ朝日会長の早河洋。ABEMAを一緒に作った相手で、真っ先に賛同した</td></tr>
+        <tr><td><b>初年度の参加企業（7チーム）</b></td><td>サイバーエージェント、テレビ朝日、博報堂、電通、コナミ、セガサミー、U-NEXT</td></tr>
+        <tr><td><b>スポンサー・顧問</b></td><td>冠スポンサーは大和証券グループと朝日新聞社。最高顧問はJリーグ初代チェアマンの川淵三郎（無償）</td></tr>
+        <tr><td><b>選手の待遇</b></td><td>最低年俸400万円を保証。チーム優勝賞金は初年度5,000万円、2025-26年から7,000万円</td></tr>
+        <tr><td><b>ドラフト</b></td><td>2018年8月7日に第1回。プロ5団体から21人を指名（各チーム3人）</td></tr>
+        <tr><td><b>ゼロギャンブル</b></td><td>選手がお金を賭けて麻雀をしたら即除名。「賭け麻雀」との決別を制度にした</td></tr>
+        <tr><td><b>拡大</b></td><td>7チーム（2018）→ 8（2019）→ 9（2023）→ 10（2025）。2025-26年は40選手・全300試合、ABEMAで全試合無料生中継。1試合で100万視聴を超えることもある</td></tr>
+        <tr><td><b>歴代優勝</b></td><td>赤坂ドリブンズ、U-NEXT Pirates（2回）、EX風林火山（2回）、KADOKAWAサクラナイツ、渋谷ABEMAS、セガサミーフェニックス</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Mリーグの運営団体としての収支は公表されておらず、黒字かどうかは確認できない。<span class="tag warn">△ 未確認</span> ただABEMAにとっては、毎晩の生中継で熱心な視聴者を呼び込む看板番組になっている。</p>
+
+  <h3>渋谷ABEMAS：自ら監督を務めたチーム</h3>
+  <p>サイバーエージェントのチーム「渋谷ABEMAS」の監督は、藤田本人が務めた（2018〜2023年）。第1回ドラフトで多井隆晴・白鳥翔・松本吉弘を指名し、2019年に日向藍子を加えた。実際の采配はエースの多井に任せていた。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>シーズン</th><th>レギュラーシーズン</th><th>最終結果</th></tr></thead>
+      <tbody>
+        <tr><td>2018-19</td><td>2位</td><td>ファイナル3位</td></tr>
+        <tr><td>2019-20</td><td>2位</td><td>ファイナル3位</td></tr>
+        <tr><td>2020-21</td><td>1位</td><td>ファイナル3位</td></tr>
+        <tr><td>2021-22</td><td>2位</td><td>ファイナル3位</td></tr>
+        <tr><td>2022-23</td><td>3位</td><td><b>初優勝</b>。これを区切りに監督を退き、チェアマン専任に</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>5年連続でファイナルに進みながら4年連続3位。勝ち切れない時期を「降りずに」続けた末の優勝は、藤田の経営スタイルそのものだった。監督交代後の2025-26年は7位でレギュラーシーズン敗退となっている。</p>
+
+  <h3>麻雀と経営をつなぐ言葉</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>言葉</th><th>経営での意味</th></tr></thead>
+      <tbody>
+        <tr><td>「運が7割、実力が3割」</td><td>結果に一喜一憂せず、運が来た時に取りこぼさない準備をしておく</td></tr>
+        <tr><td>「押し引き」</td><td>攻める時と降りる時の見極め。最新刊のタイトル『勝負眼「押し引き」を見極める思考と技術』（2025年）にもなった</td></tr>
+        <tr><td>「配牌はみんな不平等」</td><td>スタート条件の差を嘆かず、配られた手でどう勝つかを考える</td></tr>
+        <tr><td>「キレたらゲームオーバー」</td><td>悪い流れでも感情を表に出さない。麻雀でも経営でも、苛立ちが判断を崩す</td></tr>
+        <tr><td>決断力・忍耐力・分析力・洞察力</td><td>麻雀で磨ける4つの力として本人が挙げるもの</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>2016年にはプロのリーグ戦（RTDリーグ）で準優勝、2019年にも最強戦の歴代最強位による予選を勝ち抜いた。2025年には世界大会で日本代表の監督を務め、3位だった。週刊文春では麻雀コラム「リーチ・ツモ・ドラ1」を連載している。</p>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>The 2001 Crisis</div>
+  <h2>2001年の乗っ取り危機：村上ファンドとGMO</h2>
+  <p>藤田の人生で最も変化率が高かったのは、上場直後のこの1年だ。登場人物が多いので、先に関係を整理する。</p>
+
+  <h3>登場人物と持株比率（2000年末）</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>株主</th><th>比率</th><th>立場</th></tr></thead>
+      <tbody>
+        <tr><td><b>藤田晋</b></td><td>22.6％</td><td>創業社長。危機の数カ月前に社員へ株を配っていたため、持株が下がっていた</td></tr>
+        <tr><td><b>GMO（熊谷正寿）</b></td><td>21.4％</td><td>当時の社名はインターキュー→グローバルメディアオンライン。渋谷ビットバレーの先輩格。<b>藤田に買収を持ちかけた側</b></td></tr>
+        <tr><td><b>有線ブロードネットワークス（宇野康秀）</b></td><td>13.2％</td><td>藤田の新卒時代の社長で、創業時の出資者。<b>助けた側</b></td></tr>
+        <tr><td><b>村上ファンド（村上世彰）</b></td><td>約10％</td><td>「物言う株主」。<b>お金を返せと迫った側</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--muted)">出典：文春オンライン（2026年2月、大西康之）。GMOの比率は2001年12月の開示では売却前17.5％で、新株の発行による変化などで数字が合わない部分がある。<span class="tag warn">△ 一部未解明</span></p>
+
+  <div class="warn-box"><strong>よくある誤解：</strong>「GMOの熊谷正寿が、若い藤田を兄貴分として支えた」という話を見かけるが、確認できた資料はむしろ逆だ。2001年の熊谷はCAの大株主として<b>「ウチと一緒にやらないか」と買収を持ちかけた</b>側で、藤田はその背後に「村上氏の存在を感じた」と書いている。熊谷が藤田を助けたという具体的な話は、今回の調査では見つからなかった。<span class="tag warn">△ 未確認</span></div>
+
+  <h3>何が起きたのか：時系列</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-date">2000年3月</div><div class="tl-body"><b>上場で225億円を調達。</b>26歳、当時の最年少上場社長。<span class="tag warn">△ 200億円とする記事もある</span></div></div>
+    <div class="tl-item"><div class="tl-date">2000年末</div><div class="tl-body"><b>ネットバブルが崩壊し、株価は上場時の約8分の1に。</b>会社の時価総額が、手元にある現金を下回る状態になった。つまり「会社を買い取って解散すれば、現金だけで儲かる」状態だ。12月の株主総会では株主から罵声を浴びた。</div></div>
+    <div class="tl-item"><div class="tl-date">2001年</div><div class="tl-body"><b>村上世彰と初めて会う。</b>紹介したのは恩人の宇野康秀だった。村上は前年に昭栄へ日本初の本格的な敵対的買収を仕掛けて話題になっていた。5月頃、村上ファンドが市場でCA株の約10％を取得し、第4位の株主になる。</div></div>
+    <div class="tl-item"><div class="tl-date">2001年</div><div class="tl-body"><b>村上の要求。</b>「一旦、市場に返したらどうでしょう」（225億円の調達自体が間違いだった、という主張）、「本業はネット広告ですよね。メディア事業など止めて、本業に専念すべきです」。藤田の要約では「資金も事業も縮小して、身の丈にあった経営をやれ」。報道では会社の解散まで求めたとされる。</div></div>
+    <div class="tl-item"><div class="tl-date">2001年</div><div class="tl-body"><b>GMOの熊谷が買収を提案。</b>「ウチと一緒にやらないか」。熊谷側の話として、村上ファンドやリーマン・ブラザーズと組んで株を買い集め、売却を迫ったという証言もある。<span class="tag warn">△ 出典は堀江貴文のYouTube発言のみ</span></div></div>
+    <div class="tl-item"><div class="tl-date">2001年秋</div><div class="tl-body"><b>藤田、宇野に「サイバーを買って欲しい」と頼む。</b>返ってきたのは<b>「お前の会社なんかいらねーよ」</b>。突き放したように見えて、実は「自分で何とかしろ」という激励だった。宇野は裏で三木谷浩史に「藤田を助けてやってくれ」と働きかけていた。</div></div>
+    <div class="tl-item"><div class="tl-date">2001年秋</div><div class="tl-body"><b>藤田、楽天の三木谷を訪ねる。</b>「これからECとネット広告は成長するので、楽天とサイバーには大きなシナジー効果が生まれると思います」。三木谷の返事は<b>「話は聞いてる。出資するよ」</b>。理由は「ベンチャーが叩かれているんだから、助けないとね」だった。</div></div>
+    <div class="tl-item"><div class="tl-date">2001年12月20日</div><div class="tl-body"><b>楽天と資本提携。</b>楽天がCA株の約8.6％（約10億円）を取得した。<span class="tag warn">△ 比率は8.6％と約10％で資料が分かれる</span> 翌21日、GMOはCA株を半分ほど売却し、持株比率が17.5％→9.0％に下がった（GMOの開示）。楽天の株はGMOから譲り受けた可能性が高いが、相手先は開示されていない。これで熊谷の買収提案は取り下げられ、村上の圧力も消えた。</div></div>
+    <div class="tl-item"><div class="tl-date">2002年6月</div><div class="tl-body"><b>村上ファンドが撤退。</b></div></div>
+  </div>
+
+  <h3>その後：敵も味方も、長い付き合いになった</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>相手</th><th>その後</th></tr></thead>
+      <tbody>
+        <tr><td><b>三木谷浩史（楽天）</b></td><td>2006年、楽天はCA株の一部を約53億円で売り、約45億円の売却益を得た。約10億円の救済出資は大きく報われた。2023年、携帯事業で苦しむ楽天の増資に、CAが約100億円応じた。日経は「サイバー藤田氏が忘れなかった恩」と報じたが、藤田本人は「恩返しではない」と書いている</td></tr>
+        <tr><td><b>村上世彰</b></td><td>その後、六本木ヒルズで部屋が隣同士になり、家族ぐるみで付き合う仲になった。敵対せず、話し合いを重ねて決着させたからこそ残った関係だ</td></tr>
+        <tr><td><b>熊谷正寿（GMO）</b></td><td>GMOは2001年の売却後も「サイバーエージェントは事業戦略上、極めて重要なパートナー」と開示している。のちに、ライブドアとCAが半分ずつ出資していた会社の売却をめぐり、熊谷の10億円の提示をCAが断って5億円で自社で買い取ったという話もある。<span class="tag warn">△ 二次情報</span></td></tr>
+        <tr><td><b>宇野康秀</b></td><td>終生の恩人。藤田が馬主になる時も、宇野の許可を取ってから始めたという</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>この危機から生まれたもの：</strong>①上場で集めたお金を「返せ」と言われないよう、<b>本業と新しい事業の両方で成果を出し続ける</b>覚悟。②「メディア事業をやめろ」と言われたのに、3年後にAmebaを始めてメディアの会社へ舵を切った<b>反骨</b>。③会社を守ってくれた人への恩と、<b>敵を作らずに話し合いで解決する</b>作法。藤田は後年、この1年を「社長を辞めようかと本気で思った」と振り返っている。麻雀でいえば、配牌も流れも最悪の局で、降りずに放銃もせずに耐え切った局面だった。</div>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Formative Moments</div>
+  <h2>原体験エピソード：偉大さのトリガーは5つ</h2>
+
+  <div class="episode">
+    <h3>🔑 雀荘で数千半荘を打った2年間（19〜20歳 / 1992〜93年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>桜井章一の雀鬼会に通い、留年するほど打ち込んだ。プロ雀士を本気で考えたが、最終的には起業を選んだ。</p>
+    <p>→ <b>どう繋がったか：</b>運に左右される中で最善の判断を続ける訓練になった。「運7・実力3」「押し引き」「キレたらゲームオーバー」という経営の言葉の多くがここから来ている。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 「なんだ、社長って大したことないじゃん」（22〜24歳 / 1995〜97年）</h3>
+    <p><span class="tag good">✓ 本人インタビューで確認</span></p>
+    <p>広告代理店のアルバイトで若い社長たちを見て、起業が手の届くものに変わった。新卒で入ったインテリジェンスでは新人トップの営業になり、1年目の年末に起業を決意。社長の宇野康秀は、経営権を取らない形で出資して送り出した。</p>
+    <p>→ <b>どう繋がったか：</b>宇野との関係が、のちに会社を救う。最初の上司に恵まれ、その上司に応援されて独立したことが、2001年の危機で命綱になった。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 上場、そして株価8分の1と乗っ取り危機（26〜28歳 / 2000〜01年）</h3>
+    <p><span class="tag good">✓ 本人連載・一次開示で確認</span></p>
+    <p>前章の通り。最年少上場の栄光から1年足らずで、会社を失う寸前まで追い込まれた。</p>
+    <p>→ <b>どう繋がったか：</b>「上場企業の社長」が何に責任を負うのかを、身をもって知った。以後、上場で得たお金を長期の事業に張り続けるために、本業で利益を出し続けることにこだわるようになる。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 Amebaを自分で率いる（31〜36歳 / 2004〜09年）</h3>
+    <p><span class="tag warn">△ 赤字額は二次情報</span></p>
+    <p>2004年にブログサービス「Ameba」を始めた。広告を売る会社から、自分で媒体を持つ会社への転換だ。2005年からは社長自らが事業本部長になり、ページビューを指標に赤字を許して育てた。累積の赤字は約60億円とされ、黒字化は2009年。芸能人ブログで日本有数のメディアに育った。</p>
+    <p>→ <b>どう繋がったか：</b>「メディア事業などやめろ」と言った村上への、事業での答えになった。同時に「赤字でも勝負所まで張り続ける」型が、のちのABEMAにそのまま受け継がれる。</p>
+  </div>
+
+  <div class="episode">
+    <h3>🔑 最強位になり、麻雀界の貧しさを知る（41歳 / 2014年）</h3>
+    <p><span class="tag good">✓ Web確認済</span></p>
+    <p>16年ぶりに本気で麻雀に向き合い、アマチュアで最強位を獲った。その立場でプロと付き合い、トッププロでも食べていけない現実を知る。</p>
+    <p>→ <b>どう繋がったか：</b>4年後のMリーグにつながる。本人は「人生で一番、世のためになった仕事」と語っている。ABEMAという自前の放送局を持っていたから、リーグを作り、全試合を流すことができた。</p>
+  </div>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Career</div>
+  <h2>キャリア・業績の軌跡：事業の柱を4回作り替えた</h2>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>時期</th><th>主力事業</th><th>何が起き、なぜその時期だったか</th></tr></thead>
+      <tbody>
+        <tr><td>1998〜</td><td><b>ネット広告代理</b></td><td>堀江貴文のオン・ザ・エッヂが作ったクリック保証型広告「サイバークリック」で急成長。「ネット×営業力」の空白を突いた。今も会社の稼ぎ頭の一つ</td></tr>
+        <tr><td>2004〜</td><td><b>Ameba（ブログ）</b></td><td>上場で得たお金を、広告代理だけでは終わらないための媒体づくりに投じた。累積約60億円の赤字を経て2009年に黒字化</td></tr>
+        <tr><td>2011〜</td><td><b>スマホゲーム</b></td><td>子会社Cygamesの『グランブルーファンタジー』、2021年の『ウマ娘』が爆発。2021年9月期は営業利益1,043億円（前期の3.1倍）。藤田は「ヒットがどこで落ち着くか経営陣も予測がつかない」と、翌期の業績予想を出さなかった</td></tr>
+        <tr><td>2016〜</td><td><b>ABEMA（ネットテレビ）</b></td><td>テレビ朝日と共同で開局。年200億円規模を投じ続け、長く赤字。2022年のFIFAワールドカップ全64試合の無料生中継で知名度が跳ねた。2025年9月期にメディア&amp;IP事業が10年ぶりに黒字化、2026年9月期の中間期はABEMA単体でも103億円の黒字</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>2025年9月期は売上8,740億円、営業利益717億円で、28期連続の増収。2025年12月、創業以来初めて社長を交代し、山内隆裕に任せて自身は会長になった。後継者の育成は2022年から候補16人を選んで3年半かけて準備したもので、突然の交代ではない。持株16.63％で筆頭株主のままだ。</p>
+  <div class="callout"><strong>読み解き：</strong>4つの柱はどれも「本業が稼いでいるうちに、次の柱に赤字覚悟で張る」という同じ形をしている。広告代理の利益でAmebaを育て、ゲームの利益でABEMAを支えた。2001年に「事業を縮小して身の丈に合った経営をしろ」と言われたことへの、25年かけた答えでもある。</div>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜ藤田晋だけが？</h2>
+  <p>ビットバレーの時代には、同世代の若い起業家が大勢いた。その多くが消え、あるいは事件で退場するなかで、藤田だけが25年以上トップに立ち続け、会社を売上9,000億円規模にした理由は、次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 麻雀で鍛えた押し引き</b></td><td>攻める時と降りる時を、感情ではなく流れと確率で決める</td><td>雀鬼会、最強位、『勝負眼「押し引き」を見極める思考と技術』</td></tr>
+        <tr><td><b>② 勝負所まで降りない我慢</b></td><td>赤字の事業でも、勝てると判断したら何年でも張り続ける</td><td>Amebaの累積60億円の赤字、ABEMAの10年赤字、ABEMASの4年連続3位からの優勝</td></tr>
+        <tr><td><b>③ 敵を作らない危機対応</b></td><td>喧嘩をせず、話し合いで決着させる。だから敵だった人とも関係が残る</td><td>村上ファンドとの決着と、その後の家族ぐるみの付き合い</td></tr>
+        <tr><td><b>④ 恩人と人脈</b></td><td>最初の上司に応援されて独立し、危機には業界の先輩が助けに来た</td><td>宇野の「お前の会社なんかいらねーよ」、三木谷の「話は聞いてる。出資するよ」</td></tr>
+        <tr><td><b>⑤ 若手に任せる仕組み</b></td><td>新規事業を社員に提案させ、育て、ダメなら畳む仕組みを制度にした</td><td>あした会議、CAJJ・CAKK制度、16人の後継者候補</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>①が「どこに張るか」を決め、②が「張り続ける時間」を作り、③と④が「生き延びるための味方」を確保し、⑤が「自分がいなくても勝ち続ける組織」にした。とくに<b>①と②の組み合わせ</b>が珍しい。我慢強いだけの経営者は損切りできずに沈み、判断が速いだけの経営者は芽が出る前に撤退する。藤田は「降りる」と「降りない」の両方を、麻雀の卓で何千回も練習していた。</div>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Philosophy</div>
+  <h2>思想・経営術</h2>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>考え方・仕組み</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td>「21世紀を代表する会社を創る」</td><td>創業時から掲げるビジョン。広告代理店の枠に収まらない、という宣言でもある</td></tr>
+        <tr><td>あした会議</td><td>役員が社員とチームを組み、新規事業を藤田にプレゼンする会議。ここから子会社が約20社生まれた</td></tr>
+        <tr><td>CAJJ制度 → CAKK制度</td><td>新規事業を利益の規模で格付けし、条件を満たさなければ撤退する仕組み。2022年からは半期ごとの「企業価値向上会議」で事業の統合や撤退を判断する</td></tr>
+        <tr><td>若手の抜擢</td><td>20代で子会社の社長を任せる。失敗しても再挑戦させる</td></tr>
+        <tr><td>後継者育成</td><td>2022年春から候補16人を選び、3年半かけて準備したうえで2025年に社長を交代</td></tr>
+        <tr><td>「運7・実力3」</td><td>結果を実力だけのせいにしない。運が来た時に取りこぼさない準備をしておく</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>光と影</h3>
+  <p>ABEMAには長年巨額の赤字を出し続け、株主から厳しい目が向けられた。累計の赤字額は「1,000億円超」とよく言われるが、一次資料では確認できていない。<span class="tag warn">△ 未確認</span> ゲームの大ヒットに頼った利益の波も大きい。2013年に創刊した女性誌「DRESS」は約3.4億円の損失を出して2年で売却するなど、張った勝負がすべて当たったわけではない。それでも「張って、ダメなら降りる」を繰り返したことが、28期連続の増収につながっている。</p>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">競馬</div><div class="info-card-title">有馬記念で1,474万円</div><div class="info-card-text">2008年、ダイワスカーレットとアドマイヤモナークの馬連を5万円買い、294.9倍が的中。払い戻しは1,474.5万円だった。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">馬主</div><div class="info-card-title">日本馬初のBCクラシック制覇</div><div class="info-card-text">2021年に馬主になり、初年度のセリで18頭に約23.7億円を投じた。所有馬フォーエバーヤングは2025年に米国のBCクラシックを日本馬として初めて制し、2026年にはサウジカップを連覇した。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">馬主</div><div class="info-card-title">馬主を始めるのに恩人の許可を取った</div><div class="info-card-text">2020年、馬主になる前に宇野康秀の許可を取り、武豊に助言を求めた。馬名は1年目がワイン、2年目以降はヒップホップにちなむ。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">サッカー</div><div class="info-card-title">町田ゼルビアを天皇杯優勝へ</div><div class="info-card-text">2018年に約11億円でFC町田ゼルビアを買収し、2022年から社長。2025年に天皇杯で優勝した。試合中は采配にやきもきして「髪が抜けていた」と明かした。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">結婚</div><div class="info-card-title">女優・奥菜恵と結婚、1年半で離婚</div><div class="info-card-text">2004年に女優の奥菜恵と結婚し、2005年に離婚。2009年に元秘書と再婚し、ブログで報告した。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ゲーム</div><div class="info-card-title">自分の馬がウマ娘に</div><div class="info-card-text">自社のゲーム『ウマ娘』に、所有馬フォーエバーヤングが登場することが2026年2月に発表された。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">噂</div><div class="info-card-title">ヤクルト買収報道に「初耳です（笑）」</div><div class="info-card-text">プロ野球球団の買収が報じられた時の反応。スポーツへの投資が続くので、噂も立ちやすい。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">睡眠</div><div class="info-card-title">創業期も6時間は寝ていた</div><div class="info-card-text">「寝ずに働いた」イメージに反して、最低6時間の睡眠は守っていたと語っている。</div></div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Message</div>
+  <h2>現代へのメッセージ：降りる練習と、降りない練習を両方やれ</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 「降りる基準」と「張り続ける基準」を先に決めておく。</strong>藤田はAmebaもABEMAも赤字で張り続けたが、DRESSは2年で畳んだ。違いは感情ではなく基準だ。<b>今抱えている取り組みを1つ選び、「どうなったら続ける／やめる」を数字で書いておく</b>。</p>
+    <p><strong>② 最悪の局面でも、敵を作らない。</strong>会社を取られかけた相手とも、話し合いで決着させたから、後に家族ぐるみの仲になった。<b>今こじれている相手がいたら、勝ち負けではなく「関係が残る終わらせ方」を1つ考える</b>。</p>
+    <p><strong>③ 助けてくれる人は、普段の働き方で決まる。</strong>宇野が三木谷に頭を下げてくれたのは、藤田が新人時代にトップ営業として結果を出し、筋を通して独立したからだ。<b>今の上司・取引先に、自分は「困った時に助けたい人」になっているかを点検する</b>。</p>
+    <p><strong>④ 遊びを、訓練に変える。</strong>雀荘の数千時間は、外から見れば遊んでいた時間だ。だが藤田はそこで判断と我慢を鍛えた。<b>自分が没頭していることから、仕事に使える「型」を1つ言葉にしてみる</b>。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://bunshun.jp/articles/-/85797">文春オンライン — 「ベンチャーが叩かれているんだから…」藤田晋を救った三木谷浩史（2026/2）</a></li>
+    <li><a href="https://bunshun.jp/denshiban/articles/b11301">週刊文春 藤田晋連載 第47回 — 村上世彰さんとフジテレビ騒動</a></li>
+    <li><a href="https://bunshun.jp/articles/-/76979">文春オンライン — 楽天への100億円出資</a></li>
+    <li><a href="https://ir.group.gmo/pdf/irlibrary/disclose_info20011221.pdf">GMO 適時開示 — サイバーエージェント株式の売却（2001/12/21）</a></li>
+    <li><a href="https://corp.rakuten.co.jp/news/press/2006/0721.html">楽天 プレスリリース — サイバーエージェント株式の売却（2006/7/21）</a></li>
+    <li><a href="https://the-shashi.com/tse/4751/decisions/murakami-fund-2001/">the-shashi — サイバーエージェントと村上ファンド（2001）</a></li>
+    <li><a href="https://the-shashi.com/tse/4751/decisions/ameba-blog-2004/">the-shashi — Amebaブログ参入（2004）</a></li>
+    <li><a href="https://ja.wikipedia.org/wiki/%E8%97%A4%E7%94%B0%E6%99%8B">Wikipedia — 藤田晋</a></li>
+    <li><a href="https://ja.wikipedia.org/wiki/%E7%86%8A%E8%B0%B7%E6%AD%A3%E5%AF%BF">Wikipedia — 熊谷正寿</a></li>
+    <li><a href="https://ja.wikipedia.org/wiki/M%E3%83%AA%E3%83%BC%E3%82%B0">Wikipedia — Mリーグ</a></li>
+    <li><a href="https://ja.wikipedia.org/wiki/%E6%B8%8B%E8%B0%B7ABEMAS">Wikipedia — 渋谷ABEMAS</a></li>
+    <li><a href="https://ja.wikipedia.org/wiki/%E9%BA%BB%E9%9B%80%E6%9C%80%E5%BC%B7%E6%88%A6">Wikipedia — 麻雀最強戦</a></li>
+    <li><a href="https://president.jp/articles/-/15350">PRESIDENT — 桜井章一の寄稿（2015）</a></li>
+    <li><a href="https://president.jp/articles/-/33297">PRESIDENT — 麻雀と仕事</a></li>
+    <li><a href="https://av.watch.impress.co.jp/docs/news/1133113.html">AV Watch — Mリーグ発足会見（2018）</a></li>
+    <li><a href="https://www.flierinc.com/summary/2554">flier — 『ネット興亡記』要約</a></li>
+    <li><a href="https://gamebiz.jp/news/366103">gamebiz — 社長交代（2025）</a></li>
+    <li><a href="https://gamebiz.jp/news/416048">gamebiz — 2025年9月期決算</a></li>
+    <li><a href="https://gamebiz.jp/news/430770">gamebiz — 2026年9月期 第3四半期決算</a></li>
+    <li><a href="https://gamebiz.jp/news/337636">gamebiz — ウマ娘で営業利益1,000億円超（2021）</a></li>
+    <li><a href="https://www.daily.co.jp/soccer/2022/03/15/0015135292.shtml">デイリー — ABEMAがW杯全64試合を無料中継</a></li>
+    <li><a href="https://www.soccer-king.jp/news/japan/emperorcup/20251122/2090655.html">サッカーキング — 町田が天皇杯優勝（2025）</a></li>
+    <li><a href="https://number.bunshun.jp/articles/-/872536">Number — フォーエバーヤング BCクラシック（2026）</a></li>
+    <li><a href="https://www.cyberagent.co.jp/way/info/detail/id=26070">サイバーエージェント — CAKK制度</a></li>
+    <li><a href="https://times.abema.tv/articles/-/7031033">ABEMA TIMES — 麻雀最強戦2019</a></li>
+    <li><a href="https://goetheweb.jp/person/article/20170528-fujita-mahjong">GOETHE — 藤田晋は、なぜ麻雀を極めようとするのか</a></li>
+    <li><a href="http://logmi.jp/1877">ログミーBiz — 起業のきっかけは「社長って大したことないじゃん」</a></li>
+  </ul>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>
