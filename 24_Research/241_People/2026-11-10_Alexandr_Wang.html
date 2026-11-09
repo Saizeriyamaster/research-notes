@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexandr Wang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-logos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero-logo { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 10px; padding: 8px 14px; }
+.hero-logo img { height: 26px; width: auto; display: block; }
+.hero-logo .role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; border-left: 1px solid var(--border); padding-left: 10px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+</style>
+
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+<!-- page-toc:head:start -->
+<style>
+.page-toc{position:fixed;top:84px;left:24px;width:216px;max-height:calc(100vh - 104px);overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 14px;font-size:12px;z-index:40}
+.page-toc .toc-title{margin-bottom:10px;padding-bottom:10px}
+.page-toc a{display:block;color:var(--muted);text-decoration:none;padding:4px 8px;margin:0 -8px;border-left:2px solid transparent;border-radius:4px;line-height:1.5;transition:color .12s,background .12s}
+.page-toc a:hover{color:var(--text);background:var(--surface)}
+.page-toc a.lvl-h3{padding-left:20px;font-size:11px}
+.page-toc a.active{color:var(--text);border-left-color:var(--text);font-weight:700;background:var(--surface)}
+@media (max-width:1400px){.page-toc{display:none}}
+</style>
+<!-- page-toc:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Diff Analysis</span>
+    <span class="badge badge-white">241_People</span>
+    <span class="badge badge-white">2026-11-10</span>
+  </div>
+  <div class="hero-logos">
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3NCAyNCI+PHRleHQgeD0iMCIgeT0iMTkiIGZvbnQtZmFtaWx5PSJQb3BwaW5zLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTExIiBsZXR0ZXItc3BhY2luZz0iLTAuNSI+c2NhbGU8L3RleHQ+PC9zdmc+Cg==" alt="Scale AI"><span class="role">Scale AI / Co-founder &amp; CEO 2016–2025</span></div>
+    <div class="hero-logo"><img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDQ2N0RGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+TWV0YTwvdGl0bGU+PHBhdGggZD0iTTYuOTE1IDQuMDNjLTEuOTY4IDAtMy42ODMgMS4yOC00Ljg3MSAzLjExM0MuNzA0IDkuMjA4IDAgMTEuODgzIDAgMTQuNDQ5YzAgLjcwNi4wNyAxLjM2OS4yMSAxLjk3M2E2LjYyNCA2LjYyNCAwIDAgMCAuMjY1Ljg2IDUuMjk3IDUuMjk3IDAgMCAwIC4zNzEuNzYxYy42OTYgMS4xNTkgMS44MTggMS45MjcgMy41OTMgMS45MjcgMS40OTcgMCAyLjYzMy0uNjcxIDMuOTY1LTIuNDQ0Ljc2LTEuMDEyIDEuMTQ0LTEuNjI2IDIuNjYzLTQuMzJsLjc1Ni0xLjMzOS4xODYtLjMyNWMuMDYxLjEuMTIxLjE5Ni4xODMuM2wyLjE1MiAzLjU5NWMuNzI0IDEuMjEgMS42NjUgMi41NTYgMi40NyAzLjMxNCAxLjA0Ni45ODcgMS45OTIgMS4yMiAzLjA2IDEuMjIgMS4wNzUgMCAxLjg3Ni0uMzU1IDIuNDU1LS44NDNhMy43NDMgMy43NDMgMCAwIDAgLjgxLS45NzNjLjU0Mi0uOTM5Ljg2MS0yLjEyNy44NjEtMy43NDUgMC0yLjcyLS42ODEtNS4zNTctMi4wODQtNy40NS0xLjI4Mi0xLjkxMi0yLjk1Ny0yLjkzLTQuNzE2LTIuOTMtMS4wNDcgMC0yLjA4OC40NjctMy4wNTMgMS4zMDgtLjY1Mi41Ny0xLjI1NyAxLjI5LTEuODIgMi4wNS0uNjktLjg3NS0xLjMzNS0xLjU0Ny0xLjk1OC0yLjA1Ni0xLjE4Mi0uOTY2LTIuMzE1LTEuMzAzLTMuNDU0LTEuMzAzem0xMC4xNiAyLjA1M2MxLjE0NyAwIDIuMTg4Ljc1OCAyLjk5MiAxLjk5OSAxLjEzMiAxLjc0OCAxLjY0NyA0LjE5NSAxLjY0NyA2LjQgMCAxLjU0OC0uMzY4IDIuOS0xLjgzOSAyLjktLjU4IDAtMS4wMjctLjIzLTEuNjY0LTEuMDA0LS40OTYtLjYwMS0xLjM0My0xLjg3OC0yLjgzMi00LjM1OGwtLjYxNy0xLjAyOGE0NC45MDggNDQuOTA4IDAgMCAwLTEuMjU1LTEuOThjLjA3LS4xMDkuMTQxLS4yMjQuMjExLS4zMjcgMS4xMi0xLjY2NyAyLjExOC0yLjYwMiAzLjM1OC0yLjYwMnptLTEwLjIwMS41NTNjMS4yNjUgMCAyLjA1OC43OTEgMi42NzUgMS40NDYuMzA3LjMyNy43MzcuODcxIDEuMjM0IDEuNTc5bC0xLjAyIDEuNTY2Yy0uNzU3IDEuMTYzLTEuODgyIDMuMDE3LTIuODM3IDQuMzM4LTEuMTkxIDEuNjQ5LTEuODEgMS44MTctMi40ODYgMS44MTctLjUyNCAwLTEuMDM4LS4yMzctMS4zODMtLjc5NC0uMjYzLS40MjYtLjQ2NC0xLjEzLS40NjQtMi4wNDYgMC0yLjIyMS42My00LjUzNSAxLjY2LTYuMDg4LjQ1NC0uNjg3Ljk2NC0xLjIyNiAxLjUzMy0xLjUzM2EyLjI2NCAyLjI2NCAwIDAgMSAxLjA4OC0uMjg1eiIvPjwvc3ZnPg==" alt="Meta"><span class="role">Meta / Chief AI Officer 2025–</span></div>
+  </div>
+  <h1>Alexandr Wang（アレクサンダー・ワン）</h1>
+  <div class="hero-sub">原爆が生まれた町ロスアラモスで、物理学者の両親のもとに育った競技数学の少年が、19歳でMITを辞めて「AIの学習データ」を作る会社を始めた。誰もがアルゴリズムと計算機に夢中だった時代に、<strong>「足りないのはデータだ」</strong>と見抜き、自動運転・国防・ChatGPTの裏側にデータを売り続けた。28歳で、Metaが<strong>143億ドル</strong>を払って迎え入れたAI部門のトップ。偉大さの構造は、<strong>誰も取りに行かない地味なボトルネックを押さえる目</strong>と、<strong>同世代の天才たちとの網の目</strong>と、<strong>研究者ではなく「組織を動かす人」として勝つ割り切り</strong>の掛け算だ。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">$14.3B</div><div class="lbl">MetaがScale AIの49%に払った額（2025年6月）</div></div>
+    <div class="kpi"><div class="val">約$29B</div><div class="lbl">その取引から逆算したScaleの企業価値</div></div>
+    <div class="kpi"><div class="val">25歳</div><div class="lbl">「世界最年少の自力ビリオネア」になった年齢（Forbes 2022）</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">TL;DR と基本情報</a></li>
+    <li><a href="#s2">年表：人生の変化率マップ</a></li>
+    <li><a href="#s3">幼少期：ロスアラモスと物理学者の両親</a></li>
+    <li><a href="#s4">なぜ「データ」に目をつけたのか</a></li>
+    <li><a href="#s5">HRTインターン：「新しいPayPalマフィア」</a></li>
+    <li><a href="#s6">サム・アルトマンとの同居</a></li>
+    <li><a href="#s7">Scale AIの軌跡</a></li>
+    <li><a href="#s8">Metaの143億ドル：何が評価されたのか</a></li>
+    <li><a href="#s9">Chief AI Officerとして、いま何をしているか</a></li>
+    <li><a href="#s10">偉大さの構造分析</a></li>
+    <li><a href="#s11">光と影：批判と矛盾</a></li>
+    <li><a href="#s12">雑学・意外な側面</a></li>
+    <li><a href="#s13">現代へのメッセージ</a></li>
+  </ol>
+</div>
+
+<!-- 01 -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>AIの「つるはし」を売り、最後は金鉱そのものに呼ばれた男</h2>
+  <div class="callout"><strong>30秒サマリー：</strong>ワンは研究者ではない。AIの論文で名を上げた人でもない。彼がやったのは、①AIの材料である<b>「正解ラベル付きのデータ」が足りない</b>ことに2016年の時点で気づき、②それを世界中の作業者とソフトで<b>大量生産する仕組み</b>を作って、自動運転・米国防総省・OpenAIなど<b>あらゆるAI企業の裏方</b>になったこと。③全員の裏方だったからこそ「業界の全員が何をしているか知っている男」になり、Metaはその知識と組織を動かす力に143億ドルを払った。ゴールドラッシュで「つるはしを売る」側に立ち、最後は金鉱の掘り手に引き抜かれた、というのが一番短い要約だ。</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">生年月日</div><div class="v">1997年1月（米ニューメキシコ州ロスアラモス）。中国名は汪滔</div></div>
+    <div class="kv-item"><div class="k">家族</div><div class="v">両親とも中国からの移民で、ロスアラモス国立研究所の物理学者</div></div>
+    <div class="kv-item"><div class="k">学歴</div><div class="v">ロスアラモス高校（1年早く卒業）→ MIT（1年で中退）</div></div>
+    <div class="kv-item"><div class="k">競技歴</div><div class="v">米国数学オリンピック合宿の選抜（2013）、米国物理チームの選抜（2014）、米国情報オリンピック（USACO）決勝進出（2012・2013）</div></div>
+    <div class="kv-item"><div class="k">前職</div><div class="v">Addepar（資産管理ソフト）エンジニア → Quora テックリード → Hudson River Trading（高頻度取引の会社）インターン</div></div>
+    <div class="kv-item"><div class="k">主な肩書き</div><div class="v">Scale AI 共同創業者・CEO（2016〜2025）／ Meta 初代Chief AI Officer、Meta Superintelligence Labs（MSL）トップ（2025年6月〜）</div></div>
+    <div class="kv-item"><div class="k">資産</div><div class="v">Forbes推計 約36億ドル（2025年4月） <span class="tag warn">△ Meta取引後の更新値は未確認</span></div></div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Timeline</div>
+  <h2>年表：人生の変化率マップ</h2>
+  <p>★★★は、偉大さの方向を決めた変化率の最も高い瞬間を示す。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>年齢</th><th>西暦</th><th>出来事</th><th>変化率</th></tr></thead>
+      <tbody>
+        <tr><td>0歳</td><td>1997</td><td>ロスアラモスで誕生。両親は国立研究所の物理学者</td><td>—</td></tr>
+        <tr><td>小6前後</td><td>2008頃</td><td>数学・プログラミングの全国大会に出始める。最初の動機は「優勝するとディズニーワールドに行ける」</td><td>★★</td></tr>
+        <tr><td>15–17歳</td><td>2012–14</td><td>USACO決勝、数学オリンピック合宿、物理チームに選ばれる。全米の「競技の天才」の輪に入る</td><td>★★</td></tr>
+        <tr><td>17歳</td><td>2014</td><td>高校を1年早く出てシリコンバレーへ。Addepar、続いてQuoraでエンジニア。Quoraで<b>Lucy Guo</b>と出会う</td><td>★★★</td></tr>
+        <tr><td>18歳</td><td>2015</td><td>MITに入学（AI・機械学習を学ぶ）</td><td>★</td></tr>
+        <tr><td>19歳</td><td>2016年1月</td><td><b>Hudson River Tradingの最初のインターン（10人）に参加。</b>同期にScott Wu、Jeff Yan、Jesse Zhang</td><td>★★★</td></tr>
+        <tr><td>19歳</td><td>2016</td><td>冷蔵庫の食べ物を盗む犯人を探すカメラを作ろうとして、<b>「学習データがない」</b>壁にぶつかる。MITを辞め、Y Combinator（夏期）でScale AIを創業</td><td>★★★</td></tr>
+        <tr><td>20–22歳</td><td>2017–19</td><td>自動運転の会社（Cruise、Lyft、Toyota系など）向けの画像ラベル付けで急成長。2018年にLucy Guoが退社</td><td>★★</td></tr>
+        <tr><td>23歳</td><td>2020</td><td>米空軍などと契約し、国防に踏み込む。コロナ禍の一時期、<b>サム・アルトマンと同居</b></td><td>★★</td></tr>
+        <tr><td>24–25歳</td><td>2021–22</td><td>企業価値73億ドル。Forbesが「世界最年少の自力ビリオネア」と報じる</td><td>★★</td></tr>
+        <tr><td>26–27歳</td><td>2023–24</td><td>ChatGPT以降、大規模言語モデル向けの「人間の評価データ」に主力を移す。2024年5月、企業価値138億ドル</td><td>★★</td></tr>
+        <tr><td>28歳</td><td>2025年6月</td><td><b>MetaがScaleの49%を143億ドルで取得。ワンはMetaの初代Chief AI Officerへ</b></td><td>★★★</td></tr>
+        <tr><td>28歳</td><td>2025年10–11月</td><td>MSLで約600人を削減。チーフAIサイエンティストのYann LeCunが退社</td><td>★★</td></tr>
+        <tr><td>29歳</td><td>2026</td><td>4月に最初のモデル「Muse Spark」、8月にオープンモデル「Muse Glimmer」、9月に個人向けAIエージェント「Muse」を公開</td><td>★★★</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Early Life</div>
+  <h2>幼少期：ロスアラモスと物理学者の両親</h2>
+  <p>ロスアラモスは、第二次世界大戦中にマンハッタン計画で<b>原子爆弾が作られた町</b>だ。今も米国の核兵器研究の中心で、住民の多くが研究所で働く科学者とその家族という、世界でも珍しい「科学者の町」である。ワンの両親はともに中国から来た物理学者で、この研究所で働いていた。本人は「ロスアラモスで育った。両親はどちらも国立研究所で働く物理学者だった」と語っている。<span class="tag good">✓ 本人発言</span> 一部の報道は、両親の仕事を軍事関連の研究と伝えている。<span class="tag warn">△ 研究分野の詳細は非公開</span></p>
+  <p>彼が最初に数学の全国大会に申し込んだ理由は、「勝てばディズニーワールドへの旅行がもらえるから」だったという。そこから数学オリンピック、物理オリンピック、情報オリンピック（USACO）と、米国の「競技の天才」が集まる輪に入っていく。高校は1年早く卒業し、大学に入る前にシリコンバレーで働き始めた。</p>
+  <div class="callout"><strong>この時期に育ったパラメータ：</strong>①周りの大人が全員科学者という環境で身についた<b>「科学は国の力そのもの」という感覚</b>、②競技で鍛えた<b>速く正確に解く力と、勝ち負けへのこだわり</b>、③10代で社会に出たことによる<b>大人と対等に話す度胸</b>。このうち①は、のちにScaleが国防総省と組み、Metaに移っても「米中のAI競争」を語り続ける姿勢に直結している。</div>
+</div>
+
+<!-- 04 -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>Why Data</div>
+  <h2>なぜ「データ」に目をつけたのか</h2>
+  <p>2016年当時、AIの話題の中心は「すごいアルゴリズム（ディープラーニング）」と「速い計算機（GPU）」だった。ワンは早い段階から、AIを<b>アルゴリズム・計算機・データの3本柱</b>で説明し、「計算機はNVIDIAが、アルゴリズムは研究者が進めている。でもデータを本気でやっている人がいない」という立場を取った。その発想に至った道筋は、少なくとも4本の線に分けられる。</p>
+
+  <h3>線① MITの冷蔵庫事件：自分でAIを作ろうとして、データの壁にぶつかった</h3>
+  <p><span class="tag good">✓ 複数の報道で一致</span> MITの寮で、冷蔵庫の食べ物（ヨーグルトだったという話もある）を誰かに盗まれ続けた。彼は冷蔵庫の中にカメラを付け、中身が減ったら自動で気づくAIを作ろうとした。ところが、画像から「何がなくなったか」を見分けるAIを作るには、<b>「これはヨーグルト」「これは牛乳」と人が正解を付けた大量の画像</b>が要る。アルゴリズムは公開されていて誰でも使えるのに、肝心の正解データだけが手に入らない。ここで「AIの一番のボトルネックはデータだ」と体で理解したのが、Scaleの出発点とされる。</p>
+
+  <h3>線② Quoraと高頻度取引：「データを持つ側が勝つ」世界を2度見た</h3>
+  <p>Quoraは、質問と回答をどう並べるかを機械学習で決める会社だった。続くHudson River Tradingは、大量の市場データから一瞬の価格のずれを見つけて稼ぐ会社だ。どちらも<b>「良いデータを持ち、それを速く使える側が勝つ」</b>世界で、18〜19歳の彼はそれを内側から見ている。 <span class="tag warn">△ ここはキャリアの並びからの解釈。本人が「Quoraでデータの重要性を学んだ」と明言した一次資料は確認できていない</span></p>
+
+  <h3>線③ 物理学者の両親との「化学反応」</h3>
+  <p>正直に書くと、ワン自身は両親について多くを語っていない。「物理学者の両親から○○を学んだからデータに目をつけた」という本人の発言は、確認できた範囲では見つからない。<span class="tag warn">△ 直接の証言なし</span> そのうえで、確かな事実から言えることは2つある。</p>
+  <div class="vc-grid">
+    <div class="info-card"><div class="info-card-eyebrow">事実から言えること 1</div><div class="info-card-title">「測ったものしか信じない」文化</div><div class="info-card-text">物理学、とくに国立研究所の物理は、理論より先に<b>測定と実験データ</b>で物事を決める世界だ。ワンは「ロスアラモスでは、周りの子の親がみんな科学者だった」という環境で育っている。AIを「モデルの賢さ」ではなく「何を食べさせたか（データ）」で見る発想は、この文化と相性がいい。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">事実から言えること 2</div><div class="info-card-title">「技術は国の安全保障」という感覚</div><div class="info-card-text">原爆の町で育ったことは、彼のAI観にはっきり出ている。Scaleは2020年から米軍と契約し、国防総省のAI部門とも組んだ。2025年1月にはトランプ大統領への公開書簡で「アメリカはAI戦争に勝たなければならない」と書いた。<b>「AIは次の核兵器級の国家技術」</b>という見方は、ロスアラモス育ちと切り離せない。</div></div>
+  </div>
+
+  <h3>線④ タイミング：自動運転ブームという「最初の買い手」</h3>
+  <p>データに目をつけた人は他にもいたかもしれない。だがワンには、すぐにお金を払う買い手がいた。2016〜17年は自動運転の投資ブームで、各社が「道路の画像に、車・人・信号の枠を人の手で付けたデータ」を何百万枚も必要としていた。ScaleはまずGPS付きの作業依頼ソフトのような小さな事業を試した後、この<b>自動運転向けの画像ラベル付け</b>に絞り込み、CruiseやLyftなどを顧客にして伸びた。</p>
+  <div class="callout"><strong>まとめ：</strong>冷蔵庫事件で「データがない」痛みを自分で味わい（線①）、データで勝負が決まる会社を2社見て（線②）、測定を重んじ技術を国力と見る家庭で育ち（線③）、ちょうど自動運転がデータを大量に欲しがった（線④）。<b>個人の痛み × 環境 × 市場のタイミング</b>が、19歳の時点で一点に重なった。</div>
+</div>
+
+<!-- 05 -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>The HRT Gang</div>
+  <h2>HRTインターン：「新しいPayPalマフィア」</h2>
+  <div class="warn-box"><strong>最初に訂正：</strong>ワンがインターンをしたのは、暗号資産やNFTの会社ではなく、ニューヨークの<b>Hudson River Trading（HRT）＝コンピューターで超高速に株などを売買する会社（高頻度取引・クオンツ）</b>だ。ただし「暗号資産のイメージ」は的外れではない。同じインターンの同期から、暗号資産の取引所で世界最大級になった<b>Hyperliquid</b>の創業者が出ているし、インターン期間中にHRTの元パートナーたちがインターン生にビットコインの話をしていたと伝えられている。</div>
+
+  <h3>何をしたインターンだったのか</h3>
+  <p>2016年1月（「2015年の冬期インターン」と呼ばれる）、HRTが初めて開いたインターンで、参加者はわずか<b>10人</b>。ハーバードやMITの1〜3年生で、ほぼ全員が数学・情報・物理オリンピックの経験者だった。中身は<b>3週間の競争形式</b>で、ラウンドごとに順位が出る。毎回1位と2位を取ったのは、後にCognitionを作るScott Wuと、Hyperliquidを作るJeff Yanだったという。<span class="tag good">✓ Colossus・PANews等で一致</span> 具体的な課題（どんなアルゴリズムを書かされたか）は公開されていない。ワンはMITの1年生で、19歳の誕生日をこのインターン中に迎えている。</p>
+
+  <h3>同期から生まれた会社</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>人物</th><th>当時</th><th>その後</th><th>規模（2026年秋時点の報道）</th></tr></thead>
+      <tbody>
+        <tr><td><b>Alexandr Wang</b></td><td>MIT 1年</td><td>Scale AI 創業 → Meta Chief AI Officer</td><td>Scale 約290億ドル（Meta取引時）</td></tr>
+        <tr><td><b>Scott Wu</b></td><td>ハーバード 1年</td><td>Lunchclub → AIエンジニア「Devin」のCognition CEO</td><td>480億ドル（2026年9月の調達）</td></tr>
+        <tr><td><b>Jeff Yan</b></td><td>ハーバード 3年</td><td>HRT正社員 → 暗号資産のマーケットメイク → <b>Hyperliquid</b>（暗号資産の先物取引所）。社員11人・VC資金ゼロ</td><td>時価総額 数百億ドル（2026年10月で約760〜800億ドルとの報道。4月時点は約100億ドル）<span class="tag warn">△ 暗号資産のため変動大</span></td></tr>
+        <tr><td><b>Jesse Zhang</b></td><td>ハーバード</td><td>Lowkey（Niantic が買収）→ AIカスタマーサポートのDecagon</td><td>45億ドル</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>残る6人の進路はほとんど報じられていない。2026年10月19日、ワンはWuとYanとの写真をXに載せ、「HRTの仲間がまた集まった！」と書いた。これをきっかけに中国語圏・暗号資産メディアが「新しいPayPalマフィア」「10人のインターンから1000億ドル」と一斉に取り上げた。同じ競技仲間の輪からは、Perplexity（Johnny Ho）、Pika（Demi Guo）、CognitionのもうひとりのSteven Haoも出ている（この3人はHRT同期とは限らない）。</p>
+
+  <h3>なぜ、こんなに起業家が出たのか</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>理由</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 選抜がすでに極端</b></td><td>HRTやJane Streetのようなクオンツ会社は、昔から数学オリンピックのメダリストを狙って採用する。10人は「全米の競技の天才を、さらにふるいにかけた10人」だった。HRTが天才を作ったのではなく、<b>天才が集まる場所をHRTが一時的に提供した</b>というのが実態に近い</td></tr>
+        <tr><td><b>② 競技で育った考え方</b></td><td>制限時間の中で最適解を出す訓練を何年も受けている。クオンツは「感覚ではなく期待値で判断する」考え方をさらに強める。起業の「勝ち筋を計算して、一気に賭ける」と相性がいい</td></tr>
+        <tr><td><b>③ 同い年の基準が異常に高い</b></td><td>ワンは19歳の時、仲間に「PayPalマフィアのようなことが、なぜ自分たちにはできないのか（Why not us?）」と問いかけたと伝えられる <span class="tag warn">△ 場面（誕生日会か友人の集まりか）は資料で食い違う</span>。隣の友達が先に起業して成功すると、「自分もできる」が当たり前になる</td></tr>
+        <tr><td><b>④ 時代の波が2つ来た</b></td><td>彼らが20代になった2016〜2025年に、<b>AI</b>と<b>暗号資産</b>という、数学とプログラミングがそのまま武器になる巨大な波が来た。PayPalマフィアがWeb2の波に乗ったのと同じ構図</td></tr>
+        <tr><td><b>⑤ 互いに助け合う網</b></td><td>出資・採用・紹介が仲間内で回る。Wuは「友情はインターンで始まったのではなく、もっと前の競技仲間からだ」という趣旨を語っている。HRTは「出会いの場」ではなく「再会の場」だった</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>PayPalマフィアとの違い：</strong>PayPalマフィアは「同じ会社で一緒に戦い、売却で得たお金で互いに出資した」集団。HRT組は<b>同じ会社で働いたのは3週間だけ</b>で、つながりの正体は「中高時代からの競技仲間」と「同じ考え方」だ。また、成功した4人だけが語られ、残り6人が語られないのは<b>後から見た成功者だけを数える偏り（生存者バイアス）</b>でもある点は差し引いて見る必要がある。</div>
+</div>
+
+<!-- 06 -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>Sam Altman</div>
+  <h2>サム・アルトマンとの同居</h2>
+  <div class="warn-box"><strong>先に正直に：</strong>「アルトマンとルームシェアして、毎晩話し込んだ」という<b>会話の中身まで書いた一次資料は見つからなかった</b>。確かなのは「コロナ禍のピークの時期に、一時期一緒に住んでいた」という事実まで。以下は確認できた事実と、そこから読める関係性に分けて書く。</div>
+  <h3>確認できた事実</h3>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">01</div><div><div class="ind-title">出会いはY Combinator。</div><div class="ind-desc">Scaleが2016年にYCに入った時、YCの社長がアルトマンだった。19歳のワンにとって、最初の「大人の後ろ盾」の一人。</div></div></div>
+    <div class="ind-item"><div class="ind-num">02</div><div><div class="ind-title">コロナ禍のピーク（2020年ごろ）に同居。</div><div class="ind-desc">Wikipedia（Semafor 2025年1月の記事を出典）とBloomberg（2025年6月）が「一時期一緒に住んでいた」と報じている。期間について「数か月」とする記事もあるが、出典が弱い。<span class="tag good">✓ 同居の事実</span> <span class="tag warn">△ 期間</span></div></div></div>
+    <div class="ind-item"><div class="ind-num">03</div><div><div class="ind-title">アルトマンの冗談。</div><div class="ind-desc">Bloombergによれば、社交好きで有名なワンに、アルトマンは「人付き合いを少しは控えろ」と冗談を言ったことがあり、Xでも「彼ほど多くのパーティーに飛行機で出入りする人はいない」とからかっている。</div></div></div>
+    <div class="ind-item"><div class="ind-num">04</div><div><div class="ind-title">「長年の友人」。</div><div class="ind-desc">TIME誌の「AIで最も影響力のある100人」でワンの紹介文を書いたのはアルトマンで、「longtime friend（長年の友人）」と書いている。</div></div></div>
+    <div class="ind-item"><div class="ind-num">05</div><div><div class="ind-title">仕事でも深くつながっていた。</div><div class="ind-desc">ScaleはOpenAIの学習データ・評価の取引先で、ChatGPTを「人間の好みに合わせて調整する」作業（人間による評価データ）にも関わった。Meta取引の後、Googleなどが取引を減らす中、OpenAIは当初「Scaleとの取引を続ける」と報じられた。</div></div></div>
+  </div>
+  <h3>この関係から読めること</h3>
+  <p>同居していた2020年は、OpenAIがGPT-3を出し、Scaleが自動運転から言語AIへ軸足を移し始めた時期と重なる。<b>「AIの最先端の会社のトップ」と「そのデータを作る会社のトップ」が同じ家にいた</b>わけで、業界の次の流れを誰より早く知れる位置にいたことは間違いない。<span class="tag warn">△ 解釈</span></p>
+  <p>皮肉なのはその後だ。2025年夏、MetaのトップになったワンはOpenAIから研究者を次々と引き抜き、ChatGPTの共同開発者<b>Shengjia Zhao</b>をMSLのチーフサイエンティストに据えた。アルトマンは社内向けに「傭兵（お金で動く人）より、使命で動く人が勝つ」という趣旨のメッセージを出して対抗した。<b>かつての同居人が、AI人材をめぐる一番の競争相手になった</b>。</p>
+</div>
+
+<!-- 07 -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Scale AI</div>
+  <h2>Scale AIの軌跡</h2>
+  <h3>Quoraで出会った相棒、Lucy Guo</h3>
+  <p>共同創業者のLucy Guoは、カーネギーメロン大学を中退したThielフェロー（ピーター・ティールの「大学を辞めて起業する若者」への奨学金）で、Quoraのプロダクトデザイナーだった。ワンがQuoraで出会った人物だ。2人は2016年にYCに入り、Scaleを作った。Guoは2018年に退社し、後に自分のファンドやPassesという会社を作っている。Scaleの創業物語ではGuoの役割が語られにくいことに、批判もある。</p>
+  <h3>3つの波に、毎回乗り換えた</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>時期</th><th>主な顧客</th><th>売っていたもの</th></tr></thead>
+      <tbody>
+        <tr><td>2016–19</td><td>自動運転（Cruise、Lyft、Toyota系など）</td><td>道路の画像・3Dセンサーのデータに、車・人・信号の枠を付けたデータ</td></tr>
+        <tr><td>2020–22</td><td>米国防総省・米空軍、政府機関</td><td>衛星画像などの分析データ、AIの試験・評価</td></tr>
+        <tr><td>2022–25</td><td>OpenAI、Google、Meta などの言語AI企業</td><td>人間が書いた模範解答、AIの回答の良し悪しの評価（RLHF用データ）、モデルの安全性テスト</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>作業の多くは、子会社<b>Remotasks</b>などを通じて、フィリピン・ケニア・ベネズエラなどの作業者がオンラインで行った。ソフトで作業を細かく分け、品質を自動でチェックすることで、「人手の作業」を「APIで呼べるサービス」に見せたのがScaleの発明だった。企業価値は2021年に73億ドル、2024年5月に138億ドル、そして2025年のMeta取引で約290億ドルになった。</p>
+</div>
+
+<!-- 08 -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>The Meta Deal</div>
+  <h2>Metaの143億ドル：何が評価されたのか</h2>
+  <div class="warn-box"><strong>厳密には「買収（M&amp;A）」ではない：</strong>MetaはScaleの<b>49%を、議決権のない株</b>として買った。Scaleは独立した会社のままで、ワンはCEOを降りてMetaに移り、Scaleの取締役には残った。後任CEOは戦略責任者だったJason Droege。過半数を取らない形にしたのは、Metaが独占禁止法の裁判（FTC対Meta）を抱えていて、正式な買収だと審査が入るのを避けるためと報じられている。実質は<b>「人を迎えるための巨額出資（アクハイヤー）」</b>だ。</div>
+  <div class="col-num">
+    <div class="n"><div class="v">$14.3B</div><div class="l">出資額。WhatsApp買収に次ぐMeta史上2番目の規模</div></div>
+    <div class="n"><div class="v">49%</div><div class="l">取得比率（議決権なし）</div></div>
+    <div class="n"><div class="v">約$29B</div><div class="l">逆算した企業価値。1年前の138億ドルの約2倍</div></div>
+    <div class="n"><div class="v">$5B → $20B</div><div class="l">交渉の入り口。ザッカーバーグの50億ドルに、ワンは200億ドルで返した（The Information）</div></div>
+  </div>
+  <h3>Metaは何に143億ドルを払ったのか</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>評価されたもの</th><th>中身</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 焦り：Llama 4の失敗</b></td><td>2025年4月に出したLlama 4の評判が悪く、ザッカーバーグは強い不満を持っていたと報じられた。OpenAI・Google・Anthropicに離されつつあり、<b>時間をお金で買う必要があった</b></td></tr>
+        <tr><td><b>② 業界全体を知っている</b></td><td>Scaleはほぼ全てのAI企業にデータを売ってきた。Bloombergは見出しで「ワンは、他の全員が何をしているかを知っている」と書いた。どの会社が、どんなデータで、どこに力を入れているか、を肌で知る人物は他にいない</td></tr>
+        <tr><td><b>③ 研究者ではなく「経営者」</b></td><td>Metaは研究の天才ではなく、<b>大きな組織を速く動かせる経営者</b>に賭けたと評された。ワン本人も研究者ではないことを隠さない</td></tr>
+        <tr><td><b>④ 人を集める力</b></td><td>シリコンバレー随一の人脈と社交力。実際、着任後に数十人のトップ研究者を引き抜いた</td></tr>
+        <tr><td><b>⑤ データの供給網</b></td><td>学習データの最大手を半分持つことは、「データの供給を止められない保険」にもなる</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><b>その後のScale：</b>Metaと近くなったScaleを、Google・OpenAI・xAIなどが警戒して取引を減らした。Scaleは2025年7月に社員の約14%を削減している。「全員の中立な裏方」という最大の強みは、この取引で失われた。</p>
+</div>
+
+<!-- 09 -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>Chief AI Officer</div>
+  <h2>Chief AI Officerとして、いま何をしているか</h2>
+  <p>ワンが率いるのは<b>Meta Superintelligence Labs（MSL）</b>。「人間を超える知能（超知能）」を作るとザッカーバーグが宣言して2025年6月30日に作った組織で、Metaの全AI研究をまとめて抱える。</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2025年6–7月</span><span class="tl-title">人集め。</span></div><div class="tl-body">元GitHub CEOのNat Friedman（製品担当）、Daniel Gross、OpenAIのShengjia Zhao（チーフサイエンティスト）などを採用。報酬は1人あたり数百万〜1億ドル規模と報じられ、業界の相場を壊した。SSI（イリヤ・サツケバー）、Thinking Machines、Perplexityの買収も検討したが成立せず</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2025年8月</span><span class="tl-title">4つに再編。</span></div><div class="tl-body">①次世代モデルを作る少数精鋭の「TBD Lab」（ワン直轄）②基礎研究のFAIR ③製品と応用研究（Friedman）④インフラ（Aparna Ramani）</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2025年10月22日</span><span class="tl-title">約600人を削減。</span></div><div class="tl-body">古いAI部門が中心。ワンは社内に「人数を減らせば、決めるまでに必要な会話が減る」という趣旨を伝えた。TBD Labは対象外</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2025年11月</span><span class="tl-title">Yann LeCunが退社。</span></div><div class="tl-body">チューリング賞受賞者で、Metaのチーフ AIサイエンティスト。「言語モデルの延長に超知能はない」と考えるLeCunと、新体制の方針の違いが背景とされ、自分の会社AMI Labsを作った</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2026年3月</span><span class="tl-title">逆風。</span></div><div class="tl-body">開発中のモデル（コード名Avocado）が社内テストでGoogle・OpenAI・Anthropicに届かず、公開を延期したとNYTが報道。CTOのボズワース配下に別の「応用AIエンジニアリング」組織ができ、ワンの権限が削られたという報道も出たが、Metaは否定し、ザッカーバーグはワンとの写真を投稿した <span class="tag warn">△ 権限の実態は不明</span></div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2026年4月8日</span><span class="tl-title">最初のモデル「Muse Spark」公開。</span></div><div class="tl-body">AvocadoがMuse Sparkになった。Llamaと違い<b>中身を公開しない（クローズド）</b>モデルで、Meta AIアシスタントを動かす。第三者の総合評価で上位4〜5位。Metaは「最先端」ではなく「効率と十分な性能」を打ち出した</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2026年8月10日</span><span class="tl-title">「Muse Glimmer」公開。</span></div><div class="tl-body">パソコンでも動く300億パラメータのオープンモデル（Apache License）。オープン路線の灯は残した <span class="tag warn">△ Wikipediaのみで確認</span></div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2026年9月8日</span><span class="tl-title">個人向けAIエージェント「Muse」公開。</span></div><div class="tl-body">予約・支払い・文章作成など、時間のかかる作業を自分から進める。無料版と月20ドル・月100ドルの有料版。米国から始め、カナダ、11月5日にメキシコへ（ワンがXで発表）。EUは未定</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2026年10月</span><span class="tl-title">「小さなチーム」の哲学。</span></div><div class="tl-body">ワンはイーロン・マスクから学んだ「少人数で速く」というやり方を、Metaに持ち込んでいると語った（Benzinga）</div></div></div>
+  </div>
+  <div class="callout"><strong>CAIOとしての仕事を一言で：</strong>ワンは自分で論文を書く人ではなく、<b>①トップ研究者を集め、②組織を小さく鋭く作り直し、③「オープンなLlama」から「クローズドで稼ぐMuse」へとMetaのAI戦略そのものを切り替えた</b>人だ。Scale時代の「データを集める人」から、Metaでは「人を集める人」になった。評価はまだ割れている。Muse Sparkは首位ではなく、Museエージェントはこれから、という段階だ。</div>
+</div>
+
+<!-- 10 -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Structure of Greatness</div>
+  <h2>偉大さの構造分析：なぜワンだけが？</h2>
+  <p>HRTの同期にも、MITの同級生にも、もっと数学ができる人はいた。それでもワンがAI業界の中心に立った理由は、次の5つに分解できる。</p>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>要因</th><th>説明</th><th>裏付けエピソード</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 地味なボトルネックを見る目</b></td><td>皆がアルゴリズムと計算機を見ていた時に、誰もやりたがらない「データの手作業」を本業にした。競争相手が少ない場所を選んだ</td><td>冷蔵庫事件。AIを「3本柱」で語る癖</td></tr>
+        <tr><td><b>② 波に合わせて客を乗り換える速さ</b></td><td>自動運転 → 国防 → 言語AIと、3回顧客の中心を入れ替えた。どの波でも「データの裏方」という立ち位置は同じ</td><td>2020年の国防参入、2022年以降のRLHF</td></tr>
+        <tr><td><b>③ 裏方だからこそ集まる情報</b></td><td>全てのAI企業と取引することで、業界全体の地図を持つ唯一の人物になった</td><td>Bloomberg「他の全員が何をしているかを知っている」</td></tr>
+        <tr><td><b>④ 天才の網と社交力</b></td><td>競技仲間・HRT同期・YC・アルトマン・ワシントンの政治家まで。研究者ではない彼の最大の武器は、人をつなぎ、集める力</td><td>HRT組、アルトマンとの同居、議会証言、各国首脳との面会</td></tr>
+        <tr><td><b>⑤ 国家の物語に乗せる力</b></td><td>「AIは米中の覇権争い」という物語を早くから語り、自分の会社を国の安全保障の一部にした。ロスアラモス育ちらしい視点</td><td>国防総省との契約、トランプ大統領への書簡</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>構造の要約：</strong>①で<b>競争の少ない場所</b>に立ち、②で<b>波が変わっても生き残り</b>、③と④で<b>情報と人脈が雪だるま式に集まり</b>、⑤で<b>国家レベルの後ろ盾</b>を得た。研究の天才ではなく、「どこに立つか」を選ぶ天才だった。</div>
+</div>
+
+<!-- 11 -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Light &amp; Shadow</div>
+  <h2>光と影：批判と矛盾</h2>
+  <h3>「デジタルの搾取工場」</h3>
+  <p>ワシントン・ポストは2023年、Remotasksでデータ作業をするフィリピンの作業者が、低い報酬や支払いの遅れに苦しんでいると報じた。AIの「魔法」は、途上国の安い手作業の上に成り立っているという批判は、Scaleに常につきまとった。</p>
+  <h3>「中立な裏方」を自分で手放した</h3>
+  <p>Meta取引でScaleは「全員の味方」ではなくなり、主要顧客が離れ、社員を削減した。ワン個人にとっては大きな飛躍だが、会社にとっては最大の強みを売った形でもある。</p>
+  <h3>「MEI」発言</h3>
+  <p>2024年、ワンはScaleの採用方針を「DEI（多様性）ではなくMEI（実力・卓越・知性）」と打ち出した。マスクらは称賛したが、多様性の研究者からは強く批判された。</p>
+  <h3>Metaでの「結果」はまだ出ていない</h3>
+  <p>巨額の報酬で人を集め、600人を削り、LeCunが去った。それでも最初のモデルは首位ではなかった。「お金で時間は買えるのか」という問いへの答えは、まだ出ていない。</p>
+</div>
+
+<!-- 12 -->
+<div class="sec" id="s12">
+  <div class="sec-label"><span class="num">12</span>Trivia</div>
+  <h2>雑学・意外な側面</h2>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-card-eyebrow">きっかけ</div><div class="info-card-title">競技数学の動機はディズニーワールド</div><div class="info-card-text">最初に全国大会に出たのは、優勝賞品のディズニーワールド旅行が欲しかったから。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">冷蔵庫</div><div class="info-card-title">会社の原点は「ヨーグルト泥棒」</div><div class="info-card-text">寮の冷蔵庫の食べ物を盗む犯人を見つけたくてAIカメラを作ろうとしたことが、データ会社の出発点。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">最年少</div><div class="info-card-title">25歳で「世界最年少の自力ビリオネア」</div><div class="info-card-text">2022年にForbesが報じた。見出しは「政府と仕事をして金持ちになった」。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">パーティー</div><div class="info-card-title">アルトマンに「遊びすぎ」とからかわれる</div><div class="info-card-text">「彼ほど多くのパーティーに飛行機で出入りする人はいない」とアルトマンがXで冗談を言うほどの社交家。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">ワシントン</div><div class="info-card-title">「ワシントンのAI通訳」</div><div class="info-card-text">ChatGPT以前から議員や国防関係者と会っていた。Semaforは2023年に「ワシントンのAIの囁き役」と呼んだ。2025年にはトランプ大統領の就任式にも出席した。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">HRT</div><div class="info-card-title">19歳の誕生日はインターン中</div><div class="info-card-text">MIT1年の冬、HRTのインターン中に19歳になった。10年後、その同期は合計で1000億ドル規模の会社群を率いている。</div></div>
+    <div class="info-card"><div class="info-card-eyebrow">取締役</div><div class="info-card-title">Expediaの取締役</div><div class="info-card-text">2023年に旅行サイトExpediaの取締役に就任。同じ年にアルトマンがその席を退いている。</div></div>
+  </div>
+</div>
+
+<!-- 13 -->
+<div class="sec" id="s13">
+  <div class="sec-label"><span class="num">13</span>Message</div>
+  <h2>現代へのメッセージ：みんなが見ていない「材料」を押さえろ</h2>
+  <div class="col-box">
+    <div class="col-lbl">Takeaways</div>
+    <p><strong>① 自分で作ろうとして、つまずいた場所を見逃さない。</strong>ワンの事業は、冷蔵庫のAIを作ろうとして「データがない」とつまずいた体験から生まれた。<b>今週、仕事で「これさえあればできるのに」と思った材料・情報・作業を1つメモする。それが他の人も困っているなら、事業の種になる</b>。</p>
+    <p><strong>② 主役ではなく、全員が必要とする裏方に立つ。</strong>AIモデルの開発競争に直接参加せず、全員にデータを売ったから、勝者が誰でも儲かり、業界全体の情報が集まった。<b>自分の業界で「どの会社が勝っても必要になるもの」は何かを書き出してみる</b>。</p>
+    <p><strong>③ 隣にいる人の基準が、自分の基準になる。</strong>HRT組は「同世代の友達が起業して成功している」ことが当たり前の環境にいた。<b>自分より一段上で挑戦している人が集まる場所に、月1回でも顔を出す</b>。</p>
+    <p><strong>④ ただし、裏方の中立性は一度しか売れない。</strong>ワンはMetaに移ったことで、Scaleの「全員の味方」という価値を手放した。大きなチャンスが来た時、自分が失うものも先に数えておくこと。</p>
+  </div>
+  <p style="margin-top:24px;color:var(--muted)">どこをもっと深掘りする？　原体験・キャリア・思想、気になるセクションがあれば！</p>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://en.wikipedia.org/wiki/Alexandr_Wang">Wikipedia — Alexandr Wang</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Meta_Superintelligence_Labs">Wikipedia — Meta Superintelligence Labs</a></li>
+    <li><a href="https://www.meta.com/about/leadership/alexandr-wang/">Meta — Alexandr Wang, Chief AI Officer</a></li>
+    <li><a href="https://scale.com/blog/author/alexandr-wang">Scale AI — Alexandr Wang author page</a></li>
+    <li><a href="https://www.ycombinator.com/companies/scale-ai">Y Combinator — Scale AI</a></li>
+    <li><a href="https://www.indexventures.com/perspectives/scale-ai-why-data-will-power-the-ai-revolution/">Index Ventures — Scale AI: Why data will power the AI revolution</a></li>
+    <li><a href="https://www.forbes.com.au/news/innovation/how-alexandr-wang-turned-clickworkers-into-a-7-3-billion-ai-unicorn/">Forbes — How Alexandr Wang turned clickworkers into a $7.3B unicorn</a></li>
+    <li><a href="https://entrepreneur.com/business-news/who-is-alexandr-wang-the-founder-of-scale-ai-joining-meta/493281">Entrepreneur — Who is Alexandr Wang</a></li>
+    <li><a href="https://www.graphic.com.gh/business/business-news/alexandr-wang-meet-the-world-s-youngest-self-made-billionaire.html">Graphic — World's youngest self-made billionaire</a></li>
+    <li><a href="https://e.vnexpress.net/news/tech/enterprises/5-things-to-know-about-tech-mogul-alexandr-wang-world-s-youngest-self-made-billionaire-4883222.html">VnExpress — 5 things to know about Alexandr Wang</a></li>
+    <li><a href="https://peninsula360press.com/en/alexander-wang-the-rebel-billionaire/">Peninsula 360 — The rebel billionaire（El País等を引用）</a></li>
+    <li><a href="https://www.petertheil.com/168927/">Interview — Alexandr Wang on securing U.S. AI leadership</a></li>
+    <li><a href="https://www.bloomberg.com/news/articles/2025-06-16/scale-ai-s-alexandr-wang-brings-meta-his-extensive-competitor-knowledge">Bloomberg — Wang brings to Meta knowledge of what everyone else is doing</a></li>
+    <li><a href="https://www.thestar.com.my/tech/tech-news/2025/06/17/scale-ais-wang-brings-to-meta-knowledge-of-what-everyone-elseis-doing">The Star（Bloomberg転載）</a></li>
+    <li><a href="https://www.semafor.com/article/06/30/2023/the-26-year-old-ceo-who-became-washingtons-ai-whisperer">Semafor — Washington's AI whisperer (2023)</a></li>
+    <li><a href="https://www.maginative.com/article/meta-bets-14-3-billion-on-scale-ai-and-its-ceo-to-lead-new-superintelligence-lab/">Maginative — Meta bets $14.3B on Scale AI</a></li>
+    <li><a href="https://www.nasdaq.com/articles/meta-invests-143-bln-scale-ai-taps-ceo-alexandr-wang-lead-superintelligence-push">Nasdaq — Meta invests $14.3B in Scale AI</a></li>
+    <li><a href="https://www.brecorder.com/news/amp/40367549">Business Recorder (Reuters) — Meta finalizes $14.3B investment</a></li>
+    <li><a href="https://www.cnbc.com/2026/04/08/meta-debuts-first-major-ai-model-since-14-billion-deal-to-bring-in-alexandr-wang.html">CNBC — Meta debuts Muse Spark (2026-04)</a></li>
+    <li><a href="https://www.understandingai.org/p/meta-is-back-in-the-llm-game-after">Understanding AI — Meta is back in the LLM game</a></li>
+    <li><a href="https://www.cnbc.com/2026/06/14/meta-hired-alexandr-wang-to-build-ai-its-zuckerbergs-job-to-sell-it.html">CNBC — A year after Meta tapped Wang (2026-06)</a></li>
+    <li><a href="https://www.axios.com/2026/09/08/meta-debuts-muse-personal-ai-agent">Axios — Meta debuts Muse personal AI agent (2026-09)</a></li>
+    <li><a href="https://www.cnbc.com/2026/09/08/meta-personal-ai-agents-public-reckoning-privacy-safety.html">CNBC — Meta pushes into personal AI agents (2026-09)</a></li>
+    <li><a href="https://www.benzinga.com/markets/tech/26/10/62316913/alexandr-wang-brought-elon-musks-lean-team-playbook-to-mark-zuckerberg-at-meta">Benzinga — Wang's Elon Musk lean-team lesson (2026-10)</a></li>
+    <li><a href="https://mautoblog.com/en/posts/meta-muse-ai-agent-not-available-europe-2026/">Mautoblog — Meta Muse not in Europe</a></li>
+    <li><a href="https://colossus.com/article/beyond-the-sky-jeffrey-yan-hyperliquid/">Colossus — Jeffrey Yan / Hyperliquid (2026-04)</a></li>
+    <li><a href="https://panews.io/articles/01a153df-c757-7278-b1f5-f56696eb3327">PANews — The New PayPal Mafia: 10 interns, $100B (2026-10)</a></li>
+    <li><a href="https://www.chaincatcher.com/en/article/2297333">ChainCatcher — HRT interns produced Meta AI head and Hyperliquid (2026-10)</a></li>
+    <li><a href="https://rupakghose.substack.com/p/the-quant-kids-of-trading">Rupak Ghose — The quant kids of trading (2026-05)</a></li>
+    <li><a href="https://www.kucoin.com/news/flash/meta-chief-ai-officer-alexandr-wang-shares-photo-with-former-hrt-interns">KuCoin News — Wang shares photo with former HRT interns</a></li>
+    <li><a href="https://techflowpost.com/en-US/article/34694">TechFlow — "Why not us?"</a></li>
+    <li><a href="https://gettingrealaboutai.substack.com/p/labor-exploitation-at-scale">Getting Real About AI — Labor exploitation at Scale</a></li>
+  </ul>
+</div>
+
+</div>
+
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>
