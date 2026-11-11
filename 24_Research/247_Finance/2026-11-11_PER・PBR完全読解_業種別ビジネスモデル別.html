@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PER・PBR 完全読解 — 業種・ビジネスモデル別の読み方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   WANDERLUST WEB PAGE SYSTEM — Design tokens & components
+   黒の角丸ヒーローカード＋KPI列・番号付きセクション・グレーカード
+   基調のフォーマット（kyo24111.github.io startup_news系デザイン
+   ＝ 261009_mecka_series_b.html を正本として移植、2026-10刷新）
+   スライド(_Templates/slides/)とは別系統。ツール・レポート・
+   コンテンツページ（country-info, deep-research, 単発ツール等）
+   で使う。
+
+   運用ルール:
+   - 生成するHTMLは外部依存なしの単体ファイルにすること
+     （Google Fontsの<link>のみ許可）。このファイルは「コピー元の
+     正本」であり、<link>で読み込むものではない。生成時はこの内容
+     をそのまま <style> に埋め込む。
+   - 各コンポーネントの実例は同ディレクトリの template.html を参照。
+   - 基本構成: .page > .hero(角丸黒カード) → .toc(2段目次) →
+     .sec(番号付きセクション) … → .sources
+     旧構成（body直下の .hero > .hero-inner ＋ .wrap ＋ .block）も
+     同じ見た目で動くよう互換クラスを残してある。
+   ============================================================ */
+
+:root {
+  --bg:      #ffffff;
+  --surface: #f5f5f5; /* 目次・kv・コールアウトの地 */
+  --card:    #f0f0f0; /* カード・タイムライン・人物の地 */
+  --card2:   #e8e8e8; /* 表ヘッダー・ホバー */
+  --surface2:#e8e8e8; /* 旧名（= --card2） */
+  --ink:     #111111; /* ヒーロー・番号・見出し罫線の黒 */
+  --text:    #111111;
+  --mid:     #444444;
+  --muted:   #888888;
+  --dim:     #bbbbbb;
+  --border:  #d8d8d8;
+
+  --good:   #2f7a4f; /* 改善・確認済・低リスク */
+  --bad:    #b3382c; /* 悪化・要注意・高リスク */
+  --warn:   #a67c2e; /* 中リスク・未検証 */
+  --accent: #111111; /* 単一の強調。基本は黒（グレースケールで完結させる） */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; line-height: 1.8;
+}
+strong { font-weight: 700; }
+em { font-style: italic; color: var(--mid); }
+a { color: var(--ink); text-decoration: underline; }
+
+h1, h2, h3, .badge, .kpi, .toc-lbl, .toc-title, .sec-label, .section-label, .block-label,
+.hero-eyebrow, .stat-label, .info-card-eyebrow, .tl-date, .tl-year, .eyebrow, .net-name,
+.p-name, .p-role, .vc-name, .r-badge, .f-amount, .col-lbl, .w-title {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+}
+
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
+.page, .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+.hero + .wrap { padding-top: 0; }
+
+/* ============================================================
+   HERO — 角丸の黒カード（バッジ → タイトル → リード → KPI列）
+   .page の中に置く。旧構成（body直下の .hero > .hero-inner）でも
+   同じカードになるよう幅と余白を揃えてある。
+   ============================================================ */
+.hero {
+  background: var(--ink); color: #fff; border-radius: 16px;
+  padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none;
+}
+body > .hero { max-width: 852px; margin: 48px auto 24px; }
+.hero-inner { max-width: none; }
+
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 4px; display: inline-block;
+}
+.badge-white { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.badge-solid { background: #fff; color: var(--ink); }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 2.4rem; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: #fff; margin-bottom: 12px;
+}
+.hero-sub { font-size: .95rem; color: rgba(255,255,255,.75); max-width: 660px; line-height: 1.7; margin-bottom: 28px; }
+.hero-sub:last-child { margin-bottom: 0; }
+.hero-sub strong { color: #fff; }
+
+/* KPI列（ヒーロー下段の大きな数字） */
+.kpi-row, .hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.kpi .val { font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.kpi .lbl { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+/* 旧 hero-meta（ラベル上・値下の小さめ版） */
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-item .label { font-family: 'Poppins', sans-serif; font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .07em; text-transform: uppercase; }
+.hero-meta-item .value { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* ヒーローを使わない単発ツール用のタイトル */
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.page-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
+.page-sub { font-size: 14px; color: var(--mid); line-height: 1.8; max-width: 680px; margin: 0; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.meta-chip { border: 1px solid var(--border); padding: 3px 10px; font-size: 12px; color: var(--mid); border-radius: 4px; }
+.meta-chip strong { color: var(--text); }
+
+/* ============================================================
+   TOC — ヒーロー直下の2段組み目次（番号は自動）
+   <div class="toc"><div class="toc-lbl">Contents</div><ol><li><a href="#s1">…</a></li></ol></div>
+   ============================================================ */
+.toc {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 10px; padding: 22px 28px; margin-bottom: 32px;
+}
+.toc-lbl, .toc-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.toc ol { list-style: none; column-count: 2; column-gap: 32px; counter-reset: toc; }
+.toc ol li { counter-increment: toc; padding: 4px 0; font-size: 13px; color: var(--mid); break-inside: avoid; }
+.toc ol li::before {
+  content: counter(toc, decimal-leading-zero) ". "; color: var(--ink); font-weight: 700;
+  font-family: 'Poppins', sans-serif; font-size: 10px;
+}
+.toc ol li a { color: var(--text); text-decoration: none; }
+.toc ol li a:hover { text-decoration: underline; }
+
+/* ============================================================
+   SECTION — 番号付きラベル＋h2
+   <div class="sec" id="s1"><div class="sec-label"><span class="num">01</span>Label</div><h2>…</h2></div>
+   ============================================================ */
+.sec, section, .block { margin-bottom: 48px; }
+.sec-label, .section-label, .block-label {
+  font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label .num {
+  background: var(--ink); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sec-label::after, .section-label::after, .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+h2, .block-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+h3 { font-size: 1rem; font-weight: 700; margin: 22px 0 10px; }
+p { margin-bottom: 14px; font-size: 14px; color: var(--text); line-height: 1.85; }
+p:last-child { margin-bottom: 0; }
+.sec ul, .sec ol, .block ul, .block ol { padding-left: 20px; margin-bottom: 14px; }
+.sec li, .block li { font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+/* ============================================================
+   SUMMARY / CALLOUT / WARN BOX / QUOTE
+   ============================================================ */
+.summary, .callout {
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0;
+  font-size: 13.5px; color: var(--mid); line-height: 1.75;
+}
+.summary { margin: 0 0 32px; font-size: 14px; }
+.summary strong, .callout strong { color: var(--text); }
+.callout.warn { border-left-color: var(--warn); }
+.callout.bad  { border-left-color: var(--bad); }
+.callout.good { border-left-color: var(--good); }
+
+/* 注意書き・表記の揺れなどを箇条書きで */
+.warn-box {
+  background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--ink);
+  border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 16px 0;
+}
+.warn-box .w-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.warn-box ul { padding-left: 18px; }
+.warn-box li { font-size: 13.5px; color: var(--mid); line-height: 1.8; margin-bottom: 4px; }
+.warn-box li b, .warn-box li strong { color: var(--text); }
+
+.quote, blockquote {
+  margin: 14px 0; padding: 12px 18px; border-left: 3px solid var(--ink); background: var(--surface);
+  border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.85; color: var(--text);
+}
+.quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+/* ============================================================
+   KEY-VALUE GRID / NUMBER TILES / STATS
+   ============================================================ */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.kv-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+.kv-item .k { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.kv-item .v { font-size: 13.5px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+/* 小さな数字タイル（倍率・期間・人数など） */
+.col-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.col-num .n { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.col-num .n .v { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 3px; }
+.col-num .n .l { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* 旧 stat-grid（.col-num と同じ見た目のタイル） */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.stat-value { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.stat-value .delta { font-size: 12px; font-weight: 700; margin-left: 8px; }
+.delta.bad { color: var(--bad); } .delta.good { color: var(--good); } .delta.flat { color: var(--muted); font-weight: 600; }
+.stat-badge {
+  display: inline-block; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: -.02em; padding: 6px 20px; border-radius: 10px; margin-top: 8px;
+}
+
+/* ============================================================
+   TABLE — 黒の下線ヘッダー。横に長い表は .t-wrap で包む
+   ============================================================ */
+.t-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; }
+.t-wrap .t, .t-wrap .data-table { min-width: 560px; margin: 0; }
+.t, .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+.t th, .data-table th {
+  background: var(--card2); color: var(--mid); font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; padding: 9px 14px; text-align: left; border-bottom: 2px solid var(--ink);
+}
+.t td, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; color: var(--text); }
+.t tr:last-child td, .data-table tr:last-child td { border-bottom: none; }
+.t tr:hover td, .data-table tr:hover td { background: var(--surface); }
+.t td:first-child { font-weight: 600; white-space: nowrap; }
+/* 縦型のキー・バリュー表（<tr><th>項目</th><td>値</td></tr>） */
+.data-table.kv th {
+  width: 30%; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0;
+  font-weight: 600; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+
+/* ============================================================
+   TAG — 角4pxのラベル
+   ============================================================ */
+.tag {
+  display: inline-block; border: 1px solid var(--border); background: var(--card2); border-radius: 4px;
+  padding: 2px 9px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .04em; color: var(--mid);
+}
+.tag.solid, .tag.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tag.good { color: var(--good); border-color: var(--good); background: transparent; }
+.tag.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+.tag.bad  { color: var(--bad);  border-color: var(--bad);  background: transparent; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.bar-row { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid); margin-bottom: 5px; }
+.bar-track { height: 6px; background: var(--card2); border-radius: 4px; }
+.bar-fill { height: 100%; background: var(--ink); border-radius: 4px; }
+.bar-fill.accent { background: var(--ink); }
+.bar-fill.good { background: var(--good); }
+.bar-fill.bad { background: var(--bad); }
+
+/* ============================================================
+   TIMELINE — 縦線＋ドット＋カード
+   <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content">
+     <div class="tl-header"><span class="tl-date">2026-06</span><span class="tl-title">…</span></div>
+     <div class="tl-body">…</div></div></div>
+   旧マークアップ（.tl-year/.tl-title/.tl-text を直に並べる）も動く。
+   ============================================================ */
+.timeline { position: relative; padding-left: 26px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--border); border-radius: 2px; }
+.tl-item { position: relative; margin-bottom: 8px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-dot { position: absolute; left: -22px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); z-index: 1; }
+.tl-dot.filled { background: var(--ink); }
+.tl-content { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.tl-date, .tl-year {
+  font-size: 10.5px; font-weight: 700; color: var(--ink); background: #11111110; border: 1px solid #11111125;
+  padding: 1px 8px; border-radius: 4px; white-space: nowrap; display: inline-block;
+}
+.tl-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.tl-body, .tl-text { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 4px; }
+.tl-body b, .tl-text b { color: var(--text); font-weight: 600; }
+.tl-loc { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* 旧マークアップ: カード化とドットを自動で付ける */
+.tl-item:not(:has(.tl-content)) { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; }
+.tl-item:not(:has(.tl-content))::before {
+  content: ''; position: absolute; left: -22px; top: 18px; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--ink); background: var(--ink); z-index: 1;
+}
+.tl-item:not(:has(.tl-content)) .tl-year { margin-bottom: 4px; }
+
+/* ============================================================
+   NUMBERED LIST — 黒い番号タイル＋タイトル＋説明（仕組み・ステップ）
+   ============================================================ */
+.ind-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.ind-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 16px 18px; }
+.ind-num {
+  font-family: 'Poppins', sans-serif; font-size: .85rem; font-weight: 800; color: #fff; background: var(--ink);
+  width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ind-title { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.ind-desc { font-size: 13px; color: var(--mid); line-height: 1.7; }
+
+/* ============================================================
+   CARDS — 汎用カード / 投資家カード / 調達ラウンド
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.card, .info-card, .episode { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.episode { margin-bottom: 12px; }
+.info-card.flag { border-left: 3px solid var(--bad); }
+.card h3, .episode h3, .info-card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+.card p, .card ul, .episode p, .info-card-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.card ul { padding-left: 18px; }
+.info-card-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+/* 2列カード。.lead で上辺を黒罫線＋右上タグ */
+.vc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.vc-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; }
+.vc-card.lead { border-top: 3px solid var(--ink); }
+.vc-name { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.vc-role { font-family: 'Poppins', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.vc-desc { font-size: 12.5px; color: var(--mid); line-height: 1.65; }
+.lead-tag {
+  position: absolute; top: 14px; right: 14px; background: var(--ink); color: #fff; font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+
+/* 横長の行カード（調達ラウンド・時系列の金額など）。.corp=黒罫線 / .gov=グレー罫線 */
+.f-stack { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.f-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+.f-card.gov { border-left: 3px solid var(--mid); }
+.f-card.corp { border-left: 3px solid var(--ink); }
+.r-badge {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0; background: var(--card2); color: var(--mid); border: 1px solid var(--border);
+}
+.f-card.corp .r-badge { background: var(--ink); color: #fff; border-color: var(--ink); }
+.f-amount { font-size: 1.4rem; font-weight: 800; color: var(--text); flex-shrink: 0; min-width: 84px; }
+.f-detail { flex: 1; }
+.f-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 3px; }
+.f-desc { font-size: 13px; color: var(--mid); line-height: 1.6; }
+
+/* ============================================================
+   PERSON — 人物カード（名前＋役割バッジ＋経歴＋箇条書き＋引用）
+   ============================================================ */
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.person .p-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 3px; }
+.person .p-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.person .p-role { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink); padding: 2px 9px; border-radius: 4px; }
+.person .p-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.person .p-line:last-child { margin-bottom: 0; }
+.person ul { list-style: none; padding: 0; margin: 0; }
+.person li { font-size: 13.5px; color: var(--mid); line-height: 1.8; padding: 6px 0 6px 16px; position: relative; border-bottom: 1px solid var(--border); }
+.person li:last-child { border-bottom: none; }
+.person li::before { content: ''; position: absolute; left: 0; top: 15px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.person li b, .person li strong { color: var(--text); font-weight: 700; }
+.person .p-quote { margin-top: 12px; padding: 11px 15px; border-left: 3px solid var(--ink); background: var(--surface); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+
+/* 旧 net-person（人物を罫線で区切って並べる簡易版） */
+.net-person { border-bottom: 1px solid var(--border); padding: 22px 0; }
+.net-person:last-child { border-bottom: none; padding-bottom: 0; }
+.net-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.net-role { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.net-body { font-size: 13.5px; color: var(--mid); line-height: 1.8; }
+
+/* ============================================================
+   COLUMN BOX — 示唆・コラム（黒ラベル＋本文＋小見出し）
+   ============================================================ */
+.col-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin: 22px 0; }
+.col-box .col-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--ink);
+  display: inline-block; padding: 3px 10px; border-radius: 4px; margin-bottom: 14px;
+}
+.col-box h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.05rem; }
+.col-box p { font-size: 13.5px; line-height: 1.9; }
+.col-box .col-sub {
+  font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted);
+  text-transform: uppercase; margin: 20px 0 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   Q&A — <div class="qa"><details><summary>問い</summary><p>答え</p></details></div>
+   ============================================================ */
+.qa details { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.qa details[open] { background: var(--bg); border-color: var(--ink); }
+.qa summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; font-size: 13.5px; font-weight: 700; color: var(--text);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.65;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary:hover { background: var(--card2); }
+.qa details[open] summary:hover { background: var(--surface); }
+.qa summary::before {
+  content: 'Q'; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink);
+  width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.qa summary::after { content: '+'; margin-left: auto; padding-left: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--muted); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.qa details[open] summary::after { content: '\2212'; }
+/* 回答本文。summary 以外の直下要素すべてに効かせる */
+.qa details > *:not(summary) { margin: 0 0 10px; padding: 0 18px 0 48px; font-size: 13.5px; color: var(--mid); line-height: 1.85; overflow-wrap: anywhere; }
+.qa details > *:not(summary):last-child { margin-bottom: 16px; }
+.qa details > *:not(summary) b, .qa details > *:not(summary) strong { color: var(--text); font-weight: 700; }
+.qa details > ul, .qa details > ol { padding-left: 66px; }
+
+/* ============================================================
+   FACT LIST — キー：値の行リスト
+   ============================================================ */
+.fact-list { list-style: none; padding: 0 !important; }
+.fact-list li { display: flex; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: flex-start; margin: 0; }
+.fact-list li:last-child { border-bottom: none; }
+.fact-list .key { min-width: 130px; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; }
+.fact-list .val { flex: 1; color: var(--text); }
+@media (max-width: 600px) { .fact-list li { flex-direction: column; gap: 3px; } .fact-list .key { min-width: 0; } }
+
+/* ============================================================
+   SOURCES — ページ末の出典（2列）
+   <div class="sources"><h2>Sources</h2><ul><li><a>…</a></li></ul></div>
+   ============================================================ */
+.sources { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 28px; margin-top: 40px; }
+.sources h2 { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.sources ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; padding: 0; }
+.sources li { font-size: 12px; color: var(--mid); padding: 4px 0; border-bottom: 1px solid var(--border); margin: 0; }
+
+/* ============================================================
+   TWO COLUMN / SIDEBAR LAYOUT（ツール・ダッシュボード用）
+   ============================================================ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
+.layout.toc-left { grid-template-columns: 220px 1fr; }
+.sidebar, .summary-box, .layout .toc { position: sticky; top: 72px; margin-bottom: 0; }
+.sidebar, .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 22px; font-size: 13px; }
+.layout .toc ol { column-count: 1; }
+@media (max-width: 900px) { .layout, .layout.toc-left { grid-template-columns: 1fr; gap: 24px; } .sidebar, .summary-box, .layout .toc { position: static; } }
+
+/* ============================================================
+   PAGE TOC — 左固定・自動生成の在ページ目次
+   h2/h3見出しをJSが自動収集してリンク化し、スクロール位置に応じて
+   active表示する（手書き不要）。長文コンテンツページ（diff/coanal/
+   deep-research等）向け。markup+script一式は同ディレクトリの
+   page-toc-snippet.html を参照。既存ページへの後付け注入は
+   inject_page_toc.py で行う（未注入ファイルにのみ差分適用）。
+   ヒーロー直下に手書きで置く .toc（2段目次）とは別物。
+   ============================================================ */
+.page-toc {
+  position: fixed; top: 84px; left: 24px; width: 216px;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 14px; font-size: 12px; z-index: 40;
+}
+.page-toc .toc-title { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.page-toc a {
+  display: block; color: var(--muted); text-decoration: none; padding: 4px 8px; margin: 0 -8px;
+  border-left: 2px solid transparent; border-radius: 4px; line-height: 1.5; transition: color .12s, background .12s;
+}
+.page-toc a:hover { color: var(--text); background: var(--surface); }
+.page-toc a.lvl-h3 { padding-left: 20px; font-size: 11px; }
+.page-toc a.active { color: var(--text); border-left-color: var(--text); font-weight: 700; background: var(--surface); }
+@media (max-width: 1400px) { .page-toc { display: none; } }
+
+/* ============================================================
+   INDEX / NAV LIST — フォルダ一覧ページ（ナビゲーションindex.html用）
+   ============================================================ */
+.index-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding: 0; }
+.index-list li { margin: 0; }
+.index-list a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 13px 18px; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+}
+.index-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.index-date { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.index-folder-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0; padding: 0; }
+.index-folder-list a {
+  display: block; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+  text-decoration: none; color: var(--text); background: var(--card);
+}
+.index-folder-list a:hover { border-color: var(--ink); background: var(--bg); }
+.index-folder-list .index-folder-title { font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.index-folder-list .index-folder-count { font-size: 11.5px; color: var(--muted); }
+
+/* ============================================================
+   BUTTONS / LINKS / FOOTER
+   ============================================================ */
+.btn {
+  display: inline-block; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .02em; font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  cursor: pointer; border-radius: 6px; text-decoration: none;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.primary:hover { opacity: .8; }
+.btn.small { padding: 4px 12px; font-size: 11px; }
+.back-link { display: inline-block; margin-top: 40px; font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.back-link:hover { color: var(--mid); }
+.page-footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+img, svg, iframe { max-width: 100%; height: auto; }
+body { overflow-wrap: break-word; }
+svg text { font-family: 'Poppins', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; }
+.note { font-size: 12px; color: var(--muted); line-height: 1.8; }
+code { font-size: .9em; background: var(--card2); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .page, .wrap { padding: 32px 16px 80px; }
+  body > .hero { margin: 24px 16px 20px; }
+  .hero { padding: 28px 24px; }
+  .hero h1 { font-size: 1.7rem; }
+  .kpi-row, .hero-meta { gap: 18px; }
+  .toc ol { column-count: 1; }
+  .kv { grid-template-columns: 1fr 1fr; }
+  .vc-grid, .two-col, .sources ul { grid-template-columns: 1fr; }
+  .f-card { flex-wrap: wrap; }
+  .qa details > *:not(summary) { padding-left: 18px; }
+  .qa details > ul, .qa details > ol { padding-left: 36px; }
+}
+
+
+/* ---- このページ専用の追加（数値表・式・4象限） ---- */
+.formula { font-family: 'Poppins','Noto Sans JP',sans-serif; font-weight: 800; font-size: 1.15rem; text-align: center;
+  background: var(--ink); color: #fff; border-radius: 10px; padding: 18px 16px; margin: 16px 0; letter-spacing: .01em; }
+.t.num td:not(:first-child):not(.why), .t.num th:not(:first-child) { font-family: 'Poppins','Noto Sans JP',sans-serif; }
+.t.jpx td, .t.jpx th { padding: 8px 10px; }
+.t.jpx td:nth-child(n+2):nth-child(-n+7) { text-align: right; white-space: nowrap; }
+.t.jpx th:nth-child(n+2):nth-child(-n+7) { text-align: right; white-space: nowrap; }
+.t.jpx td.why { font-size: 12px; color: var(--mid); min-width: 260px; line-height: 1.6; }
+.t.jpx td.lo b { color: var(--bad); }
+.t.jpx .barcell { position: relative; min-width: 92px; }
+.t.jpx .barcell .bar { position: absolute; left: 0; top: 9px; height: 18px; background: var(--card2); border-radius: 3px; z-index: 0; }
+.t.jpx .barcell b { position: relative; z-index: 1; }
+.t-wrap .t.jpx { min-width: 820px; }
+.matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.mx-axis-y, .mx-axis-x { grid-column: 1 / -1; font-family: 'Poppins','Noto Sans JP',sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
+.mx-axis-x { text-align: right; }
+.mx-cell { background: var(--card); border: 1px solid var(--border); border-top: 3px solid var(--ink); border-radius: 10px; padding: 16px 18px; }
+.mx-tag { font-family: 'Poppins','Noto Sans JP',sans-serif; font-size: 10.5px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.mx-title { font-size: .98rem; font-weight: 700; margin-bottom: 8px; }
+.mx-body { font-size: 12.5px; color: var(--mid); line-height: 1.7; }
+.mx-body b { color: var(--text); }
+@media (max-width: 640px) { .matrix { grid-template-columns: 1fr; } .formula { font-size: .95rem; } }
+
+</style>
+<!-- snav:head:start -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{padding-top:56px!important}
+.snav{position:fixed;top:0;left:0;right:0;height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:9999;font-family:'Poppins',sans-serif}
+.snav-logo{color:#fff;text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.02em;transition:opacity .15s}
+.snav-logo:hover{opacity:.6}
+.snav-inline{display:none;align-items:center;gap:4px}
+.snav-inline a{color:rgba(255,255,255,.7);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:4px;transition:all .15s;letter-spacing:-.01em}
+.snav-inline a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.snav-inline .sep{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 6px}
+.snav-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px}
+.snav-btn span{display:block;width:20px;height:1.5px;background:#fff;transition:all .2s ease}
+.snav-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.snav-btn.open span:nth-child(2){opacity:0}
+.snav-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.snav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;cursor:pointer}
+.snav-overlay.open{display:block}
+.snav-panel{position:fixed;top:0;right:0;bottom:0;width:min(260px,80vw);background:#111;z-index:9999;transform:translateX(100%);transition:transform .25s ease;padding:68px 32px 40px;font-family:'Poppins',sans-serif;overflow-y:auto}
+.snav-panel.open{transform:translateX(0)}
+.snav-sec{margin-bottom:28px}
+.snav-sec-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:8px}
+.snav-a{display:block;color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 0;letter-spacing:-.01em;transition:color .12s}
+.snav-a:hover{color:#fff}
+.snav-sub{position:relative;margin-left:5px;padding-left:15px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.72)}
+.snav-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.14)}
+.snav-sub:last-child::before,.snav-sub.last::before{bottom:50%}
+.snav-sub::after{content:"";position:absolute;left:0;top:50%;width:9px;height:1px;background:rgba(255,255,255,.14)}
+.snav-sub:hover{color:#fff}
+.snav-sub:hover::after{background:rgba(255,255,255,.45)}
+@media(min-width:900px){.snav-inline{display:flex}.snav-btn{display:none}}
+</style>
+<!-- snav:head:end -->
+</head>
+<body>
+<!-- snav:bar -->
+<div class="snav">
+  <a class="snav-logo" href="/research-notes/index.html">54111</a>
+  <div class="snav-inline">
+    <a href="/research-notes/23_Travel/index.html">travel</a>
+    <span class="sep"></span>
+    <a href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+    <span class="sep"></span>
+    <a href="/research-notes/26_Books/index.html">books</a>
+  </div>
+  <button class="snav-btn" id="snavBtn" onclick="snavToggle()" aria-label="menu"><span></span><span></span><span></span></button>
+</div>
+<div class="snav-overlay" id="snavOverlay" onclick="snavToggle()"></div>
+<nav class="snav-panel" id="snavPanel">
+  <a class="snav-a" href="/research-notes/index.html" style="opacity:.5;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1)">home</a>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Travel</div>
+    <a class="snav-a" href="/research-notes/23_Travel/index.html">travel</a>
+    <a class="snav-a snav-sub last" href="/research-notes/23_Travel/USA/index.html">usa</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Research</div>
+    <a class="snav-a" href="/research-notes/24_Research/241_People/index.html">people</a>
+    <a class="snav-a" href="/research-notes/24_Research/242_Geography/index.html">geography</a>
+    <a class="snav-a" href="/research-notes/24_Research/243_History/index.html">history</a>
+    <a class="snav-a" href="/research-notes/24_Research/244_Companies/index.html">companies</a>
+    <a class="snav-a snav-sub" href="/research-notes/24_Research/244_Companies/Startups/index.html">startups</a>
+    <a class="snav-a snav-sub last" href="/research-notes/24_Research/244_Companies/大企業/index.html">大企業</a>
+    <a class="snav-a" href="/research-notes/24_Research/245_Industry/index.html">industry</a>
+    <a class="snav-a" href="/research-notes/24_Research/246_Culture/index.html">culture</a>
+    <a class="snav-a" href="/research-notes/24_Research/247_Finance/index.html">finance</a>
+    <a class="snav-a" href="/research-notes/24_Research/248_Random/index.html">random</a>
+    <a class="snav-a" href="/research-notes/24_Research/249_Philosophy/index.html">philosophy</a>
+  </div>
+  <div class="snav-sec">
+    <div class="snav-sec-label">Books</div>
+    <a class="snav-a" href="/research-notes/26_Books/index.html">books</a>
+  </div>
+</nav>
+<script>function snavToggle(){document.getElementById('snavBtn').classList.toggle('open');document.getElementById('snavPanel').classList.toggle('open');document.getElementById('snavOverlay').classList.toggle('open')}</script>
+<!-- snav:panel:end -->
+
+<div class="page">
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="badge badge-solid">Finance</span>
+    <span class="badge badge-white">Valuation</span>
+    <span class="badge badge-white">2026-11-11</span>
+  </div>
+  <h1>PER・PBR 完全読解</h1>
+  <div class="hero-sub">四季報でPERを見た瞬間に「この業種だからこの数字」「この会社はここが違うからこの数字」と言えるようになるための一冊。式は2本だけ覚える。<strong>PERは「成長・リスク・資本効率」の3変数</strong>、<strong>PBRは「ROE × PER」</strong>。あとは業種ごとに、どの変数が効いているかを当てはめる。</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val">20.1倍</div><div class="lbl">プライム PER（実績・加重）</div></div>
+    <div class="kpi"><div class="val">1.7倍</div><div class="lbl">プライム PBR（加重）</div></div>
+    <div class="kpi"><div class="val">8.6%</div><div class="lbl">プライム ROE（逆算）</div></div>
+    <div class="kpi"><div class="val">9.3〜45倍</div><div class="lbl">33業種のPERの幅</div></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-lbl">Contents</div>
+  <ol>
+    <li><a href="#s1">30秒でつかむ結論</a></li>
+    <li><a href="#s2">定義と四季報の欄の読み方</a></li>
+    <li><a href="#s3">PERを決める3つの変数</a></li>
+    <li><a href="#s4">PBR = ROE × PER</a></li>
+    <li><a href="#s5">PERが歪む9つの原因</a></li>
+    <li><a href="#s6">ビジネスモデル別の読み方（18類型）</a></li>
+    <li><a href="#s7">実データ：東証33業種のPER・PBR</a></li>
+    <li><a href="#s8">米国との比較</a></li>
+    <li><a href="#s9">PBR1倍割れの意味</a></li>
+    <li><a href="#s10">PER×PBRの4象限</a></li>
+    <li><a href="#s11">四季報を開いて5秒で読む手順</a></li>
+    <li><a href="#s12">実例ドリル12問</a></li>
+    <li><a href="#s13">PER・PBRが効かない時の指標</a></li>
+    <li><a href="#s14">よくある誤解</a></li>
+  </ol>
+</div>
+
+<!-- ================= 01 ================= -->
+<div class="sec" id="s1">
+  <div class="sec-label"><span class="num">01</span>TL;DR</div>
+  <h2>30秒でつかむ結論</h2>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">1</div><div><div class="ind-title">PERは「この利益が、何年分・どれだけ確かに・どれだけ伸びるか」の値段</div><div class="ind-desc">PERが高い ＝ ①利益が伸びる、②利益が安定していて読める、③伸びるのに追加の資金がいらない、のどれか。低い ＝ その逆か、<b>今の利益が一時的に多すぎる</b>と市場が見ている。</div></div></div>
+    <div class="ind-item"><div class="ind-num">2</div><div><div class="ind-title">業種でPERが違うのは、利益の「続き方」が違うから</div><div class="ind-desc">食料品や医療機器は毎年ほぼ同じ利益が出る（高PER）。海運・鉄鋼・証券は好況の利益が翌年消える（低PER）。SaaSは今の利益が小さく将来が大きい（超高PERか赤字）。銀行・不動産は借入で利益を作る（低PER）。</div></div></div>
+    <div class="ind-item"><div class="ind-num">3</div><div><div class="ind-title">PBRは「ROE × PER」。純資産1円で何円稼ぐかの値段</div><div class="ind-desc">PBR1倍割れは「割安」とは限らず、<b>ROEが株主の要求利回り（ざっくり8%）に届いていない</b>という通知表。逆に、資産が人とソフトの会社はPBRが5倍・10倍でも普通。</div></div></div>
+    <div class="ind-item"><div class="ind-num">4</div><div><div class="ind-title">数字を見たら、まず分母を疑う</div><div class="ind-desc">PERの分母（純利益）は特別損益・景気の山谷・会計基準で簡単に動く。「PERが低い」の半分は株価が安いのではなく、<b>利益が今だけ多い</b>。「PERが高い」の半分は<b>利益が今だけ少ない</b>。</div></div></div>
+  </div>
+  <div class="callout"><strong>このページの使い方。</strong>03・04で式を腹落ちさせる → 06で業種の型を覚える → 07の実データで答え合わせ → 11の手順を四季報の横に置く → 12のドリルで反射にする。</div>
+</div>
+
+<!-- ================= 02 ================= -->
+<div class="sec" id="s2">
+  <div class="sec-label"><span class="num">02</span>Basics</div>
+  <h2>定義と四季報の欄の読み方</h2>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>指標</th><th>式</th><th>言い換え</th><th>逆数</th></tr></thead>
+      <tbody>
+        <tr><td>PER<br>株価収益率</td><td>株価 ÷ 1株利益（EPS）<br>＝ 時価総額 ÷ 純利益</td><td>会社を丸ごと買ったら、今の利益の何年分を払うか</td><td>益回り（1÷PER）。PER20倍＝益回り5%</td></tr>
+        <tr><td>PBR<br>株価純資産倍率</td><td>株価 ÷ 1株純資産（BPS）<br>＝ 時価総額 ÷ 純資産</td><td>株主が帳簿上持っている1円に、市場が何円の値を付けているか</td><td>—</td></tr>
+        <tr><td>ROE<br>自己資本利益率</td><td>純利益 ÷ 純資産</td><td>株主の1円が1年で何円稼ぐか</td><td>PBR ÷ PER で出せる</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>四季報の【株価指標】欄</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>欄</th><th>中身</th><th>読むときの注意</th></tr></thead>
+      <tbody>
+        <tr><td>予想PER（今期・来期）</td><td>株価 ÷ 四季報記者の予想EPS</td><td>基本はここを見る。来期の方が小さければ増益予想、大きければ減益予想</td></tr>
+        <tr><td>実績PER 高値平均・安値平均</td><td>過去3期の、各期の高値・安値 ÷ 実績EPS の平均</td><td>その会社の「定位置」。今の予想PERがこの帯の上か下かで、過去比の割高・割安がわかる</td></tr>
+        <tr><td>PBR</td><td>株価 ÷ 直近決算の1株純資産</td><td>業績欄の「1株純資産」と対。ROEは【指標等】欄にある</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="warn-box">
+    <div class="w-title">同じ「PER」でも数字が違う理由</div>
+    <ul>
+      <li><b>予想か実績か</b>：日経平均の予想PERは15.3倍（2026-11-10、加重平均）。一方、東証が出すプライム市場のPERは20.1倍（2026年10月末）。後者は確定した決算の利益を使う<b>実績ベース</b>なので、増益局面では高く出る。</li>
+      <li><b>単純平均か加重平均か</b>：単純平均は各社のPERを足して割る（中小型の姿）。加重平均は業種の時価総額合計÷利益合計（大型株の姿）。<b>赤字企業の赤字は合計利益を削る</b>ので、加重PERは大型の赤字企業が1社あるだけで跳ね上がる。</li>
+      <li><b>会社予想か四季報予想かアナリスト予想か</b>：サイトによって分母が違う。比べるときは同じ出所どうしで。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= 03 ================= -->
+<div class="sec" id="s3">
+  <div class="sec-label"><span class="num">03</span>Drivers of PER</div>
+  <h2>PERを決める3つの変数：成長・リスク・資本効率</h2>
+  <p>株価の理論値は「将来株主に返ってくるお金を、要求利回りで割り引いた合計」。これを利益で割ると、PERの式になる。</p>
+  <div class="formula">PER ＝ ( 1 − g ÷ ROE ) ÷ ( r − g )</div>
+  <div class="kv">
+    <div class="kv-item"><div class="k">g ／ 成長率</div><div class="v">利益が長期で年何%伸びるか。大きいほどPERは高い</div></div>
+    <div class="kv-item"><div class="k">r ／ 株主の要求利回り</div><div class="v">金利＋リスクの上乗せ。日本株はざっくり7〜9%。利益が読みにくい会社ほど高く、PERは低くなる</div></div>
+    <div class="kv-item"><div class="k">ROE ／ 資本効率</div><div class="v">成長するために利益のどれだけを再投資に回す必要があるか。高ROEなら少しの再投資で伸び、残りを株主に返せる</div></div>
+  </div>
+  <p>分子の <code>1 − g÷ROE</code> は「利益のうち株主に返せる割合」。年5%成長したい会社がROE10%なら利益の半分を再投資に取られ、ROE25%なら2割で済む。</p>
+
+  <h3>早見表①：成長率とROEでPERはこう動く（r＝8%）</h3>
+  <div class="t-wrap">
+    <table class="t num">
+      <thead><tr><th>長期成長率 g</th><th>ROE 8%</th><th>ROE 15%</th><th>ROE 30%</th></tr></thead>
+      <tbody>
+        <tr><td>0%</td><td>12.5倍</td><td>12.5倍</td><td>12.5倍</td></tr>
+        <tr><td>2%</td><td>12.5倍</td><td>14.4倍</td><td>15.6倍</td></tr>
+        <tr><td>4%</td><td>12.5倍</td><td>18.3倍</td><td>21.7倍</td></tr>
+        <tr><td>6%</td><td>12.5倍</td><td>30.0倍</td><td>40.0倍</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>ここが一番大事。</strong>ROEが要求利回りと同じ8%の会社は、いくら成長してもPERは12.5倍のまま。成長のために同じだけ資金を食うので、株主の取り分が増えない。<strong>成長がPERを押し上げるのは、ROEが資本コストを上回っている時だけ</strong>。「売上は伸びているのにPERが低い」会社（設備産業、薄利の小売、人を増やさないと伸びない会社）はこれで説明がつく。</div>
+
+  <h3>早見表②：リスク（要求利回り）でPERはこう動く（g＝3%、ROE＝15%）</h3>
+  <div class="t-wrap">
+    <table class="t num">
+      <thead><tr><th>要求利回り r</th><th>PER</th><th>当てはまる会社の例</th></tr></thead>
+      <tbody>
+        <tr><td>6%</td><td>26.7倍</td><td>利益が毎年ほぼ同じ。食品、日用品、医療機器、鉄道</td></tr>
+        <tr><td>8%</td><td>16.0倍</td><td>平均的な会社</td></tr>
+        <tr><td>10%</td><td>11.4倍</td><td>利益が景気・市況で大きく振れる。海運、鉄鋼、証券、不動産開発</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>成長率が同じでも、利益の読みやすさだけでPERは2倍以上違う。<strong>「景気に関係なく売れる」は、それ自体がPERを高くする理由</strong>になる。食品株が大して伸びないのに20倍台で、絶好調の海運が1ケタなのはこのため。</p>
+
+  <h3>早見表③：高PERは「利益が何倍になる」と言っているのか</h3>
+  <p>株価が動かないまま、利益が伸びてPERが普通の15倍に落ち着くには、利益が何倍必要か。</p>
+  <div class="t-wrap">
+    <table class="t num">
+      <thead><tr><th>今のPER</th><th>益回り</th><th>必要な利益</th><th>年20%増益なら</th><th>年30%増益なら</th></tr></thead>
+      <tbody>
+        <tr><td>10倍</td><td>10.0%</td><td>—（すでに15倍未満）</td><td>—</td><td>—</td></tr>
+        <tr><td>20倍</td><td>5.0%</td><td>1.3倍</td><td>約1.6年</td><td>約1.1年</td></tr>
+        <tr><td>30倍</td><td>3.3%</td><td>2倍</td><td>約3.8年</td><td>約2.6年</td></tr>
+        <tr><td>45倍</td><td>2.2%</td><td>3倍</td><td>約6.0年</td><td>約4.2年</td></tr>
+        <tr><td>60倍</td><td>1.7%</td><td>4倍</td><td>約7.6年</td><td>約5.3年</td></tr>
+        <tr><td>100倍</td><td>1.0%</td><td>6.7倍</td><td>約10.4年</td><td>約7.2年</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>PER60倍を見たら「利益が4倍になるまで株価が上がらなくても文句を言わない」という値付けだと読む。その間は株主のリターンがゼロなので、実際にはもっと速い成長が織り込まれている。</p>
+</div>
+
+<!-- ================= 04 ================= -->
+<div class="sec" id="s4">
+  <div class="sec-label"><span class="num">04</span>PBR</div>
+  <h2>PBR ＝ ROE × PER。PBRは「資本の通知表」</h2>
+  <div class="formula">PBR ＝ ROE × PER ＝ ( ROE − g ) ÷ ( r − g )</div>
+  <p>株価÷純資産 ＝（利益÷純資産）×（株価÷利益）と分解しただけ。だから<strong>四季報でPBRとPERが並んでいたら、割り算すればROEが出る</strong>。PBR1.5倍・PER15倍ならROE10%。</p>
+
+  <h3>早見表④：ROEでPBRはこう動く（r＝8%、g＝2%）</h3>
+  <div class="t-wrap">
+    <table class="t num">
+      <thead><tr><th>ROE</th><th>理論PBR</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td>4%</td><td>0.33倍</td><td>株主の1円が年4%しか稼がない。8%欲しい投資家は3分の1の値段でしか買わない。鉄鋼・紙パルプ・地銀がこの辺り</td></tr>
+        <tr><td>6%</td><td>0.67倍</td><td>電力・ガス、自動車がこの辺り（PBR0.7〜0.9倍）</td></tr>
+        <tr><td>8%</td><td>1.00倍</td><td>ROE＝要求利回り。ちょうど簿価の値打ち</td></tr>
+        <tr><td>12%</td><td>1.67倍</td><td>優良企業の入口。商社、保険、建設の上位</td></tr>
+        <tr><td>20%</td><td>3.00倍</td><td>高収益の機械・医療機器・ITサービス</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>実際のプライム市場はROE8.6%でPBR1.7倍と、この表より高い。実績利益より来期の予想利益が大きいこと（増益期待）と、要求利回りが8%より低く見られていることが上乗せ分。表は「ROEが動くとPBRがどれだけ動くか」の感覚をつかむために使う。</p>
+  <div class="callout"><strong>PBR1倍の正体。</strong>「解散したら純資産が返ってくる値段」ではなく、<strong>ROEが株主の要求利回りと同じ</strong>という状態。1倍割れは「この会社に資本を預けても要求利回りを稼げない、と市場が見ている」。東証が2023年3月に求めた「資本コストや株価を意識した経営」は、この式をそのまま経営に突きつけたもの。</div>
+
+  <h3>PBRが業種で違う2つの理由</h3>
+  <div class="vc-grid">
+    <div class="vc-card lead"><div class="vc-name">① ROEが違う</div><div class="vc-role">稼ぐ力</div><div class="vc-desc">上の式どおり。設備や在庫を大量に抱えて薄く稼ぐ業種（鉄鋼・紙・電力）は低く、少ない資本で厚く稼ぐ業種（ソフト・医療機器・コンサル）は高い。</div></div>
+    <div class="vc-card lead"><div class="vc-name">② 帳簿に載る資産が違う</div><div class="vc-role">分母の中身</div><div class="vc-desc">工場・土地・貸出金は帳簿に載る。人材・ソフト・ブランド・顧客基盤は自分で育てた分はほぼ載らない。資産が帳簿の外にある会社ほど、分母が小さくPBRは高く出る。</div></div>
+  </div>
+</div>
+
+<!-- ================= 05 ================= -->
+<div class="sec" id="s5">
+  <div class="sec-label"><span class="num">05</span>Distortions</div>
+  <h2>PERが歪む9つの原因。数字を見たらまず分母を疑う</h2>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>原因</th><th>PERの見え方</th><th>典型</th><th>確かめ方</th></tr></thead>
+      <tbody>
+        <tr><td>景気・市況の山</td><td>異常に低い（3〜7倍）</td><td>海運、鉄鋼、石油、半導体メモリ、証券</td><td>過去10年の利益の平均で割り直す。配当利回りが異常に高ければ同じ合図</td></tr>
+        <tr><td>景気・市況の谷</td><td>異常に高い or 赤字で算出不能</td><td>同上</td><td>PBRを見る。シクリカルは<b>高PERの時が買い場、低PERの時が売り場</b>になりやすい</td></tr>
+        <tr><td>特別利益</td><td>低い</td><td>土地・政策保有株・子会社の売却益</td><td>営業利益に対して純利益が大きすぎないか（通常は営業利益の65〜70%）</td></tr>
+        <tr><td>特別損失</td><td>高い</td><td>減損、リストラ、訴訟</td><td>同上。来期の予想PERで見直す</td></tr>
+        <tr><td>先行投資</td><td>高い or 赤字</td><td>SaaS、バイオ、出店攻勢中の小売</td><td>売上総利益率と、投資をやめたら出る利益を考える。PSRやEV/売上を併用</td></tr>
+        <tr><td>のれん償却</td><td>日本基準は高く出る</td><td>M&amp;Aの多い会社</td><td>日本基準はのれんを毎年償却、IFRSは償却しない。基準が違う会社を比べるならEBITDAか償却前利益で</td></tr>
+        <tr><td>税金</td><td>低い</td><td>繰越欠損金で税負担が軽い会社</td><td>税引前利益×0.7で引き直す</td></tr>
+        <tr><td>現金・持ち合い株</td><td>高く見える</td><td>現金リッチな中小型、政策保有株の多い会社</td><td>（時価総額−ネットキャッシュ）÷利益で見直す。事業だけのPERは半分ということもある</td></tr>
+        <tr><td>借入（レバレッジ）</td><td>低く見える</td><td>不動産、リース、商社、電力</td><td>借金込みの値段で見るEV/EBITDAを併用。借入が多い会社は利益の振れが増幅されるので低PERが妥当</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= 06 ================= -->
+<div class="sec" id="s6">
+  <div class="sec-label"><span class="num">06</span>By Business Model</div>
+  <h2>ビジネスモデル別の読み方（18類型）</h2>
+  <p>各類型の「目安」は平時の日本株のおおよその帯。相場全体が上がれば全体に上へずれる。大事なのは数字そのものより<strong>「どの変数が効いてその帯にいるか」</strong>。</p>
+
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>類型</th><th>PER目安</th><th>PBR目安</th><th>効いている変数</th></tr></thead>
+      <tbody>
+        <tr><td>SaaS・サブスク</td><td>40〜100倍超／赤字</td><td>5〜20倍</td><td>成長＋積み上がる売上＋資産が帳簿外</td></tr>
+        <tr><td>ネットプラットフォーム</td><td>20〜40倍</td><td>3〜10倍</td><td>追加コストなしで伸びる（高ROE）</td></tr>
+        <tr><td>SIer・ITサービス</td><td>15〜25倍</td><td>2〜4倍</td><td>安定需要、人数に比例</td></tr>
+        <tr><td>労働集約（派遣・SES・BPO・介護）</td><td>10〜18倍</td><td>1.5〜4倍</td><td>人を増やさないと伸びない、薄利</td></tr>
+        <tr><td>コンサル・高単価プロフェッショナル</td><td>18〜35倍</td><td>4〜10倍</td><td>高単価＋高成長だが人に依存</td></tr>
+        <tr><td>高収益ニッチ製造（FA・精密・医療機器）</td><td>25〜40倍</td><td>3〜6倍</td><td>高シェア・高利益率・安定</td></tr>
+        <tr><td>半導体・電子部品</td><td>15〜40倍（振れ大）</td><td>2〜8倍</td><td>成長期待とサイクルの綱引き</td></tr>
+        <tr><td>自動車・部品</td><td>8〜13倍</td><td>0.6〜1.1倍</td><td>巨額設備、低成長、為替・景気連動</td></tr>
+        <tr><td>素材（鉄鋼・化学・紙）</td><td>6〜12倍（谷では数十倍）</td><td>0.4〜1.0倍</td><td>市況、巨大設備、低ROE</td></tr>
+        <tr><td>海運・資源・エネルギー</td><td>山で3〜6倍、平時10〜14倍</td><td>0.7〜1.2倍</td><td>利益が市況次第＝山の利益は割り引かれる</td></tr>
+        <tr><td>総合商社</td><td>8〜12倍</td><td>1.0〜1.8倍</td><td>資源比率、事業の寄せ集め</td></tr>
+        <tr><td>銀行</td><td>8〜16倍</td><td>0.3〜1.4倍</td><td>ROEがすべて。PBRで見る業種</td></tr>
+        <tr><td>証券・保険・ノンバンク</td><td>8〜14倍</td><td>0.8〜1.6倍</td><td>市況連動、レバレッジ</td></tr>
+        <tr><td>不動産（開発・賃貸）</td><td>8〜14倍</td><td>1.0〜1.5倍</td><td>借入依存、含み益（NAVで見る）</td></tr>
+        <tr><td>建設</td><td>10〜13倍</td><td>0.8〜1.3倍</td><td>受注の山谷、採算のブレ</td></tr>
+        <tr><td>小売・外食</td><td>18〜30倍</td><td>2〜4倍</td><td>内需の安定＋出店成長、個人株主</td></tr>
+        <tr><td>食品・日用品・医薬品</td><td>18〜28倍</td><td>1.5〜3倍</td><td>景気に左右されない（低リスク）</td></tr>
+        <tr><td>インフラ（電力・ガス・鉄道・通信）</td><td>10〜16倍</td><td>0.6〜1.8倍</td><td>規制・安定だが低成長・巨大設備</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>SaaS・サブスク：PERは見るな、売上の質を見る</h3>
+  <div class="col-box">
+    <div class="col-lbl">Software / Subscription</div>
+    <p><strong>なぜ高いか。</strong>①解約されない限り売上が毎年積み上がる（来年の売上の8〜9割が年初に見えている＝低リスク）。②粗利率70〜85%で、1社増えても原価がほぼ増えない。③今は営業・開発に利益を全部突っ込んでいるので利益が小さい＝分母が小さい。④資産は人とコードで帳簿に載らないのでPBRも高い。</p>
+    <p><strong>なぜPERで測れないか。</strong>広告宣伝費を止めれば利益は出るが、止めないのが正解の時期だから。PER200倍と赤字は紙一重で、どちらも「利益をまだ出す気がない」だけ。</p>
+    <div class="col-sub">代わりに見るもの</div>
+    <p><strong>PSR（時価総額÷売上）</strong>、ARR成長率、解約率、売上継続率（NRR）、<strong>Rule of 40</strong>（売上成長率＋営業利益率が40%を超えれば優良）。「成熟したら営業利益率25%」と仮置きして、PSR10倍 ＝ 将来の純利益ベースでPER約57倍（10÷0.25÷0.7）、と翻訳すると高さの程度が掴める。</p>
+    <div class="col-sub">罠</div>
+    <p>金利が上がると真っ先に下がる（利益が遠い将来にあるほど、割引率の影響が大きい）。成長率が鈍った瞬間にPERは半分以下になる。グロース市場の情報・通信業が加重46倍、プライムの同業種が12倍という落差は「同じ業種名でも中身が別物」の典型。</p>
+  </div>
+
+  <h3>ネットプラットフォーム・マーケットプレイス</h3>
+  <p>取引が増えても自社のコストが増えない（場を貸しているだけ）。在庫も工場も要らないのでROEが30%を超えることもあり、式どおり成長がそのままPERに乗る。米国のソフト・ネット系がPBR9〜13倍（Damodaran、2026年1月）なのはこの構造。<strong>注意：</strong>広告依存型は景気に連動する。手数料率を上げられるかが評価の分かれ目。</p>
+
+  <h3>SIer・ITサービス（受託開発、システム運用）</h3>
+  <p>売上 ＝ 技術者の人数 × 単価 × 稼働率。DX需要で仕事は切れないので安定（PER15〜25倍）だが、人を採らないと伸びないので成長率に天井がある。自社プロダクトやクラウドの月額収入の比率が上がるほどPERは上がる。<strong>見る点：</strong>営業利益率（8%が並、12%超は優良）、不採算案件の有無、ストック売上比率。</p>
+
+  <h3>労働集約（人材派遣・SES・BPO・介護・警備・清掃）</h3>
+  <div class="col-box">
+    <div class="col-lbl">Labor-intensive</div>
+    <p><strong>なぜ低めか。</strong>売上を2倍にするには人を2倍にするしかない。採用費と人件費が売上と同じ速さで増えるので、規模が大きくなっても利益率が上がらない（営業利益率3〜8%）。人手不足と賃上げで利幅が削られるリスクもある。成長が「資本」ではなく「採用」に縛られる分、03の式の g に上限がかかる。</p>
+    <p><strong>なぜPBRは意外と高いか。</strong>工場も在庫も要らないので純資産が小さい。薄利でもROEは15〜20%出る。<strong>PER14倍・PBR3倍</strong>のように「PERは地味、PBRは高い」組み合わせになるのがこの型の顔。</p>
+    <div class="col-sub">同じ人ビジネスでも高い会社</div>
+    <p>コンサル（1人あたり売上と利益率が高く、単価を上げられる）、M&amp;A仲介（成功報酬で利益率40〜50%）、医師・エンジニアなど専門人材のマッチング（人を雇わず紹介料を取る＝プラットフォームに近い）。<strong>「人を雇って売る」か「人を紹介して手数料を取る」か</strong>でPERは倍違う。</p>
+    <div class="col-sub">罠</div>
+    <p>高成長コンサルは採用と離職で成長が止まった瞬間にPERが30倍→15倍になる。派遣は景気後退で真っ先に契約を切られる。介護・保育は公定価格で利益率が決まる。</p>
+  </div>
+
+  <h3>高収益ニッチ製造（FA・計測・精密・医療機器）</h3>
+  <p>キーエンス、SMC、HOYA、シスメックスのような会社。世界シェアが高く、値下げ競争をしない、工場をあまり持たない（ファブライト）か消耗品で稼ぐ。営業利益率20〜50%・ROE15%超で、利益が安定して伸びる＝3変数が全部いい方向。製造業なのにPER30倍台・PBR4〜6倍になる。プライムの精密機器が加重32.3倍・3.1倍なのはこの顔ぶれ。<strong>見る点：</strong>営業利益率と海外売上比率。利益率が落ち始めたら評価は崩れる。</p>
+
+  <h3>半導体・電子部品</h3>
+  <p>「AI・データセンターで長期成長」という期待（PERを上げる）と、「3〜4年周期で好不況が来る」というサイクル（PERを下げる）が同居する。製造装置・検査装置は寡占で高利益率なので高く、メモリや汎用部品は市況商品なので低い。<strong>読み方：</strong>受注が底のとき利益が小さくPERは高く見え、ピークのとき低く見える。PERが低くなってから買うと天井を掴みやすい。受注残・BBレシオ・顧客の設備投資計画で位置を確かめる。</p>
+
+  <h3>自動車・部品</h3>
+  <p>巨額の利益を出していてもPER10倍前後・PBR1倍前後。理由は、①毎年兆円単位の設備・開発投資が必要（利益のうち株主に返せる割合が小さい）、②為替1円で利益が数百億円動く、③EV・ソフト化で将来の利益が読めない、④販売金融を抱えて資産が巨大（ROEが上がらない）。<strong>部品メーカー</strong>はさらに、完成車メーカーからの値下げ要請があるので一段低い。</p>
+
+  <h3>素材（鉄鋼・化学・紙パルプ・ガラス）</h3>
+  <p>巨大設備で汎用品を作る。製品に差がないので価格は市況で決まり、設備は止められないので不況でも作り続けて値崩れする。ROEが長期で5%前後しか出ないのでPBRは0.4〜0.8倍が定位置。<strong>例外：</strong>半導体材料、電池材料、機能性化学品など「スペックで選ばれ、代わりがない」素材は高収益ニッチ製造の側に入る。化学は1つの業種に両方が混ざっているので、業種平均は当てにならない。</p>
+
+  <h3>海運・資源・エネルギー</h3>
+  <div class="col-box">
+    <div class="col-lbl">Cyclical / Commodity</div>
+    <p><strong>PER4倍・配当利回り8%は「安い」ではなく「この利益は続かない」という合図。</strong>運賃や原油価格が2倍になれば利益は5倍にも10倍にもなるが、翌年には元に戻りうる。市場は山の利益を信用せず、平年の利益で値付けする。山の利益で割るからPERが低く見える。</p>
+    <p><strong>読み方：</strong>過去10年の平均利益で割り直したPER、PBR（1倍前後が中立）、市況そのもの（運賃指数、原油・銅価格）を見る。<strong>シクリカル株はPERが一番低い時が一番危なく、赤字でPERが出ない時が一番安い</strong>ことが多い。</p>
+  </div>
+
+  <h3>総合商社</h3>
+  <p>PER8〜12倍。理由は、①利益の3〜5割が資源で市況に連動する、②事業が多すぎて全体の成長率が読めない（コングロマリット・ディスカウント）、③投資会社に近く、減損が時々出る。2020年にバフェットが買ってから「非資源で安定して稼ぎ、配当と自社株買いで還元する会社」という見方が広がり、PBRは0.7倍前後から1倍超へ上がった。<strong>見る点：</strong>非資源利益の比率、累進配当の方針、ROE（12〜15%なら1.5倍前後が妥当）。</p>
+
+  <h3>銀行：PERよりPBR、PBRよりROE</h3>
+  <div class="col-box">
+    <div class="col-lbl">Banks</div>
+    <p><strong>銀行は「純資産の10〜20倍のお金を預かって貸す」商売。</strong>資産のほぼ全部が貸出金と債券で、帳簿価格が時価に近い。だから帳簿＝会社の中身であり、PBRが主役になる。売上や営業利益という概念がなく、PSRやEV/EBITDAは使えない。</p>
+    <p><strong>なぜ長年PBR0.3〜0.5倍だったか。</strong>ゼロ金利で利ざやがなく、ROEが3〜5%しか出なかった。04の表のとおり、ROE4%なら理論PBRは0.33倍。割安だったのではなく、式どおりだった。</p>
+    <p><strong>今。</strong>金利のある世界に戻り、メガバンクはROE9〜10%台を掲げてPBR1倍を超えた。プライムの銀行業は加重PBR1.4倍、一方でスタンダード市場の銀行は0.4倍のまま。差はROEと還元。</p>
+    <div class="col-sub">見る点</div>
+    <p>ROE目標、利ざや（金利が上がると預金金利より先に貸出金利が上がる）、与信費用（景気が悪化すると貸倒れが増え利益が吹き飛ぶ）、保有債券の含み損、政策保有株の売却。</p>
+  </div>
+
+  <h3>証券・保険・ノンバンク</h3>
+  <p><strong>証券：</strong>相場が良いと手数料もトレーディング益も増える完全な市況産業。好況期の利益は割り引かれ、PER10倍前後。<strong>保険：</strong>損保は政策保有株の売却益で利益がかさ上げされている期間はPERが低く出る。生保は帳簿の利益が実態を表しにくいので、保有契約の将来利益を足したEV（エンベディッド・バリュー）に対する倍率で見る。<strong>リース・ノンバンク：</strong>借りて貸す商売でレバレッジが高く、銀行と同じくROEとPBRで見る。</p>
+
+  <h3>不動産：PERは低く出る。NAVで見る</h3>
+  <div class="col-box">
+    <div class="col-lbl">Real Estate</div>
+    <p><strong>なぜPERが低いか。</strong>①資産の半分以上を借入で賄う（金利上昇・地価下落で利益が大きく振れる）、②マンション分譲や物件売却の利益は「在庫を売った」1回限りで、毎年続く保証がない、③土地を仕入れ続けないと成長できない（資金を食う）。プライムの不動産業は加重13.6倍。</p>
+    <p><strong>PBRの注意。</strong>賃貸ビルは取得時の値段で帳簿に載るので、昔から持っている都心の土地には巨額の含み益がある。帳簿のPBRが1.4倍でも、含み益を足した実質の純資産（<strong>NAV</strong>）で割ると1倍を切ることがある。大手不動産はNAV倍率で語られる。</p>
+    <div class="col-sub">同じ不動産でも型が違う</div>
+    <p><strong>賃貸（ビル・物流）</strong>＝家賃で安定、評価は高め。<strong>分譲・開発</strong>＝売り切り、PER6〜9倍。<strong>仲介・管理</strong>＝手数料商売で資産が軽く、労働集約型に近い。<strong>REIT</strong>＝減価償却が大きく純利益が実力より小さいので、PERではなくP/FFO、NAV倍率、分配金利回りで見る。米国REITのPERが50倍前後に見えるのも同じ理由（Damodaran）。</p>
+  </div>
+
+  <h3>建設</h3>
+  <p>受注してから数年かけて利益が出る。受注時の見積りより資材・人件費が上がると赤字工事になる（2022〜24年に多発）。好況でも「今の利益率は続くのか」と疑われ、PER10〜13倍。<strong>見る点：</strong>受注残と、受注時採算（粗利率）の推移。手元資金と政策保有株が厚い会社が多く、還元強化でPBRが上がる余地がある業種。</p>
+
+  <h3>小売・外食</h3>
+  <p>プライムの小売業は加重29.2倍と高い。理由は、①日々の消費で売上が安定、②出店すれば伸びる成長モデルが描きやすい、③株主優待目当ての個人株主が売らない（特に外食）、④ファーストリテイリングやニトリのような製造小売（SPA）は利益率が高く海外で伸びる。<strong>注意：</strong>薄利の食品スーパーやドラッグストアは15〜20倍。既存店売上高が前年を割ると、出店しても伸びないと見なされて急落する。</p>
+
+  <h3>食品・日用品・医薬品（ディフェンシブ）</h3>
+  <p>景気が悪くても売れる＝利益が読める＝要求利回りが低い＝PERが高い（03の早見表②）。成長率は年2〜4%でもPER20倍台が付く。<strong>医薬品</strong>は特許が切れると売上が急減する（パテントクリフ）ので、主力薬の特許期限と開発中の新薬（パイプライン）で評価が決まる。<strong>創薬ベンチャー</strong>は利益がないのでPERは無意味で、新薬候補の成功確率×市場規模で値付けされる（グロース市場の医薬品39社は合計で赤字、PBRは5.4倍）。</p>
+
+  <h3>インフラ（電力・ガス・鉄道・通信）</h3>
+  <p><strong>電力・ガス：</strong>料金が規制され、発電所と送電網という巨大設備を抱え、原発や燃料価格のリスクがある。ROE5%前後でPBR0.7倍。<strong>鉄道：</strong>安定だが人口減で伸びない。沿線不動産の含み益がある。<strong>通信キャリア：</strong>月額課金で極めて安定、高配当。PER12〜16倍でPBRは1.5〜2倍。安定度のわりにPERが低いのは、成長がほぼなく、設備投資が重いから（03の式で g が小さく、再投資負担が大きい）。</p>
+
+  <h3>ゲーム・コンテンツ・エンタメ</h3>
+  <p>ヒット作が出た年は利益が数倍になり、翌年は半分になる。市場はヒットの利益を平年並みに割り引くので、ヒット直後はPERが低く見える。一方、任天堂やサンリオのように<strong>IP（キャラクター）を何十年も使い回せる会社</strong>は、ヒット依存ではなくブランド商売と見なされて高PERが付く。テーマパークは一度作れば値上げで稼げる独占型。</p>
+
+  <h3>持株会社・投資会社・親子上場</h3>
+  <p>保有株の時価合計より時価総額が安い（NAVディスカウント）のが普通。理由は、売却時の税金、資金の使い道への不信、同じものを直接買える、の3つ。利益は保有株の評価益で大きく振れるので、PERはほとんど意味を持たない。<strong>親子上場の親会社</strong>や、<strong>政策保有株・現金を溜め込んだ会社</strong>も同じ構造で、PBR0.5倍・PER10倍のまま放置されやすい。動くきっかけは還元強化、TOB、アクティビスト。</p>
+</div>
+
+<!-- ================= 07 ================= -->
+<div class="sec" id="s7">
+  <div class="sec-label"><span class="num">07</span>Real Data — TSE Prime</div>
+  <h2>実データ：東証プライム33業種のPER・PBR（2026年10月末）</h2>
+  <p>日本取引所グループの公表値。利益と純資産は確定した決算（2025年8月期〜2026年7月期）の<strong>実績ベース</strong>。PER・PBRは加重平均（業種の時価総額合計÷利益合計）と単純平均の両方を載せた。ROEは業種の利益合計÷純資産合計。加重PERの高い順。</p>
+  <div class="kv">
+    <div class="kv-item"><div class="k">プライム 総合</div><div class="v">PER 20.1倍 ／ PBR 1.7倍<br><span class="note">ROE 8.6%・1537社</span></div></div>
+    <div class="kv-item"><div class="k">金融を除く</div><div class="v">PER 21.4倍 ／ PBR 1.8倍<br><span class="note">ROE 8.3%・1417社</span></div></div>
+    <div class="kv-item"><div class="k">製造業</div><div class="v">PER 26.5倍 ／ PBR 1.9倍<br><span class="note">ROE 7.1%・671社</span></div></div>
+    <div class="kv-item"><div class="k">非製造業</div><div class="v">PER 16.6倍 ／ PBR 1.7倍<br><span class="note">ROE 10.0%・746社</span></div></div>
+  </div>
+  <div class="t-wrap">
+    <table class="t num jpx">
+      <thead><tr><th>業種</th><th>社数</th><th>PER 加重</th><th>PER 単純</th><th>PBR 加重</th><th>PBR 単純</th><th>ROE</th><th>なぜこの数字か</th></tr></thead>
+      <tbody>
+        <tr><td>33 サービス業</td><td>140</td><td class="barcell"><span class="bar" style="width:100%"></span><b>45.0</b></td><td>20.9</td><td><b>2.2</b></td><td>1.9</td><td>4.8%</td><td class="why">人材・コンサル・レジャー・ネットの寄せ集め。利益の薄い大型が加重を押し上げ（単純20.9倍）</td></tr>
+        <tr><td>16 電気機器</td><td>123</td><td class="barcell"><span class="bar" style="width:99%"></span><b>44.4</b></td><td>26.8</td><td><b>3.3</b></td><td>2.1</td><td>7.5%</td><td class="why">半導体装置・AI関連の大型株が高PER。利益の薄い大型も混ざり加重が跳ねる（単純26.8倍）</td></tr>
+        <tr><td>5 繊維製品</td><td>15</td><td class="barcell"><span class="bar" style="width:82%"></span><b>37.1</b></td><td>25.9</td><td><b>1.0</b></td><td>1.0</td><td>2.7%</td><td class="why">加重PERが高いのは大型の利益が薄い（分母が小さい）ため。PBR1.0倍が実態</td></tr>
+        <tr><td>18 精密機器</td><td>27</td><td class="barcell"><span class="bar" style="width:72%"></span><b>32.3</b></td><td>24.3</td><td><b>3.1</b></td><td>2.3</td><td>9.5%</td><td class="why">医療機器・光学。高利益率で安定成長。3変数が全部良い</td></tr>
+        <tr><td>27 小売業</td><td>127</td><td class="barcell"><span class="bar" style="width:65%"></span><b>29.2</b></td><td>23.3</td><td><b>2.7</b></td><td>1.9</td><td>9.1%</td><td class="why">内需の安定＋出店成長＋製造小売の大型株。個人株主に人気</td></tr>
+        <tr><td>8 医薬品</td><td>31</td><td class="barcell"><span class="bar" style="width:58%"></span><b>26.1</b></td><td>19.3</td><td><b>2.1</b></td><td>1.3</td><td>8.0%</td><td class="why">特許に守られた高利益率と新薬期待。大型が高く、単純PBRは1.3倍</td></tr>
+        <tr><td>4 食料品</td><td>67</td><td class="barcell"><span class="bar" style="width:55%"></span><b>24.9</b></td><td>20.7</td><td><b>1.9</b></td><td>1.3</td><td>7.8%</td><td class="why">景気に左右されない安定利益で要求利回りが低い。大型株が加重を押し上げ</td></tr>
+        <tr><td>7 化学</td><td>114</td><td class="barcell"><span class="bar" style="width:51%"></span><b>23.0</b></td><td>20.1</td><td><b>1.5</b></td><td>1.3</td><td>6.7%</td><td class="why">汎用石化（低評価）と半導体材料など機能品（高評価）の混合。平均は当てにならない</td></tr>
+        <tr><td>19 その他製品</td><td>36</td><td class="barcell"><span class="bar" style="width:51%"></span><b>23.0</b></td><td>18.3</td><td><b>2.6</b></td><td>1.6</td><td>11.1%</td><td class="why">ゲーム・玩具・文具・印刷の寄せ集め。大型ゲーム株の比重が大きい</td></tr>
+        <tr><td>15 機械</td><td>107</td><td class="barcell"><span class="bar" style="width:50%"></span><b>22.7</b></td><td>20.9</td><td><b>2.0</b></td><td>1.6</td><td>8.7%</td><td class="why">FA・建機・半導体関連。高シェアの高収益企業が多くPBR2倍</td></tr>
+        <tr><td>12 鉄鋼</td><td>20</td><td class="barcell"><span class="bar" style="width:46%"></span><b>20.9</b></td><td>11.7</td><td class="lo"><b>0.6</b></td><td>0.7</td><td>3.0%</td><td class="why">PBR0.6倍の代表。加重PERが高いのは減益で分母が縮んだため（単純は11.7倍）</td></tr>
+        <tr><td>14 金属製品</td><td>26</td><td class="barcell"><span class="bar" style="width:43%"></span><b>19.5</b></td><td>15.3</td><td><b>1.0</b></td><td>0.8</td><td>5.3%</td><td class="why">成熟・中小型が多く、PBR1倍前後に張り付く</td></tr>
+        <tr><td>13 非鉄金属</td><td>20</td><td class="barcell"><span class="bar" style="width:43%"></span><b>19.4</b></td><td>12.5</td><td><b>2.3</b></td><td>1.0</td><td>11.8%</td><td class="why">加重PBR2.3倍はAIデータセンター向け電線株の影響。単純は1.0倍で大半は地味</td></tr>
+        <tr><td>26 卸売業</td><td>116</td><td class="barcell"><span class="bar" style="width:39%"></span><b>17.5</b></td><td>14.6</td><td><b>1.8</b></td><td>1.3</td><td>10.1%</td><td class="why">総合商社が大半。資源市況と事業の寄せ集めで割引</td></tr>
+        <tr><td>11 ガラス・土石製品</td><td>22</td><td class="barcell"><span class="bar" style="width:38%"></span><b>17.1</b></td><td>20.4</td><td><b>1.3</b></td><td>1.7</td><td>7.7%</td><td class="why">ガラス・セメントは設備産業、セラミック・衛生陶器は高収益。混合</td></tr>
+        <tr><td>17 輸送用機器</td><td>38</td><td class="barcell"><span class="bar" style="width:38%"></span><b>16.9</b></td><td>15.6</td><td class="lo"><b>0.9</b></td><td>0.9</td><td>5.4%</td><td class="why">巨額の利益でも設備・開発負担と為替、EV移行の不透明さでPBR1倍割れ</td></tr>
+        <tr><td>28 銀行業</td><td>69</td><td class="barcell"><span class="bar" style="width:37%"></span><b>16.6</b></td><td>17.3</td><td><b>1.4</b></td><td>1.0</td><td>8.7%</td><td class="why">金利上昇でROEが回復、さらなる増益期待でPERも上昇。加重PBR1.4倍・単純1.0倍、スタンダード市場は0.4倍</td></tr>
+        <tr><td>6 パルプ・紙</td><td>10</td><td class="barcell"><span class="bar" style="width:34%"></span><b>15.5</b></td><td>14.4</td><td class="lo"><b>0.6</b></td><td>0.6</td><td>4.0%</td><td class="why">紙需要の縮小と巨大設備。資産が資本コストを稼げていない</td></tr>
+        <tr><td>24 倉庫・運輸関連業</td><td>9</td><td class="barcell"><span class="bar" style="width:32%"></span><b>14.4</b></td><td>15.9</td><td><b>1.2</b></td><td>1.1</td><td>8.6%</td><td class="why">土地の含み益を持つ低成長業種</td></tr>
+        <tr><td>22 海運業</td><td>5</td><td class="barcell"><span class="bar" style="width:32%"></span><b>14.3</b></td><td>12.6</td><td><b>1.0</b></td><td>1.1</td><td>7.2%</td><td class="why">市況産業の典型。運賃高騰の山ではPER3〜5倍だった。利益が平常に戻るとPERは上がる</td></tr>
+        <tr><td>31 その他金融業</td><td>20</td><td class="barcell"><span class="bar" style="width:32%"></span><b>14.2</b></td><td>13.1</td><td><b>1.3</b></td><td>0.9</td><td>8.8%</td><td class="why">リース・ノンバンク。借りて貸すレバレッジ事業</td></tr>
+        <tr><td>20 電気・ガス業</td><td>21</td><td class="barcell"><span class="bar" style="width:31%"></span><b>14.0</b></td><td>10.9</td><td class="lo"><b>0.7</b></td><td>0.8</td><td>5.2%</td><td class="why">規制料金・巨大設備・原発リスク。ROEが低くPBR0.7倍</td></tr>
+        <tr><td>32 不動産業</td><td>48</td><td class="barcell"><span class="bar" style="width:30%"></span><b>13.6</b></td><td>11.3</td><td><b>1.4</b></td><td>1.5</td><td>10.0%</td><td class="why">借入依存と売却益の一過性で低PER。含み益があり実質PBRはもっと低い</td></tr>
+        <tr><td>30 保険業</td><td>11</td><td class="barcell"><span class="bar" style="width:30%"></span><b>13.5</b></td><td>13.2</td><td><b>1.6</b></td><td>1.4</td><td>12.2%</td><td class="why">政策保有株の売却益が利益に乗り、PERは低めに出る</td></tr>
+        <tr><td>21 陸運業</td><td>36</td><td class="barcell"><span class="bar" style="width:30%"></span><b>13.4</b></td><td>14.7</td><td><b>1.1</b></td><td>1.1</td><td>8.3%</td><td class="why">鉄道・物流。安定だが人口減で伸びない</td></tr>
+        <tr><td>10 ゴム製品</td><td>10</td><td class="barcell"><span class="bar" style="width:30%"></span><b>13.3</b></td><td>13.2</td><td><b>1.2</b></td><td>1.1</td><td>8.9%</td><td class="why">タイヤは交換需要があり自動車より安定。ROEは並</td></tr>
+        <tr><td>9 石油・石炭製品</td><td>5</td><td class="barcell"><span class="bar" style="width:29%"></span><b>13.0</b></td><td>11.9</td><td><b>1.0</b></td><td>0.9</td><td>7.6%</td><td class="why">在庫評価で利益が振れる。脱炭素で成長が見えない</td></tr>
+        <tr><td>2 鉱業</td><td>4</td><td class="barcell"><span class="bar" style="width:28%"></span><b>12.5</b></td><td>12.3</td><td><b>1.0</b></td><td>1.0</td><td>7.9%</td><td class="why">原油・ガス価格で利益が決まる。今の利益を山と見て低PER</td></tr>
+        <tr><td>25 情報・通信業</td><td>162</td><td class="barcell"><span class="bar" style="width:27%"></span><b>12.1</b></td><td>19.2</td><td><b>1.8</b></td><td>2.2</td><td>15.2%</td><td class="why">加重12.1倍は巨大通信キャリアなど利益の大きい数社が決めている。単純は19.2倍、グロース市場の同業種は46.0倍</td></tr>
+        <tr><td>3 建設業</td><td>70</td><td class="barcell"><span class="bar" style="width:26%"></span><b>11.6</b></td><td>12.3</td><td><b>1.3</b></td><td>1.3</td><td>11.5%</td><td class="why">受注産業。資材高・人手不足で採算が崩れた記憶があり、好況でも疑われる</td></tr>
+        <tr><td>1 水産・農林業</td><td>6</td><td class="barcell"><span class="bar" style="width:25%"></span><b>11.2</b></td><td>10.6</td><td class="lo"><b>0.9</b></td><td>0.9</td><td>8.4%</td><td class="why">市況と為替で利益が振れる一次産品。成長期待が小さい</td></tr>
+        <tr><td>29 証券、商品先物取引業</td><td>20</td><td class="barcell"><span class="bar" style="width:22%"></span><b>9.9</b></td><td>10.5</td><td><b>1.1</b></td><td>1.2</td><td>11.5%</td><td class="why">相場次第の利益。好況期の利益は割り引かれる</td></tr>
+        <tr><td>23 空運業</td><td>2</td><td class="barcell"><span class="bar" style="width:21%"></span><b>9.3</b></td><td>9.3</td><td><b>1.1</b></td><td>1.1</td><td>11.5%</td><td class="why">2社のみ。固定費が重く景気・燃料・感染症に弱い万年低PER</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">「なぜこの数字か」は業種の構造と数字からの読み筋で、JPXの見解ではない。個別の大型株の影響に触れた部分は推定を含む。</p>
+
+  <h3>この表から読み取ること</h3>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">1</div><div><div class="ind-title">PBRが1倍を大きく割る業種は、そろってROE5%前後かそれ以下</div><div class="ind-desc">鉄鋼（PBR0.6倍・ROE3.0%）、パルプ・紙（0.6倍・4.0%）、電気・ガス（0.7倍・5.2%）、輸送用機器（0.9倍・5.4%）。04の式そのまま。</div></div></div>
+    <div class="ind-item"><div class="ind-num">2</div><div><div class="ind-title">加重と単純が大きくズレる業種は「一部の大型株の話」</div><div class="ind-desc">非鉄金属のPBRは加重2.3倍・単純1.0倍。20社の大半は1倍前後で、AIデータセンター向け電線の数社だけが高い。電気機器（PER44.4倍と26.8倍）、サービス業（45.0倍と20.9倍）も同じ。<b>業種平均を個別株の物差しにするなら単純平均の方が近い。</b></div></div></div>
+    <div class="ind-item"><div class="ind-num">3</div><div><div class="ind-title">低PERの業種は「利益が続くか疑われている」業種</div><div class="ind-desc">空運9.3倍、証券9.9倍、水産11.2倍、建設11.6倍、情報・通信12.1倍、鉱業12.5倍。市況・景気・一時益のどれかが利益に乗っている。</div></div></div>
+    <div class="ind-item"><div class="ind-num">4</div><div><div class="ind-title">市場区分でも水準が違う</div><div class="ind-desc">加重平均で、プライム 20.1倍・1.7倍、スタンダード 18.2倍・1.2倍、グロース 57.7倍・3.6倍（PER・PBRの順）。 グロースは成長期待、スタンダードは小型・低流動性・低ROEで割り引かれる。</div></div></div>
+  </div>
+</div>
+
+<!-- ================= 08 ================= -->
+<div class="sec" id="s8">
+  <div class="sec-label"><span class="num">08</span>US Comparison</div>
+  <h2>米国との比較：PBRの差はROEの差</h2>
+  <p>ニューヨーク大学ダモダラン教授の米国業種別データ（2026年1月時点）。予想PER、PBR、ROEを抜粋した。</p>
+  <div class="t-wrap">
+    <table class="t num">
+      <thead><tr><th>業種（米国）</th><th>予想PER</th><th>PBR</th><th>ROE</th><th>読み方</th></tr></thead>
+      <tbody>
+        <tr><td>ソフトウェア（システム・アプリ）</td><td>34.1</td><td>9.1</td><td>29.6%</td><td>高ROE×高成長。資産は帳簿の外</td></tr>
+        <tr><td>半導体</td><td>37.3</td><td>13.3</td><td>31.4%</td><td>AI需要。期待成長率22.9%</td></tr>
+        <tr><td>半導体製造装置</td><td>41.6</td><td>9.7</td><td>35.8%</td><td>寡占・高利益率</td></tr>
+        <tr><td>医薬品</td><td>24.2</td><td>6.6</td><td>24.0%</td><td>特許で守られた高利益率</td></tr>
+        <tr><td>機械</td><td>24.1</td><td>4.5</td><td>16.4%</td><td>日本（22.7倍・2.0倍）とPERは近く、PBRが倍</td></tr>
+        <tr><td>日用品</td><td>16.9</td><td>5.9</td><td>27.0%</td><td>ブランドで高ROE</td></tr>
+        <tr><td>食品スーパー</td><td>14.3</td><td>3.9</td><td>12.9%</td><td>薄利・安定</td></tr>
+        <tr><td>大手銀行</td><td>13.0</td><td>1.6</td><td>12.9%</td><td>ROE13%でPBR1.6倍。日本のメガバンクが目指す形</td></tr>
+        <tr><td>地方銀行</td><td>11.0</td><td>1.1</td><td>9.8%</td><td>ROE10%弱でPBR約1倍。式どおり</td></tr>
+        <tr><td>生命保険</td><td>9.3</td><td>1.4</td><td>12.9%</td><td>金利・運用次第で低PER</td></tr>
+        <tr><td>不動産開発</td><td>12.3</td><td>1.0</td><td>5.1%</td><td>ROE5%でPBR1倍</td></tr>
+        <tr><td>REIT</td><td>45.1</td><td>2.0</td><td>5.0%</td><td>減価償却で利益が小さくPERは無意味。P/FFOで見る</td></tr>
+        <tr><td>住宅建設</td><td>14.4</td><td>1.6</td><td>14.2%</td><td>金利連動のシクリカル</td></tr>
+        <tr><td>石油（統合大手）</td><td>21.9</td><td>1.7</td><td>10.0%</td><td>減益予想で予想PERが上がっている</td></tr>
+        <tr><td>鉄鋼</td><td>16.9</td><td>1.9</td><td>3.7%</td><td>利益の谷。回復を織り込んだPBR</td></tr>
+        <tr><td>航空</td><td>11.4</td><td>2.8</td><td>14.2%</td><td>万年低PER。固定費が重く景気に弱い</td></tr>
+        <tr><td>外食</td><td>31.9</td><td>74.7</td><td>0.1%</td><td>自社株買いで純資産がほぼ消えた。PBRが意味を失う例</td></tr>
+        <tr><td>全市場</td><td>27.7</td><td>4.6</td><td>17.2%</td><td>日本のプライムは実績20.1倍・1.7倍・ROE8.6%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>日米のPBRは2.7倍違うが、PERの差は1.3倍ほど。</strong>PBR÷ROEで逆算した米国のPERは約27倍で、日本の20.1倍との差は小さい。残りはROEが2倍（17.2%と8.6%）違うことで説明がつく。PBR ＝ ROE × PER の掛け算がそのまま国の差に出ている。日本株のPBRを上げる話が、結局ROEを上げる話（利益率、資産の圧縮、自社株買い）になるのはこのため。</div>
+</div>
+
+<!-- ================= 09 ================= -->
+<div class="sec" id="s9">
+  <div class="sec-label"><span class="num">09</span>PBR Below 1x</div>
+  <h2>PBR1倍割れの意味と、東証の要請で起きたこと</h2>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2023-03</span><span class="tl-title">東証が「資本コストや株価を意識した経営」を要請</span></div><div class="tl-body">プライム・スタンダードの全社に、資本コストと資本収益性の現状分析、改善計画の開示を求めた。特に<b>PBR1倍割れ</b>の会社に改善を促した。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2023〜</span><span class="tl-title">自社株買い・増配・政策保有株の売却が急増</span></div><div class="tl-body">手っ取り早くROEを上げる方法は、分母（純資産）を減らすこと。余った現金と持ち合い株を株主に返す動きが広がった。</div></div></div>
+    <div class="tl-item"><div class="tl-dot filled"></div><div class="tl-content"><div class="tl-header"><span class="tl-date">2026-02</span><span class="tl-title">「高PBR・高ROE」企業が552社→780社に</span></div><div class="tl-body">第一生命経済研究所の集計（プライム、PBR1倍・ROE8%が境目）。「低PBR・低ROE」は506社→312社に減少。一方、2023年に低PBR・低ROEだった会社の63%は3年後も同じ場所にいる。</div></div></div>
+  </div>
+
+  <h3>PBR1倍割れの4つの型</h3>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>型</th><th>中身</th><th>見分け方</th><th>上がるきっかけ</th></tr></thead>
+      <tbody>
+        <tr><td>低ROE型</td><td>事業が儲からない。設備過剰、構造不況</td><td>ROEが長年5%以下、営業利益率が低い</td><td>再編、不採算事業の撤退。なければ万年割安</td></tr>
+        <tr><td>資産過多型</td><td>事業は普通だが、現金・持ち合い株・遊休不動産を溜め込みROEが薄まっている</td><td>自己資本比率70%超、ネットキャッシュが時価総額の半分以上</td><td>自社株買い、増配、TOB、アクティビスト。<b>一番動きやすい型</b></td></tr>
+        <tr><td>シクリカルの谷型</td><td>今は利益が落ちているだけ</td><td>過去のROEは山で10%超、PERが異常に高いか赤字</td><td>市況の回復</td></tr>
+        <tr><td>資産が傷んでいる型</td><td>帳簿の純資産が信用されていない（含み損、不良債権、減損予備軍）</td><td>のれん・無形資産が純資産に対して大きい、保有債券の含み損</td><td>損失の出し切り</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>PBRが当てにならない時</h3>
+  <div class="warn-box">
+    <div class="w-title">分母（純資産）が実態とズレる場合</div>
+    <ul>
+      <li><b>含み益</b>：昔買った土地・株は取得価格のまま。不動産、鉄道、倉庫、老舗メーカーの実質PBRは帳簿より低い。</li>
+      <li><b>帳簿に載らない資産</b>：自社で育てたブランド、ソフト、人材、顧客基盤。IT・コンサル・消費財はPBRが高く出て当然。</li>
+      <li><b>M&amp;Aののれん</b>：買収で膨らんだのれんは純資産を大きく見せる。減損すれば一気に消える。</li>
+      <li><b>自社株買いのやり過ぎ</b>：純資産が極端に小さくなるとPBRは数十倍になる（米国外食のPBR74.7倍）。ROEも同様に異常値になる。</li>
+      <li><b>債務超過・赤字続き</b>：純資産が毎年減るので、PBRが低くても安くない。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= 10 ================= -->
+<div class="sec" id="s10">
+  <div class="sec-label"><span class="num">10</span>Matrix</div>
+  <h2>PER×PBRの4象限：組み合わせで会社の顔がわかる</h2>
+  <p>PBR ÷ PER ＝ ROE なので、2つを並べるとROEの高低まで同時に読める。</p>
+  <div class="matrix">
+    <div class="mx-axis-y">PBR 高い ↑</div>
+    <div class="mx-cell">
+      <div class="mx-tag">低PER × 高PBR ＝ ROEが非常に高い</div>
+      <div class="mx-title">稼いでいるのに評価されていない</div>
+      <div class="mx-body">例：PER10倍・PBR3倍（ROE30%）。<b>疑うこと：</b>利益が山ではないか、借入でROEをかさ上げしていないか、自社株買いで純資産が小さいだけではないか。全部違えば掘り出し物。労働集約型の優良企業、好況期の人材・不動産仲介に多い。</div>
+    </div>
+    <div class="mx-cell">
+      <div class="mx-tag">高PER × 高PBR ＝ ROEも成長も高い</div>
+      <div class="mx-title">グロース・クオリティ</div>
+      <div class="mx-body">例：PER35倍・PBR6倍（ROE17%）。SaaS、医療機器、FA、半導体装置。<b>疑うこと：</b>成長が鈍ったときの下げ幅。03の早見表③で、何年分の成長を先払いしているか数える。</div>
+    </div>
+    <div class="mx-cell">
+      <div class="mx-tag">低PER × 低PBR ＝ ROEは並以下</div>
+      <div class="mx-title">バリュー、またはバリュートラップ</div>
+      <div class="mx-body">例：PER8倍・PBR0.5倍（ROE6%）。銀行、鉄鋼、自動車部品、地方の老舗。<b>疑うこと：</b>ROEが上がる道筋（還元、再編、金利）があるか。なければ10年後も同じ数字。09の4つの型で仕分ける。</div>
+    </div>
+    <div class="mx-cell">
+      <div class="mx-tag">高PER × 低PBR ＝ ROEが非常に低い</div>
+      <div class="mx-title">利益が一時的に凹んでいる</div>
+      <div class="mx-body">例：PER40倍・PBR0.6倍（ROE1.5%）。不況期の素材、リストラ中の会社。<b>疑うこと：</b>利益は戻るのか。戻るならPERは一気に下がる（シクリカルの買い場）。戻らないなら純資産が減り続ける。</div>
+    </div>
+    <div class="mx-axis-x">PER 高い →</div>
+  </div>
+</div>
+
+<!-- ================= 11 ================= -->
+<div class="sec" id="s11">
+  <div class="sec-label"><span class="num">11</span>Routine</div>
+  <h2>四季報を開いて5秒で読む手順</h2>
+  <div class="ind-list">
+    <div class="ind-item"><div class="ind-num">1</div><div><div class="ind-title">業種と特色を見て、型を決める</div><div class="ind-desc">【特色】【連結事業】欄で06の18類型のどれかに当てはめる。事業が複数なら利益の一番大きい事業で決める。型の目安PERが頭に浮かべば、数字を見る前に「たぶん◯倍くらい」と予想できる。</div></div></div>
+    <div class="ind-item"><div class="ind-num">2</div><div><div class="ind-title">予想PERを見て、型の目安とのズレを見る</div><div class="ind-desc">目安どおりなら「業種なりの値段」。上にズレていれば、その会社固有の成長か安定がある。下にズレていれば、固有のリスクか、利益が一時的に多い。</div></div></div>
+    <div class="ind-item"><div class="ind-num">3</div><div><div class="ind-title">ズレの理由を業績欄で探す</div><div class="ind-desc">営業利益が3年で何倍か（成長）。純利益が営業利益の7割から大きく外れていないか（特別損益）。今期と来期の予想PERの差（増益・減益）。</div></div></div>
+    <div class="ind-item"><div class="ind-num">4</div><div><div class="ind-title">実績PERの高値平均・安値平均と比べる</div><div class="ind-desc">その会社の過去の定位置。今が帯の下なら、過去より期待が下がっている。理由が一時的なら割安、構造的なら妥当。</div></div></div>
+    <div class="ind-item"><div class="ind-num">5</div><div><div class="ind-title">PBR ÷ PER でROEを暗算する</div><div class="ind-desc">8%より上か下か。10の4象限のどこにいるかが決まる。</div></div></div>
+    <div class="ind-item"><div class="ind-num">6</div><div><div class="ind-title">自己資本比率と現金を見る</div><div class="ind-desc">自己資本比率70%超でPBR1倍割れなら資産過多型。30%未満で高ROEなら借入でかさ上げ。【財務】欄の現金同等物と有利子負債の差（ネットキャッシュ）が時価総額の何割かも見る。</div></div></div>
+  </div>
+  <div class="callout"><strong>口に出す型。</strong>「これは◯◯型だから普通は△倍。この会社は□倍で上（下）にいる。理由は◇◇。」 これを1社10秒で言えるようにするのがゴール。</div>
+</div>
+
+<!-- ================= 12 ================= -->
+<div class="sec" id="s12">
+  <div class="sec-label"><span class="num">12</span>Drill</div>
+  <h2>実例ドリル12問：この数字を見たらどう読むか</h2>
+  <p>数字は典型的な姿を示す架空の例。答えを開く前に、型・理由・疑う点を口に出してみる。</p>
+  <div class="qa">
+    <details><summary>海運会社。PER4倍、PBR0.9倍、配当利回り8%。</summary>
+      <p><b>市況の山。</b>運賃高騰で利益が平年の数倍になっている。市場は来期以降の減益を見ているので株価が上がらず、PERが低く、配当利回りが高く見える。「安い」ではなく「この利益は続かない」。運賃指数と来期予想を見る。</p></details>
+    <details><summary>SaaS企業。PER120倍、PBR15倍、売上成長率30%、営業利益率3%。</summary>
+      <p><b>先行投資で分母が小さいだけ。</b>PERは使えない。PSR、粗利率、解約率、Rule of 40（30＋3＝33でやや届かず）で見る。成熟時の営業利益率を25%と置けば、実質のPERは120×3÷25≒14倍相当…と言いたくなるが、それは売上が今のままの場合で、成長が続く前提の値付けであることを忘れない。成長率が20%を切ると評価は急に厳しくなる。</p></details>
+    <details><summary>地方銀行。PER9倍、PBR0.4倍。</summary>
+      <p><b>ROE4.4%の低ROE型。</b>0.4÷9で暗算。04の表でROE4%の理論PBRは0.33倍なので、ほぼ式どおりで割安ではない。金利上昇で利ざやが広がる、還元を増やす、再編する、のどれかでROEが上がる道筋があるかを見る。</p></details>
+    <details><summary>総合商社。PER9倍、PBR1.3倍。</summary>
+      <p><b>ROE14%なのに低PER。</b>資源市況に利益が左右されることと、事業の寄せ集めで成長が読めないことへの割引。非資源の利益比率が高く、累進配当を約束している会社ほどPERは上に行く。</p></details>
+    <details><summary>FA機器メーカー。PER35倍、PBR5倍、営業利益率45%。</summary>
+      <p><b>高収益ニッチ製造。</b>ROE14%（自己資本が厚いので利益率のわりにROEは抑えめ）。製造業でもこの利益率と安定成長があれば高PERが正当化される。疑うのは利益率の低下と設備投資サイクル。</p></details>
+    <details><summary>鉄鋼メーカー。PER40倍、PBR0.5倍。</summary>
+      <p><b>利益の谷。</b>高PERは成長期待ではなく、利益が一時的に小さいだけ。ROEは1.3%。PBR0.5倍の方が実態を表す。市況が戻ればPERは10倍以下に下がる。シクリカルは高PERの時が買い場になりやすい。</p></details>
+    <details><summary>SES・技術者派遣。PER14倍、PBR4倍、営業利益率7%。</summary>
+      <p><b>労働集約型の典型。</b>ROEは29%と高いが、人を増やさないと伸びず利益率も上がらないのでPERは地味。資産が要らないのでPBRは高く出る。見るのは技術者数の伸び、単価、稼働率、離職率。</p></details>
+    <details><summary>中堅メーカー。PER12倍、PBR0.6倍、自己資本比率80%、現金と投資有価証券が時価総額の7割。</summary>
+      <p><b>資産過多型。</b>事業は普通に稼いでいるが、溜め込んだ現金と株でROEが5%に薄まっている。現金を引いた事業だけのPERは3〜4倍。自社株買い・増配・TOBで一番動きやすい型。株主構成（創業家、持ち合い、アクティビスト）を見る。</p></details>
+    <details><summary>大手不動産。PER13倍、PBR1.4倍。</summary>
+      <p><b>不動産の定位置。</b>借入依存と物件売却益の一過性でPERは低め。賃貸ビルの含み益を足したNAVで割ると1倍を切っていることが多く、帳簿のPBRより実質は安い。金利上昇が逆風。</p></details>
+    <details><summary>食品メーカー。PER24倍、PBR2倍、営業増益率は年3%。</summary>
+      <p><b>安定がPERを押し上げている。</b>成長は小さいが、不況でも利益が減らないので要求利回りが低い。ROEは8.3%で並。値上げが通るブランド力と海外比率が上振れ要因、原材料高が下振れ要因。</p></details>
+    <details><summary>創薬ベンチャー。PER算出不能（赤字）、PBR8倍。</summary>
+      <p><b>PERもPBRも使えない。</b>開発中の薬の成功確率×市場規模の値付け。見るのは治験の段階、提携先、手元資金が何年もつか（増資による希薄化）。</p></details>
+    <details><summary>コンサル会社。PER28倍、PBR9倍、売上成長率25%、営業利益率30%。</summary>
+      <p><b>高単価の人ビジネス。</b>ROE32%。高成長と高利益率で高評価だが、成長は採用数に比例する。採用が鈍る、離職が増える、稼働率が落ちる、のどれかでPERは15倍台まで下がりうる。コンサルタント数の四半期推移が最重要。</p></details>
+  </div>
+</div>
+
+<!-- ================= 13 ================= -->
+<div class="sec" id="s13">
+  <div class="sec-label"><span class="num">13</span>Alternatives</div>
+  <h2>PER・PBRが効かない時の指標</h2>
+  <div class="t-wrap">
+    <table class="t">
+      <thead><tr><th>指標</th><th>式</th><th>使う場面</th><th>目安</th></tr></thead>
+      <tbody>
+        <tr><td>PSR</td><td>時価総額 ÷ 売上</td><td>赤字・先行投資期のSaaS、ネット</td><td>成長SaaSで5〜15倍。粗利率とセットで見る</td></tr>
+        <tr><td>EV/EBITDA</td><td>（時価総額＋純有利子負債）÷（営業利益＋減価償却）</td><td>借入や設備の多い会社、会計基準の違う会社の比較、M&amp;A</td><td>7〜10倍が並。通信・素材は5〜7倍</td></tr>
+        <tr><td>PEG</td><td>PER ÷ 利益成長率（%）</td><td>成長株どうしの比較</td><td>1倍以下は割安、2倍超は割高</td></tr>
+        <tr><td>PCFR</td><td>時価総額 ÷ 営業キャッシュフロー</td><td>減価償却の大きい設備産業</td><td>業種内で比較</td></tr>
+        <tr><td>FCF利回り</td><td>フリーキャッシュフロー ÷ 時価総額</td><td>成熟企業の還元余力</td><td>5%超なら還元余地が大きい</td></tr>
+        <tr><td>NAV倍率</td><td>時価総額 ÷（純資産＋含み益）</td><td>不動産、REIT、持株会社</td><td>1倍が中立</td></tr>
+        <tr><td>P/FFO</td><td>価格 ÷（純利益＋減価償却−売却益）</td><td>REIT</td><td>15〜20倍</td></tr>
+        <tr><td>P/EV</td><td>時価総額 ÷ エンベディッド・バリュー</td><td>生命保険</td><td>0.5〜1倍</td></tr>
+        <tr><td>配当利回り</td><td>1株配当 ÷ 株価</td><td>成熟・高配当株。株価の下支え</td><td>プライム平均2%前後。異常に高い時は減配の予兆</td></tr>
+        <tr><td>CAPE（シラーPER）</td><td>株価 ÷ 過去10年の平均実質利益</td><td>シクリカル、市場全体の過熱</td><td>景気の山谷をならして見る</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= 14 ================= -->
+<div class="sec" id="s14">
+  <div class="sec-label"><span class="num">14</span>FAQ</div>
+  <h2>よくある誤解</h2>
+  <div class="qa">
+    <details><summary>PERが低い株は割安？</summary>
+      <p>半分は違う。利益が一時的に多い（市況の山、特別利益）、利益が減ると見られている、借入が多い、成長に資金を食う、のどれかで低く出る。「低PERの理由」が説明できて、その理由が解消される見込みがある時だけ割安。</p></details>
+    <details><summary>PERは15倍が適正？</summary>
+      <p>要求利回り8%・成長2%・ROE15%で計算すると約14倍になるので、平均的な会社の目安としては合っている。ただし成長・リスク・ROEが違えば適正値も違う。食品の20倍と海運の6倍はどちらも適正でありうる。</p></details>
+    <details><summary>PBR1倍割れなら、解散すれば儲かる？</summary>
+      <p>帳簿の資産が帳簿の値段で売れる保証はなく（工場や在庫は叩き売り）、退職金などの清算費用もかかり、そもそも経営陣は解散しない。PBR1倍割れは「解散価値以下」ではなく「ROEが資本コスト以下」と読む。</p></details>
+    <details><summary>金利が上がるとPERはどうなる？</summary>
+      <p>要求利回りrが上がるので全体に下がる。影響が大きいのは利益が遠い将来にある高PER株（SaaS、バイオ）。銀行は逆に利ざやが広がって利益が増える。不動産・REITは借入コスト増で逆風。</p></details>
+    <details><summary>自社株買いをするとPER・PBRはどうなる？</summary>
+      <p>株数が減ってEPSが増えるので、株価が同じならPERは下がる。純資産が減るのでROEは上がり、PBRは上がる方向。現金を寝かせている会社ほど効果が大きい。</p></details>
+    <details><summary>同じ業種なのにPERが倍違うのはなぜ？</summary>
+      <p>業種名は「何を売っているか」で、PERは「どう稼いでいるか」で決まるから。情報・通信業には通信キャリア（月額・設備産業）もSaaS（高成長）もSIer（人月）もゲーム（ヒット依存）も入っている。化学には汎用石化と半導体材料がある。業種より06の類型で見る。</p></details>
+    <details><summary>知名度や人気でPERは変わる？</summary>
+      <p>変わる。個人に身近な会社、優待のある会社、テーマに乗った会社（AI、防衛、半導体）は買い手が多く高くなる。逆に小型・地味・流動性の低い会社は機関投資家が買えず割り引かれる（スタンダード市場の単純PERは13.9倍、プライムは18.2倍）。ただし人気は3変数の「期待」が先走っているだけなので、利益がついてこなければ剥がれる。</p></details>
+    <details><summary>日経平均のPERと東証プライムのPERが違うのは？</summary>
+      <p>①予想利益か実績利益か、②対象銘柄（225社か約1,500社か）、③計算方法（日経は加重平均と指数ベースの2種類を公表）。2026年11月10日の日経平均は加重平均15.3倍、指数ベース18.7倍。東証の統計は実績ベースで20.1倍。数字を比べる時は必ず同じ定義どうしで。</p></details>
+  </div>
+</div>
+
+<div class="sources">
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://www.jpx.co.jp/markets/statistics-equities/misc/04.html" target="_blank" rel="noopener">日本取引所グループ — 規模別・業種別PER・PBR（2026年10月）</a></li>
+    <li><a href="https://indexes.nikkei.co.jp/nkave/archives/summary" target="_blank" rel="noopener">日経平均プロフィル — 日次サマリー（PER・PBR、2026-11-10）</a></li>
+    <li><a href="https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/pedata.html" target="_blank" rel="noopener">Damodaran — PE Ratio by Sector (US), January 2026</a></li>
+    <li><a href="https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/pbvdata.html" target="_blank" rel="noopener">Damodaran — Price/Book and ROE by Sector (US), January 2026</a></li>
+    <li><a href="https://www.dlri.co.jp/report/ld/588240.html" target="_blank" rel="noopener">第一生命経済研究所 — PBR・ROE象限別の企業数に関するレポート（2026年）</a></li>
+    <li>06の「目安」と12のドリルは、各類型の平時のおおよその水準を示す筆者の整理。個別銘柄の推奨ではない</li>
+  </ul>
+  <p style="font-size:11px;color:var(--muted);margin-top:14px">Last updated: 2026-11-11</p>
+</div>
+
+</div>
+
+<!-- page-toc:start -->
+<aside class="page-toc" id="pageToc" hidden>
+  <div class="toc-title">Contents</div>
+  <div id="pageTocLinks"></div>
+</aside>
+<script>
+(function(){
+  var toc = document.getElementById('pageToc');
+  var linksEl = document.getElementById('pageTocLinks');
+  if (!toc || !linksEl) return;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('h2, h3'))
+    .filter(function(h){ return !h.closest('#pageToc'); });
+  if (heads.length < 3) return;
+  var used = {};
+  heads.forEach(function(h){
+    if (!h.id) {
+      var slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'section';
+      var id = slug, i = 1;
+      while (used[id]) { id = slug + '-' + (++i); }
+      h.id = id;
+    }
+    used[h.id] = true;
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.trim();
+    a.className = h.tagName.toLowerCase() === 'h3' ? 'lvl-h3' : 'lvl-h2';
+    linksEl.appendChild(a);
+  });
+  toc.hidden = false;
+  var links = Array.prototype.slice.call(linksEl.querySelectorAll('a'));
+  function onScroll(){
+    var pos = window.scrollY + 96;
+    var current = heads[0];
+    heads.forEach(function(h){ if (h.offsetTop <= pos) current = h; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + current.id); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<!-- page-toc:end -->
+</body>
+</html>
